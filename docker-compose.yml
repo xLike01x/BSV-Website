@@ -1,31 +1,23 @@
-version: '3'
-
+# Lokale Entwicklungs-Datenbank für die BSV-Website.
+# Start:   docker compose up -d
+# Stopp:   docker compose down          (Daten bleiben erhalten)
+# Reset:   docker compose down -v       (löscht die lokale Datenbank!)
 services:
-  payload:
-    image: node:18-alpine
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: bsv
+      POSTGRES_PASSWORD: bsv
+      POSTGRES_DB: bsv
     ports:
-      - '3000:3000'
+      - '127.0.0.1:5432:5432'   # nur vom eigenen Rechner erreichbar
     volumes:
-      - .:/home/node/app
-      - node_modules:/home/node/app/node_modules
-    working_dir: /home/node/app/
-    command: sh -c "yarn install && yarn dev"
-    depends_on:
-      - mongo
-    env_file:
-      - .env
-
-  mongo:
-    image: mongo:latest
-    ports:
-      - '27017:27017'
-    command:
-      - --storageEngine=wiredTiger
-    volumes:
-      - data:/data/db
-    logging:
-      driver: none
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U bsv']
+      interval: 5s
+      retries: 10
 
 volumes:
-  data:
-  node_modules:
+  pgdata:

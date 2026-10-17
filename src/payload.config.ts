@@ -9,6 +9,13 @@ import { Media } from './collections/Media'
 import { Pages } from './collections/Pages'
 import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
+import { Angebote } from './collections/Angebote'
+import { Termine } from './collections/Termine'
+import { Mitgliedsantraege } from './collections/Mitgliedsantraege'
+import { Probetraining } from './collections/Probetraining'
+import { Ausfaelle } from './collections/Ausfaelle'
+import { Verein } from './Verein/config'
+import { de } from '@payloadcms/translations/languages/de'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
@@ -32,6 +39,9 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    meta: {
+      titleSuffix: ' – BSV Verwaltung',
+    },
     livePreview: {
       breakpoints: [
         {
@@ -62,9 +72,13 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Media, Categories, Users],
+  collections: [Pages, Posts, Termine, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer],
+  globals: [Header, Footer, Verein],
+  i18n: {
+    supportedLanguages: { de },
+    fallbackLanguage: 'de',
+  },
   plugins,
   secret: process.env.PAYLOAD_SECRET,
   sharp,

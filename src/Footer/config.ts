@@ -1,3 +1,4 @@
+import { isEditor } from '../access/roles'
 import type { GlobalConfig } from 'payload'
 
 import { link } from '@/fields/link'
@@ -7,6 +8,7 @@ export const Footer: GlobalConfig = {
   slug: 'footer',
   access: {
     read: () => true,
+    update: isEditor,
   },
   fields: [
     {

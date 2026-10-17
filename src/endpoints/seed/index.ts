@@ -50,7 +50,7 @@ export const seed = async ({
         slug: global,
         data: {
           navItems: [],
-        },
+        } as never,
         depth: 0,
         context: {
           disableRevalidate: true,
@@ -105,6 +105,7 @@ export const seed = async ({
         name: 'Demo Author',
         email: 'demo-author@example.com',
         password: 'password',
+        roles: ['redaktion'],
       },
     }),
     payload.create({

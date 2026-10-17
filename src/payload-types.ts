@@ -69,6 +69,11 @@ export interface Config {
   collections: {
     pages: Page;
     posts: Post;
+    termine: Termine;
+    angebote: Angebote;
+    ausfaelle: Ausfaelle;
+    probetraining: Probetraining;
+    mitgliedsantraege: Mitgliedsantraege;
     media: Media;
     categories: Category;
     users: User;
@@ -91,6 +96,11 @@ export interface Config {
   collectionsSelect: {
     pages: PagesSelect<false> | PagesSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
+    termine: TermineSelect<false> | TermineSelect<true>;
+    angebote: AngeboteSelect<false> | AngeboteSelect<true>;
+    ausfaelle: AusfaelleSelect<false> | AusfaelleSelect<true>;
+    probetraining: ProbetrainingSelect<false> | ProbetrainingSelect<true>;
+    mitgliedsantraege: MitgliedsantraegeSelect<false> | MitgliedsantraegeSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -106,16 +116,18 @@ export interface Config {
     'payload-migrations': PayloadMigrationsSelect<false> | PayloadMigrationsSelect<true>;
   };
   db: {
-    defaultIDType: string;
+    defaultIDType: number;
   };
   fallbackLocale: null;
   globals: {
     header: Header;
     footer: Footer;
+    verein: Verein;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    verein: VereinSelect<false> | VereinSelect<true>;
   };
   locale: null;
   widgets: {
@@ -156,7 +168,7 @@ export interface UserAuthOperations {
  * via the `definition` "pages".
  */
 export interface Page {
-  id: string;
+  id: number;
   title: string;
   hero: {
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
@@ -183,11 +195,11 @@ export interface Page {
             reference?:
               | ({
                   relationTo: 'pages';
-                  value: string | Page;
+                  value: number | Page;
                 } | null)
               | ({
                   relationTo: 'posts';
-                  value: string | Post;
+                  value: number | Post;
                 } | null);
             url?: string | null;
             label: string;
@@ -199,7 +211,7 @@ export interface Page {
           id?: string | null;
         }[]
       | null;
-    media?: (string | null) | Media;
+    media?: (number | null) | Media;
   };
   layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
@@ -207,7 +219,7 @@ export interface Page {
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
@@ -225,9 +237,9 @@ export interface Page {
  * via the `definition` "posts".
  */
 export interface Post {
-  id: string;
+  id: number;
   title: string;
-  heroImage?: (string | null) | Media;
+  heroImage?: (number | null) | Media;
   content: {
     root: {
       type: string;
@@ -243,18 +255,18 @@ export interface Post {
     };
     [k: string]: unknown;
   };
-  relatedPosts?: (string | Post)[] | null;
-  categories?: (string | Category)[] | null;
+  relatedPosts?: (number | Post)[] | null;
+  categories?: (number | Category)[] | null;
   meta?: {
     title?: string | null;
     /**
      * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
      */
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
     description?: string | null;
   };
   publishedAt?: string | null;
-  authors?: (string | User)[] | null;
+  authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
         id?: string | null;
@@ -275,7 +287,7 @@ export interface Post {
  * via the `definition` "media".
  */
 export interface Media {
-  id: string;
+  id: number;
   alt?: string | null;
   caption?: {
     root: {
@@ -292,7 +304,7 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
-  folder?: (string | null) | FolderInterface;
+  folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
   url?: string | null;
@@ -368,18 +380,18 @@ export interface Media {
  * via the `definition` "payload-folders".
  */
 export interface FolderInterface {
-  id: string;
+  id: number;
   name: string;
-  folder?: (string | null) | FolderInterface;
+  folder?: (number | null) | FolderInterface;
   documentsAndFolders?: {
     docs?: (
       | {
           relationTo?: 'payload-folders';
-          value: string | FolderInterface;
+          value: number | FolderInterface;
         }
       | {
           relationTo?: 'media';
-          value: string | Media;
+          value: number | Media;
         }
     )[];
     hasNextPage?: boolean;
@@ -394,17 +406,17 @@ export interface FolderInterface {
  * via the `definition` "categories".
  */
 export interface Category {
-  id: string;
+  id: number;
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
-  parent?: (string | null) | Category;
+  parent?: (number | null) | Category;
   breadcrumbs?:
     | {
-        doc?: (string | null) | Category;
+        doc?: (number | null) | Category;
         url?: string | null;
         label?: string | null;
         id?: string | null;
@@ -418,8 +430,16 @@ export interface Category {
  * via the `definition` "users".
  */
 export interface User {
-  id: string;
-  name?: string | null;
+  id: number;
+  name: string;
+  /**
+   * Bestimmt, was diese Person sehen und bearbeiten darf.
+   */
+  roles: ('admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'mitglied')[];
+  /**
+   * Bei Mitgliedern: angemeldete Angebote. Bei Übungsleitungen siehe „Leitung“ im Angebot.
+   */
+  angebote?: (number | Angebote)[] | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -427,6 +447,7 @@ export interface User {
   resetPasswordExpiration?: string | null;
   salt?: string | null;
   hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
   loginAttempts?: number | null;
   lockUntil?: string | null;
   sessions?:
@@ -438,6 +459,74 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "angebote".
+ */
+export interface Angebote {
+  id: number;
+  title: string;
+  bereich: 'fussball' | 'kids' | 'erwachsene';
+  untergruppe?: ('junioren' | 'juniorinnen' | 'senioren' | 'seniorinnen') | null;
+  kategorie?:
+    ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
+  alterText?: string | null;
+  alterVon?: number | null;
+  alterBis?: number | null;
+  kurzbeschreibung?: string | null;
+  beschreibung?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  bild?: (number | null) | Media;
+  zeiten?:
+    | {
+        tag?: ('Montag' | 'Dienstag' | 'Mittwoch' | 'Donnerstag' | 'Freitag' | 'Samstag' | 'Sonntag') | null;
+        von?: string | null;
+        bis?: string | null;
+        ort?: string | null;
+        hinweis?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Diese Personen dürfen das Angebot selbst bearbeiten und Ausfälle melden.
+   */
+  leitung?: (number | User)[] | null;
+  team?:
+    | {
+        name: string;
+        rolle?: string | null;
+        foto?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  plaetzeBegrenzt?: boolean | null;
+  maxPlaetze?: number | null;
+  spielklasse?: string | null;
+  fupaWidgetId?: string | null;
+  fussballDeTeamId?: string | null;
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -467,11 +556,11 @@ export interface CallToActionBlock {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: string | Post;
+                value: number | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -517,11 +606,11 @@ export interface ContentBlock {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: string | Post;
+                value: number | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -542,7 +631,7 @@ export interface ContentBlock {
  * via the `definition` "MediaBlock".
  */
 export interface MediaBlock {
-  media: string | Media;
+  media: number | Media;
   id?: string | null;
   blockName?: string | null;
   blockType: 'mediaBlock';
@@ -569,12 +658,12 @@ export interface ArchiveBlock {
   } | null;
   populateBy?: ('collection' | 'selection') | null;
   relationTo?: 'posts' | null;
-  categories?: (string | Category)[] | null;
+  categories?: (number | Category)[] | null;
   limit?: number | null;
   selectedDocs?:
     | {
         relationTo: 'posts';
-        value: string | Post;
+        value: number | Post;
       }[]
     | null;
   id?: string | null;
@@ -586,7 +675,7 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
-  form: string | Form;
+  form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
     root: {
@@ -612,7 +701,7 @@ export interface FormBlock {
  * via the `definition` "forms".
  */
 export interface Form {
-  id: string;
+  id: number;
   title: string;
   fields?:
     | (
@@ -724,9 +813,6 @@ export interface Form {
       )[]
     | null;
   submitButtonLabel?: string | null;
-  /**
-   * Choose whether to display an on-page message or redirect to a different page after they submit the form.
-   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -746,9 +832,6 @@ export interface Form {
   redirect?: {
     url: string;
   };
-  /**
-   * Send custom emails when the form submits. Use comma separated lists to send the same email to multiple recipients. To reference a value from this form, wrap that field's name with double curly brackets, i.e. {{firstName}}. You can use a wildcard {{*}} to output all data and {{*:table}} to format it as an HTML table in the email.
-   */
   emails?:
     | {
         emailTo?: string | null;
@@ -757,9 +840,6 @@ export interface Form {
         replyTo?: string | null;
         emailFrom?: string | null;
         subject: string;
-        /**
-         * Enter the message that should be sent in this email.
-         */
         message?: {
           root: {
             type: string;
@@ -783,10 +863,96 @@ export interface Form {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "termine".
+ */
+export interface Termine {
+  id: number;
+  title: string;
+  beginn: string;
+  ende?: string | null;
+  ort?: string | null;
+  bereich?: ('verein' | 'fussball' | 'kids' | 'erwachsene') | null;
+  beschreibung?: string | null;
+  nurMitglieder?: boolean | null;
+  anmeldung?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ausfaelle".
+ */
+export interface Ausfaelle {
+  id: number;
+  angebot: number | Angebote;
+  datum: string;
+  grund?: ('Krankheit' | 'Halle belegt' | 'Ferien / Feiertag' | 'Wetter' | 'Sonstiges') | null;
+  hinweis?: string | null;
+  benachrichtigen?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "probetraining".
+ */
+export interface Probetraining {
+  id: number;
+  angebot: number | Angebote;
+  name: string;
+  email: string;
+  teilnehmer?: string | null;
+  alter?: number | null;
+  wunschtermin?: string | null;
+  nachricht?: string | null;
+  datenschutz: boolean;
+  status?: ('neu' | 'zugesagt' | 'alternativ' | 'erledigt') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedsantraege".
+ */
+export interface Mitgliedsantraege {
+  id: number;
+  status?: ('neu' | 'rueckfrage' | 'aufgenommen' | 'abgelehnt') | null;
+  vorname: string;
+  nachname: string;
+  geburtsdatum: string;
+  email: string;
+  telefon?: string | null;
+  strasse: string;
+  plz: string;
+  ort: string;
+  mitgliedsart: 'jugend' | 'aktiv' | 'familie' | 'passiv';
+  familienmitglieder?:
+    | {
+        vorname: string;
+        nachname?: string | null;
+        geburtsdatum?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  angebote?: (number | Angebote)[] | null;
+  kontoinhaber: string;
+  /**
+   * Wird verschlüsselt gespeichert.
+   */
+  iban: string;
+  sepaMandat: boolean;
+  satzungAkzeptiert: boolean;
+  fotoEinwilligung?: boolean | null;
+  notizen?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
-  id: string;
+  id: number;
   /**
    * You will need to rebuild the website when changing this field.
    */
@@ -796,11 +962,11 @@ export interface Redirect {
     reference?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: string | Post;
+          value: number | Post;
         } | null);
     url?: string | null;
   };
@@ -812,8 +978,8 @@ export interface Redirect {
  * via the `definition` "form-submissions".
  */
 export interface FormSubmission {
-  id: string;
-  form: string | Form;
+  id: number;
+  form: number | Form;
   submissionData?:
     | {
         field: string;
@@ -831,18 +997,18 @@ export interface FormSubmission {
  * via the `definition` "search".
  */
 export interface Search {
-  id: string;
+  id: number;
   title?: string | null;
   priority?: number | null;
   doc: {
     relationTo: 'posts';
-    value: string | Post;
+    value: number | Post;
   };
   slug?: string | null;
   meta?: {
     title?: string | null;
     description?: string | null;
-    image?: (string | null) | Media;
+    image?: (number | null) | Media;
   };
   categories?:
     | {
@@ -860,7 +1026,7 @@ export interface Search {
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
-  id: string;
+  id: number;
   key: string;
   data:
     | {
@@ -877,7 +1043,7 @@ export interface PayloadKv {
  * via the `definition` "payload-jobs".
  */
 export interface PayloadJob {
-  id: string;
+  id: number;
   /**
    * Input data provided to the job
    */
@@ -969,52 +1135,72 @@ export interface PayloadJob {
  * via the `definition` "payload-locked-documents".
  */
 export interface PayloadLockedDocument {
-  id: string;
+  id: number;
   document?:
     | ({
         relationTo: 'pages';
-        value: string | Page;
+        value: number | Page;
       } | null)
     | ({
         relationTo: 'posts';
-        value: string | Post;
+        value: number | Post;
+      } | null)
+    | ({
+        relationTo: 'termine';
+        value: number | Termine;
+      } | null)
+    | ({
+        relationTo: 'angebote';
+        value: number | Angebote;
+      } | null)
+    | ({
+        relationTo: 'ausfaelle';
+        value: number | Ausfaelle;
+      } | null)
+    | ({
+        relationTo: 'probetraining';
+        value: number | Probetraining;
+      } | null)
+    | ({
+        relationTo: 'mitgliedsantraege';
+        value: number | Mitgliedsantraege;
       } | null)
     | ({
         relationTo: 'media';
-        value: string | Media;
+        value: number | Media;
       } | null)
     | ({
         relationTo: 'categories';
-        value: string | Category;
+        value: number | Category;
       } | null)
     | ({
         relationTo: 'users';
-        value: string | User;
+        value: number | User;
       } | null)
     | ({
         relationTo: 'redirects';
-        value: string | Redirect;
+        value: number | Redirect;
       } | null)
     | ({
         relationTo: 'forms';
-        value: string | Form;
+        value: number | Form;
       } | null)
     | ({
         relationTo: 'form-submissions';
-        value: string | FormSubmission;
+        value: number | FormSubmission;
       } | null)
     | ({
         relationTo: 'search';
-        value: string | Search;
+        value: number | Search;
       } | null)
     | ({
         relationTo: 'payload-folders';
-        value: string | FolderInterface;
+        value: number | FolderInterface;
       } | null);
   globalSlug?: string | null;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   updatedAt: string;
   createdAt: string;
@@ -1024,10 +1210,10 @@ export interface PayloadLockedDocument {
  * via the `definition` "payload-preferences".
  */
 export interface PayloadPreference {
-  id: string;
+  id: number;
   user: {
     relationTo: 'users';
-    value: string | User;
+    value: number | User;
   };
   key?: string | null;
   value?:
@@ -1047,7 +1233,7 @@ export interface PayloadPreference {
  * via the `definition` "payload-migrations".
  */
 export interface PayloadMigration {
-  id: string;
+  id: number;
   name?: string | null;
   batch?: number | null;
   updatedAt: string;
@@ -1221,6 +1407,131 @@ export interface PostsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "termine_select".
+ */
+export interface TermineSelect<T extends boolean = true> {
+  title?: T;
+  beginn?: T;
+  ende?: T;
+  ort?: T;
+  bereich?: T;
+  beschreibung?: T;
+  nurMitglieder?: T;
+  anmeldung?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "angebote_select".
+ */
+export interface AngeboteSelect<T extends boolean = true> {
+  title?: T;
+  bereich?: T;
+  untergruppe?: T;
+  kategorie?: T;
+  alterText?: T;
+  alterVon?: T;
+  alterBis?: T;
+  kurzbeschreibung?: T;
+  beschreibung?: T;
+  bild?: T;
+  zeiten?:
+    | T
+    | {
+        tag?: T;
+        von?: T;
+        bis?: T;
+        ort?: T;
+        hinweis?: T;
+        id?: T;
+      };
+  leitung?: T;
+  team?:
+    | T
+    | {
+        name?: T;
+        rolle?: T;
+        foto?: T;
+        id?: T;
+      };
+  plaetzeBegrenzt?: T;
+  maxPlaetze?: T;
+  spielklasse?: T;
+  fupaWidgetId?: T;
+  fussballDeTeamId?: T;
+  reihenfolge?: T;
+  aktiv?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "ausfaelle_select".
+ */
+export interface AusfaelleSelect<T extends boolean = true> {
+  angebot?: T;
+  datum?: T;
+  grund?: T;
+  hinweis?: T;
+  benachrichtigen?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "probetraining_select".
+ */
+export interface ProbetrainingSelect<T extends boolean = true> {
+  angebot?: T;
+  name?: T;
+  email?: T;
+  teilnehmer?: T;
+  alter?: T;
+  wunschtermin?: T;
+  nachricht?: T;
+  datenschutz?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedsantraege_select".
+ */
+export interface MitgliedsantraegeSelect<T extends boolean = true> {
+  status?: T;
+  vorname?: T;
+  nachname?: T;
+  geburtsdatum?: T;
+  email?: T;
+  telefon?: T;
+  strasse?: T;
+  plz?: T;
+  ort?: T;
+  mitgliedsart?: T;
+  familienmitglieder?:
+    | T
+    | {
+        vorname?: T;
+        nachname?: T;
+        geburtsdatum?: T;
+        id?: T;
+      };
+  angebote?: T;
+  kontoinhaber?: T;
+  iban?: T;
+  sepaMandat?: T;
+  satzungAkzeptiert?: T;
+  fotoEinwilligung?: T;
+  notizen?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media_select".
  */
 export interface MediaSelect<T extends boolean = true> {
@@ -1339,6 +1650,8 @@ export interface CategoriesSelect<T extends boolean = true> {
  */
 export interface UsersSelect<T extends boolean = true> {
   name?: T;
+  roles?: T;
+  angebote?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -1346,6 +1659,7 @@ export interface UsersSelect<T extends boolean = true> {
   resetPasswordExpiration?: T;
   salt?: T;
   hash?: T;
+  resetPasswordRequestedAt?: T;
   loginAttempts?: T;
   lockUntil?: T;
   sessions?:
@@ -1636,7 +1950,7 @@ export interface PayloadMigrationsSelect<T extends boolean = true> {
  * via the `definition` "header".
  */
 export interface Header {
-  id: string;
+  id: number;
   navItems?:
     | {
         link: {
@@ -1645,11 +1959,11 @@ export interface Header {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: string | Post;
+                value: number | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -1665,7 +1979,7 @@ export interface Header {
  * via the `definition` "footer".
  */
 export interface Footer {
-  id: string;
+  id: number;
   navItems?:
     | {
         link: {
@@ -1674,11 +1988,11 @@ export interface Footer {
           reference?:
             | ({
                 relationTo: 'pages';
-                value: string | Page;
+                value: number | Page;
               } | null)
             | ({
                 relationTo: 'posts';
-                value: string | Post;
+                value: number | Post;
               } | null);
           url?: string | null;
           label: string;
@@ -1686,6 +2000,39 @@ export interface Footer {
         id?: string | null;
       }[]
     | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verein".
+ */
+export interface Verein {
+  id: number;
+  name?: string | null;
+  mitglieder?: number | null;
+  kinderFussball?: number | null;
+  gruendung?: number | null;
+  sportpark?: string | null;
+  postanschrift?: string | null;
+  beitraege?:
+    | {
+        key: string;
+        label: string;
+        zielgruppe?: string | null;
+        quartal: number;
+        id?: string | null;
+      }[]
+    | null;
+  hauptsponsor?: {
+    name?: string | null;
+    url?: string | null;
+    logo?: (number | null) | Media;
+  };
+  social?: {
+    instagram?: string | null;
+    facebook?: string | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -1737,6 +2084,43 @@ export interface FooterSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verein_select".
+ */
+export interface VereinSelect<T extends boolean = true> {
+  name?: T;
+  mitglieder?: T;
+  kinderFussball?: T;
+  gruendung?: T;
+  sportpark?: T;
+  postanschrift?: T;
+  beitraege?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        zielgruppe?: T;
+        quartal?: T;
+        id?: T;
+      };
+  hauptsponsor?:
+    | T
+    | {
+        name?: T;
+        url?: T;
+        logo?: T;
+      };
+  social?:
+    | T
+    | {
+        instagram?: T;
+        facebook?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "collections_widget".
  */
 export interface CollectionsWidget {
@@ -1756,14 +2140,17 @@ export interface TaskSchedulePublish {
     doc?:
       | ({
           relationTo: 'pages';
-          value: string | Page;
+          value: number | Page;
         } | null)
       | ({
           relationTo: 'posts';
-          value: string | Post;
+          value: number | Post;
         } | null);
     global?: string | null;
-    user?: (string | null) | User;
+    user?: {
+      relationTo: 'users';
+      value: number | User;
+    } | null;
   };
   output?: unknown;
 }
