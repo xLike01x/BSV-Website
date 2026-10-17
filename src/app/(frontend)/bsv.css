@@ -227,7 +227,11 @@
 .prose-bsv p { margin: 0 0 24px; }
 .prose-bsv h2 { font-size: 32px; line-height: 1.15; font-weight: 800; letter-spacing: -0.03em; margin: 48px 0 16px; }
 .prose-bsv h3 { font-size: 24px; font-weight: 700; margin: 36px 0 12px; }
+.prose-bsv { max-width: 760px; }
 .prose-bsv ul, .prose-bsv ol { margin: 0 0 24px; padding-left: 1.3em; }
+.prose-bsv ul { list-style: disc; }
+.prose-bsv ol { list-style: decimal; }
+.prose-bsv li::marker { color: var(--bsv-green); }
 .prose-bsv li { margin-bottom: 6px; }
 .prose-bsv blockquote { margin: 48px 0; padding: 0; font-size: clamp(26px, 3.4vw, 38px); line-height: 1.2; font-weight: 800; letter-spacing: -0.035em; }
 .prose-bsv img { border-radius: 22px; height: auto; }
