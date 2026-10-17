@@ -14,6 +14,7 @@ import { Termine } from './collections/Termine'
 import { Mitgliedsantraege } from './collections/Mitgliedsantraege'
 import { Probetraining } from './collections/Probetraining'
 import { Ausfaelle } from './collections/Ausfaelle'
+import { Kontaktanfragen } from './collections/Kontaktanfragen'
 import { Verein } from './Verein/config'
 import { de } from '@payloadcms/translations/languages/de'
 import { Footer } from './Footer/config'
@@ -72,7 +73,7 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Termine, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Media, Categories, Users],
+  collections: [Pages, Posts, Termine, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Verein],
   i18n: {

@@ -74,6 +74,7 @@ export interface Config {
     ausfaelle: Ausfaelle;
     probetraining: Probetraining;
     mitgliedsantraege: Mitgliedsantraege;
+    kontaktanfragen: Kontaktanfragen;
     media: Media;
     categories: Category;
     users: User;
@@ -101,6 +102,7 @@ export interface Config {
     ausfaelle: AusfaelleSelect<false> | AusfaelleSelect<true>;
     probetraining: ProbetrainingSelect<false> | ProbetrainingSelect<true>;
     mitgliedsantraege: MitgliedsantraegeSelect<false> | MitgliedsantraegeSelect<true>;
+    kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -949,6 +951,25 @@ export interface Mitgliedsantraege {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kontaktanfragen".
+ */
+export interface Kontaktanfragen {
+  id: number;
+  status?: ('neu' | 'bearbeitung' | 'erledigt') | null;
+  /**
+   * Gewählte Ansprechperson oder Thema
+   */
+  an?: string | null;
+  name: string;
+  email: string;
+  betreff: string;
+  nachricht: string;
+  datenschutz: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1164,6 +1185,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'mitgliedsantraege';
         value: number | Mitgliedsantraege;
+      } | null)
+    | ({
+        relationTo: 'kontaktanfragen';
+        value: number | Kontaktanfragen;
       } | null)
     | ({
         relationTo: 'media';
@@ -1527,6 +1552,21 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
   satzungAkzeptiert?: T;
   fotoEinwilligung?: T;
   notizen?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kontaktanfragen_select".
+ */
+export interface KontaktanfragenSelect<T extends boolean = true> {
+  status?: T;
+  an?: T;
+  name?: T;
+  email?: T;
+  betreff?: T;
+  nachricht?: T;
+  datenschutz?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -2029,6 +2069,58 @@ export interface Verein {
     url?: string | null;
     logo?: (number | null) | Media;
   };
+  /**
+   * Erscheint im Mitgliedsantrag beim SEPA-Mandat.
+   */
+  glaeubigerId?: string | null;
+  /**
+   * Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular, keine Telefonnummern.
+   */
+  vorstand?:
+    | {
+        name: string;
+        rolle: string;
+        foto?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  downloads?:
+    | {
+        titel: string;
+        hinweis?: string | null;
+        datei?: (number | null) | Media;
+        nurMitglieder?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  dsgvo?:
+    | {
+        frage: string;
+        antwort: string;
+        id?: string | null;
+      }[]
+    | null;
+  startseite?: {
+    heroBilder?: (number | Media)[] | null;
+    heroTag1?: string | null;
+    heroTag2?: string | null;
+    bildFussball?: (number | null) | Media;
+    bildKids?: (number | null) | Media;
+    bildFitness?: (number | null) | Media;
+    bildBreitensport1?: (number | null) | Media;
+    bildBreitensport2?: (number | null) | Media;
+    bildBreitensport3?: (number | null) | Media;
+    bildVerein?: (number | null) | Media;
+  };
+  aktion?: {
+    aktiv?: boolean | null;
+    kicker?: string | null;
+    titel?: string | null;
+    text?: string | null;
+    linkText?: string | null;
+    linkUrl?: string | null;
+    bild?: (number | null) | Media;
+  };
   social?: {
     instagram?: string | null;
     facebook?: string | null;
@@ -2108,6 +2200,56 @@ export interface VereinSelect<T extends boolean = true> {
         name?: T;
         url?: T;
         logo?: T;
+      };
+  glaeubigerId?: T;
+  vorstand?:
+    | T
+    | {
+        name?: T;
+        rolle?: T;
+        foto?: T;
+        id?: T;
+      };
+  downloads?:
+    | T
+    | {
+        titel?: T;
+        hinweis?: T;
+        datei?: T;
+        nurMitglieder?: T;
+        id?: T;
+      };
+  dsgvo?:
+    | T
+    | {
+        frage?: T;
+        antwort?: T;
+        id?: T;
+      };
+  startseite?:
+    | T
+    | {
+        heroBilder?: T;
+        heroTag1?: T;
+        heroTag2?: T;
+        bildFussball?: T;
+        bildKids?: T;
+        bildFitness?: T;
+        bildBreitensport1?: T;
+        bildBreitensport2?: T;
+        bildBreitensport3?: T;
+        bildVerein?: T;
+      };
+  aktion?:
+    | T
+    | {
+        aktiv?: T;
+        kicker?: T;
+        titel?: T;
+        text?: T;
+        linkText?: T;
+        linkUrl?: T;
+        bild?: T;
       };
   social?:
     | T

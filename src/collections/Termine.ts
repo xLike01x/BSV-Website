@@ -1,6 +1,7 @@
 import type { Access, CollectionConfig } from 'payload'
 
 import { hasRole, isEditor } from '../access/roles'
+import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
 /** Öffentliche Termine für alle, Mitgliedertermine nur nach Login. */
 const readTermine: Access = ({ req }) => {
@@ -23,6 +24,7 @@ export const Termine: CollectionConfig = {
     defaultColumns: ['title', 'beginn', 'bereich', 'nurMitglieder'],
   },
   defaultSort: 'beginn',
+  hooks: { afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
     { name: 'title', label: 'Titel', type: 'text', required: true },
     {

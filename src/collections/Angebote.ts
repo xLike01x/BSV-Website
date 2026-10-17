@@ -4,6 +4,7 @@ import { slugField } from 'payload'
 import { anyone } from '../access/anyone'
 import { canEditAngebot, isEditor } from '../access/roles'
 import { slugFromTitle } from '../hooks/slugFromTitle'
+import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
 /**
  * Teams (Fußball) und Kurse (Breitensport) in einer Sammlung.
@@ -26,7 +27,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],
   },
-  hooks: { beforeValidate: [slugFromTitle] },
+  hooks: { beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
     { name: 'title', label: 'Name', type: 'text', required: true },
     {

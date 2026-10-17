@@ -4,6 +4,7 @@ import { APIError, ValidationError } from 'payload'
 import { anyone } from '../access/anyone'
 import { isFinance } from '../access/roles'
 import { decrypt, encrypt, isValidIBAN } from '../utilities/crypto'
+import { spamSchutz } from '../hooks/spamSchutz'
 
 /**
  * Online-Mitgliedsantrag. Anlegen darf jeder (öffentliches Formular),
@@ -136,6 +137,7 @@ export const Mitgliedsantraege: CollectionConfig = {
   ],
   hooks: {
     beforeValidate: [
+      spamSchutz('antrag'),
       ({ data, operation }) => {
         if (operation === 'create' && data && (!data.sepaMandat || !data.satzungAkzeptiert)) {
           throw new APIError('SEPA-Mandat und Satzung müssen bestätigt werden.', 400)

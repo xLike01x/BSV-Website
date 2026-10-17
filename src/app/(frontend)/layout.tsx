@@ -1,41 +1,44 @@
-import type { Metadata } from 'next'
+import type { Metadata, Viewport } from 'next'
 
 import { cn } from '@/utilities/ui'
 import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
-import { AdminBar } from '@/components/AdminBar'
-import { Footer } from '@/Footer/Component'
-import { Header } from '@/Header/Component'
+import '@fontsource/caveat/600.css'
+import '@fontsource/caveat/700.css'
+
+import { Footer } from '@/bsv/components/Footer'
+import { Nav } from '@/bsv/components/Nav'
 import { Providers } from '@/providers'
-import { InitTheme } from '@/providers/Theme/InitTheme'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
 
 import './globals.css'
+import './bsv.css'
 import { getServerSideURL } from '@/utilities/getURL'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="en" suppressHydrationWarning>
+    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="de" data-theme="light">
       <head>
-        <InitTheme />
-        <link href="/favicon.ico" rel="icon" sizes="32x32" />
-        <link href="/favicon.svg" rel="icon" type="image/svg+xml" />
+        <link href="/favicon.png" rel="icon" type="image/png" />
+        <link href="/bsv-logo.png" rel="apple-touch-icon" />
       </head>
-      <body>
+      <body className="bsv">
         <Providers>
-          <AdminBar
-            adminBarProps={{
-              preview: isEnabled,
-            }}
-          />
-
-          <Header />
-          {children}
+          <a href="#inhalt" className="sr-only">
+            Zum Inhalt springen
+          </a>
+          {isEnabled && (
+            <div style={{ background: 'var(--bsv-ink)', color: '#fff', fontSize: 13, padding: '8px 22px', textAlign: 'center' }}>
+              Vorschau mit unveröffentlichten Änderungen · <a href="/next/exit-preview" style={{ color: '#fff' }}>Vorschau beenden</a>
+            </div>
+          )}
+          <Nav />
+          <main id="inhalt">{children}</main>
           <Footer />
         </Providers>
       </body>
@@ -45,9 +48,15 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
 export const metadata: Metadata = {
   metadataBase: new URL(getServerSideURL()),
-  openGraph: mergeOpenGraph(),
-  twitter: {
-    card: 'summary_large_image',
-    creator: '@payloadcms',
+  title: {
+    default: 'Büdericher Spielverein 1919 e.V. – Fußball und Breitensport in Wesel-Büderich',
+    template: '%s | Büdericher SV 1919',
   },
+  description:
+    'Fußball, Tanzen, Turnen, Fitness, Yoga und Walking für alle von 1 bis 99 Jahren. Über 1.000 Mitglieder im Kutscher-Remy-Sportpark in Wesel-Büderich.',
+  openGraph: mergeOpenGraph(),
+}
+
+export const viewport: Viewport = {
+  themeColor: '#157A43',
 }

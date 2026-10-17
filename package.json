@@ -19,9 +19,11 @@
     "start": "cross-env NODE_OPTIONS=--no-deprecation next start",
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
-    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts"
+    "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
+    "seed:bsv": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/seed.ts"
   },
   "dependencies": {
+    "@fontsource/caveat": "^5.3.0",
     "@payloadcms/admin-bar": "3.91.0",
     "@payloadcms/db-postgres": "3.91.0",
     "@payloadcms/live-preview-react": "3.91.0",

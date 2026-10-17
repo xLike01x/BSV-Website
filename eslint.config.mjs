@@ -31,6 +31,11 @@ const eslintConfig = [
     },
   },
   {
+    // Bilder kommen mit fertigen Größen (srcset) aus der Payload-Mediathek
+    files: ['src/bsv/**', 'src/app/(frontend)/**'],
+    rules: { '@next/next/no-img-element': 'off' },
+  },
+  {
     ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts'],
   },
 ]

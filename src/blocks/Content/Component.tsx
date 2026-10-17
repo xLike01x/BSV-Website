@@ -17,7 +17,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
   }
 
   return (
-    <div className="container my-16">
+    <div className="wrap-narrow" style={{ margin: '48px auto' }}>
       <div className="grid grid-cols-4 lg:grid-cols-12 gap-y-8 gap-x-16">
         {columns &&
           columns.length > 0 &&
@@ -31,7 +31,7 @@ export const ContentBlock: React.FC<ContentBlockProps> = (props) => {
                 })}
                 key={index}
               >
-                {richText && <RichText data={richText} enableGutter={false} />}
+                {richText && <RichText data={richText} enableGutter={false} enableProse={false} className="prose-bsv" />}
 
                 {enableLink && <CMSLink {...link} />}
               </div>

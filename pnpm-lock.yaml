@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@fontsource/caveat':
+        specifier: ^5.3.0
+        version: 5.3.0
       '@payloadcms/admin-bar':
         specifier: 3.91.0
         version: 3.91.0(react-dom@19.2.6(react@19.2.6))(react@19.2.6)
@@ -953,6 +956,9 @@ packages:
 
   '@floating-ui/utils@0.2.12':
     resolution: {integrity: sha512-HpCo8tmWzLVad5s2d19EhAz5zqrrQ6s69qd6moPMQvkOuSwDT1YgRfWSVuc4ennqrgv3OHppiOGMQ7oC13yIww==}
+
+  '@fontsource/caveat@5.3.0':
+    resolution: {integrity: sha512-eHTfzQxFSW9ABERRLNruHoNJmKed2J7pqTUc5lp4a4POMgXGKpxmWj3d9Hz10kmAg6iuTTLe6UagbA4bnsmfQw==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -5574,6 +5580,8 @@ snapshots:
       tabbable: 6.5.0
 
   '@floating-ui/utils@0.2.12': {}
+
+  '@fontsource/caveat@5.3.0': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

@@ -8,7 +8,7 @@ import { getServerSideURL } from './getURL'
 const getImageURL = (image?: Media | Config['db']['defaultIDType'] | null) => {
   const serverUrl = getServerSideURL()
 
-  let url = serverUrl + '/website-template-OG.webp'
+  let url = serverUrl + '/og-bsv.jpg'
 
   if (image && typeof image === 'object' && 'url' in image) {
     const ogUrl = image.sizes?.og?.url
@@ -26,9 +26,8 @@ export const generateMeta = async (args: {
 
   const ogImage = getImageURL(doc?.meta?.image)
 
-  const title = doc?.meta?.title
-    ? doc?.meta?.title + ' | Payload Website Template'
-    : 'Payload Website Template'
+  const titel = doc?.meta?.title || (doc && 'title' in doc ? doc.title : undefined)
+  const title = titel ? `${titel} | Büdericher SV 1919` : 'Büdericher Spielverein 1919 e.V.'
 
   return {
     description: doc?.meta?.description,
@@ -44,6 +43,6 @@ export const generateMeta = async (args: {
       title,
       url: Array.isArray(doc?.slug) ? doc?.slug.join('/') : '/',
     }),
-    title,
+    title: { absolute: title },
   }
 }

@@ -2,6 +2,7 @@ import type { Access, CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { hasRole } from '../access/roles'
+import { spamSchutz } from '../hooks/spamSchutz'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
 const readAnfragen: Access = async ({ req }) => {
@@ -36,6 +37,7 @@ export const Probetraining: CollectionConfig = {
     defaultColumns: ['name', 'angebot', 'status', 'createdAt'],
   },
   defaultSort: '-createdAt',
+  hooks: { beforeValidate: [spamSchutz('probetraining')] },
   fields: [
     { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true },
     {

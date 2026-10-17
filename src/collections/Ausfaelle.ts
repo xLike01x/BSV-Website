@@ -3,6 +3,7 @@ import { APIError } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { hasRole } from '../access/roles'
+import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
 /** Ausfall melden: Admin/Redaktion für alle, Übungsleitung nur für eigene Angebote. */
 const canManage: Access = async ({ req }) => {
@@ -51,6 +52,8 @@ export const Ausfaelle: CollectionConfig = {
     { name: 'benachrichtigen', label: 'Teilnehmende per E-Mail/Push benachrichtigen', type: 'checkbox', defaultValue: true },
   ],
   hooks: {
+    afterChange: [revalidateAllesNachAenderung],
+    afterDelete: [revalidateAllesNachLoeschen],
     beforeChange: [
       // Übungsleitungen dürfen Ausfälle nur für eigene Angebote anlegen.
       async ({ req, data, operation }) => {
