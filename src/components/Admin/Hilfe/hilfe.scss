@@ -401,3 +401,170 @@
   margin: 0;
   color: #b42318;
 }
+
+/* „Wozu brauche ich das?“ */
+.bsv-hilfe__wozu {
+  background: #fff8e6;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 0 0 16px;
+
+  h3 {
+    margin: 0 0 6px;
+    font-size: 15px;
+  }
+
+  p {
+    margin: 0 0 6px;
+    line-height: 1.5;
+  }
+
+  ul {
+    margin: 4px 0 0;
+    padding-left: 20px;
+  }
+
+  li {
+    margin: 2px 0;
+  }
+}
+
+.bsv-hilfe__wozu-titel {
+  font-weight: 600;
+  font-size: 14px;
+}
+
+/* Ablauf-Grafik */
+.bsv-zusammenhang {
+  background: #f5f7f6;
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 0 0 16px;
+
+  h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+  }
+
+  ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    gap: 6px;
+  }
+
+  li {
+    position: relative;
+  }
+
+  li + li::before {
+    content: '';
+    position: absolute;
+    left: 21px;
+    top: -6px;
+    height: 6px;
+    width: 2px;
+    background: #b9d9c6;
+  }
+
+  a,
+  li > div {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: #fff;
+    color: #1d1d1f;
+    text-decoration: none;
+    border: 2px solid transparent;
+  }
+
+  a:hover {
+    border-color: #b9d9c6;
+  }
+
+  li.is-aktiv a {
+    border-color: #157a43;
+    background: #e8f6ee;
+  }
+
+  strong {
+    display: block;
+  }
+
+  small {
+    display: block;
+    color: #3a3a3c;
+    font-size: 13px;
+  }
+
+  em {
+    display: block;
+    font-style: normal;
+    color: #157a43;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+}
+
+.bsv-zusammenhang__nr {
+  flex: none;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #157a43;
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  display: grid;
+  place-items: center;
+}
+
+.bsv-zusammenhang__hier {
+  margin: 8px 0 0;
+  font-size: 13px;
+  color: #157a43;
+  font-weight: 600;
+}
+
+/* Wegweiser „Ich möchte …“ */
+.bsv-wegweiser {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 10px;
+
+  a {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    background: #f5f7f6;
+    border-radius: 14px;
+    padding: 12px 14px;
+    color: #1d1d1f;
+    text-decoration: none;
+    border: 2px solid transparent;
+    height: 100%;
+  }
+
+  a:hover {
+    border-color: #b9d9c6;
+  }
+
+  span[aria-hidden] {
+    font-size: 22px;
+    line-height: 1;
+  }
+
+  small {
+    display: block;
+    color: #157a43;
+    font-weight: 600;
+    margin-top: 2px;
+  }
+}

@@ -26,6 +26,7 @@ import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } fro
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { FormularHinweise as FormularHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { default as default_f9caa14ad54853b251d4a6b878f91617 } from '@/components/Admin/Formulare/Einstieg'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -75,6 +76,7 @@ export const importMap = {
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#FormularHinweise": FormularHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/Formulare/Einstieg#default": default_f9caa14ad54853b251d4a6b878f91617,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,

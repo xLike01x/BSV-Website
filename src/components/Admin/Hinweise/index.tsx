@@ -209,6 +209,39 @@ export function MedienHinweise() {
 }
 
 /** Formular: Wo ist es eingebunden – und wie bindet man es ein? */
+function SeiteMitFormular({ id }: { id: number | string }) {
+  const titel = useFormFields(([f]) => f?.title?.value as string | undefined)
+  const [laeuft, setLaeuft] = useState(false)
+  const [fehler, setFehler] = useState(false)
+  const anlegen = async () => {
+    setLaeuft(true)
+    setFehler(false)
+    try {
+      const r = await fetch('/api/pages?draft=true', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title: titel || 'Neue Seite', _status: 'draft', hero: { type: 'none' }, layout: [{ blockType: 'formBlock', form: id, enableIntro: false }] }),
+      })
+      const d = await r.json()
+      if (!r.ok || !d?.doc?.id) throw new Error()
+      window.location.href = `/admin/collections/pages/${d.doc.id}`
+    } catch {
+      setFehler(true)
+      setLaeuft(false)
+    }
+  }
+  return (
+    <>
+      <button type="button" className="bsv-hinweise__knopf" onClick={anlegen} disabled={laeuft}>
+        {laeuft ? 'Seite wird angelegt …' : '➕ Neue Seite mit diesem Formular erstellen'}
+      </button>
+      <span className="bsv-hinweise__klein">Legt einen Entwurf an. Du prüfst ihn und klickst dann „Veröffentlichen“.</span>
+      {fehler && <span className="bsv-hinweise__klein">Hat nicht geklappt – bitte noch einmal versuchen.</span>}
+    </>
+  )
+}
+
 export function FormularHinweise() {
   const { id } = useDocumentInfo()
   const [seiten, setSeiten] = useState<{ id: number; title: string; slug?: string; status?: string }[] | null>(null)
@@ -247,9 +280,9 @@ export function FormularHinweise() {
       art: 'warn',
       text: (
         <>
-          Noch auf <strong>keiner Seite</strong> eingebaut – Besucher sehen es noch nicht. So geht&apos;s: <strong>Seiten</strong> öffnen (oder neu anlegen) → Reiter „Inhalt (Bausteine)“ →
-          „Baustein hinzufügen“ → <strong>Formular</strong> → dieses Formular auswählen → Veröffentlichen.{' '}
-          <a href="/admin/collections/pages/create">Neue Seite anlegen ›</a>
+          Noch auf <strong>keiner Seite</strong> eingebaut – Besucher sehen es noch nicht. Am einfachsten:
+          <SeiteMitFormular id={id} />
+          Oder selbst: <strong>Seiten</strong> öffnen → Reiter „Inhalt (Bausteine)“ → „Baustein hinzufügen“ → <strong>Formular</strong> → dieses Formular auswählen → Veröffentlichen.
         </>
       ),
     })

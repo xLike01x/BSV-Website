@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
+import { Zusammenhang, ZUSAMMENHANG } from './Zusammenhang'
 import { AnleitungBox, FaqBox, Feedback, FelderBox, FrageAnAdmin, tourStarten } from './bausteine'
 import { ansichtAus, hilfeFuer, ladeHilfeGlobal, type HilfeGlobal } from './daten'
 import { GLOSSAR, hauptRolle, ROLLEN_PROFIL } from './extras'
@@ -64,6 +65,24 @@ export default function Hilfe() {
                 </button>
               </header>
               <p className="bsv-hilfe__kurz">{h.kurz}</p>
+
+              {h.wozu && (
+                <section className="bsv-hilfe__wozu">
+                  <h3>Wozu brauche ich das?</h3>
+                  <p>{h.wozu.text}</p>
+                  {h.wozu.beispiele && h.wozu.beispiele.length > 0 && (
+                    <>
+                      <p className="bsv-hilfe__wozu-titel">Beispiele aus dem Verein:</p>
+                      <ul>
+                        {h.wozu.beispiele.map((b) => (
+                          <li key={b}>{b}</li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </section>
+              )}
+              {ZUSAMMENHANG.includes(h.schluessel) && <Zusammenhang aktiv={h.schluessel} />}
 
               {h.rollenHinweis && (
                 <p className="bsv-hilfe__rolle">

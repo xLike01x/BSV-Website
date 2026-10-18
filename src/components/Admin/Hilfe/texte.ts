@@ -13,6 +13,8 @@ export type HilfeText = {
   wirkung: string[]
   /** Kleine Tipps und Stolperfallen */
   tipps?: string[]
+  /** Wozu brauche ich das überhaupt? Mit Beispielen aus dem Vereinsalltag */
+  wozu?: { text: string; beispiele?: string[] }
 }
 
 export const HILFE: Record<string, HilfeText> = {
@@ -32,6 +34,10 @@ export const HILFE: Record<string, HilfeText> = {
   posts: {
     titel: 'News',
     kurz: 'Hier schreibst du Neuigkeiten aus dem Verein – vom Spielbericht bis zur Einladung zum Sommerfest.',
+    wozu: {
+      text: 'Damit Mitglieder, Eltern und Fans mitbekommen, was im Verein passiert.',
+      beispiele: ['Spielbericht vom Wochenende', '„Neue Trainingszeiten ab September“', 'Rückblick aufs Sommerfest mit Fotos'],
+    },
     tun: [
       '„Neu erstellen“ anklicken. Alles steht auf einer Seite: Titel, Titelbild, Text.',
       'Rechts das Team oder den Kurs wählen – wer nur ein Team betreut, hat es schon vorausgewählt. Leer = Vereins-News.',
@@ -54,6 +60,10 @@ export const HILFE: Record<string, HilfeText> = {
   termine: {
     titel: 'Termine',
     kurz: 'Der Vereinskalender: Feste, Turniere, Versammlungen und andere Veranstaltungen.',
+    wozu: {
+      text: 'Damit alle wissen, wann was stattfindet. Termine erscheinen im Kalender und auf der Startseite.',
+      beispiele: ['Jahreshauptversammlung', 'Sommerfest', 'Hallenturnier der E-Jugend'],
+    },
     tun: [
       'Einen Termin mit Titel, Beginn, Ende und Ort anlegen.',
       'Den Bereich wählen (Verein, Fußball, Kids, Breitensport) – davon hängt die Farbe ab.',
@@ -69,6 +79,10 @@ export const HILFE: Record<string, HilfeText> = {
   media: {
     titel: 'Mediathek',
     kurz: 'Alle Bilder und Dateien der Website an einem Ort.',
+    wozu: {
+      text: 'Hier liegen alle Bilder und Dateien. Was hier liegt, kannst du überall auswählen: in News, auf Seiten, bei Teams.',
+      beispiele: ['Mannschaftsfoto für die Teamseite', 'Plakat zum Sommerfest', 'Satzung als PDF'],
+    },
     tun: [
       'Bilder oder PDFs hochladen – einfach per Drag & Drop oder über „Neu erstellen“.',
       'Eine kurze Bildbeschreibung eingeben: Was ist auf dem Bild zu sehen?',
@@ -89,6 +103,10 @@ export const HILFE: Record<string, HilfeText> = {
   pages: {
     titel: 'Seiten',
     kurz: 'Eigene Seiten, die ihr selbst zusammenbaut – z. B. „Kunstrasen“, „Impressum“ oder eine Seite fürs Sommerfest.',
+    wozu: {
+      text: 'Für alles, was nicht News, Termin oder Team ist: eine eigene Seite mit eigener Adresse, die ihr frei aus Bausteinen zusammensetzt.',
+      beispiele: ['Seite „Sommerfest 2027“ mit Infos, Bild und Anmeldeformular', 'Seite „Helfer gesucht“', 'Feste Seiten wie Impressum oder Kunstrasen'],
+    },
     tun: [
       '„Neu erstellen“ anklicken und einen Titel vergeben.',
       'Reiter „Kopfbereich“: der große Bereich ganz oben (Art, Überschrift, Buttons, Bild).',
@@ -112,6 +130,10 @@ export const HILFE: Record<string, HilfeText> = {
   categories: {
     titel: 'Kategorien',
     kurz: 'Schlagworte für News, z. B. „Fußball“, „Kids“ oder „Verein“.',
+    wozu: {
+      text: 'Optional: Themen, nach denen News sortiert werden können. Für Teams braucht ihr das nicht – die werden direkt beim News-Eintrag gewählt.',
+      beispiele: ['„Vereinsleben“', '„Jugend“', '„Sponsoren“'],
+    },
     tun: ['Neue Kategorie anlegen oder vorhandene umbenennen.', 'In einer News kannst du dann eine oder mehrere Kategorien auswählen.'],
     wirkung: ['Auf der News-Seite können Besucher nach diesen Kategorien filtern.'],
     tipps: ['Lieber wenige, klare Kategorien als viele ähnliche.'],
@@ -120,6 +142,10 @@ export const HILFE: Record<string, HilfeText> = {
   angebote: {
     titel: 'Teams & Kurse',
     kurz: 'Alle Fußballteams und Breitensportkurse des Vereins – jedes mit eigener Seite.',
+    wozu: {
+      text: 'Jedes Team und jeder Kurs bekommt automatisch eine eigene Seite mit Zeiten, Ort, Ansprechpartnern, News und Bildern.',
+      beispiele: ['„E-Jugend“ mit Trainingszeiten', 'Kurs „Rückenfit“', '„Tanzmäuse“'],
+    },
     tun: [
       'Name, Altersangabe, Beschreibung und Titelbild pflegen.',
       'Unter „Trainingszeiten“ Tag, Uhrzeit und Ort eintragen.',
@@ -140,6 +166,10 @@ export const HILFE: Record<string, HilfeText> = {
   ausfaelle: {
     titel: 'Trainingsausfälle',
     kurz: 'Hier meldest du, wenn ein Training ausfällt – z. B. weil die Halle belegt ist.',
+    wozu: {
+      text: 'Damit niemand umsonst zum Training kommt. Der Ausfall erscheint sofort auf der Teamseite.',
+      beispiele: ['„Training fällt aus – Halle belegt“', 'Ferienpause', 'Platz gesperrt nach Unwetter'],
+    },
     tun: ['Team oder Kurs wählen, Datum eintragen und den Grund auswählen.', 'Ist der Ausfall vorbei, verschwindet er von selbst.'],
     wirkung: [
       'Der Ausfall erscheint sofort gut sichtbar auf der Seite des Teams und im Mitgliederbereich.',
@@ -151,6 +181,10 @@ export const HILFE: Record<string, HilfeText> = {
   probetraining: {
     titel: 'Probetraining-Anfragen',
     kurz: 'Anfragen von Interessierten, die über die Website ein Probetraining angefragt haben.',
+    wozu: {
+      text: 'Hier landen Anfragen von Leuten, die ein Team oder einen Kurs ausprobieren möchten.',
+      beispiele: ['Eltern melden ihr Kind zum Schnuppertraining an', 'Erwachsene fragen nach einer Probestunde'],
+    },
     tun: [
       'Neue Anfragen öffnen und lesen.',
       'Die Person kontaktieren und danach den Status ändern, z. B. auf „Zugesagt“ oder „Erledigt“.',
@@ -165,6 +199,10 @@ export const HILFE: Record<string, HilfeText> = {
   mitgliedsantraege: {
     titel: 'Mitgliedsanträge',
     kurz: 'Online gestellte Anträge auf Mitgliedschaft – inklusive SEPA-Lastschriftmandat.',
+    wozu: {
+      text: 'Online-Mitgliedsanträge von der Website – inklusive Bankdaten fürs Lastschrift-Mandat.',
+      beispiele: ['Neues Mitglied über „Mitglied werden“'],
+    },
     tun: [
       'Neue Anträge prüfen.',
       'Den Status setzen: „Rückfrage“, „Aufgenommen“ oder „Abgelehnt“.',
@@ -180,6 +218,10 @@ export const HILFE: Record<string, HilfeText> = {
   kontaktanfragen: {
     titel: 'Kontaktanfragen',
     kurz: 'Nachrichten, die über das Kontaktformular der Website geschickt wurden.',
+    wozu: {
+      text: 'Nachrichten aus dem Kontaktformular und Fragen aus der Hilfe.',
+      beispiele: ['Frage zu Beiträgen', 'Sponsoring-Anfrage', 'Frage an den Admin'],
+    },
     tun: ['Nachricht lesen, beantworten und den Status auf „Erledigt“ setzen.', 'Im Feld „An“ steht, wen die Person erreichen wollte.'],
     wirkung: ['Der Status ist nur intern sichtbar.'],
     tipps: ['Erledigte Anfragen regelmäßig löschen – es sind persönliche Daten.'],
@@ -188,6 +230,10 @@ export const HILFE: Record<string, HilfeText> = {
   users: {
     titel: 'Benutzer',
     kurz: 'Alle Personen, die sich anmelden können – vom Mitglied bis zum Admin.',
+    wozu: {
+      text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle legt fest, was die Person darf.',
+      beispiele: ['Konto für eine neue Übungsleitung', 'Pressewart einer Mannschaft als Team-Redaktion'],
+    },
     tun: [
       'Neue Konten anlegen und Rollen vergeben.',
       'Schnell sehen, wer welche Rolle für welches Team hat: links unten „Rollen-Übersicht“.',
@@ -207,6 +253,10 @@ export const HILFE: Record<string, HilfeText> = {
   menue: {
     titel: 'Menü & Fußzeile',
     kurz: 'Hier legst du fest, was oben im Menü und unten in der Fußzeile der Website steht – und in welcher Reihenfolge.',
+    wozu: {
+      text: 'Damit Besucher eure Seiten finden. Eine Seite, die nirgends verlinkt ist, findet kaum jemand.',
+      beispiele: ['Seite „Sommerfest“ oben ins Menü', '„Fan-Shop“ als Link auf eine fremde Website', 'YouTube-Kanal in der Fußzeile'],
+    },
     tun: [
       'Reiter „Hauptmenü oben“: alle Einträge der Menüleiste, von links nach rechts.',
       'Reihenfolge ändern: einen Eintrag am Griff links (sechs Punkte) nach oben oder unten ziehen. Oben = weiter links auf der Website.',
@@ -227,6 +277,10 @@ export const HILFE: Record<string, HilfeText> = {
   verein: {
     titel: 'Vereinsdaten',
     kurz: 'Die Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Startseiten-Bilder.',
+    wozu: {
+      text: 'Grunddaten, die an mehreren Stellen der Website auftauchen – einmal ändern, überall aktuell.',
+      beispiele: ['Neue Mitgliederzahl', 'Vorstand nach der Wahl aktualisieren', 'Beiträge anpassen'],
+    },
     tun: [
       'Mitgliederzahl und Gründungsjahr aktualisieren.',
       'Beiträge pflegen – sie erscheinen im Mitgliedsantrag und auf der Vereinsseite.',
@@ -246,6 +300,10 @@ export const HILFE: Record<string, HilfeText> = {
   texte: {
     titel: 'Website-Texte',
     kurz: 'Alle Überschriften, Texte und Link-Beschriftungen der Website – ohne Programmieren änderbar.',
+    wozu: {
+      text: 'Alle festen Überschriften und Texte der Website, z. B. auf der Startseite – ohne Programmieren änderbar.',
+      beispiele: ['Begrüßung auf der Startseite', 'Text im Bereich „Mitglied werden“'],
+    },
     tun: [
       'Oben einen Reiter wählen: Startseite, Fußball, Breitensport, Verein oder Weitere Seiten (News, Termine, Kontakt, Antrag, Probetraining, Fußzeile).',
       'Im Reiter „Startseite“ stehen die Felder in derselben Reihenfolge wie auf der Seite: Kopfbereich, Zahlen-Leiste, Kacheln, Angebotsfinder, News, „Mitglied werden“ mit den drei Schritten.',
@@ -265,11 +323,15 @@ export const HILFE: Record<string, HilfeText> = {
   forms: {
     titel: 'Formulare',
     kurz: 'Eigene Formulare für Seiten, z. B. eine Anmeldung zum Sommerfest.',
+    wozu: {
+      text: 'Wenn ihr von Besuchern etwas abfragen wollt, das es nicht schon gibt: Anmeldungen, Bestellungen, Umfragen. Ihr baut das Formular hier, setzt es auf eine Seite – und die Antworten landen gesammelt unter „Formular-Eingänge“. Mitgliedsantrag, Probetraining und Kontakt gibt es schon fertig.',
+      beispiele: ['Anmeldung zum Sommerfest (Name, Anzahl Personen)', 'Helferliste fürs Turnier (Name, Schicht)', 'Sammelbestellung Trainingsanzüge (Name, Größe)', 'Abfrage für die Weihnachtsfeier'],
+    },
     tun: [
-      'Ein Formular aus Feldern zusammenstellen: Name, E-Mail, Auswahl, Ankreuzfeld usw.',
+      'Oben in der Liste eine Vorlage anklicken (Anmeldung, Helferliste, Sammelbestellung) – oder selbst ein Formular aus Feldern zusammenstellen: Name, E-Mail, Auswahl, Ankreuzfeld usw.',
       'Festlegen, welche Nachricht nach dem Absenden erscheint.',
       'Wichtig: Ein Formular allein ist noch nicht auf der Website. Du baust es auf einer Seite ein: Seiten → Seite öffnen oder neu anlegen → Reiter „Inhalt (Bausteine)“ → „Baustein hinzufügen“ → „Formular“ → dieses Formular auswählen → Veröffentlichen.',
-      'Rechts im Formular zeigt der Kasten „Wo erscheint dieses Formular?“, auf welchen Seiten es schon eingebaut ist.',
+      'Rechts im Formular zeigt der Kasten „Wo erscheint dieses Formular?“, auf welchen Seiten es schon eingebaut ist – und erstellt mit einem Klick eine neue Seite mit dem Formular.',
       'Damit Besucher die Seite finden: unter „Menü & Fußzeile“ einen Eintrag zur Seite anlegen.',
     ],
     wirkung: ['Ausgefüllte Formulare landen unter „Formular-Eingänge“ – der Kasten rechts verlinkt direkt dorthin.'],
@@ -279,6 +341,10 @@ export const HILFE: Record<string, HilfeText> = {
   'form-submissions': {
     titel: 'Formular-Eingänge',
     kurz: 'Alles, was Besucher über eure eigenen Formulare abgeschickt haben.',
+    wozu: {
+      text: 'Die Antworten auf eure eigenen Formulare – wie eine Liste, die sich von selbst füllt.',
+      beispiele: ['Alle Anmeldungen zum Sommerfest', 'Wer hat welche Größe bestellt?'],
+    },
     tun: ['Einträge ansehen und nach Formular filtern.'],
     wirkung: ['Nur für euch sichtbar.'],
     tipps: ['Nach der Veranstaltung die Eingänge löschen – es sind persönliche Daten.'],
@@ -287,6 +353,10 @@ export const HILFE: Record<string, HilfeText> = {
   redirects: {
     titel: 'Weiterleitungen',
     kurz: 'Leitet alte Adressen auf neue Seiten um – z. B. Links von der alten Website.',
+    wozu: {
+      text: 'Technik: Wenn sich eine Adresse ändert, leitet ihr die alte Adresse auf die neue um – alte Links funktionieren dann weiter.',
+      beispiele: ['/kunstrasen-projekt → /kunstrasen'],
+    },
     tun: ['Eine alte Adresse eintragen und angeben, wohin sie führen soll.'],
     wirkung: ['Wer die alte Adresse aufruft, landet automatisch auf der neuen Seite.'],
     tipps: ['Nur nötig, wenn sich eine Adresse geändert hat. Im Zweifel einen Admin fragen.'],
@@ -295,6 +365,10 @@ export const HILFE: Record<string, HilfeText> = {
   search: {
     titel: 'Suchindex',
     kurz: 'Ein automatisch gepflegtes Verzeichnis für die Suche auf der Website.',
+    wozu: {
+      text: 'Technik: Der Suchindex wird automatisch gepflegt. Normalerweise müsst ihr hier nichts tun.',
+      beispiele: [],
+    },
     tun: ['Normalerweise nichts – die Einträge entstehen von selbst, wenn News veröffentlicht werden.'],
     wirkung: ['Änderungen hier beeinflussen nur die Suchergebnisse.'],
     tipps: ['Hier bitte nichts von Hand löschen.'],
@@ -303,6 +377,10 @@ export const HILFE: Record<string, HilfeText> = {
   rollen: {
     titel: 'Rollen-Übersicht',
     kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich?',
+    wozu: {
+      text: 'Damit ihr schnell seht, wer welche Rechte hat – und wo noch jemand fehlt.',
+      beispiele: ['Wer pflegt die D-Jugend?', 'Hat die neue Übungsleitung schon Zwei-Faktor?'],
+    },
     tun: [
       'Reiter „Nach Person“: jede Person mit ihren Rollen, ihren Teams und ob die Zwei-Faktor-Anmeldung eingerichtet ist.',
       'Reiter „Nach Team“: jedes Team und jeder Kurs mit den Verantwortlichen.',

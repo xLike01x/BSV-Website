@@ -16,7 +16,7 @@ export const FormBlock: Block = {
     {
       name: 'form',
       label: 'Formular',
-      admin: { description: 'Formulare legst du unter „Baukasten → Formulare“ an.' },
+      admin: { description: 'Noch kein passendes Formular? Unter „Eigene Formulare → Formulare“ anlegen – dort gibt es fertige Vorlagen (Anmeldung, Helferliste, Bestellung).' },
       type: 'relationship',
       relationTo: 'forms',
       required: true,

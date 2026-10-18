@@ -864,7 +864,7 @@ export interface ArchiveBlock {
  */
 export interface FormBlock {
   /**
-   * Formulare legst du unter „Baukasten → Formulare“ an.
+   * Noch kein passendes Formular? Unter „Eigene Formulare → Formulare“ anlegen – dort gibt es fertige Vorlagen (Anmeldung, Helferliste, Bestellung).
    */
   form: number | Form;
   enableIntro?: boolean | null;

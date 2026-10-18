@@ -3,6 +3,7 @@ import React, { useMemo, useState } from 'react'
 
 import { AnleitungBox, FaqBox, Feedback, FrageAnAdmin, HilfeVideo, tourStarten } from '../Hilfe/bausteine'
 import type { HilfeBereich } from '../Hilfe/daten'
+import { Wegweiser, Zusammenhang } from '../Hilfe/Zusammenhang'
 import { GLOSSAR, type Faq, type RolleKey, type RollenProfil } from '../Hilfe/extras'
 
 type Props = {
@@ -113,6 +114,24 @@ export default function HilfeCenterClient({ bereiche, faq, rolle, profil, rollen
               ))}
             </div>
           </section>
+
+          <section className="bsv-hc__abschnitt">
+            <h2>Wo finde ich was? – „Ich möchte …“</h2>
+            <p className="bsv-hc__klein">Ein Klick bringt dich direkt an die richtige Stelle.</p>
+            <Wegweiser erlaubt={bereiche.map((b) => b.schluessel)} />
+          </section>
+
+          {bereiche.some((b) => b.schluessel === 'forms') && (
+            <section className="bsv-hc__abschnitt">
+              <h2>Eigene Formulare: Wozu und wie?</h2>
+              <p>
+                Mit eigenen Formularen fragt ihr auf der Website etwas ab, das es noch nicht gibt – z. B. die Anmeldung zum Sommerfest, eine Helferliste fürs Turnier oder
+                eine Sammelbestellung für Trainingsanzüge. Ein Formular allein ist noch nicht sichtbar: Es kommt auf eine Seite, die Seite ins Menü – und die Antworten
+                sammeln sich unter „Formular-Eingänge“.
+              </p>
+              <Zusammenhang />
+            </section>
+          )}
 
           {videos.length > 0 && (
             <section className="bsv-hc__abschnitt">

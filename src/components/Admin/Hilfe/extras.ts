@@ -418,7 +418,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Ein Anmeldeformular bauen',
       video: '/hilfe/formular-bauen.mp4',
       schritte: [
-        '„Neu erstellen“ klicken und einen Titel vergeben.',
+        'Am schnellsten: oben in der Formular-Liste eine Vorlage anklicken (Anmeldung, Helferliste, Sammelbestellung) – das Formular ist sofort angelegt.',
+        'Oder „Neu erstellen“ klicken und einen Titel vergeben.',
         'Mit „Feld hinzufügen“ Felder wie Name, E-Mail oder Anzahl Personen anlegen.',
         'Bei „Bestätigungsnachricht“ eintragen, was nach dem Absenden erscheint.',
         'Speichern. Auf einer Seite den Baustein „Formular“ einfügen und dieses Formular auswählen.',
@@ -428,7 +429,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'formular-einbauen',
       titel: 'Das Formular auf der Website zeigen',
       schritte: [
-        'Links auf „Seiten“. Eine bestehende Seite öffnen oder „Neu erstellen“ (z. B. „Sommerfest“).',
+        'Am einfachsten: im Formular rechts auf „Neue Seite mit diesem Formular erstellen“ klicken. Die Seite ist dann schon fertig – nur noch prüfen und „Veröffentlichen“.',
+        'Oder von Hand: links auf „Seiten“. Eine bestehende Seite öffnen oder „Neu erstellen“ (z. B. „Sommerfest“).',
         'Oben den Reiter „Inhalt (Bausteine)“ wählen.',
         '„Baustein hinzufügen“ → „Formular“ anklicken.',
         'Bei „Formular“ dein Formular auswählen. Optional eine kurze Einleitung darüber schreiben.',
@@ -489,7 +491,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Baustein „Bild oder Video“', text: 'Ein Bild oder Video aus der Mediathek in voller Breite.' },
     { name: 'Baustein „Hinweis-Kasten mit Button“', text: 'Ein hervorgehobener Kasten mit kurzem Text und ein bis zwei Buttons, z. B. „Jetzt anmelden“.' },
     { name: 'Baustein „News-Liste“', text: 'Zeigt automatisch die neuesten News (optional nur aus bestimmten Kategorien) oder ausgewählte News.' },
-    { name: 'Baustein „Formular“', text: 'Bindet ein Formular aus „Baukasten → Formulare“ ein, z. B. eine Anmeldung.' },
+    { name: 'Baustein „Formular“', text: 'Bindet ein Formular aus „Eigene Formulare → Formulare“ ein, z. B. eine Anmeldung.' },
     { name: 'Reiter „Google-Vorschau“', text: 'Titel und Beschreibung für Google und beim Teilen. Leer lassen = wird automatisch erzeugt.' },
     { name: 'Buttons / Links', text: 'Linkziel: „Eigene Seite/News“ (aus der Liste wählen) oder „Adresse eingeben“ (z. B. /termine oder https://…). Dazu der Text auf dem Button und die Optik: grüner oder heller Button.' },
     { name: 'Slug', text: 'Die Adresse der Seite, z. B. /sommerfest. Besser nicht mehr ändern, wenn schon verlinkt.' },
@@ -596,8 +598,13 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Was mache ich mit einem eigenen Formular überhaupt?',
+    antwort: 'Damit sammelt ihr Angaben von Besuchern, z. B. Anmeldungen zum Sommerfest, eine Helferliste fürs Turnier oder eine Sammelbestellung. Ablauf: 1. Formular bauen (am besten mit Vorlage) 2. auf eine Seite setzen 3. Seite im Menü verlinken 4. Besucher füllen aus 5. Antworten unter „Formular-Eingänge“ lesen. Mitgliedsantrag, Probetraining und Kontakt gibt es schon fertig.',
+    bereich: 'forms',
+  },
+  {
     frage: 'Ich habe ein Formular angelegt – wo sehe ich es?',
-    antwort: 'Ein Formular erscheint erst, wenn du es auf einer Seite einbaust: Seiten → Seite öffnen oder neu anlegen → „Inhalt (Bausteine)“ → „Baustein hinzufügen“ → „Formular“ → Formular auswählen → Veröffentlichen. Danach die Seite unter „Menü & Fußzeile“ ins Menü aufnehmen. Rechts im Formular siehst du, wo es schon eingebaut ist.',
+    antwort: 'Ein Formular erscheint erst, wenn du es auf einer Seite einbaust. Am einfachsten im Formular rechts auf „Neue Seite mit diesem Formular erstellen“ klicken. Von Hand: Seiten → Seite öffnen oder neu anlegen → „Inhalt (Bausteine)“ → „Baustein hinzufügen“ → „Formular“ → Formular auswählen → Veröffentlichen. Danach die Seite unter „Menü & Fußzeile“ ins Menü aufnehmen. Rechts im Formular siehst du, wo es schon eingebaut ist.',
     bereich: 'forms',
   },
   {

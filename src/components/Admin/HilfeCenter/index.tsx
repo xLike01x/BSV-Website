@@ -7,6 +7,7 @@ import React from 'react'
 import { alleBereiche, alleFaq, type HilfeGlobal } from '../Hilfe/daten'
 import { hauptRolle, ROLLEN_PROFIL, ROLLEN_REIHENFOLGE } from '../Hilfe/extras'
 import HilfeCenterClient from './Client'
+import '../Hilfe/hilfe.scss'
 import './hilfe-center.scss'
 
 /** Bereiche, die man ohne eigene Sammlung immer sieht */

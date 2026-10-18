@@ -68,12 +68,16 @@ export const plugins: Plugin[] = [
     formSubmissionOverrides: {
       // Formulare aus dem Baukasten (Seiten). Eigene BSV-Formulare liegen unter „Verwaltung“.
       labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
-      admin: { group: 'Baukasten', hidden: ausblendenAusser('admin', 'redaktion') },
+      admin: { group: 'Eigene Formulare', hidden: ausblendenAusser('admin', 'redaktion') },
       access: { create: anyone, read: isEditor, update: isAdmin, delete: isAdmin },
     },
     formOverrides: {
       labels: { singular: 'Formular', plural: 'Formulare' },
-      admin: { group: 'Baukasten', hidden: ausblendenAusser('admin', 'redaktion') },
+      admin: {
+        group: 'Eigene Formulare',
+        hidden: ausblendenAusser('admin', 'redaktion'),
+        components: { beforeList: ['@/components/Admin/Formulare/Einstieg'] },
+      },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
         // Deutsche, verständliche Beschriftungen für den Formular-Baukasten

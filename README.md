@@ -60,6 +60,10 @@ Alle Überschriften und festen Texte der Website stehen in der Verwaltung unter 
 
 Alle Einträge im Hauptmenü (inkl. Reihenfolge), das Aufklappmenü „Verein“ und die Fußzeile (inkl. Kontakt-Spalte mit beliebigen Social-Media-Links) pflegt die Redaktion unter **Inhalte → Menü & Fußzeile**. Leere Liste = Standardmenü.
 
+## Eigene Formulare
+
+Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferliste, Sammelbestellung). Im Formular erstellt „Neue Seite mit diesem Formular erstellen“ direkt eine Seite mit dem Formular-Baustein. Antworten landen unter **Formular-Eingänge**. Vorlagen: `src/components/Admin/Formulare/vorlagen.ts`.
+
 ## Hilfe in der Verwaltung
 
 - **„? Hilfe“** oben rechts auf jeder Seite: Erklärung des Bereichs, Schritt-für-Schritt-Anleitungen, Feld-Erklärungen, Hinweise je Rolle, FAQ, Rückmeldung 👍/👎, „Frage an den Admin“ (landet bei den Kontaktanfragen).
