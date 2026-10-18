@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react'
 
 import { AnleitungBox, FaqBox, Feedback, FrageAnAdmin, HilfeVideo, tourStarten } from '../Hilfe/bausteine'
 import type { HilfeBereich } from '../Hilfe/daten'
-import type { Faq, RolleKey, RollenProfil } from '../Hilfe/extras'
+import { GLOSSAR, type Faq, type RolleKey, type RollenProfil } from '../Hilfe/extras'
 
 type Props = {
   bereiche: HilfeBereich[]
@@ -27,8 +27,9 @@ export default function HilfeCenterClient({ bereiche, faq, rolle, profil, rollen
       b.anleitungen.filter((a) => passt(a.titel, ...a.schritte)).map((a) => ({ a, bereich: b.titel })),
     )
     const fragen = faq.filter((f) => passt(f.frage, f.antwort))
+    const begriffe = GLOSSAR.filter((g) => passt(g.name, g.text))
     const themen = bereiche.filter((b) => passt(b.titel, b.kurz, ...b.tun, ...b.wirkung, ...(b.tipps ?? []), ...b.felder.map((f) => f.name + ' ' + f.text)))
-    return { anleitungen, fragen, themen }
+    return { anleitungen, fragen, themen, begriffe }
   }, [q, bereiche, faq])
 
   const videos = bereiche.flatMap((b) => b.anleitungen.filter((a) => a.video).map((a) => ({ a, bereich: b.titel })))
@@ -57,7 +58,7 @@ export default function HilfeCenterClient({ bereiche, faq, rolle, profil, rollen
           <h2>
             Suchergebnisse für „{suche.trim()}“
           </h2>
-          {treffer.anleitungen.length + treffer.fragen.length + treffer.themen.length === 0 && (
+          {treffer.anleitungen.length + treffer.fragen.length + treffer.themen.length + treffer.begriffe.length === 0 && (
             <p className="bsv-hc__leer">
               Nichts gefunden. Versuch ein anderes Wort – oder stell unten eine Frage an den Admin.
             </p>
@@ -70,6 +71,8 @@ export default function HilfeCenterClient({ bereiche, faq, rolle, profil, rollen
           ))}
           {treffer.fragen.length > 0 && <h3>Häufige Fragen</h3>}
           <FaqBox faq={treffer.fragen} />
+          {treffer.begriffe.length > 0 && <h3>Begriffe</h3>}
+          <Begriffe liste={treffer.begriffe} />
           {treffer.themen.length > 0 && <h3>Passende Bereiche</h3>}
           <div className="bsv-hc__kacheln">
             {treffer.themen.map((b) => (
@@ -134,6 +137,11 @@ export default function HilfeCenterClient({ bereiche, faq, rolle, profil, rollen
           </section>
 
           <section className="bsv-hc__abschnitt">
+            <h2>Begriffe einfach erklärt</h2>
+            <Begriffe liste={GLOSSAR} />
+          </section>
+
+          <section className="bsv-hc__abschnitt">
             <h2>Alle Bereiche</h2>
             <div className="bsv-hc__kacheln">
               {bereiche
@@ -153,6 +161,20 @@ export default function HilfeCenterClient({ bereiche, faq, rolle, profil, rollen
         <Feedback bereich="hilfe-center" />
       </section>
     </div>
+  )
+}
+
+function Begriffe({ liste }: { liste: { name: string; text: string }[] }) {
+  if (!liste.length) return null
+  return (
+    <dl className="bsv-hc__glossar">
+      {liste.map((g) => (
+        <div key={g.name}>
+          <dt>{g.name}</dt>
+          <dd>{g.text}</dd>
+        </div>
+      ))}
+    </dl>
   )
 }
 
@@ -185,6 +207,12 @@ function BereichKachel({ b }: { b: HilfeBereich }) {
               <li key={t}>{t}</li>
             ))}
           </ul>
+        </>
+      )}
+      {b.felder.length > 0 && (
+        <>
+          <h4>Was bedeuten die Felder?</h4>
+          <Begriffe liste={b.felder} />
         </>
       )}
       {(b.tipps?.length ?? 0) > 0 && (

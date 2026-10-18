@@ -55,7 +55,7 @@ Alle Überschriften und festen Texte der Website stehen in der Verwaltung unter 
 
 ## Menü
 
-Die Links im Hauptmenü (neben „Fußball“, „Breitensport“, „Verein“) und das Aufklappmenü „Verein“ pflegt die Redaktion unter **Inhalte → Menü**. Leere Liste = Standardmenü.
+Alle Einträge im Hauptmenü (inkl. Reihenfolge), das Aufklappmenü „Verein“ und die Fußzeile pflegt die Redaktion unter **Inhalte → Menü & Fußzeile**. Leere Liste = Standardmenü.
 
 ## Hilfe in der Verwaltung
 

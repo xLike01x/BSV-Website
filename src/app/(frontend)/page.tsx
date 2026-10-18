@@ -76,7 +76,7 @@ export default async function Startseite() {
             <p className="in3" style={{ margin: '22px 0 0', maxWidth: 500, fontSize: 20, lineHeight: 1.5, color: 'var(--bsv-ink-2)' }}>
               <T text={tx.heroText} werte={w} />
             </p>
-            <AgeFinder angebote={vorschlaege} frage={tx.alterFrage ?? undefined} />
+            <AgeFinder angebote={vorschlaege} frage={tx.alterFrage ?? undefined} keinTreffer={tx.alterKeinTreffer ?? undefined} />
           </div>
 
           <div aria-hidden="true" className="hero-art">
@@ -114,25 +114,25 @@ export default async function Startseite() {
             <div className="stat-num" style={{ color: 'var(--bsv-green)' }}>
               <CountUp bis={verein.mitglieder ?? 0} />
             </div>
-            <div style={{ color: 'var(--bsv-ink-2)' }}>Mitglieder</div>
+            <div style={{ color: 'var(--bsv-ink-2)' }}>{tx.zahlMitglieder || 'Mitglieder'}</div>
           </div>
           <div>
             <div className="stat-num" style={{ color: 'var(--bsv-coral)' }}>
               <CountUp bis={angebote.length} />
             </div>
-            <div style={{ color: 'var(--bsv-ink-2)' }}>Teams und Kurse</div>
+            <div style={{ color: 'var(--bsv-ink-2)' }}>{tx.zahlAngebote || 'Teams und Kurse'}</div>
           </div>
           <div>
             <div className="stat-num" style={{ color: 'var(--bsv-blue)' }}>
               <CountUp bis={verein.kinderFussball ?? 0} />
             </div>
-            <div style={{ color: 'var(--bsv-ink-2)' }}>Kinder in der Fußballjugend</div>
+            <div style={{ color: 'var(--bsv-ink-2)' }}>{tx.zahlKinder || 'Kinder in der Fußballjugend'}</div>
           </div>
           <div>
             <div className="stat-num" style={{ color: 'var(--bsv-lavender)' }}>
               <CountUp bis={verein.gruendung ?? 1919} von={1800} tausender={false} />
             </div>
-            <div style={{ color: 'var(--bsv-ink-2)' }}>gegründet</div>
+            <div style={{ color: 'var(--bsv-ink-2)' }}>{tx.zahlGruendung || 'gegründet'}</div>
           </div>
         </div>
       </section>
@@ -146,19 +146,19 @@ export default async function Startseite() {
             <Link href="/fussball" className="tile tile-wide rv" style={{ minHeight: 500, justifyContent: 'flex-end', color: '#fff' }}>
               <Bild media={s?.bildFussball} size="xlarge" sizes="(max-width: 760px) 100vw, 820px" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'relative', margin: 20, background: 'rgba(255,255,255,0.94)', color: 'var(--bsv-ink)', borderRadius: 24, padding: '26px 28px', maxWidth: 520, backdropFilter: 'blur(8px)' }}>
-                <p className="tile-label green">Fußball</p>
+                <p className="tile-label green">{tx.kachelFussball?.label}</p>
                 <h3>
                   <T text={tx.kachelFussball?.titel} werte={w} />
                 </h3>
                 <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)' }}><T text={tx.kachelFussball?.text} werte={w} /></p>
-                <span style={{ display: 'inline-block', marginTop: 10, color: 'var(--bsv-green)', fontWeight: 600 }}>Teams entdecken ›</span>
+                <span style={{ display: 'inline-block', marginTop: 10, color: 'var(--bsv-green)', fontWeight: 600 }}>{tx.kachelFussball?.link}</span>
               </div>
             </Link>
 
             <Link href="/breitensport#kids" className="tile rv" style={{ minHeight: 500, background: 'var(--bsv-coral-tint)' }}>
               <div className="tile-pad">
                 <p className="tile-label" style={{ color: 'var(--bsv-coral-dark)' }}>
-                  BSV Kids
+                  {tx.kachelKids?.label}
                 </p>
                 <h3>
                   <T text={tx.kachelKids?.titel} werte={w} />
@@ -177,7 +177,7 @@ export default async function Startseite() {
             <Link href="/breitensport#erwachsene" className="tile rv" style={{ minHeight: 480, background: 'var(--bsv-blue-tint)' }}>
               <div className="tile-pad">
                 <p className="tile-label" style={{ color: 'var(--bsv-blue)' }}>
-                  Fitness &amp; Gesundheit
+                  {tx.kachelFitness?.label}
                 </p>
                 <h3>
                   <T text={tx.kachelFitness?.titel} werte={w} />
@@ -191,7 +191,7 @@ export default async function Startseite() {
 
             <div className="tile tile-wide rv" style={{ minHeight: 480, background: 'var(--bsv-green-tint)', padding: 44, flexDirection: 'row', flexWrap: 'wrap', gap: 32, alignItems: 'center', justifyContent: 'space-between' }}>
               <div style={{ flex: '1 1 320px' }}>
-                <p className="tile-label green">Mitgliederbereich</p>
+                <p className="tile-label green">{tx.kachelMitglieder?.label}</p>
                 <h3 style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}>
                   <T text={tx.kachelMitglieder?.titel} werte={w} />
                 </h3>
@@ -199,14 +199,14 @@ export default async function Startseite() {
                   <T text={tx.kachelMitglieder?.text} werte={w} />
                 </p>
                 <Link href="/mitglieder" className="link-more" style={{ display: 'inline-block', marginTop: 18 }}>
-                  Zum Mitgliederbereich ›
+                  {tx.kachelMitglieder?.link}
                 </Link>
               </div>
               <div aria-hidden="true" className="phone">
                 <div style={{ position: 'absolute', top: 10, left: '50%', width: 80, height: 22, marginLeft: -40, borderRadius: 999, background: 'var(--bsv-ink)' }} />
                 <div className="nt" style={{ position: 'absolute', top: 46, left: 10, right: 10, background: 'var(--bsv-soft)', borderRadius: 18, padding: '10px 12px', fontSize: 12, lineHeight: 1.35, boxShadow: '0 6px 16px rgba(0,0,0,0.08)' }}>
-                  <strong style={{ display: 'block' }}>BSV 1919 · jetzt</strong>
-                  <span style={{ color: 'var(--bsv-ink-2)' }}>Spinning fällt heute aus. Nächster Termin wie gewohnt.</span>
+                  <strong style={{ display: 'block' }}>{tx.kachelMitglieder?.handyTitel}</strong>
+                  <span style={{ color: 'var(--bsv-ink-2)' }}>{tx.kachelMitglieder?.handyText}</span>
                 </div>
                 <div style={{ position: 'absolute', bottom: 24, left: 18, right: 18, display: 'flex', flexDirection: 'column', gap: 8 }}>
                   <span style={{ height: 44, borderRadius: 12, background: 'var(--bsv-soft)' }} />
@@ -224,7 +224,7 @@ export default async function Startseite() {
           <h2 className="t-sec rv center">
             <T text={tx.finderTitel} werte={w} />
           </h2>
-          <OfferFinder items={gemischt} />
+          <OfferFinder items={gemischt} linkText={tx.finderLink ?? undefined} />
         </div>
       </section>
 
@@ -267,7 +267,7 @@ export default async function Startseite() {
               <T text={tx.newsTitel} werte={w} />
             </h2>
             <Link href="/news" className="link-more" style={{ fontSize: 19 }}>
-              Alle News ›
+              {tx.newsLink}
             </Link>
           </div>
           <div className="news-rail">
@@ -297,11 +297,11 @@ export default async function Startseite() {
         </p>
         <div className="steps3">
           {[
-            ['Probetraining', 'Angebot wählen, Termin anfragen, vorbeikommen.'],
-            ['Online-Antrag', 'Teams und Kurse auswählen, Beitrag berechnen, fertig.'],
-            ['Loslegen', 'Zugang zum Mitgliederbereich inklusive.'],
+            [tx.schritte?.t1, tx.schritte?.d1],
+            [tx.schritte?.t2, tx.schritte?.d2],
+            [tx.schritte?.t3, tx.schritte?.d3],
           ].map(([t, d], i) => (
-            <div key={t} className="rv" style={{ background: 'var(--bsv-soft)', borderRadius: 26, padding: 28 }}>
+            <div key={i} className="rv" style={{ background: 'var(--bsv-soft)', borderRadius: 26, padding: 28 }}>
               <div className="step-num">{i + 1}</div>
               <h3 style={{ margin: '16px 0 6px', fontSize: 22 }}>{t}</h3>
               <p className="muted" style={{ margin: 0 }}>
@@ -311,7 +311,7 @@ export default async function Startseite() {
           ))}
         </div>
         <Link href="/mitglied-werden" className="btn btn-primary rv" style={{ marginTop: 48, fontSize: 19, padding: '16px 34px' }}>
-          Jetzt Mitglied werden
+          {tx.schritte?.button}
         </Link>
       </section>
     </>

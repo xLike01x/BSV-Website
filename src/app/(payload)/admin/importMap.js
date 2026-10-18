@@ -31,6 +31,7 @@ import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } f
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { default as default_d9ad9595ea4f39c57478e527de33797c } from '@/Menue/RowLabel'
+import { default as default_46234c6f88ae2e73ec168e941d39add2 } from '@/Menue/SpaltenLabel'
 import { default as default_e26d2ce2fb829c050970d592e6488485 } from '@/components/Admin/Icon'
 import { default as default_1519062be06c6f010a03d3cd4e40f8fb } from '@/components/Admin/Logo'
 import { default as default_3aa723e87d072df22350edc5f0ba8872 } from '@/components/Admin/Hilfe'
@@ -77,6 +78,7 @@ export const importMap = {
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/Menue/RowLabel#default": default_d9ad9595ea4f39c57478e527de33797c,
+  "@/Menue/SpaltenLabel#default": default_46234c6f88ae2e73ec168e941d39add2,
   "@/components/Admin/Icon#default": default_e26d2ce2fb829c050970d592e6488485,
   "@/components/Admin/Logo#default": default_1519062be06c6f010a03d3cd4e40f8fb,
   "@/components/Admin/Hilfe#default": default_3aa723e87d072df22350edc5f0ba8872,

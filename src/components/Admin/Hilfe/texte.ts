@@ -33,20 +33,21 @@ export const HILFE: Record<string, HilfeText> = {
     titel: 'News',
     kurz: 'Hier schreibst du Neuigkeiten aus dem Verein – vom Spielbericht bis zur Einladung zum Sommerfest.',
     tun: [
-      '„Neu erstellen“ anklicken, Titel eingeben, ein Titelbild wählen und den Text schreiben.',
-      'Rechts wählst du das Team oder den Kurs, zu dem die News gehört – oder lässt es leer für Vereins-News.',
+      '„Neu erstellen“ anklicken. Alles steht auf einer Seite: Titel, Titelbild, Text.',
+      'Rechts das Team oder den Kurs wählen – wer nur ein Team betreut, hat es schon vorausgewählt. Leer = Vereins-News.',
       '„Entwurf speichern“ sichert deine Arbeit, ohne dass sie jemand sieht.',
-      '„Änderungen veröffentlichen“ stellt die News online.',
+      '„Veröffentlichen“ stellt die News online.',
     ],
     wirkung: [
       'Veröffentlichte News erscheinen auf der Seite des gewählten Teams.',
       'Ist „Auf Startseite“ angehakt, erscheint sie zusätzlich auf der Startseite und unter „News“. Das entscheidet die Redaktion.',
+      'Die Google-Vorschau (wie die News bei Google und beim Teilen aussieht) wird automatisch aus Titel, Text und Titelbild erzeugt.',
       'Entwürfe sieht niemand außer euch in der Verwaltung.',
     ],
     tipps: [
       'Bilder mit Kindern nur verwenden, wenn die Eltern zugestimmt haben.',
-      'Kurze, klare Überschriften funktionieren am besten – die erste Zeile zählt.',
-      'Unter „Veröffentlicht am“ kannst du das Datum festlegen, das über der News steht.',
+      'Kurze, klare Überschriften funktionieren am besten.',
+      'Redaktion: Kategorie, Datum, Autor:in und Slug stehen rechts; ganz unten eingeklappt „Für Fortgeschrittene“ (Google-Vorschau, passende News). Alles davon ist optional.',
     ],
   },
 
@@ -90,13 +91,15 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Eigene Seiten, die ihr selbst zusammenbaut – z. B. „Kunstrasen“, „Impressum“ oder eine Seite fürs Sommerfest.',
     tun: [
       '„Neu erstellen“ anklicken und einen Titel vergeben.',
-      'Die Seite aus Bausteinen zusammenstellen: Text, Bilder, Buttons, Formulare.',
+      'Reiter „Kopfbereich“: der große Bereich ganz oben (Art, Überschrift, Buttons, Bild).',
+      'Reiter „Inhalt (Bausteine)“: die Seite aus Bausteinen zusammenstellen – Text, Bild, Hinweis-Kasten mit Button, News-Liste, Formular.',
+      'Reiter „Google-Vorschau“: optional, wird sonst automatisch erzeugt.',
       'Mit der Vorschau (Bildschirm-Symbol oben) siehst du die Seite, bevor sie online geht.',
-      '„Änderungen veröffentlichen“ stellt die Seite online.',
+      '„Veröffentlichen“ stellt die Seite online.',
     ],
     wirkung: [
       'Die Seite ist unter eurer Domain mit dem Kurznamen erreichbar, z. B. /sommerfest.',
-      'Im Menü erscheint sie erst, wenn ihr sie unter „Menü“ eintragt.',
+      'Im Menü erscheint sie erst, wenn ihr sie unter „Menü & Fußzeile“ eintragt.',
       'Entwürfe sind nicht öffentlich.',
     ],
     tipps: [
@@ -199,20 +202,22 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   menue: {
-    titel: 'Menü',
-    kurz: 'Hier legst du fest, welche Links oben im Hauptmenü der Website stehen.',
+    titel: 'Menü & Fußzeile',
+    kurz: 'Hier legst du fest, was oben im Menü und unten in der Fußzeile der Website steht – und in welcher Reihenfolge.',
     tun: [
-      '„Links in der Menüleiste“: die Einträge rechts neben „Verein“, z. B. News oder Kontakt.',
-      'Aufklappmenü „Verein“: die beiden Spalten, die beim Darüberfahren erscheinen.',
-      'Pro Eintrag: einen Text eingeben und entweder eine Seite auswählen oder eine Adresse eintragen.',
-      'Einträge mit dem Griff links verschieben, um die Reihenfolge zu ändern.',
+      'Reiter „Hauptmenü oben“: alle Einträge der Menüleiste, von links nach rechts.',
+      'Reihenfolge ändern: einen Eintrag am Griff links (sechs Punkte) nach oben oder unten ziehen. Oben = weiter links auf der Website.',
+      'Entfernen: rechts am Eintrag auf die drei Punkte (⋯) → „Entfernen“.',
+      'Hinzufügen: unten „Eintrag hinzufügen“, Text eingeben und wählen, was er tun soll: Seite öffnen, Adresse öffnen oder Aufklappmenü zeigen.',
+      'Reiter „Aufklappmenü Verein“: die beiden Spalten, die beim Darüberfahren über „Verein“ erscheinen.',
+      'Reiter „Fußzeile unten“: die Spalten mit Links ganz unten auf jeder Seite.',
     ],
     wirkung: [
       'Nach dem Speichern ist das neue Menü nach kurzer Zeit auf der ganzen Website sichtbar.',
-      '„Fußball“ und „Breitensport“ füllen sich automatisch aus „Teams & Kurse“ – die musst du hier nicht pflegen.',
-      'Bleibt eine Liste leer, zeigt die Website das Standardmenü.',
+      'Die Aufklappmenüs „Fußball“ und „Breitensport“ füllen sich automatisch aus „Teams & Kurse“.',
+      'Wird eine Liste ganz geleert, zeigt die Website wieder den Standard.',
     ],
-    tipps: ['Höchstens fünf Links in der Menüleiste, sonst wird es auf kleineren Bildschirmen eng.', 'Ausgewählte Seiten müssen veröffentlicht sein.'],
+    tipps: ['Höchstens etwa acht Einträge in der Menüleiste, sonst wird es auf kleineren Bildschirmen eng.', 'Ausgewählte Seiten müssen veröffentlicht sein.'],
   },
 
   verein: {
@@ -223,6 +228,8 @@ export const HILFE: Record<string, HilfeText> = {
       'Beiträge pflegen – sie erscheinen im Mitgliedsantrag und auf der Vereinsseite.',
       'Vorstand und Ansprechpersonen eintragen, mit Funktion und optional Foto.',
       'Satzung und andere Dokumente zum Herunterladen hinterlegen.',
+      'Unter „Startseite“: die Bilder oben, die zwei Schilder, die Kachel-Bilder und die grüne Aktions-Box.',
+      'Hauptsponsor und Social-Media-Links für die Fußzeile pflegen.',
     ],
     wirkung: [
       'Die Zahlen tauchen auf der Startseite und in Texten auf.',
@@ -234,16 +241,20 @@ export const HILFE: Record<string, HilfeText> = {
 
   texte: {
     titel: 'Website-Texte',
-    kurz: 'Alle Überschriften und kurzen Texte der Website – ohne Programmieren änderbar.',
+    kurz: 'Alle Überschriften, Texte und Link-Beschriftungen der Website – ohne Programmieren änderbar.',
     tun: [
-      'Oben einen Reiter wählen (Startseite, Fußball, Breitensport, Verein, Weitere Seiten).',
-      'Text im Feld ändern und speichern.',
+      'Oben einen Reiter wählen: Startseite, Fußball, Breitensport, Verein oder Weitere Seiten (News, Termine, Kontakt, Antrag, Probetraining, Fußzeile).',
+      'Im Reiter „Startseite“ stehen die Felder in derselben Reihenfolge wie auf der Seite: Kopfbereich, Zahlen-Leiste, Kacheln, Angebotsfinder, News, „Mitglied werden“ mit den drei Schritten.',
+      'Text im Feld ändern und oben rechts speichern.',
       'Platzhalter wie {mitglieder} oder {teams} werden automatisch durch die aktuelle Zahl ersetzt.',
     ],
-    wirkung: ['Nach dem Speichern steht der neue Text nach kurzer Zeit auf der Website.'],
+    wirkung: ['Nach dem Speichern steht der neue Text nach etwa einer Minute auf der Website.'],
     tipps: [
+      'Bilder, die Schilder im Kopfbereich und die grüne Aktions-Box der Startseite stehen unter „Vereinsdaten“.',
+      'Die Zahlen selbst (Mitglieder, Kinder, Gründungsjahr) ebenfalls unter „Vereinsdaten“. Die Anzahl der Teams & Kurse zählt die Website automatisch.',
+      'Menü und Fußzeilen-Links: unter „Menü & Fußzeile“.',
       'Platzhalter in geschweiften Klammern bitte genau so stehen lassen.',
-      'Ein Zeilenumbruch im Feld wird auch auf der Website ein Zeilenumbruch.',
+      'Ein Zeilenumbruch in einer Überschrift macht die zweite Zeile grün.',
     ],
   },
 

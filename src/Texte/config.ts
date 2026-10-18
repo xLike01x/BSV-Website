@@ -37,29 +37,56 @@ export const Texte: GlobalConfig = {
       tabs: [
         {
           label: 'Startseite',
+          description:
+            'Alle Texte der Startseite – von oben nach unten. Bilder, die zwei Schilder im Kopfbereich und die grüne Aktions-Box stehen unter „Vereinsdaten“ → Startseite. Die Zahlen (Mitglieder, Kinder, Gründungsjahr) ebenfalls unter „Vereinsdaten“; die Anzahl der Teams & Kurse wird automatisch gezählt. Menü und Fußzeile: „Menü & Fußzeile“.',
           fields: [
             text('heroTitel', 'Große Überschrift', 'Bewegung\nfür alle.', true),
             text('heroHand', 'Handschrift darunter', 'von 1 bis 99 Jahren'),
             text('heroText', 'Einleitung', 'Tanzen, Turnen, Fußball, Fitness, Yoga und Walking am Rhein – in Büderich, mit über {mitglieder} Mitgliedern und ganz viel Herz. Schnuppern ist überall erwünscht!', true),
             text('alterFrage', 'Altersregler: Frage', 'Wie alt bist du?'),
+            text('alterKeinTreffer', 'Altersregler: wenn nichts passt', 'Schreib uns – wir finden etwas Passendes.'),
+            {
+              type: 'row',
+              fields: [
+                text('zahlMitglieder', 'Zahlen-Leiste: unter Mitgliederzahl', 'Mitglieder'),
+                text('zahlAngebote', 'unter Anzahl Teams & Kurse', 'Teams und Kurse'),
+                text('zahlKinder', 'unter Kinderzahl', 'Kinder in der Fußballjugend'),
+                text('zahlGruendung', 'unter Gründungsjahr', 'gegründet'),
+              ],
+            },
             text('weltenTitel', 'Überschrift „Welten“', 'Ein Verein.\nDrei Welten.', true),
             gruppe('kachelFussball', 'Kachel Fußball', [
+              text('label', 'Kleine Überschrift', 'Fußball'),
               text('titel', 'Titel', '{teams} Teams. Ein neuer Kunstrasen.'),
               text('text', 'Text', 'Von Buddy’s Fußballzwergen ab 3 Jahren bis zu den Alten Herren – dazu Damen und Mädchenteams.', true),
+              text('link', 'Link-Text', 'Teams entdecken ›'),
             ]),
-            gruppe('kachelKids', 'Kachel BSV Kids', [text('titel', 'Titel', 'Hüpfen. Tanzen. Turnen.')]),
+            gruppe('kachelKids', 'Kachel BSV Kids', [text('label', 'Kleine Überschrift', 'BSV Kids'), text('titel', 'Titel', 'Hüpfen. Tanzen. Turnen.')]),
             gruppe('kachelFitness', 'Kachel Fitness', [
+              text('label', 'Kleine Überschrift', 'Fitness & Gesundheit'),
               text('titel', 'Titel', 'Dein Puls. Dein Tempo.'),
               text('text', 'Text', 'Step & Burn, Zumba, Pilates, Yoga, Spinning, Rehasport und mehr.'),
             ]),
             gruppe('kachelMitglieder', 'Kachel Mitgliederbereich', [
+              text('label', 'Kleine Überschrift', 'Mitgliederbereich'),
               text('titel', 'Titel', 'Training fällt aus?\nDu weißt es zuerst.', true),
               text('text', 'Text', 'Ausfälle deiner Kurse, Vereinstermine und deine Anmeldungen – alles an einem Ort, auch auf dem Handy.', true),
+              text('link', 'Link-Text', 'Zum Mitgliederbereich ›'),
+              text('handyTitel', 'Handy-Bild: Absender', 'BSV 1919 · jetzt'),
+              text('handyText', 'Handy-Bild: Nachricht', 'Spinning fällt heute aus. Nächster Termin wie gewohnt.'),
             ]),
             text('finderTitel', 'Angebotsfinder: Überschrift', 'Finde deinen Sport.'),
+            text('finderLink', 'Angebotsfinder: Text auf den Karten', 'Probetraining ›'),
             text('newsTitel', 'News: Überschrift', 'Neues aus dem BSV.'),
+            text('newsLink', 'News: Link-Text', 'Alle News ›'),
             text('mitgliedTitel', 'Mitglied werden: Überschrift', 'In fünf Minuten\nMitglied.', true),
             text('mitgliedText', 'Mitglied werden: Text', 'Ab 5 € im Monat, alle Kurse inklusive. Antrag, Beitragsrechner und SEPA-Mandat – alles online.', true),
+            gruppe('schritte', 'Mitglied werden: drei Schritte', [
+              { type: 'row', fields: [text('t1', 'Schritt 1: Titel', 'Probetraining'), text('d1', 'Schritt 1: Text', 'Angebot wählen, Termin anfragen, vorbeikommen.')] },
+              { type: 'row', fields: [text('t2', 'Schritt 2: Titel', 'Online-Antrag'), text('d2', 'Schritt 2: Text', 'Teams und Kurse auswählen, Beitrag berechnen, fertig.')] },
+              { type: 'row', fields: [text('t3', 'Schritt 3: Titel', 'Loslegen'), text('d3', 'Schritt 3: Text', 'Zugang zum Mitgliederbereich inklusive.')] },
+              text('button', 'Text auf dem Button', 'Jetzt Mitglied werden'),
+            ]),
           ],
         },
         {
@@ -95,6 +122,9 @@ export const Texte: GlobalConfig = {
         {
           label: 'Weitere Seiten',
           fields: [
+            gruppe('fusszeile', 'Fußzeile (unten auf jeder Seite)', [
+              { type: 'row', fields: [text('sponsor', 'Text vor dem Sponsor-Logo', 'Hauptsponsor'), text('sponsorLink', 'Link „Sponsor werden“', 'Sponsor werden ›')] },
+            ]),
             gruppe('news', 'News', [
               text('titel', 'Überschrift', 'Newsroom'),
               text('text', 'Text', 'Was im BSV los ist – auf dem Platz, in der Halle, im Verein.'),

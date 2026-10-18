@@ -3,31 +3,8 @@ import React from 'react'
 import { getAngebote, getMenue } from '@/bsv/data'
 import { UNTERGRUPPE_LABEL } from '@/bsv/lib'
 
-import { NavClient, type NavItem, type NavMenu } from './NavClient'
-
-type MenueEintrag = {
-  label?: string | null
-  ziel?: 'seite' | 'adresse' | null
-  seite?: number | { slug?: string | null } | null
-  adresse?: string | null
-  neuerTab?: boolean | null
-}
-
-/** Einträge aus dem Global „Menü“ in Links umwandeln; unvollständige Einträge werden übersprungen. */
-const zuLinks = (eintraege: MenueEintrag[] | null | undefined, standard: NavItem[]): NavItem[] => {
-  const links = (eintraege ?? []).flatMap((e): NavItem[] => {
-    if (!e.label) return []
-    if (e.ziel === 'adresse') {
-      const href = (e.adresse ?? '').trim()
-      if (!href) return []
-      const extern = /^https?:\/\//.test(href)
-      return [{ label: e.label, href, external: extern || Boolean(e.neuerTab) }]
-    }
-    const slug = typeof e.seite === 'object' ? e.seite?.slug : null
-    return slug ? [{ label: e.label, href: `/${slug}` }] : []
-  })
-  return links.length ? links : standard
-}
+import { zuLink, zuLinks, type MenueEintrag } from './menueLinks'
+import { NavClient, type NavEintrag, type NavMenu } from './NavClient'
 
 /** Hauptmenü: Teams und Kurse kommen direkt aus Payload, neue Angebote erscheinen automatisch. */
 export async function Nav() {
@@ -74,33 +51,36 @@ export async function Nav() {
       groups: [
         {
           title: 'Über uns',
-          items: zuLinks(menue?.vereinUeberUns, [
-            { label: 'Vorstand', href: '/verein#vorstand' },
-            { label: 'Mitgliedsbeiträge', href: '/verein#beitraege' },
-            { label: 'Satzung & Downloads', href: '/verein#downloads' },
-            { label: 'Mitglied werden', href: '/mitglied-werden' },
-            { label: 'Informationspflichten (DSGVO)', href: '/verein#dsgvo' },
-          ]),
+          items: zuLinks(menue?.vereinUeberUns as MenueEintrag[]),
         },
         {
           title: 'Mehr',
-          items: zuLinks(menue?.vereinMehr, [
-            { label: 'Termine', href: '/termine' },
-            { label: 'Kunstrasen 2026', href: '/kunstrasen' },
-            { label: 'Vereinskollektion (JAKO) ↗', href: 'https://team.jako.de/de/team/buederichersv/', external: true },
-            { label: 'Merch-Shop (fan12) ↗', href: 'https://buedericher-spielverein.fan12.de', external: true },
-          ]),
+          items: zuLinks(menue?.vereinMehr as MenueEintrag[]),
         },
       ],
     },
   ]
 
-  const links = zuLinks(menue?.links, [
-    { label: 'News', href: '/news' },
-    { label: 'Termine', href: '/termine' },
-    { label: 'Kunstrasen', href: '/kunstrasen' },
-    { label: 'Kontakt', href: '/kontakt' },
-  ])
+  // Reihenfolge und Einträge aus „Menü & Fußzeile“ (leer = Standard, kommt schon so aus der Datenbank)
+  const roh = (menue?.links ?? []) as MenueEintrag[]
+  const mitAufklapp = roh.some((e) => e.ziel === 'aufklapp')
+  // Ältere Einstellungen ohne Aufklappmenüs: die drei wie früher vorne einsetzen
+  const liste: MenueEintrag[] = mitAufklapp
+    ? roh
+    : [
+        { label: 'Fußball', ziel: 'aufklapp', aufklapp: 'fussball' },
+        { label: 'Breitensport', ziel: 'aufklapp', aufklapp: 'breitensport' },
+        { label: 'Verein', ziel: 'aufklapp', aufklapp: 'verein' },
+        ...roh,
+      ]
+  const eintraege: NavEintrag[] = liste.flatMap((e): NavEintrag[] => {
+    if (e.ziel === 'aufklapp') {
+      const m = menus.find((x) => x.id === e.aufklapp)
+      return m ? [{ art: 'menu', id: m.id, label: e.label || m.label }] : []
+    }
+    const l = zuLink(e)
+    return l ? [{ art: 'link', item: l }] : []
+  })
 
-  return <NavClient menus={menus} links={links} />
+  return <NavClient menus={menus} eintraege={eintraege} />
 }

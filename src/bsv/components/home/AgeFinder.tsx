@@ -6,7 +6,15 @@ import React, { useMemo, useState } from 'react'
 export type Vorschlag = { name: string; href: string; von: number; bis: number; img?: string; bg: string }
 
 /** „Wie alt bist du?“ – Schieberegler, der passende Angebote vorschlägt */
-export function AgeFinder({ angebote, frage = 'Wie alt bist du?' }: { angebote: Vorschlag[]; frage?: string }) {
+export function AgeFinder({
+  angebote,
+  frage = 'Wie alt bist du?',
+  keinTreffer = 'Schreib uns – wir finden etwas Passendes.',
+}: {
+  angebote: Vorschlag[]
+  frage?: string
+  keinTreffer?: string
+}) {
   const [alter, setAlter] = useState(5)
 
   const treffer = useMemo(() => {
@@ -29,7 +37,7 @@ export function AgeFinder({ angebote, frage = 'Wie alt bist du?' }: { angebote: 
       </label>
       <input id="alter" type="range" min={1} max={99} value={alter} onChange={(e) => setAlter(Number(e.target.value))} />
       <div className="chips" aria-live="polite">
-        {treffer.length === 0 && <span className="muted">Schreib uns – wir finden etwas Passendes.</span>}
+        {treffer.length === 0 && <span className="muted">{keinTreffer}</span>}
         {treffer.map((t) => (
           <Link key={t.href + alter} href={t.href} className="sug" style={{ background: t.bg }}>
             {t.img ? <img src={t.img} alt="" /> : <span className="sug-dot" />}

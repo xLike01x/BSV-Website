@@ -1,3 +1,4 @@
+import { seoAutomatisch } from '@/hooks/seoAutomatisch'
 import { hinweisFeld } from '@/fields/hinweise'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
@@ -39,7 +40,7 @@ export const Pages: CollectionConfig<'pages'> = {
     slug: true,
   },
   admin: {
-    description: 'Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü“.',
+    description: 'Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü & Fußzeile“.',
     group: 'Inhalte',
     hidden: ausblendenAusser('admin', 'redaktion'),
     defaultColumns: ['title', 'slug', 'updatedAt'],
@@ -65,18 +66,22 @@ export const Pages: CollectionConfig<'pages'> = {
       label: 'Titel',
       type: 'text',
       required: true,
+      admin: { description: 'Name der Seite – steht im Browser-Tab und ergibt die Adresse, z. B. „Sommerfest 2027“ → /sommerfest-2027.' },
     },
     {
       type: 'tabs',
       tabs: [
         {
           fields: [hero],
-          label: 'Hero',
+          label: 'Kopfbereich',
+          description: 'Der große Bereich ganz oben auf der Seite.',
         },
         {
           fields: [
             {
               name: 'layout',
+              label: 'Bausteine der Seite',
+              labels: { singular: 'Baustein', plural: 'Bausteine' },
               type: 'blocks',
               blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
               required: true,
@@ -85,11 +90,13 @@ export const Pages: CollectionConfig<'pages'> = {
               },
             },
           ],
-          label: 'Content',
+          label: 'Inhalt (Bausteine)',
+          description: 'Die Seite besteht aus Bausteinen untereinander. Mit „Baustein hinzufügen“ fügst du Text, Bilder, Buttons, News-Listen oder Formulare ein.',
         },
         {
           name: 'meta',
-          label: 'SEO',
+          label: 'Google-Vorschau (optional)',
+          description: 'So erscheint die Seite bei Google und beim Teilen. Leer lassen = wird automatisch erzeugt.',
           fields: [
             OverviewField({
               titlePath: 'meta.title',
@@ -129,7 +136,7 @@ export const Pages: CollectionConfig<'pages'> = {
   ],
   hooks: {
     afterChange: [revalidatePage],
-    beforeChange: [populatePublishedAt],
+    beforeChange: [populatePublishedAt, seoAutomatisch({ text: (d) => d.hero?.richText, bild: (d) => d.hero?.media })],
     afterDelete: [revalidateDelete],
   },
   versions: {

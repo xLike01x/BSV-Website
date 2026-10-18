@@ -39,7 +39,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Ins große Textfeld darunter klicken und den Text schreiben. Die Werkzeugleiste darüber macht Text fett, kursiv oder zu einer Zwischenüberschrift.',
         'Rechts bei „Team / Kurs“ das passende Team wählen (oder leer lassen für Vereins-News).',
         'Oben rechts „Entwurf speichern“ – dann ist nichts verloren.',
-        'Wenn alles passt: „Änderungen veröffentlichen“. Fertig!',
+        'Wenn alles passt: „Veröffentlichen“. Fertig!',
       ],
     },
     {
@@ -48,8 +48,27 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'In der Liste „News“ auf den Titel klicken.',
         'Den Fehler korrigieren.',
-        '„Änderungen veröffentlichen“ klicken – die Website zeigt sofort die neue Fassung.',
+        '„Veröffentlichen“ klicken – die Website zeigt sofort die neue Fassung.',
         'Über „Versionen“ oben siehst du frühere Fassungen und kannst sie wiederherstellen.',
+      ],
+    },
+    {
+      id: 'news-planen',
+      titel: 'Eine News zu einem späteren Zeitpunkt veröffentlichen',
+      schritte: [
+        'Die News fertig schreiben und „Entwurf speichern“.',
+        'Auf den kleinen Pfeil rechts neben „Veröffentlichen“ klicken.',
+        '„Veröffentlichungsplanung“ wählen, Datum und Uhrzeit eintragen und bestätigen.',
+        'Die News geht dann automatisch zur gewählten Zeit online.',
+      ],
+    },
+    {
+      id: 'news-versionen',
+      titel: 'Eine frühere Fassung wiederherstellen',
+      schritte: [
+        'Die News öffnen und oben auf „Versionen“ klicken.',
+        'Die gewünschte Fassung anklicken – Änderungen sind farbig markiert.',
+        '„Diese Version wiederherstellen“ klicken.',
       ],
     },
     {
@@ -76,6 +95,17 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
     {
+      id: 'bild-zuschneiden',
+      titel: 'Ein Bild zuschneiden oder den wichtigsten Bereich festlegen',
+      schritte: [
+        'Das Bild in der Mediathek öffnen.',
+        'Auf „Bild bearbeiten“ klicken.',
+        'Zum Zuschneiden die Ecken des Rahmens ziehen.',
+        'Mit „Wichtigster Bildbereich“ auf das Wichtigste tippen, z. B. das Gesicht – kleine Vorschaubilder richten sich danach.',
+        'Übernehmen und speichern.',
+      ],
+    },
+    {
       id: 'mehrere-bilder',
       titel: 'Viele Fotos auf einmal hochladen',
       schritte: [
@@ -94,15 +124,39 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Einen Titel eingeben, z. B. „Sommerfest 2027“.',
         'Im Reiter „Inhalt“ auf „Baustein hinzufügen“ klicken und z. B. „Inhalt“ (Text) oder „Medien“ (Bild) wählen.',
         'Mit dem Bildschirm-Symbol oben die Vorschau öffnen und prüfen.',
-        '„Änderungen veröffentlichen“ klicken. Die Seite ist jetzt unter /sommerfest-2027 erreichbar.',
+        '„Veröffentlichen“ klicken. Die Seite ist jetzt unter /sommerfest-2027 erreichbar.',
+      ],
+    },
+    {
+      id: 'seite-bausteine',
+      titel: 'Mit Bausteinen arbeiten',
+      video: '/hilfe/seite-bausteine.mp4',
+      schritte: [
+        'Reiter „Inhalt (Bausteine)“ öffnen und auf „Baustein hinzufügen“ klicken.',
+        'Eine Art wählen, z. B. „Text (in Spalten)“, „Bild oder Video“ oder „Hinweis-Kasten mit Button“.',
+        'Den Baustein ausfüllen. Mit dem kleinen Pfeil rechts klappst du ihn auf und zu.',
+        'Reihenfolge ändern: am Griff links (sechs Punkte) nach oben oder unten ziehen.',
+        'Kopieren oder löschen: über die drei Punkte rechts am Baustein.',
+      ],
+    },
+    {
+      id: 'seite-kopfbereich',
+      titel: 'Den Kopfbereich gestalten',
+      schritte: [
+        'Reiter „Kopfbereich“ öffnen.',
+        'Bei „Art des Kopfbereichs“ wählen: groß mit Bild, mittel mit Bild, schlicht oder keiner.',
+        'Überschrift und einen kurzen Satz darunter schreiben.',
+        'Optional „Button hinzufügen“: Ziel wählen und den Text auf dem Button eingeben.',
+        'Bei „Groß“ oder „Mittel“ ein Bild aus der Mediathek wählen.',
       ],
     },
     {
       id: 'seite-ins-menue',
       titel: 'Die Seite ins Menü bringen',
+      video: '/hilfe/menue-link.mp4',
       schritte: [
         'Die Seite muss veröffentlicht sein.',
-        'Links auf „Menü“ klicken.',
+        'Links auf „Menü & Fußzeile“ klicken.',
         'Unter „Links in der Menüleiste“ auf „Eintrag hinzufügen“ klicken.',
         'Text eingeben, „Seite aus ‚Seiten‘“ wählen und die Seite aussuchen.',
         'Oben rechts „Speichern“.',
@@ -112,25 +166,51 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   menue: [
     {
       id: 'menue-link',
-      titel: 'Einen Link ins Menü einfügen',
+      titel: 'Einen Eintrag ins Menü einfügen',
+      video: '/hilfe/menue-link.mp4',
       schritte: [
-        'Unter „Links in der Menüleiste“ auf „Eintrag hinzufügen“ klicken.',
-        '„Text im Menü“ ausfüllen – so heißt der Link auf der Website.',
-        'Bei „Ziel“ entweder eine Seite auswählen oder eine Adresse eintragen (z. B. /termine oder https://…).',
-        'Mit dem Griff links (sechs Punkte) an die richtige Stelle ziehen.',
+        'Links auf „Menü & Fußzeile“ klicken – der Reiter „Hauptmenü oben“ ist schon offen.',
+        'Ganz unten auf „Eintrag hinzufügen“ klicken.',
+        '„Text im Menü“ ausfüllen – so heißt der Eintrag auf der Website.',
+        'Wählen, was er tun soll: „Seite aus ‚Seiten‘ öffnen“ (dann Seite aussuchen) oder „Adresse öffnen“ (z. B. /termine oder https://…).',
         'Oben rechts „Speichern“.',
       ],
     },
     {
-      id: 'menue-zuruecksetzen',
-      titel: 'Zurück zum Standardmenü',
-      schritte: ['Alle Einträge einer Liste über die drei Punkte rechts entfernen.', 'Speichern – die Website zeigt dann wieder das Standardmenü.'],
+      id: 'menue-reihenfolge',
+      titel: 'Die Reihenfolge ändern (z. B. „News“ weiter nach links)',
+      video: '/hilfe/menue-reihenfolge.mp4',
+      schritte: [
+        'Links auf „Menü & Fußzeile“ klicken.',
+        'Den Eintrag am Griff links (sechs Punkte ⋮⋮) anfassen und nach oben ziehen. Oben in der Liste = links auf der Website.',
+        'Loslassen und oben rechts „Speichern“.',
+      ],
+    },
+    {
+      id: 'menue-entfernen',
+      titel: 'Einen Eintrag entfernen (z. B. „Kunstrasen“)',
+      schritte: [
+        'Links auf „Menü & Fußzeile“ klicken.',
+        'Rechts neben dem Eintrag auf die drei Punkte (⋯) klicken.',
+        '„Entfernen“ wählen.',
+        'Oben rechts „Speichern“.',
+      ],
+    },
+    {
+      id: 'fusszeile',
+      titel: 'Links in der Fußzeile ändern',
+      schritte: [
+        'Links auf „Menü & Fußzeile“ und oben den Reiter „Fußzeile unten“ wählen.',
+        'Eine Spalte aufklappen – Überschrift ändern oder Links hinzufügen, verschieben, entfernen.',
+        'Oben rechts „Speichern“.',
+      ],
     },
   ],
   angebote: [
     {
       id: 'team-zeiten',
       titel: 'Trainingszeiten ändern',
+      video: '/hilfe/trainingszeiten.mp4',
       schritte: [
         'Links auf „Teams & Kurse“ und das Team anklicken.',
         'Nach unten zu „Trainingszeiten“ scrollen.',
@@ -141,6 +221,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'team-verantwortliche',
       titel: 'Einer Übungsleitung ein Team zuordnen',
+      video: '/hilfe/team-verantwortliche.mp4',
       schritte: [
         'Zuerst muss die Person ein Benutzerkonto mit der Rolle „Übungsleitung“ oder „Team-Redaktion“ haben (Bereich „Benutzer“).',
         'Dann das Team unter „Teams & Kurse“ öffnen.',
@@ -188,6 +269,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'antrag-bearbeiten',
       titel: 'Einen Mitgliedsantrag bearbeiten',
+      video: '/hilfe/antrag-bearbeiten.mp4',
       schritte: [
         'In der Liste auf den Antrag mit Status „Neu“ klicken.',
         'Angaben prüfen: Personen, gewählte Angebote, Beitrag, Bankverbindung.',
@@ -211,6 +293,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'konto-anlegen',
       titel: 'Ein Konto für eine neue Übungsleitung anlegen',
+      video: '/hilfe/konto-anlegen.mp4',
       schritte: [
         '„Neu erstellen“ klicken.',
         'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben.',
@@ -233,11 +316,33 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'vorstand',
       titel: 'Den Vorstand aktualisieren',
+      video: '/hilfe/vorstand.mp4',
       schritte: [
         'Nach unten zu „Vorstand und Ansprechpersonen“ scrollen.',
         'Mit „Person hinzufügen“ jemanden ergänzen: Name und Funktion.',
         'Mit dem Griff links die Reihenfolge ändern, über die drei Punkte rechts jemanden entfernen.',
         'Oben rechts „Speichern“.',
+      ],
+    },
+    {
+      id: 'startseite-bilder',
+      titel: 'Die Bilder der Startseite austauschen',
+      video: '/hilfe/startseite-bilder.mp4',
+      schritte: [
+        'Nach unten zu „Startseite“ scrollen.',
+        'Bei „Bilder oben“ ein Bild über das × entfernen und mit „Aus vorhandenen auswählen“ ein neues wählen.',
+        'Die Kachel-Bilder darunter genauso austauschen.',
+        'Oben rechts „Speichern“ – nach etwa einer Minute ist die Startseite aktualisiert.',
+      ],
+    },
+    {
+      id: 'aktion',
+      titel: 'Die grüne Aktions-Box auf der Startseite ändern',
+      schritte: [
+        'Zu „Aktion auf der Startseite (grüne Box)“ scrollen.',
+        'Überzeile, Titel, Text, Button-Text und Button-Link anpassen, optional ein Bild wählen.',
+        'Zum Ausblenden den Haken bei „Anzeigen“ entfernen.',
+        'Speichern.',
       ],
     },
     {
@@ -254,6 +359,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'text-aendern',
       titel: 'Eine Überschrift der Website ändern',
+      video: '/hilfe/website-texte.mp4',
       schritte: [
         'Oben den passenden Reiter wählen, z. B. „Startseite“.',
         'Das Feld suchen – der Name verrät, wo der Text steht.',
@@ -266,6 +372,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'formular-bauen',
       titel: 'Ein Anmeldeformular bauen',
+      video: '/hilfe/formular-bauen.mp4',
       schritte: [
         '„Neu erstellen“ klicken und einen Titel vergeben.',
         'Mit „Feld hinzufügen“ Felder wie Name, E-Mail oder Anzahl Personen anlegen.',
@@ -283,13 +390,15 @@ export const FELDER: Record<string, Feld[]> = {
   posts: [
     { name: 'Titel', text: 'Die Überschrift. Kurz und konkret – sie steht groß über der News und in der Übersicht.' },
     { name: 'Titelbild', text: 'Das große Bild oben. Ohne Bild wirkt die News in Übersichten leer.' },
-    { name: 'Text', text: 'Der eigentliche Beitrag. Mit „/“ öffnest du eine Auswahl, z. B. für Zwischenüberschriften.' },
-    { name: 'Team / Kurs', text: 'Zu welchem Team die News gehört. Sie erscheint dann auf dessen Seite. Leer = Vereins-News.' },
-    { name: 'Auf Startseite', text: 'Zeigt die News zusätzlich auf der Startseite und unter „News“. Entscheidet die Redaktion.' },
-    { name: 'Veröffentlicht am', text: 'Das Datum, das über der News steht. Leer = Tag der Veröffentlichung.' },
-    { name: 'Autor:in', text: 'Wer die News geschrieben hat. Wird automatisch mit deinem Namen vorbelegt.' },
-    { name: 'Slug', text: 'Der Teil der Adresse, z. B. /news/f1-gewinnt. Entsteht automatisch aus dem Titel.' },
-    { name: 'Zuordnung / SEO', text: 'Kategorien, passende News und Angaben für Google. Kann man meistens so lassen.' },
+    { name: 'Text', text: 'Der eigentliche Beitrag. Text markieren → fett, kursiv oder Link. Mit „/“ oder „+“ kommen Überschriften, Listen, Bilder oder ein farbiger Hinweis dazu.' },
+    { name: 'Team / Kurs', text: 'Zu welchem Team die News gehört. Sie erscheint dann auf dessen Seite. Leer = Vereins-News. Wer nur ein Team betreut, hat es schon vorausgewählt.' },
+    { name: 'Kategorie (nur Redaktion)', text: 'Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“. Mehrere sind möglich.' },
+    { name: 'Auf Startseite (nur Redaktion)', text: 'Zeigt die News zusätzlich auf der Startseite und unter „News“.' },
+    { name: 'Veröffentlicht am (nur Redaktion)', text: 'Das Datum über der News. Leer = Zeitpunkt der Veröffentlichung. Ein Datum in der Zukunft plant die News nicht automatisch ein – dafür gibt es „Veröffentlichungsplanung“ im Pfeil neben „Veröffentlichen“.' },
+    { name: 'Autor:in (nur Redaktion)', text: 'Wer die News geschrieben hat. Wird automatisch mit deinem Namen vorbelegt.' },
+    { name: 'Slug (nur Redaktion)', text: 'Der Teil der Adresse, z. B. /news/f1-gewinnt. Entsteht automatisch aus dem Titel. Mit „Entsperren“ kannst du ihn ändern – nach dem Veröffentlichen besser nicht mehr.' },
+    { name: 'Für Fortgeschrittene (nur Redaktion)', text: 'Eingeklappt unten: „Passende News“ (Empfehlungen unter dem Artikel) und die Google-Vorschau. Beides musst du nicht ausfüllen.' },
+    { name: 'Google-Vorschau (SEO)', text: 'Titel, Beschreibung und Bild, die Google und WhatsApp & Co. beim Teilen anzeigen. Wird automatisch aus Titel, Text und Titelbild erzeugt. Nur ändern, wenn du einen anderen Text möchtest.' },
   ],
   angebote: [
     { name: 'Name', text: 'So heißt das Team oder der Kurs überall auf der Website.' },
@@ -301,6 +410,9 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Beschreibung', text: 'Ausführlicher Text auf der Seite des Teams.' },
     { name: 'Trainingszeiten', text: 'Tag, Uhrzeit und Ort. Erscheinen auf der Teamseite.' },
     { name: 'Verantwortliche', text: 'Benutzerkonten, die dieses Team pflegen dürfen (News, Bilder, Ausfälle).' },
+    { name: 'Trainer- und Betreuerteam', text: 'Nur zur Anzeige auf der Teamseite (Name, Rolle, optional Foto). Wer bearbeiten darf, steht bei „Verantwortliche“.' },
+    { name: 'Kursplätze', text: 'Eingeklappt: Wenn ein Kurs nur begrenzt Plätze hat, hier die Höchstzahl eintragen.' },
+    { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse sowie die Nummern von FuPa (Kader) und FUSSBALL.DE (Spielplan/Tabelle). Die Nummer steht in der Adresse der Teamseite bei FuPa bzw. FUSSBALL.DE. Besucher sehen die Widgets erst nach einem Klick (Datenschutz).' },
     { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne in Listen und Menüs.' },
     { name: 'Aktiv', text: 'Nur aktive Angebote sind auf der Website sichtbar.' },
   ],
@@ -308,13 +420,24 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Bildbeschreibung', text: 'Beschreibt, was zu sehen ist. Wichtig für Menschen, die sich Seiten vorlesen lassen.' },
     { name: 'Team / Kurs', text: 'Ordnet das Bild einem Team zu.' },
     { name: 'In Galerie zeigen', text: 'Das Bild erscheint in der Fotogalerie auf der Seite des Teams.' },
+    { name: 'Bildunterschrift (optional)', text: 'Text, der unter dem Bild erscheinen kann, z. B. Fotograf oder Anlass.' },
+    { name: 'Bild bearbeiten', text: 'Nach dem Hochladen: zuschneiden und den „wichtigsten Bildbereich“ setzen – dann bleibt z. B. ein Gesicht auch in kleinen Vorschaubildern sichtbar.' },
+    { name: 'Bildgrößen', text: 'Die Website erzeugt automatisch kleinere Versionen für schnelle Ladezeiten. Darum musst du dich nicht kümmern.' },
+    { name: 'Ordner', text: 'Oben links „Kein Ordner“: Bilder lassen sich in Ordner sortieren, z. B. „Sommerfest 2026“. Optional – nur für die Übersicht in der Verwaltung.' },
   ],
   pages: [
-    { name: 'Titel', text: 'Name der Seite, steht auch im Browser-Tab.' },
-    { name: 'Hero / Kopfbereich', text: 'Der große Bereich ganz oben, oft mit Bild und Überschrift.' },
-    { name: 'Inhalt (Bausteine)', text: 'Die Seite besteht aus Bausteinen untereinander: Text, Bilder, Buttons, Formulare.' },
+    { name: 'Titel', text: 'Name der Seite, steht auch im Browser-Tab. Daraus entsteht die Adresse.' },
+    { name: 'Reiter „Kopfbereich“', text: 'Der große Bereich ganz oben. Art wählen: groß mit Bild (bildschirmfüllend), mittel mit Bild, schlicht nur Text – oder kein Kopfbereich. Dazu Überschrift, Einleitung und bis zu zwei Buttons.' },
+    { name: 'Reiter „Inhalt (Bausteine)“', text: 'Die Seite besteht aus Bausteinen untereinander. „Baustein hinzufügen“ → Art wählen. Mit dem Griff links verschieben, über die drei Punkte kopieren oder löschen.' },
+    { name: 'Baustein „Text (in Spalten)“', text: 'Normaler Text – auch nebeneinander in Spalten (volle, halbe, Drittel-Breite). Pro Spalte optional ein Link.' },
+    { name: 'Baustein „Bild oder Video“', text: 'Ein Bild oder Video aus der Mediathek in voller Breite.' },
+    { name: 'Baustein „Hinweis-Kasten mit Button“', text: 'Ein hervorgehobener Kasten mit kurzem Text und ein bis zwei Buttons, z. B. „Jetzt anmelden“.' },
+    { name: 'Baustein „News-Liste“', text: 'Zeigt automatisch die neuesten News (optional nur aus bestimmten Kategorien) oder ausgewählte News.' },
+    { name: 'Baustein „Formular“', text: 'Bindet ein Formular aus „Baukasten → Formulare“ ein, z. B. eine Anmeldung.' },
+    { name: 'Reiter „Google-Vorschau“', text: 'Titel und Beschreibung für Google und beim Teilen. Leer lassen = wird automatisch erzeugt.' },
+    { name: 'Buttons / Links', text: 'Linkziel: „Eigene Seite/News“ (aus der Liste wählen) oder „Adresse eingeben“ (z. B. /termine oder https://…). Dazu der Text auf dem Button und die Optik: grüner oder heller Button.' },
     { name: 'Slug', text: 'Die Adresse der Seite, z. B. /sommerfest. Besser nicht mehr ändern, wenn schon verlinkt.' },
-    { name: 'SEO', text: 'Titel und Beschreibung für Google. Optional.' },
+    { name: 'Live-Vorschau', text: 'Bildschirm-Symbol oben: zeigt die Seite neben dem Formular und jede Änderung sofort. Seiten speichern zwischendurch automatisch als Entwurf.' },
   ],
   termine: [
     { name: 'Titel', text: 'Name der Veranstaltung.' },
@@ -322,6 +445,8 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Ort', text: 'Wo der Termin stattfindet.' },
     { name: 'Bereich', text: 'Bestimmt Farbe und Zuordnung im Kalender.' },
     { name: 'Nur für Mitglieder', text: 'Nur nach dem Login sichtbar.' },
+    { name: 'Anmeldung im Mitgliederbereich', text: 'Mitglieder können sich nach dem Login für den Termin anmelden.' },
+    { name: 'Beschreibung', text: 'Weitere Infos zum Termin. Zeilenumbrüche werden übernommen.' },
   ],
   ausfaelle: [
     { name: 'Angebot', text: 'Welches Team oder welcher Kurs ausfällt.' },
@@ -334,12 +459,15 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'E-Mail', text: 'Damit meldet sich die Person an.' },
     { name: 'Rollen', text: 'Was die Person darf. Mehrere Rollen sind möglich.' },
     { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy).' },
+    { name: 'Teams & Kurse', text: 'In welchen Angeboten die Person selbst mitmacht (als Mitglied). Gibt keine Bearbeitungsrechte.' },
+    { name: 'Verantwortlich für', text: 'Zeigt, welche Teams die Person pflegen darf. Ändern kannst du das beim jeweiligen Team unter „Verantwortliche“.' },
   ],
   menue: [
-    { name: 'Text im Menü', text: 'So heißt der Link auf der Website.' },
-    { name: 'Ziel', text: 'Eine eurer Seiten oder eine eigene Adresse.' },
-    { name: 'Adresse', text: 'Intern mit „/“ (z. B. /termine), extern mit „https://“.' },
+    { name: 'Text im Menü', text: 'So heißt der Eintrag auf der Website.' },
+    { name: 'Was soll der Eintrag tun?', text: '„Seite öffnen“ (eine eurer Seiten), „Adresse öffnen“ (z. B. /news oder eine fremde Website) oder „Aufklappmenü zeigen“ (Fußball, Breitensport oder Verein).' },
+    { name: 'Adresse', text: 'Intern mit „/“: /news, /termine, /kontakt, /verein, /fussball, /breitensport, /mitglied-werden. Extern mit „https://“.' },
     { name: 'In neuem Tab öffnen', text: 'Sinnvoll für fremde Websites wie den Fan-Shop.' },
+    { name: 'Griff (sechs Punkte)', text: 'Daran ziehst du einen Eintrag nach oben oder unten.' },
   ],
   verein: [
     { name: 'Mitgliederzahl', text: 'Erscheint auf der Startseite und in Texten mit {mitglieder}.' },
@@ -347,7 +475,24 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'SEPA-Gläubiger-ID', text: 'Steht im Lastschriftmandat des Antrags.' },
     { name: 'Vorstand', text: 'Name, Funktion, optional Foto. Erscheint auf der Vereinsseite.' },
     { name: 'Satzung & Downloads', text: 'Dateien zum Herunterladen auf der Vereinsseite.' },
-    { name: 'Startseite', text: 'Die großen Bilder und Kacheln der Startseite.' },
+    { name: 'Hauptsponsor', text: 'Name, Website und Logo – erscheint unten auf der Website.' },
+    { name: 'Startseite: Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
+    { name: 'Texte der Startseite', text: 'Alle Überschriften und Texte der Startseite – auch die Zahlen-Leiste und die drei Schritte – stehen unter „Website-Texte“.' },
+    { name: 'Startseite: Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness – und die Titelbilder der Bereichs- und Vereinsseite.' },
+    { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
+    { name: 'Social Media', text: 'Links zu Instagram und Facebook – erscheinen unten auf der Website.' },
+  ],
+  forms: [
+    { name: 'Name des Formulars', text: 'Nur intern, damit ihr es wiederfindet.' },
+    { name: 'Felder', text: '„Feld hinzufügen“ → Art wählen: Text, E-Mail, Zahl, Auswahlliste, Ankreuzfeld, mehrzeiliger Text … Pro Feld: Bezeichnung und ob es Pflicht ist.' },
+    { name: 'Text auf dem Absende-Button', text: 'z. B. „Anmelden“.' },
+    { name: 'Nach dem Absenden …', text: 'Eine Danke-Nachricht zeigen oder auf eine Seite weiterleiten.' },
+    { name: 'E-Mail-Benachrichtigungen', text: 'Kommt mit dem E-Mail-Versand – bis dahin stehen die Eingänge unter „Formular-Eingänge“.' },
+  ],
+  texte: [
+    { name: 'Reiter', text: 'Oben nach Seiten sortiert: Startseite, Fußball, Breitensport, Verein, Weitere Seiten.' },
+    { name: 'Platzhalter', text: '{mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung} werden automatisch durch aktuelle Zahlen ersetzt. Genau so stehen lassen.' },
+    { name: 'Zeilenumbruch', text: 'Ein Umbruch im Feld wird auch auf der Website ein Umbruch – praktisch für zweizeilige Überschriften.' },
   ],
 }
 
@@ -429,7 +574,12 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie bekomme ich eine neue Seite ins Menü?',
-    antwort: 'Seite veröffentlichen, dann unter „Menü“ einen Eintrag hinzufügen und die Seite auswählen. Die Anleitung steht in der Hilfe zu „Menü“.',
+    antwort: 'Seite veröffentlichen, dann unter „Menü & Fußzeile“ einen Eintrag hinzufügen und die Seite auswählen.',
+    bereich: 'menue',
+  },
+  {
+    frage: 'Wie ändere ich die Reihenfolge im Menü oder entferne einen Eintrag?',
+    antwort: 'Unter „Menü & Fußzeile“: Eintrag am Griff links verschieben (oben = links auf der Website) oder über die drei Punkte rechts entfernen. Danach speichern.',
     bereich: 'menue',
   },
   {
@@ -537,3 +687,25 @@ export function hauptRolle(rollen: string[] | undefined | null): RolleKey {
 export function anleitungFinden(bereich: string, id: string): Anleitung | undefined {
   return ANLEITUNGEN[bereich]?.find((a) => a.id === id)
 }
+
+/* ------------------------------------------------------------------ */
+/* Begriffe einfach erklärt                                            */
+/* ------------------------------------------------------------------ */
+export const GLOSSAR: Feld[] = [
+  { name: 'Entwurf', text: 'Gespeichert, aber noch nicht auf der Website. Nur in der Verwaltung sichtbar.' },
+  { name: 'Veröffentlichen', text: 'Stellt einen Inhalt auf die Website bzw. übernimmt Änderungen dorthin.' },
+  { name: 'Veröffentlichung aufheben', text: 'Nimmt einen Inhalt von der Website, ohne ihn zu löschen. Er wird wieder zum Entwurf.' },
+  { name: 'Versionen', text: 'Frühere Fassungen eines Eintrags. Man kann jede davon wiederherstellen.' },
+  { name: 'Vorschau / Live-Vorschau', text: 'Zeigt, wie ein Entwurf auf der Website aussehen wird – bevor er veröffentlicht ist.' },
+  { name: 'Slug', text: 'Der lesbare Teil der Adresse, z. B. „sommerfest“ in /sommerfest. Entsteht automatisch aus dem Titel.' },
+  { name: 'SEO / Google-Vorschau', text: 'Titel, Beschreibung und Bild, die Google und Messenger beim Teilen zeigen. Wird automatisch erzeugt.' },
+  { name: 'Mediathek', text: 'Der Ort für alle Bilder und Dateien. Was dort liegt, kann überall ausgewählt werden.' },
+  { name: 'Baustein', text: 'Ein Teil einer Seite, z. B. ein Textabschnitt, ein Bild oder ein Button. Seiten bestehen aus Bausteinen untereinander.' },
+  { name: 'Kategorie', text: 'Ein Schlagwort für News, nach dem Besucher filtern können.' },
+  { name: 'Rolle', text: 'Bestimmt, was jemand in der Verwaltung darf – z. B. Redaktion, Kasse oder Übungsleitung.' },
+  { name: 'Verantwortliche', text: 'Die Benutzerkonten, die ein bestimmtes Team pflegen dürfen.' },
+  { name: 'Zwei-Faktor-Anmeldung', text: 'Zusätzlich zum Passwort ein 6-stelliger Code aus einer Handy-App. Schützt die Daten des Vereins.' },
+  { name: 'Wiederherstellungscodes', text: 'Zehn Einmal-Codes für den Notfall, falls das Handy fehlt. Gut aufbewahren!' },
+  { name: 'Drei Punkte (⋮)', text: 'Das Menü mit weiteren Aktionen: kopieren, löschen, Veröffentlichung aufheben.' },
+  { name: 'Griff (sechs Punkte)', text: 'Daran zieht man Einträge in Listen nach oben oder unten.' },
+]

@@ -13,6 +13,8 @@ export const FormBlock: Block = {
   fields: [
     {
       name: 'form',
+      label: 'Formular',
+      admin: { description: 'Formulare legst du unter „Baukasten → Formulare“ an.' },
       type: 'relationship',
       relationTo: 'forms',
       required: true,
@@ -20,7 +22,7 @@ export const FormBlock: Block = {
     {
       name: 'enableIntro',
       type: 'checkbox',
-      label: 'Enable Intro Content',
+      label: 'Einleitungstext über dem Formular anzeigen',
     },
     {
       name: 'introContent',
@@ -38,14 +40,14 @@ export const FormBlock: Block = {
           ]
         },
       }),
-      label: 'Intro Content',
+      label: 'Einleitungstext',
     },
   ],
   graphQL: {
     singularName: 'FormBlock',
   },
   labels: {
-    plural: 'Form Blocks',
-    singular: 'Form Block',
+    plural: 'Formulare',
+    singular: 'Formular',
   },
 }

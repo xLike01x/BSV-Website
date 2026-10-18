@@ -30,7 +30,7 @@ export const Users: CollectionConfig = {
   },
   endpoints: zweiFaktorEndpunkte,
   fields: [
-    { name: 'name', label: 'Name', type: 'text', required: true },
+    { name: 'name', label: 'Name', type: 'text', required: true, admin: { description: 'Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.' } },
     {
       name: 'roles',
       label: 'Rollen',
@@ -44,7 +44,7 @@ export const Users: CollectionConfig = {
         create: isAdminField,
         update: isAdminField,
       },
-      admin: { description: 'Bestimmt, was diese Person sehen und bearbeiten darf.' },
+      admin: { description: 'Admin: alles · Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
     },
     {
       name: 'angebote',

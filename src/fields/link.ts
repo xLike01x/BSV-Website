@@ -6,11 +6,11 @@ export type LinkAppearances = 'default' | 'outline'
 
 export const appearanceOptions: Record<LinkAppearances, { label: string; value: string }> = {
   default: {
-    label: 'Default',
+    label: 'Grüner Button',
     value: 'default',
   },
   outline: {
-    label: 'Outline',
+    label: 'Heller Button (umrandet)',
     value: 'outline',
   },
 }
@@ -25,6 +25,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
   const linkResult: GroupField = {
     name: 'link',
     type: 'group',
+    label: 'Link',
     admin: {
       hideGutter: true,
     },
@@ -40,13 +41,14 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
               width: '50%',
             },
             defaultValue: 'reference',
+            label: 'Linkziel',
             options: [
               {
-                label: 'Internal link',
+                label: 'Eigene Seite/News',
                 value: 'reference',
               },
               {
-                label: 'Custom URL',
+                label: 'Adresse eingeben',
                 value: 'custom',
               },
             ],
@@ -60,7 +62,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
               },
               width: '50%',
             },
-            label: 'Open in new tab',
+            label: 'In neuem Tab öffnen',
           },
         ],
       },
@@ -74,7 +76,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'reference',
       },
-      label: 'Document to link to',
+      label: 'Ziel (Seite oder News)',
       relationTo: ['pages', 'posts'],
       required: true,
     },
@@ -84,7 +86,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       admin: {
         condition: (_, siblingData) => siblingData?.type === 'custom',
       },
-      label: 'Custom URL',
+      label: 'Adresse (z. B. /termine oder https://…)',
       required: true,
     },
   ]
@@ -108,7 +110,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
           admin: {
             width: '50%',
           },
-          label: 'Label',
+          label: 'Text auf dem Button/Link',
           required: true,
         },
       ],
@@ -128,7 +130,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       name: 'appearance',
       type: 'select',
       admin: {
-        description: 'Choose how the link should be rendered.',
+        description: 'Wie der Link aussehen soll.',
       },
       defaultValue: 'default',
       options: appearanceOptionsToUse,

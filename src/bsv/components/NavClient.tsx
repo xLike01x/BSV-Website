@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
 export type NavItem = { label: string; href: string; external?: boolean }
+export type NavEintrag = { art: 'menu'; id: string; label: string } | { art: 'link'; item: NavItem }
 export type NavMenu = {
   id: string
   label: string
@@ -25,7 +26,7 @@ const ItemLink = ({ it, onClick, className }: { it: NavItem; onClick?: () => voi
     </Link>
   )
 
-export function NavClient({ menus, links }: { menus: NavMenu[]; links: NavItem[] }) {
+export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: NavEintrag[] }) {
   const pathname = usePathname()
   const [open, setOpen] = useState<string | null>(null)
   const [mobil, setMobil] = useState(false)
@@ -76,36 +77,34 @@ export function NavClient({ menus, links }: { menus: NavMenu[]; links: NavItem[]
             BSV 1919
           </Link>
           <nav aria-label="Hauptmenü" className="nav-links">
-            {menus.map((m) => (
-              <button
-                key={m.id}
-                type="button"
-                className="nav-link"
-                aria-expanded={open === m.id}
-                aria-current={bereichAktiv(m) ? 'page' : undefined}
-                onClick={() => setOpen(open === m.id ? null : m.id)}
-                onMouseEnter={() => setOpen(m.id)}
-              >
-                {m.label}
-              </button>
-            ))}
-            {links.map((l) =>
-              l.external ? (
+            {eintraege.map((e) => {
+              if (e.art === 'menu') {
+                const m = menus.find((x) => x.id === e.id)!
+                return (
+                  <button
+                    key={'m-' + e.id}
+                    type="button"
+                    className="nav-link"
+                    aria-expanded={open === m.id}
+                    aria-current={bereichAktiv(m) ? 'page' : undefined}
+                    onClick={() => setOpen(open === m.id ? null : m.id)}
+                    onMouseEnter={() => setOpen(m.id)}
+                  >
+                    {e.label}
+                  </button>
+                )
+              }
+              const l = e.item
+              return l.external ? (
                 <a key={l.href + l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="nav-link" onMouseEnter={() => setOpen(null)}>
                   {l.label}
                 </a>
               ) : (
-                <Link
-                  key={l.href + l.label}
-                  href={l.href}
-                  className="nav-link"
-                  aria-current={aktiv(l.href) ? 'page' : undefined}
-                  onMouseEnter={() => setOpen(null)}
-                >
+                <Link key={l.href + l.label} href={l.href} className="nav-link" aria-current={aktiv(l.href) ? 'page' : undefined} onMouseEnter={() => setOpen(null)}>
                   {l.label}
                 </Link>
-              ),
-            )}
+              )
+            })}
           </nav>
           <div className="nav-actions" onMouseEnter={() => setOpen(null)}>
             <Link href={eingeloggt ? '/mitglieder' : '/login'} className="nav-login">
@@ -159,25 +158,26 @@ export function NavClient({ menus, links }: { menus: NavMenu[]; links: NavItem[]
 
       {mobil && (
         <div className="mnav" id="mobilmenue">
-          {menus.map((m) => (
-            <details key={m.id}>
-              <summary>{m.label}</summary>
-              <Link href={m.href} className="mnav-sub" style={{ fontWeight: 600, color: 'var(--bsv-green)' }}>
-                Übersicht {m.label} ›
-              </Link>
-              {m.groups.map((g, i) => (
-                <div key={g.title + i} style={{ paddingBottom: 8 }}>
-                  {g.title.trim() && <p className="mnav-grp">{g.title}</p>}
-                  {g.items.map((it) => (
-                    <ItemLink key={it.href + it.label} it={it} className="mnav-sub" />
-                  ))}
-                </div>
-              ))}
-            </details>
-          ))}
-          {links.map((l) => (
-            <ItemLink key={l.href + l.label} it={l} className="mnav-top" />
-          ))}
+          {eintraege.map((e) => {
+            if (e.art === 'link') return <ItemLink key={e.item.href + e.item.label} it={e.item} className="mnav-top" />
+            const m = menus.find((x) => x.id === e.id)!
+            return (
+              <details key={'m-' + m.id}>
+                <summary>{e.label}</summary>
+                <Link href={m.href} className="mnav-sub" style={{ fontWeight: 600, color: 'var(--bsv-green)' }}>
+                  Übersicht {e.label} ›
+                </Link>
+                {m.groups.map((g, i) => (
+                  <div key={g.title + i} style={{ paddingBottom: 8 }}>
+                    {g.title.trim() && <p className="mnav-grp">{g.title}</p>}
+                    {g.items.map((it) => (
+                      <ItemLink key={it.href + it.label} it={it} className="mnav-sub" />
+                    ))}
+                  </div>
+                ))}
+              </details>
+            )
+          })}
           <div className="mnav-actions">
             <Link href="/mitglied-werden" className="btn btn-primary">
               Mitglied werden

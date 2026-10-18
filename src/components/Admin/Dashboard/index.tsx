@@ -114,7 +114,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   if (darf('ausfaelle', 'create')) aktionen.push({ label: 'Ausfall melden', href: `${ADMIN}/collections/ausfaelle/create` })
   if (darf('media', 'create')) aktionen.push({ label: 'Bilder hochladen', href: `${ADMIN}/collections/media/create` })
   if (darfGlobal('texte')) aktionen.push({ label: 'Website-Texte', href: `${ADMIN}/globals/texte` })
-  if (darfGlobal('menue')) aktionen.push({ label: 'Menü bearbeiten', href: `${ADMIN}/globals/menue` })
+  if (darfGlobal('menue')) aktionen.push({ label: 'Menü & Fußzeile', href: `${ADMIN}/globals/menue` })
   if (darf('pages', 'create')) aktionen.push({ label: 'Seite bearbeiten', href: `${ADMIN}/collections/pages` })
   if (darfGlobal('verein')) aktionen.push({ label: 'Vereinsdaten & Vorstand', href: `${ADMIN}/globals/verein` })
 

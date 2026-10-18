@@ -3,22 +3,25 @@ import type { ArrayField, Field, GlobalConfig } from 'payload'
 import { ausblendenAusser, isEditor } from '@/access/roles'
 import { revalidateAllesGlobal } from '@/hooks/revalidateAlles'
 
-/** Ein Menüeintrag: entweder eine Seite aus „Seiten“ oder eine eigene Adresse. */
-const eintrag: Field[] = [
+import { STANDARD_FUSSZEILE, STANDARD_HAUPTMENUE, STANDARD_VEREIN_MEHR, STANDARD_VEREIN_UEBER_UNS } from './standard'
+
+/** Ein Menüeintrag: Seite aus „Seiten“, eigene Adresse – oder (nur Hauptmenü) eines der Aufklappmenüs. */
+const eintrag = (mitAufklapp: boolean): Field[] => [
   {
     type: 'row',
     fields: [
-      { name: 'label', label: 'Text im Menü', type: 'text', required: true, admin: { width: '50%' } },
+      { name: 'label', label: 'Text im Menü', type: 'text', required: true, admin: { width: '40%' } },
       {
         name: 'ziel',
-        label: 'Ziel',
+        label: 'Was soll der Eintrag tun?',
         type: 'radio',
         defaultValue: 'seite',
         options: [
-          { label: 'Seite aus „Seiten“', value: 'seite' },
-          { label: 'Eigene Adresse', value: 'adresse' },
+          { label: 'Seite aus „Seiten“ öffnen', value: 'seite' },
+          { label: 'Adresse öffnen', value: 'adresse' },
+          ...(mitAufklapp ? [{ label: 'Aufklappmenü zeigen', value: 'aufklapp' }] : []),
         ],
-        admin: { layout: 'horizontal', width: '50%' },
+        admin: { layout: 'horizontal', width: '60%' },
       },
     ],
   },
@@ -28,11 +31,11 @@ const eintrag: Field[] = [
     type: 'relationship',
     relationTo: 'pages',
     admin: {
-      condition: (_, s) => s?.ziel !== 'adresse',
+      condition: (_, s) => !s?.ziel || s?.ziel === 'seite',
       description: 'Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.',
     },
     validate: (wert: unknown, { siblingData }: { siblingData: Record<string, unknown> }) =>
-      siblingData?.ziel === 'adresse' || wert ? true : 'Bitte eine Seite auswählen.',
+      siblingData?.ziel && siblingData.ziel !== 'seite' ? true : wert ? true : 'Bitte eine Seite auswählen.',
   },
   {
     type: 'row',
@@ -44,15 +47,13 @@ const eintrag: Field[] = [
         admin: {
           condition: (_, s) => s?.ziel === 'adresse',
           placeholder: '/termine oder https://…',
-          description: 'Interne Seiten mit „/“ beginnen, externe mit „https://“.',
+          description: 'Interne Seiten mit „/“ beginnen (z. B. /news, /termine, /kontakt), externe mit „https://“.',
           width: '70%',
         },
         validate: (wert: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => {
           if (siblingData?.ziel !== 'adresse') return true
           const v = String(wert ?? '').trim()
-          return v.startsWith('/') || v.startsWith('https://') || v.startsWith('http://') || v.startsWith('mailto:')
-            ? true
-            : 'Bitte mit „/“ oder „https://“ beginnen.'
+          return /^(\/|https?:\/\/|mailto:)/.test(v) ? true : 'Bitte mit „/“ oder „https://“ beginnen.'
         },
       },
       {
@@ -63,42 +64,117 @@ const eintrag: Field[] = [
       },
     ],
   },
+  ...(mitAufklapp
+    ? ([
+        {
+          name: 'aufklapp',
+          label: 'Welches Aufklappmenü?',
+          type: 'select',
+          defaultValue: 'fussball',
+          options: [
+            { label: 'Fußball (füllt sich automatisch aus „Teams & Kurse“)', value: 'fussball' },
+            { label: 'Breitensport (füllt sich automatisch aus „Teams & Kurse“)', value: 'breitensport' },
+            { label: 'Verein (Inhalt unten bei „Aufklappmenü Verein“)', value: 'verein' },
+          ],
+          admin: { condition: (_, s) => s?.ziel === 'aufklapp' },
+        },
+      ] as Field[])
+    : []),
 ]
 
-const liste = (name: string, label: string, description: string, maxRows: number): ArrayField => ({
+const liste = (name: string, label: string, description: string, maxRows: number, defaultValue: unknown[], mitAufklapp = false): ArrayField => ({
   name,
   label,
   type: 'array',
   maxRows,
+  defaultValue,
   labels: { singular: 'Eintrag', plural: 'Einträge' },
   admin: { description, initCollapsed: true, components: { RowLabel: '@/Menue/RowLabel' } },
-  fields: eintrag,
+  fields: eintrag(mitAufklapp),
 })
 
 /**
- * Hauptmenü der Website. „Fußball“ und „Breitensport“ füllen sich automatisch aus Teams & Kursen;
- * hier pflegt die Redaktion die übrigen Links – ohne Code.
+ * Menü und Fußzeile der Website – komplett ohne Code pflegbar.
+ * „Fußball“ und „Breitensport“ füllen sich automatisch aus Teams & Kursen.
  */
 export const Menue: GlobalConfig = {
   slug: 'menue',
-  label: 'Menü',
+  label: 'Menü & Fußzeile',
   admin: {
     group: 'Inhalte',
     hidden: ausblendenAusser('admin', 'redaktion'),
     description:
-      'Links im Hauptmenü oben. „Fußball“ und „Breitensport“ füllen sich automatisch aus „Teams & Kurse“. Eine leere Liste zeigt das Standardmenü.',
+      'Alle Einträge oben im Menü und unten in der Fußzeile. Reihenfolge ändern: am Griff links ziehen. Entfernen: drei Punkte rechts → „Entfernen“.',
   },
   access: { read: () => true, update: isEditor },
   fields: [
-    liste('links', 'Links in der Menüleiste', 'Erscheinen rechts neben „Verein“ – am besten höchstens 5, sonst wird es eng.', 6),
     {
-      type: 'collapsible',
-      label: 'Aufklappmenü „Verein“',
-      fields: [
-        liste('vereinUeberUns', 'Spalte „Über uns“', 'Linke Spalte im Aufklappmenü „Verein“.', 10),
-        liste('vereinMehr', 'Spalte „Mehr“', 'Rechte Spalte im Aufklappmenü „Verein“.', 10),
+      type: 'tabs',
+      tabs: [
+        {
+          label: 'Hauptmenü oben',
+          description: 'Die Einträge in der Menüleiste – in genau dieser Reihenfolge.',
+          fields: [
+            liste(
+              'links',
+              'Einträge in der Menüleiste',
+              'Von links nach rechts. Am besten höchstens 8, sonst wird es eng. Eine leere Liste zeigt das Standardmenü.',
+              10,
+              STANDARD_HAUPTMENUE,
+              true,
+            ),
+          ],
+        },
+        {
+          label: 'Aufklappmenü „Verein“',
+          description: 'Was erscheint, wenn man über „Verein“ fährt.',
+          fields: [
+            liste('vereinUeberUns', 'Linke Spalte („Über uns“)', 'Eine leere Liste zeigt die Standard-Links.', 10, STANDARD_VEREIN_UEBER_UNS),
+            liste('vereinMehr', 'Rechte Spalte („Mehr“)', 'Eine leere Liste zeigt die Standard-Links.', 10, STANDARD_VEREIN_MEHR),
+          ],
+        },
+        {
+          label: 'Fußzeile unten',
+          description: 'Die Spalten mit Links ganz unten auf jeder Seite. Die Kontakt-Spalte kommt aus den Vereinsdaten.',
+          fields: [
+            {
+              name: 'fusszeile',
+              label: 'Spalten der Fußzeile',
+              type: 'array',
+              maxRows: 5,
+              defaultValue: STANDARD_FUSSZEILE,
+              labels: { singular: 'Spalte', plural: 'Spalten' },
+              admin: { initCollapsed: true, description: 'Eine leere Liste zeigt die Standard-Fußzeile.', components: { RowLabel: '@/Menue/SpaltenLabel' } },
+              fields: [
+                { name: 'titel', label: 'Überschrift der Spalte', type: 'text', required: true },
+                {
+                  name: 'eintraege',
+                  label: 'Links',
+                  type: 'array',
+                  maxRows: 10,
+                  labels: { singular: 'Link', plural: 'Links' },
+                  admin: { initCollapsed: true, components: { RowLabel: '@/Menue/RowLabel' } },
+                  fields: eintrag(false),
+                },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],
-  hooks: { afterChange: [revalidateAllesGlobal] },
+  hooks: {
+    // Leere Listen zeigen den Standard – auch in der Verwaltung, damit man ihn direkt bearbeiten kann
+    afterRead: [
+      ({ doc }) => {
+        const leer = (v: unknown) => !Array.isArray(v) || v.length === 0
+        if (leer(doc.links)) doc.links = STANDARD_HAUPTMENUE
+        if (leer(doc.vereinUeberUns)) doc.vereinUeberUns = STANDARD_VEREIN_UEBER_UNS
+        if (leer(doc.vereinMehr)) doc.vereinMehr = STANDARD_VEREIN_MEHR
+        if (leer(doc.fusszeile)) doc.fusszeile = STANDARD_FUSSZEILE
+        return doc
+      },
+    ],
+    afterChange: [revalidateAllesGlobal],
+  },
 }

@@ -15,10 +15,10 @@ import { APIError } from 'payload'
 
 import { eigeneAngebotIds, hasRole, isEditorField, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../../access/roles'
 import { Banner } from '../../blocks/Banner/config'
-import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
 import { slugFromTitle } from '../../hooks/slugFromTitle'
+import { seoAutomatisch } from '../../hooks/seoAutomatisch'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
@@ -47,6 +47,8 @@ const newsAnlegen: Access = async ({ req }) => {
   if (hasRole(user as never, 'admin', 'redaktion')) return true
   return hasRole(user as never, ...TEAM_ROLLEN) && (await eigeneAngebotIds(req)).length > 0
 }
+
+const istRedaktion = (user: unknown) => hasRole(user as never, 'admin', 'redaktion')
 
 /** Team-News: nur für eigene Teams, Startseite entscheidet die Redaktion */
 const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operation, originalDoc }) => {
@@ -112,95 +114,61 @@ export const Posts: CollectionConfig<'posts'> = {
       admin: { description: 'Kurz und konkret, z. B. „F1 gewinnt Hallenturnier“.' },
     },
     {
-      type: 'tabs',
-      tabs: [
-        {
-          fields: [
-            {
-              name: 'heroImage',
-              label: 'Titelbild',
-              type: 'upload',
-              relationTo: 'media',
-              admin: { description: 'Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.' },
-            },
-            {
-              name: 'content',
-              type: 'richText',
-              editor: lexicalEditor({
-                features: ({ rootFeatures }) => {
-                  return [
-                    ...rootFeatures,
-                    HeadingFeature({ enabledHeadingSizes: ['h1', 'h2', 'h3', 'h4'] }),
-                    BlocksFeature({ blocks: [Banner, Code, MediaBlock] }),
-                    FixedToolbarFeature(),
-                    InlineToolbarFeature(),
-                    HorizontalRuleFeature(),
-                  ]
-                },
-              }),
-              label: false,
-              required: true,
-            },
-          ],
-          label: 'Inhalt',
+      name: 'heroImage',
+      label: 'Titelbild',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.' },
+    },
+    {
+      name: 'content',
+      label: 'Text',
+      type: 'richText',
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => {
+          return [
+            ...rootFeatures,
+            HeadingFeature({ enabledHeadingSizes: ['h2', 'h3', 'h4'] }),
+            BlocksFeature({ blocks: [Banner, MediaBlock] }),
+            FixedToolbarFeature(),
+            InlineToolbarFeature(),
+            HorizontalRuleFeature(),
+          ]
         },
+      }),
+      required: true,
+      admin: { description: 'Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren.' },
+    },
+    {
+      // Nur für Redaktion/Admin – alles hier füllt sich sonst automatisch
+      type: 'collapsible',
+      label: 'Für Fortgeschrittene: Google-Vorschau und passende News (optional)',
+      admin: {
+        initCollapsed: true,
+        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        description: 'Musst du nicht ausfüllen – die Website erzeugt das automatisch aus Titel, Text und Titelbild.',
+      },
+      fields: [
         {
-          fields: [
-            {
-              name: 'relatedPosts',
-              label: 'Passende News',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              filterOptions: ({ id }) => {
-                return {
-                  id: {
-                    not_in: [id],
-                  },
-                }
-              },
-              hasMany: true,
-              relationTo: 'posts',
-            },
-            {
-              name: 'categories',
-              label: 'Kategorien',
-              type: 'relationship',
-              admin: {
-                position: 'sidebar',
-              },
-              hasMany: true,
-              relationTo: 'categories',
-            },
-          ],
-          label: 'Zuordnung',
+          name: 'relatedPosts',
+          label: 'Passende News (unter dem Artikel)',
+          type: 'relationship',
+          filterOptions: ({ id }) => ({ id: { not_in: [id] } }),
+          hasMany: true,
+          relationTo: 'posts',
+          admin: { description: 'Leer lassen = keine Empfehlungen unter dem Artikel.' },
         },
         {
           name: 'meta',
-          label: 'SEO',
+          label: 'Google-Vorschau (SEO)',
+          type: 'group',
+          admin: { description: 'So erscheint die News bei Google und beim Teilen in WhatsApp & Co. Leer = automatisch.' },
           fields: [
-            OverviewField({
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-              imagePath: 'meta.image',
-            }),
-            MetaTitleField({
-              hasGenerateFn: true,
-            }),
-            MetaImageField({
-              relationTo: 'media',
-            }),
-
+            OverviewField({ titlePath: 'meta.title', descriptionPath: 'meta.description', imagePath: 'meta.image' }),
+            MetaTitleField({ hasGenerateFn: true }),
+            MetaImageField({ relationTo: 'media' }),
             MetaDescriptionField({}),
-            PreviewField({
-              // if the `generateUrl` function is configured
-              hasGenerateFn: true,
-
-              // field paths to match the target field for data
-              titlePath: 'meta.title',
-              descriptionPath: 'meta.description',
-            }),
+            PreviewField({ hasGenerateFn: true, titlePath: 'meta.title', descriptionPath: 'meta.description' }),
           ],
         },
       ],
@@ -211,11 +179,29 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Team / Kurs',
       type: 'relationship',
       relationTo: 'angebote',
+      // Wer genau ein Team betreut, hat es schon vorausgewählt
+      defaultValue: async ({ user, req }) => {
+        if (!user || istRedaktion(user)) return undefined
+        const r = await req.payload.find({ collection: 'angebote', where: { leitung: { contains: user.id } }, limit: 2, depth: 0, select: {} })
+        return r.docs.length === 1 ? r.docs[0]!.id : undefined
+      },
       // Team-Rollen sehen in der Auswahl nur ihre eigenen Teams
       filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
       admin: {
         position: 'sidebar',
         description: 'Erscheint auf der Seite dieses Teams. Leer lassen für Vereins-News.',
+      },
+    },
+    {
+      name: 'categories',
+      label: 'Kategorie',
+      type: 'relationship',
+      hasMany: true,
+      relationTo: 'categories',
+      admin: {
+        position: 'sidebar',
+        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        description: 'Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“.',
       },
     },
     {
@@ -226,6 +212,7 @@ export const Posts: CollectionConfig<'posts'> = {
       access: { create: isEditorField, update: isEditorField },
       admin: {
         position: 'sidebar',
+        condition: (_data, _sibling, { user }) => istRedaktion(user),
         description: 'Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.',
       },
     },
@@ -238,6 +225,8 @@ export const Posts: CollectionConfig<'posts'> = {
           pickerAppearance: 'dayAndTime',
         },
         position: 'sidebar',
+        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        description: 'Leer = Zeitpunkt der Veröffentlichung.',
       },
       hooks: {
         beforeChange: [
@@ -258,6 +247,7 @@ export const Posts: CollectionConfig<'posts'> = {
       defaultValue: ({ user }) => (user ? [user.id] : []),
       admin: {
         position: 'sidebar',
+        condition: (_data, _sibling, { user }) => istRedaktion(user),
         description: 'Wird automatisch mit deinem Namen vorbelegt.',
       },
       hasMany: true,
@@ -287,11 +277,16 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField(),
+    slugField({
+      overrides: (feld) => ({
+        ...feld,
+        admin: { ...feld.admin, condition: (_data: unknown, _sibling: unknown, { user }: { user: unknown }) => istRedaktion(user) },
+      }),
+    }),
   ],
   hooks: {
     beforeValidate: [slugFromTitle],
-    beforeChange: [teamNewsPruefen],
+    beforeChange: [teamNewsPruefen, seoAutomatisch({ text: (d) => d.content, bild: (d) => d.heroImage })],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

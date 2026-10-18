@@ -24,19 +24,20 @@ export const Archive: Block = {
           ]
         },
       }),
-      label: 'Intro Content',
+      label: 'Einleitungstext (optional)',
     },
     {
       name: 'populateBy',
+      label: 'Welche News?',
       type: 'select',
       defaultValue: 'collection',
       options: [
         {
-          label: 'Collection',
+          label: 'Automatisch die neuesten News',
           value: 'collection',
         },
         {
-          label: 'Individual Selection',
+          label: 'Bestimmte News auswählen',
           value: 'selection',
         },
       ],
@@ -48,10 +49,10 @@ export const Archive: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
       defaultValue: 'posts',
-      label: 'Collections To Show',
+      label: 'Inhaltsart',
       options: [
         {
-          label: 'Posts',
+          label: 'News',
           value: 'posts',
         },
       ],
@@ -63,7 +64,7 @@ export const Archive: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'collection',
       },
       hasMany: true,
-      label: 'Categories To Show',
+      label: 'Nur aus diesen Kategorien (optional)',
       relationTo: 'categories',
     },
     {
@@ -74,7 +75,7 @@ export const Archive: Block = {
         step: 1,
       },
       defaultValue: 10,
-      label: 'Limit',
+      label: 'Wie viele News?',
     },
     {
       name: 'selectedDocs',
@@ -83,12 +84,12 @@ export const Archive: Block = {
         condition: (_, siblingData) => siblingData.populateBy === 'selection',
       },
       hasMany: true,
-      label: 'Selection',
+      label: 'Ausgewählte News',
       relationTo: ['posts'],
     },
   ],
   labels: {
-    plural: 'Archives',
-    singular: 'Archive',
+    plural: 'News-Listen',
+    singular: 'News-Liste',
   },
 }

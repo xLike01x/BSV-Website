@@ -102,6 +102,37 @@ export default buildConfig({
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',
+    // Alltagssprache statt Fachbegriffe in der Verwaltung
+    translations: {
+      de: {
+        general: {
+          selectValue: 'Bitte auswählen …',
+          creating: 'Neu:',
+        },
+        version: {
+          publishChanges: 'Veröffentlichen',
+        },
+        fields: {
+          block: 'Baustein',
+          blocks: 'Bausteine',
+          blockType: 'Art des Bausteins',
+          searchForBlock: 'Baustein suchen',
+          addNew: 'Neuen Eintrag hinzufügen',
+        },
+        upload: {
+          dragAndDrop: 'Datei hierher ziehen',
+          dragAndDropHere: 'oder Datei hierher ziehen',
+          pasteURL: 'Adresse aus dem Internet',
+          focalPoint: 'Wichtigster Bildbereich',
+          previewSizes: 'Bildgrößen anzeigen',
+        },
+        lexical: {
+          general: {
+            placeholder: 'Hier schreiben … (mit „/“ gibt es Überschriften, Listen und mehr)',
+          },
+        },
+      },
+    } as unknown as NonNullable<NonNullable<Parameters<typeof buildConfig>[0]['i18n']>['translations']>,
   },
   plugins,
   secret: process.env.PAYLOAD_SECRET,

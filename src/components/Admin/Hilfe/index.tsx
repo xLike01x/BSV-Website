@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom'
 
 import { AnleitungBox, FaqBox, Feedback, FelderBox, FrageAnAdmin, tourStarten } from './bausteine'
 import { ansichtAus, hilfeFuer, ladeHilfeGlobal, type HilfeGlobal } from './daten'
-import { hauptRolle, ROLLEN_PROFIL } from './extras'
+import { GLOSSAR, hauptRolle, ROLLEN_PROFIL } from './extras'
 import { HILFE_BEARBEITEN, HILFE_LISTE } from './texte'
 import { HILFE_GESEHEN_PREF } from '../prefs'
 import './hilfe.scss'
@@ -91,6 +91,25 @@ export default function Hilfe() {
                   <FaqBox faq={h.faq} />
                 </section>
               )}
+
+              <section className="bsv-hilfe__gruppe">
+                <details className="bsv-hilfe__anleitung">
+                  <summary>
+                    <span className="bsv-hilfe__anleitung-icon" aria-hidden="true">
+                      ▸
+                    </span>
+                    Begriffe einfach erklärt
+                  </summary>
+                  <dl className="bsv-hilfe__felder">
+                    {GLOSSAR.map((g) => (
+                      <div key={g.name}>
+                        <dt>{g.name}</dt>
+                        <dd>{g.text}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </details>
+              </section>
 
               {ansicht.art === 'liste' && <Abschnitt titel="So funktioniert die Liste" punkte={HILFE_LISTE} />}
               {ansicht.art === 'bearbeiten' && <Abschnitt titel="Beim Bearbeiten" punkte={HILFE_BEARBEITEN} />}

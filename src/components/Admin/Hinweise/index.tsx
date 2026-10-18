@@ -86,8 +86,8 @@ export function NewsHinweise() {
   if (istTeamRolle && !id) h.push({ art: 'info', text: 'Ob die News zusätzlich auf die Startseite kommt, entscheidet die Redaktion.' })
   if (!bild) h.push({ art: 'warn', text: 'Kein Titelbild – in Übersichten sieht die News leer aus.' })
   if (titel && titel.length > 70) h.push({ art: 'warn', text: `Der Titel ist recht lang (${titel.length} Zeichen). Kürzer liest sich besser – ideal unter 70.` })
-  if (!hasPublishedDoc) h.push({ art: 'info', text: 'Noch nicht veröffentlicht – sichtbar erst nach „Änderungen veröffentlichen“.' })
-  else h.push({ art: 'ok', text: 'Ist veröffentlicht. Änderungen werden erst mit „Änderungen veröffentlichen“ übernommen.' })
+  if (!hasPublishedDoc) h.push({ art: 'info', text: 'Noch nicht veröffentlicht – sichtbar erst nach „Veröffentlichen“.' })
+  else h.push({ art: 'ok', text: 'Ist veröffentlicht. Änderungen werden erst mit „Veröffentlichen“ übernommen.' })
 
   return <HinweisBox titel="Vor dem Veröffentlichen" hinweise={h} />
 }
@@ -184,7 +184,7 @@ export function SeitenHinweise() {
       ),
     })
   if (!hasPublishedDoc && imMenue) h.push({ art: 'warn', text: 'Diese Seite steht im Menü, ist aber noch nicht veröffentlicht – der Menü-Link führt ins Leere.' })
-  if (hasPublishedDoc && !imMenue) h.push({ art: 'info', text: 'Steht nicht im Menü. Unter „Menü“ kannst du sie hinzufügen.' })
+  if (hasPublishedDoc && !imMenue) h.push({ art: 'info', text: 'Steht nicht im Menü. Unter „Menü & Fußzeile“ kannst du sie hinzufügen.' })
   if (!hasPublishedDoc) h.push({ art: 'info', text: 'Noch nicht veröffentlicht – nur in der Verwaltung sichtbar.' })
   return <HinweisBox hinweise={h} />
 }

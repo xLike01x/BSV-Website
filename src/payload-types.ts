@@ -192,6 +192,9 @@ export interface Post {
    * Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.
    */
   heroImage?: (number | null) | Media;
+  /**
+   * Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren.
+   */
   content: {
     root: {
       type: string;
@@ -207,8 +210,13 @@ export interface Post {
     };
     [k: string]: unknown;
   };
+  /**
+   * Leer lassen = keine Empfehlungen unter dem Artikel.
+   */
   relatedPosts?: (number | Post)[] | null;
-  categories?: (number | Category)[] | null;
+  /**
+   * So erscheint die News bei Google und beim Teilen in WhatsApp & Co. Leer = automatisch.
+   */
   meta?: {
     title?: string | null;
     /**
@@ -222,9 +230,16 @@ export interface Post {
    */
   team?: (number | null) | Angebote;
   /**
+   * Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“.
+   */
+  categories?: (number | Category)[] | null;
+  /**
    * Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.
    */
   aufStartseite?: boolean | null;
+  /**
+   * Leer = Zeitpunkt der Veröffentlichung.
+   */
   publishedAt?: string | null;
   /**
    * Wird automatisch mit deinem Namen vorbelegt.
@@ -468,9 +483,12 @@ export interface Angebote {
  */
 export interface User {
   id: number;
+  /**
+   * Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.
+   */
   name: string;
   /**
-   * Bestimmt, was diese Person sehen und bearbeiten darf.
+   * Admin: alles · Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
    */
   roles: ('admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied')[];
   /**
@@ -619,16 +637,25 @@ export interface Termine {
   createdAt: string;
 }
 /**
- * Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü“.
+ * Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü & Fußzeile“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
 export interface Page {
   id: number;
+  /**
+   * Name der Seite – steht im Browser-Tab und ergibt die Adresse, z. B. „Sommerfest 2027“ → /sommerfest-2027.
+   */
   title: string;
   hero: {
+    /**
+     * Groß mit Bild, mittel mit Bild, schlicht nur Text – oder gar keiner.
+     */
     type: 'none' | 'highImpact' | 'mediumImpact' | 'lowImpact';
+    /**
+     * Große Überschrift ganz oben auf der Seite, darunter ein kurzer Satz.
+     */
     richText?: {
       root: {
         type: string;
@@ -661,7 +688,7 @@ export interface Page {
             url?: string | null;
             label: string;
             /**
-             * Choose how the link should be rendered.
+             * Wie der Link aussehen soll.
              */
             appearance?: ('default' | 'outline') | null;
           };
@@ -726,7 +753,7 @@ export interface CallToActionBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Wie der Link aussehen soll.
            */
           appearance?: ('default' | 'outline') | null;
         };
@@ -776,7 +803,7 @@ export interface ContentBlock {
           url?: string | null;
           label: string;
           /**
-           * Choose how the link should be rendered.
+           * Wie der Link aussehen soll.
            */
           appearance?: ('default' | 'outline') | null;
         };
@@ -836,6 +863,9 @@ export interface ArchiveBlock {
  * via the `definition` "FormBlock".
  */
 export interface FormBlock {
+  /**
+   * Formulare legst du unter „Baukasten → Formulare“ an.
+   */
   form: number | Form;
   enableIntro?: boolean | null;
   introContent?: {
@@ -863,7 +893,13 @@ export interface FormBlock {
  */
 export interface Form {
   id: number;
+  /**
+   * Nur intern, z. B. „Anmeldung Sommerfest“.
+   */
   title: string;
+  /**
+   * Was abgefragt wird – z. B. Name, E-Mail, Anzahl Personen.
+   */
   fields?:
     | (
         | {
@@ -973,7 +1009,13 @@ export interface Form {
           }
       )[]
     | null;
+  /**
+   * z. B. „Anmelden“ oder „Absenden“.
+   */
   submitButtonLabel?: string | null;
+  /**
+   * Eine Danke-Nachricht zeigen oder auf eine andere Seite weiterleiten.
+   */
   confirmationType?: ('message' | 'redirect') | null;
   confirmationMessage?: {
     root: {
@@ -993,6 +1035,9 @@ export interface Form {
   redirect?: {
     url: string;
   };
+  /**
+   * Funktioniert erst, wenn der E-Mail-Versand eingerichtet ist.
+   */
   emails?:
     | {
         emailTo?: string | null;
@@ -1454,7 +1499,6 @@ export interface PostsSelect<T extends boolean = true> {
   heroImage?: T;
   content?: T;
   relatedPosts?: T;
-  categories?: T;
   meta?:
     | T
     | {
@@ -1463,6 +1507,7 @@ export interface PostsSelect<T extends boolean = true> {
         description?: T;
       };
   team?: T;
+  categories?: T;
   aufStartseite?: T;
   publishedAt?: T;
   authors?: T;
@@ -2247,7 +2292,7 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
- * Links im Hauptmenü oben. „Fußball“ und „Breitensport“ füllen sich automatisch aus „Teams & Kurse“. Eine leere Liste zeigt das Standardmenü.
+ * Alle Einträge oben im Menü und unten in der Fußzeile. Reihenfolge ändern: am Griff links ziehen. Entfernen: drei Punkte rechts → „Entfernen“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "menue".
@@ -2255,26 +2300,27 @@ export interface Footer {
 export interface Menue {
   id: number;
   /**
-   * Erscheinen rechts neben „Verein“ – am besten höchstens 5, sonst wird es eng.
+   * Von links nach rechts. Am besten höchstens 8, sonst wird es eng. Eine leere Liste zeigt das Standardmenü.
    */
   links?:
     | {
         label: string;
-        ziel?: ('seite' | 'adresse') | null;
+        ziel?: ('seite' | 'adresse' | 'aufklapp') | null;
         /**
          * Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.
          */
         seite?: (number | null) | Page;
         /**
-         * Interne Seiten mit „/“ beginnen, externe mit „https://“.
+         * Interne Seiten mit „/“ beginnen (z. B. /news, /termine, /kontakt), externe mit „https://“.
          */
         adresse?: string | null;
         neuerTab?: boolean | null;
+        aufklapp?: ('fussball' | 'breitensport' | 'verein') | null;
         id?: string | null;
       }[]
     | null;
   /**
-   * Linke Spalte im Aufklappmenü „Verein“.
+   * Eine leere Liste zeigt die Standard-Links.
    */
   vereinUeberUns?:
     | {
@@ -2285,7 +2331,7 @@ export interface Menue {
          */
         seite?: (number | null) | Page;
         /**
-         * Interne Seiten mit „/“ beginnen, externe mit „https://“.
+         * Interne Seiten mit „/“ beginnen (z. B. /news, /termine, /kontakt), externe mit „https://“.
          */
         adresse?: string | null;
         neuerTab?: boolean | null;
@@ -2293,7 +2339,7 @@ export interface Menue {
       }[]
     | null;
   /**
-   * Rechte Spalte im Aufklappmenü „Verein“.
+   * Eine leere Liste zeigt die Standard-Links.
    */
   vereinMehr?:
     | {
@@ -2304,10 +2350,35 @@ export interface Menue {
          */
         seite?: (number | null) | Page;
         /**
-         * Interne Seiten mit „/“ beginnen, externe mit „https://“.
+         * Interne Seiten mit „/“ beginnen (z. B. /news, /termine, /kontakt), externe mit „https://“.
          */
         adresse?: string | null;
         neuerTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Eine leere Liste zeigt die Standard-Fußzeile.
+   */
+  fusszeile?:
+    | {
+        titel: string;
+        eintraege?:
+          | {
+              label: string;
+              ziel?: ('seite' | 'adresse') | null;
+              /**
+               * Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.
+               */
+              seite?: (number | null) | Page;
+              /**
+               * Interne Seiten mit „/“ beginnen (z. B. /news, /termine, /kontakt), externe mit „https://“.
+               */
+              adresse?: string | null;
+              neuerTab?: boolean | null;
+              id?: string | null;
+            }[]
+          | null;
         id?: string | null;
       }[]
     | null;
@@ -2413,26 +2484,50 @@ export interface Texte {
   heroHand?: string | null;
   heroText?: string | null;
   alterFrage?: string | null;
+  alterKeinTreffer?: string | null;
+  zahlMitglieder?: string | null;
+  zahlAngebote?: string | null;
+  zahlKinder?: string | null;
+  zahlGruendung?: string | null;
   weltenTitel?: string | null;
   kachelFussball?: {
+    label?: string | null;
     titel?: string | null;
     text?: string | null;
+    link?: string | null;
   };
   kachelKids?: {
+    label?: string | null;
     titel?: string | null;
   };
   kachelFitness?: {
+    label?: string | null;
     titel?: string | null;
     text?: string | null;
   };
   kachelMitglieder?: {
+    label?: string | null;
     titel?: string | null;
     text?: string | null;
+    link?: string | null;
+    handyTitel?: string | null;
+    handyText?: string | null;
   };
   finderTitel?: string | null;
+  finderLink?: string | null;
   newsTitel?: string | null;
+  newsLink?: string | null;
   mitgliedTitel?: string | null;
   mitgliedText?: string | null;
+  schritte?: {
+    t1?: string | null;
+    d1?: string | null;
+    t2?: string | null;
+    d2?: string | null;
+    t3?: string | null;
+    d3?: string | null;
+    button?: string | null;
+  };
   fussball?: {
     titel?: string | null;
     text?: string | null;
@@ -2450,6 +2545,10 @@ export interface Texte {
     vorstandText?: string | null;
     beitraegeText?: string | null;
     shopTitel?: string | null;
+  };
+  fusszeile?: {
+    sponsor?: string | null;
+    sponsorLink?: string | null;
   };
   news?: {
     titel?: string | null;
@@ -2635,6 +2734,7 @@ export interface MenueSelect<T extends boolean = true> {
         seite?: T;
         adresse?: T;
         neuerTab?: T;
+        aufklapp?: T;
         id?: T;
       };
   vereinUeberUns?:
@@ -2655,6 +2755,22 @@ export interface MenueSelect<T extends boolean = true> {
         seite?: T;
         adresse?: T;
         neuerTab?: T;
+        id?: T;
+      };
+  fusszeile?:
+    | T
+    | {
+        titel?: T;
+        eintraege?:
+          | T
+          | {
+              label?: T;
+              ziel?: T;
+              seite?: T;
+              adresse?: T;
+              neuerTab?: T;
+              id?: T;
+            };
         id?: T;
       };
   updatedAt?: T;
@@ -2757,34 +2873,60 @@ export interface TexteSelect<T extends boolean = true> {
   heroHand?: T;
   heroText?: T;
   alterFrage?: T;
+  alterKeinTreffer?: T;
+  zahlMitglieder?: T;
+  zahlAngebote?: T;
+  zahlKinder?: T;
+  zahlGruendung?: T;
   weltenTitel?: T;
   kachelFussball?:
     | T
     | {
+        label?: T;
         titel?: T;
         text?: T;
+        link?: T;
       };
   kachelKids?:
     | T
     | {
+        label?: T;
         titel?: T;
       };
   kachelFitness?:
     | T
     | {
+        label?: T;
         titel?: T;
         text?: T;
       };
   kachelMitglieder?:
     | T
     | {
+        label?: T;
         titel?: T;
         text?: T;
+        link?: T;
+        handyTitel?: T;
+        handyText?: T;
       };
   finderTitel?: T;
+  finderLink?: T;
   newsTitel?: T;
+  newsLink?: T;
   mitgliedTitel?: T;
   mitgliedText?: T;
+  schritte?:
+    | T
+    | {
+        t1?: T;
+        d1?: T;
+        t2?: T;
+        d2?: T;
+        t3?: T;
+        d3?: T;
+        button?: T;
+      };
   fussball?:
     | T
     | {
@@ -2808,6 +2950,12 @@ export interface TexteSelect<T extends boolean = true> {
         vorstandText?: T;
         beitraegeText?: T;
         shopTitel?: T;
+      };
+  fusszeile?:
+    | T
+    | {
+        sponsor?: T;
+        sponsorLink?: T;
       };
   news?:
     | T
@@ -2935,17 +3083,6 @@ export interface BannerBlock {
   id?: string | null;
   blockName?: string | null;
   blockType: 'banner';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "CodeBlock".
- */
-export interface CodeBlock {
-  language?: ('typescript' | 'javascript' | 'css') | null;
-  code: string;
-  id?: string | null;
-  blockName?: string | null;
-  blockType: 'code';
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

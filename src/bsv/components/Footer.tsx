@@ -1,11 +1,14 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { getVerein } from '@/bsv/data'
+import { getMenue, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl } from '@/bsv/lib'
 
+import { zuLinks, type MenueEintrag } from './menueLinks'
+
 export async function Footer() {
-  const v = await getVerein()
+  const [v, menue, tx] = await Promise.all([getVerein(), getMenue(), getTexte()])
+  const spalten = ((menue?.fusszeile ?? []) as { titel?: string | null; eintraege?: MenueEintrag[] | null }[]).map((sp) => ({ titel: sp.titel ?? '', links: zuLinks(sp.eintraege) }))
   const sponsor = v.hauptsponsor
   const logo = bildUrl(sponsor?.logo, 'small')
 
@@ -14,7 +17,7 @@ export async function Footer() {
       <div className="foot-inner">
         <div className="foot-top">
           <img src="/bsv-logo.png" alt="BSV 1919 e.V." width={38} height={41} style={{ objectFit: 'contain' }} />
-          <span>Hauptsponsor</span>
+          <span>{tx.fusszeile?.sponsor}</span>
           {sponsor?.name && (
             <a
               href={sponsor.url || '#'}
@@ -26,41 +29,26 @@ export async function Footer() {
             </a>
           )}
           <Link href="/kontakt?thema=Sponsoring" style={{ color: 'var(--bsv-green)', marginLeft: 'auto' }}>
-            Sponsor werden ›
+            {tx.fusszeile?.sponsorLink}
           </Link>
         </div>
         <div className="foot-cols">
-          <div>
-            <strong>Fußball</strong>
-            <Link href="/fussball#junioren">Junioren</Link>
-            <Link href="/fussball#juniorinnen">Juniorinnen</Link>
-            <Link href="/fussball#senioren">Senioren</Link>
-            <Link href="/fussball#seniorinnen">Damen</Link>
-          </div>
-          <div>
-            <strong>Breitensport</strong>
-            <Link href="/breitensport#kids">BSV Kids</Link>
-            <Link href="/breitensport#erwachsene">Erwachsene &amp; Senioren</Link>
-            <Link href="/termine">Termine</Link>
-          </div>
-          <div>
-            <strong>Verein</strong>
-            <Link href="/verein#vorstand">Vorstand</Link>
-            <Link href="/verein#downloads">Satzung</Link>
-            <Link href="/verein#beitraege">Mitgliedsbeiträge</Link>
-            <Link href="/mitglied-werden">Mitglied werden</Link>
-          </div>
-          <div>
-            <strong>Entdecken</strong>
-            <Link href="/news">News</Link>
-            <Link href="/kunstrasen">Kunstrasen 2026</Link>
-            <a href="https://team.jako.de/de/team/buederichersv/" target="_blank" rel="noopener noreferrer">
-              Vereinskollektion ↗
-            </a>
-            <a href="https://buedericher-spielverein.fan12.de" target="_blank" rel="noopener noreferrer">
-              Merch-Shop ↗
-            </a>
-          </div>
+          {spalten.map((sp, i) => (
+            <div key={sp.titel + i}>
+              <strong>{sp.titel}</strong>
+              {sp.links.map((l) =>
+                l.external ? (
+                  <a key={l.href + l.label} href={l.href} target="_blank" rel="noopener noreferrer">
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link key={l.href + l.label} href={l.href}>
+                    {l.label}
+                  </Link>
+                ),
+              )}
+            </div>
+          ))}
           <div>
             <strong>Kontakt</strong>
             <span style={{ display: 'block', whiteSpace: 'pre-line' }}>{v.sportpark}</span>

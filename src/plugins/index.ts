@@ -77,7 +77,27 @@ export const plugins: Plugin[] = [
       admin: { group: 'Baukasten', hidden: ausblendenAusser('admin', 'redaktion') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
-        return defaultFields.map((field) => {
+        // Deutsche, verständliche Beschriftungen für den Formular-Baukasten
+        const beschriftung: Record<string, { label: string; description?: string }> = {
+          title: { label: 'Name des Formulars', description: 'Nur intern, z. B. „Anmeldung Sommerfest“.' },
+          fields: { label: 'Felder', description: 'Was abgefragt wird – z. B. Name, E-Mail, Anzahl Personen.' },
+          submitButtonLabel: { label: 'Text auf dem Absende-Button', description: 'z. B. „Anmelden“ oder „Absenden“.' },
+          confirmationType: { label: 'Nach dem Absenden …', description: 'Eine Danke-Nachricht zeigen oder auf eine andere Seite weiterleiten.' },
+          confirmationMessage: { label: 'Danke-Nachricht' },
+          redirect: { label: 'Weiterleiten zu' },
+          emails: { label: 'E-Mail-Benachrichtigungen', description: 'Funktioniert erst, wenn der E-Mail-Versand eingerichtet ist.' },
+        }
+        return defaultFields.map((roh) => {
+          const field = ('name' in roh && beschriftung[roh.name]
+            ? { ...roh, label: beschriftung[roh.name]!.label, admin: { ...(roh.admin ?? {}), description: beschriftung[roh.name]!.description } }
+            : roh) as typeof roh
+          if ('name' in field && field.name === 'confirmationType' && 'options' in field) {
+            const text: Record<string, string> = { message: 'Danke-Nachricht zeigen', redirect: 'Auf eine Seite weiterleiten' }
+            return {
+              ...field,
+              options: (field.options as { label: string; value: string }[]).map((o) => (typeof o === 'object' ? { ...o, label: text[o.value] ?? o.label } : o)),
+            } as typeof field
+          }
           if ('name' in field && field.name === 'confirmationMessage') {
             return {
               ...field,

@@ -163,7 +163,8 @@ const standardTexte = (felder: Field[]): Record<string, unknown> => {
         if ('name' in tab && tab.name) out[tab.name] = inner
         else Object.assign(out, inner)
       }
-    } else if (f.type === 'group' && 'name' in f && f.name) out[f.name] = standardTexte(f.fields)
+    } else if (f.type === 'row' || f.type === 'collapsible') Object.assign(out, standardTexte(f.fields))
+    else if (f.type === 'group' && 'name' in f && f.name) out[f.name] = standardTexte(f.fields)
     else if ('name' in f && 'defaultValue' in f && typeof f.defaultValue === 'string') out[f.name] = f.defaultValue
   }
   return out

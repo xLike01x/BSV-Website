@@ -11,13 +11,14 @@ export const Banner: Block = {
   fields: [
     {
       name: 'style',
+      label: 'Farbe',
       type: 'select',
       defaultValue: 'info',
       options: [
-        { label: 'Info', value: 'info' },
-        { label: 'Warning', value: 'warning' },
-        { label: 'Error', value: 'error' },
-        { label: 'Success', value: 'success' },
+        { label: 'Info (blau)', value: 'info' },
+        { label: 'Achtung (gelb)', value: 'warning' },
+        { label: 'Wichtig (rot)', value: 'error' },
+        { label: 'Erfolg (grün)', value: 'success' },
       ],
       required: true,
     },
@@ -29,9 +30,10 @@ export const Banner: Block = {
           return [...rootFeatures, FixedToolbarFeature(), InlineToolbarFeature()]
         },
       }),
-      label: false,
+      label: 'Text im Hinweis',
       required: true,
     },
   ],
   interfaceName: 'BannerBlock',
+  labels: { singular: 'Farbiger Hinweis', plural: 'Farbige Hinweise' },
 }

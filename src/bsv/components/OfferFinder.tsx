@@ -25,7 +25,7 @@ const GRUPPEN = [
 ]
 
 /** „Finde deinen Sport“ – Filter nach Altersgruppe */
-export function OfferFinder({ items }: { items: FinderItem[] }) {
+export function OfferFinder({ items, linkText = 'Probetraining ›' }: { items: FinderItem[]; linkText?: string }) {
   const [g, setG] = useState('alle')
   const [alleZeigen, setAlleZeigen] = useState(false)
   const idx = Math.max(0, GRUPPEN.findIndex((x) => x.id === g))
@@ -59,7 +59,7 @@ export function OfferFinder({ items }: { items: FinderItem[] }) {
               </span>
               <strong className="card-title">{o.name}</strong>
               <span className="card-meta">{o.alter}</span>
-              <span className="card-cta">Probetraining ›</span>
+              <span className="card-cta">{linkText}</span>
             </span>
           </Link>
         ))}

@@ -17,22 +17,23 @@ export const hero: Field = {
       name: 'type',
       type: 'select',
       defaultValue: 'lowImpact',
-      label: 'Type',
+      label: 'Art des Kopfbereichs',
+      admin: { description: 'Groß mit Bild, mittel mit Bild, schlicht nur Text – oder gar keiner.' },
       options: [
         {
-          label: 'None',
+          label: 'Kein Kopfbereich',
           value: 'none',
         },
         {
-          label: 'High Impact',
+          label: 'Groß mit Bild (bildschirmfüllend)',
           value: 'highImpact',
         },
         {
-          label: 'Medium Impact',
+          label: 'Mittel mit Bild',
           value: 'mediumImpact',
         },
         {
-          label: 'Low Impact',
+          label: 'Schlicht (nur Text)',
           value: 'lowImpact',
         },
       ],
@@ -51,7 +52,8 @@ export const hero: Field = {
           ]
         },
       }),
-      label: false,
+      label: 'Überschrift und Einleitung',
+      admin: { description: 'Große Überschrift ganz oben auf der Seite, darunter ein kurzer Satz.' },
     },
     linkGroup({
       overrides: {
@@ -60,6 +62,7 @@ export const hero: Field = {
     }),
     {
       name: 'media',
+      label: 'Bild im Kopfbereich',
       type: 'upload',
       admin: {
         condition: (_, { type } = {}) => ['highImpact', 'mediumImpact'].includes(type),

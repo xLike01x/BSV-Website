@@ -12,23 +12,24 @@ import { link } from '@/fields/link'
 const columnFields: Field[] = [
   {
     name: 'size',
+    label: 'Breite der Spalte',
     type: 'select',
     defaultValue: 'oneThird',
     options: [
       {
-        label: 'One Third',
+        label: 'Ein Drittel',
         value: 'oneThird',
       },
       {
-        label: 'Half',
+        label: 'Halbe Breite',
         value: 'half',
       },
       {
-        label: 'Two Thirds',
+        label: 'Zwei Drittel',
         value: 'twoThirds',
       },
       {
-        label: 'Full',
+        label: 'Volle Breite',
         value: 'full',
       },
     ],
@@ -46,10 +47,11 @@ const columnFields: Field[] = [
         ]
       },
     }),
-    label: false,
+    label: 'Text',
   },
   {
     name: 'enableLink',
+    label: 'Link unter dem Text anzeigen',
     type: 'checkbox',
   },
   link({
@@ -66,9 +68,12 @@ const columnFields: Field[] = [
 export const Content: Block = {
   slug: 'content',
   interfaceName: 'ContentBlock',
+  labels: { singular: 'Text (in Spalten)', plural: 'Texte' },
   fields: [
     {
       name: 'columns',
+      label: 'Spalten',
+      labels: { singular: 'Spalte', plural: 'Spalten' },
       type: 'array',
       admin: {
         initCollapsed: true,

@@ -26,7 +26,7 @@ export const CallToAction: Block = {
           ]
         },
       }),
-      label: false,
+      label: 'Text im Kasten',
     },
     linkGroup({
       appearances: ['default', 'outline'],
@@ -36,7 +36,7 @@ export const CallToAction: Block = {
     }),
   ],
   labels: {
-    plural: 'Calls to Action',
-    singular: 'Call to Action',
+    plural: 'Hinweis-Kästen mit Button',
+    singular: 'Hinweis-Kasten mit Button',
   },
 }
