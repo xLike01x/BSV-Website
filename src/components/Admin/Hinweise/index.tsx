@@ -207,3 +207,84 @@ export function MedienHinweise() {
   h.push({ art: 'info', text: 'Fotos von Kindern nur mit Einverständnis der Eltern.' })
   return <HinweisBox hinweise={h} />
 }
+
+/** Formular: Wo ist es eingebunden – und wie bindet man es ein? */
+export function FormularHinweise() {
+  const { id } = useDocumentInfo()
+  const [seiten, setSeiten] = useState<{ id: number; title: string; slug?: string; status?: string }[] | null>(null)
+  const [eingaenge, setEingaenge] = useState<number | null>(null)
+
+  useEffect(() => {
+    if (!id) return
+    let aktiv = true
+    fetch('/api/pages?depth=0&limit=300&draft=true&select[title]=true&select[slug]=true&select[layout]=true&select[_status]=true', { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : { docs: [] }))
+      .then((d: { docs: { id: number; title: string; slug?: string; _status?: string; layout?: { blockType?: string; form?: unknown }[] }[] }) => {
+        if (!aktiv) return
+        setSeiten(
+          d.docs
+            .filter((s) => (s.layout ?? []).some((b) => b.blockType === 'formBlock' && String(idVon(b.form)) === String(id)))
+            .map((s) => ({ id: s.id, title: s.title, slug: s.slug, status: s._status })),
+        )
+      })
+      .catch(() => aktiv && setSeiten([]))
+    fetch(`/api/form-submissions?depth=0&limit=0&where[form][equals]=${id}`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => aktiv && setEingaenge(d?.totalDocs ?? null))
+      .catch(() => {})
+    return () => {
+      aktiv = false
+    }
+  }, [id])
+
+  const hinweise: Hinweis[] = []
+  if (!id) {
+    hinweise.push({ art: 'info', text: 'Zuerst speichern. Danach kannst du das Formular auf einer Seite einbauen.' })
+  } else if (seiten === null) {
+    hinweise.push({ art: 'info', text: 'Prüfe, wo das Formular eingebunden ist …' })
+  } else if (seiten.length === 0) {
+    hinweise.push({
+      art: 'warn',
+      text: (
+        <>
+          Noch auf <strong>keiner Seite</strong> eingebaut – Besucher sehen es noch nicht. So geht&apos;s: <strong>Seiten</strong> öffnen (oder neu anlegen) → Reiter „Inhalt (Bausteine)“ →
+          „Baustein hinzufügen“ → <strong>Formular</strong> → dieses Formular auswählen → Veröffentlichen.{' '}
+          <a href="/admin/collections/pages/create">Neue Seite anlegen ›</a>
+        </>
+      ),
+    })
+  } else {
+    for (const s of seiten)
+      hinweise.push({
+        art: s.status === 'published' ? 'ok' : 'warn',
+        text: (
+          <>
+            Eingebaut auf <a href={`/admin/collections/pages/${s.id}`}>{s.title}</a>
+            {s.status === 'published' && s.slug ? (
+              <>
+                {' '}
+                ·{' '}
+                <a href={s.slug === 'home' ? '/' : `/${s.slug}`} target="_blank" rel="noopener">
+                  auf der Website ansehen ↗
+                </a>
+              </>
+            ) : (
+              ' – die Seite ist noch nicht veröffentlicht.'
+            )}
+          </>
+        ),
+      })
+    hinweise.push({ art: 'info', text: 'Im Menü verlinken: unter „Menü & Fußzeile“ einen Eintrag mit „Seite aus ‚Seiten‘ öffnen“ anlegen und diese Seite wählen.' })
+  }
+  if (id && eingaenge !== null)
+    hinweise.push({
+      art: 'info',
+      text: (
+        <>
+          Bisher {eingaenge === 1 ? '1 Eingang' : `${eingaenge} Eingänge`} –{' '}
+          <a href={`/admin/collections/form-submissions?where[form][equals]=${id}`}>ansehen ›</a>
+        </>
+      ),
+    })
+  return <HinweisBox titel="Wo erscheint dieses Formular?" hinweise={hinweise} />
+}

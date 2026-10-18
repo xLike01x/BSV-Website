@@ -213,6 +213,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Hinzufügen: unten „Eintrag hinzufügen“, Text eingeben und wählen, was er tun soll: Seite öffnen, Adresse öffnen oder Aufklappmenü zeigen.',
       'Reiter „Aufklappmenü Verein“: die beiden Spalten, die beim Darüberfahren über „Verein“ erscheinen.',
       'Reiter „Fußzeile unten“: die Spalten mit Links ganz unten auf jeder Seite.',
+      'Darunter „Kontakt-Spalte“: Überschrift, Adresse ein/aus und beliebig viele Links – z. B. Instagram, Facebook, YouTube oder WhatsApp-Kanal.',
     ],
     wirkung: [
       'Nach dem Speichern ist das neue Menü nach kurzer Zeit auf der ganzen Website sichtbar.',
@@ -266,9 +267,11 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       'Ein Formular aus Feldern zusammenstellen: Name, E-Mail, Auswahl, Ankreuzfeld usw.',
       'Festlegen, welche Nachricht nach dem Absenden erscheint.',
-      'Auf einer Seite den Baustein „Formular“ einfügen und dieses Formular auswählen.',
+      'Wichtig: Ein Formular allein ist noch nicht auf der Website. Du baust es auf einer Seite ein: Seiten → Seite öffnen oder neu anlegen → Reiter „Inhalt (Bausteine)“ → „Baustein hinzufügen“ → „Formular“ → dieses Formular auswählen → Veröffentlichen.',
+      'Rechts im Formular zeigt der Kasten „Wo erscheint dieses Formular?“, auf welchen Seiten es schon eingebaut ist.',
+      'Damit Besucher die Seite finden: unter „Menü & Fußzeile“ einen Eintrag zur Seite anlegen.',
     ],
-    wirkung: ['Ausgefüllte Formulare landen unter „Formular-Eingänge“.'],
+    wirkung: ['Ausgefüllte Formulare landen unter „Formular-Eingänge“ – der Kasten rechts verlinkt direkt dorthin.'],
     tipps: ['Mitgliedsantrag, Probetraining und Kontakt sind feste Formulare – die musst du hier nicht anlegen.', 'Nur abfragen, was ihr wirklich braucht (Datenschutz).'],
   },
 

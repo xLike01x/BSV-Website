@@ -6,7 +6,7 @@ import { revalidateAllesGlobal } from '@/hooks/revalidateAlles'
 import { STANDARD_FUSSZEILE, STANDARD_HAUPTMENUE, STANDARD_VEREIN_MEHR, STANDARD_VEREIN_UEBER_UNS } from './standard'
 
 /** Ein Menüeintrag: Seite aus „Seiten“, eigene Adresse – oder (nur Hauptmenü) eines der Aufklappmenüs. */
-const eintrag = (mitAufklapp: boolean): Field[] => [
+const eintrag = (mitAufklapp: boolean, extern = false): Field[] => [
   {
     type: 'row',
     fields: [
@@ -15,7 +15,7 @@ const eintrag = (mitAufklapp: boolean): Field[] => [
         name: 'ziel',
         label: 'Was soll der Eintrag tun?',
         type: 'radio',
-        defaultValue: 'seite',
+        defaultValue: extern ? 'adresse' : 'seite',
         options: [
           { label: 'Seite aus „Seiten“ öffnen', value: 'seite' },
           { label: 'Adresse öffnen', value: 'adresse' },
@@ -60,6 +60,7 @@ const eintrag = (mitAufklapp: boolean): Field[] => [
         name: 'neuerTab',
         label: 'In neuem Tab öffnen',
         type: 'checkbox',
+        defaultValue: extern,
         admin: { condition: (_, s) => s?.ziel === 'adresse', width: '30%', style: { alignSelf: 'flex-end' } },
       },
     ],
@@ -135,7 +136,7 @@ export const Menue: GlobalConfig = {
         },
         {
           label: 'Fußzeile unten',
-          description: 'Die Spalten mit Links ganz unten auf jeder Seite. Die Kontakt-Spalte kommt aus den Vereinsdaten.',
+          description: 'Die Spalten mit Links ganz unten auf jeder Seite – von links nach rechts. Ganz rechts folgt die Kontakt-Spalte (weiter unten).',
           fields: [
             {
               name: 'fusszeile',
@@ -158,6 +159,41 @@ export const Menue: GlobalConfig = {
                 },
               ],
             },
+            {
+              type: 'group',
+              name: 'kontakt',
+              label: 'Kontakt-Spalte (ganz rechts)',
+              admin: { description: 'Adresse und Links zu Social Media, YouTube, WhatsApp-Kanal, FuPa usw.' },
+              fields: [
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'anzeigen', label: 'Kontakt-Spalte anzeigen', type: 'checkbox', defaultValue: true, admin: { width: '50%', style: { alignSelf: 'flex-end' } } },
+                    { name: 'titel', label: 'Überschrift', type: 'text', defaultValue: 'Kontakt', admin: { width: '50%', condition: (_, s) => s?.anzeigen !== false } },
+                  ],
+                },
+                {
+                  name: 'adresseZeigen',
+                  label: 'Adresse des Sportplatzes anzeigen',
+                  type: 'checkbox',
+                  defaultValue: true,
+                  admin: { condition: (_, s) => s?.anzeigen !== false, description: 'Die Adresse selbst änderst du unter Verwaltung → Vereinsdaten → „Sportplatz“.' },
+                },
+                {
+                  name: 'links',
+                  label: 'Links unter der Adresse',
+                  type: 'array',
+                  maxRows: 10,
+                  labels: { singular: 'Link', plural: 'Links' },
+                  admin: {
+                    condition: (_, s) => s?.anzeigen !== false,
+                    description: 'Z. B. Instagram, Facebook, YouTube, TikTok, WhatsApp-Kanal oder FuPa. „Adresse öffnen“ wählen und die komplette Adresse mit https:// einfügen. Ein ↗ am Ende des Textes zeigt, dass es eine fremde Seite ist.',
+                    components: { RowLabel: '@/Menue/RowLabel' },
+                  },
+                  fields: eintrag(false, true),
+                },
+              ],
+            },
           ],
         },
       ],
@@ -166,12 +202,23 @@ export const Menue: GlobalConfig = {
   hooks: {
     // Leere Listen zeigen den Standard – auch in der Verwaltung, damit man ihn direkt bearbeiten kann
     afterRead: [
-      ({ doc }) => {
+      async ({ doc, req }) => {
         const leer = (v: unknown) => !Array.isArray(v) || v.length === 0
         if (leer(doc.links)) doc.links = STANDARD_HAUPTMENUE
         if (leer(doc.vereinUeberUns)) doc.vereinUeberUns = STANDARD_VEREIN_UEBER_UNS
         if (leer(doc.vereinMehr)) doc.vereinMehr = STANDARD_VEREIN_MEHR
         if (leer(doc.fusszeile)) doc.fusszeile = STANDARD_FUSSZEILE
+        // Kontakt-Links: noch nie gepflegt → Instagram/Facebook aus den bisherigen Vereinsdaten übernehmen
+        doc.kontakt = { anzeigen: true, titel: 'Kontakt', adresseZeigen: true, ...(doc.kontakt ?? {}) }
+        if (leer(doc.kontakt.links)) {
+          const v = (await req.payload.findGlobal({ slug: 'verein', depth: 0, req }).catch(() => null)) as { social?: { instagram?: string | null; facebook?: string | null } } | null
+          doc.kontakt.links = [
+            ['Instagram ↗', v?.social?.instagram ?? 'https://www.instagram.com/buedericher_spielverein/'],
+            ['Facebook ↗', v?.social?.facebook ?? 'https://www.facebook.com/bsv1919ev/'],
+          ]
+            .filter(([, url]) => url)
+            .map(([label, adresse]) => ({ label, ziel: 'adresse', adresse, neuerTab: true }))
+        }
         return doc
       },
     ],

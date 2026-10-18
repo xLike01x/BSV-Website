@@ -205,6 +205,18 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Oben rechts „Speichern“.',
       ],
     },
+    {
+      id: 'social-links',
+      titel: 'YouTube, TikTok oder einen anderen Link bei „Kontakt“ hinzufügen',
+      schritte: [
+        'Links auf „Menü & Fußzeile“ und oben den Reiter „Fußzeile unten“ wählen.',
+        'Nach unten zu „Kontakt-Spalte (ganz rechts)“ scrollen.',
+        'Bei „Links unter der Adresse“ auf „Link hinzufügen“ klicken.',
+        'Text eingeben, z. B. „YouTube ↗“. Bei „Was soll der Eintrag tun?“ „Adresse öffnen“ wählen.',
+        'Die komplette Adresse einfügen (mit https://) und „In neuem Tab öffnen“ anhaken.',
+        'Reihenfolge am Griff links ändern, oben rechts „Speichern“.',
+      ],
+    },
   ],
   angebote: [
     {
@@ -412,6 +424,18 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Speichern. Auf einer Seite den Baustein „Formular“ einfügen und dieses Formular auswählen.',
       ],
     },
+    {
+      id: 'formular-einbauen',
+      titel: 'Das Formular auf der Website zeigen',
+      schritte: [
+        'Links auf „Seiten“. Eine bestehende Seite öffnen oder „Neu erstellen“ (z. B. „Sommerfest“).',
+        'Oben den Reiter „Inhalt (Bausteine)“ wählen.',
+        '„Baustein hinzufügen“ → „Formular“ anklicken.',
+        'Bei „Formular“ dein Formular auswählen. Optional eine kurze Einleitung darüber schreiben.',
+        'Oben rechts „Veröffentlichen“. Die Seite ist jetzt unter ihrer Adresse erreichbar (z. B. /sommerfest).',
+        'Ins Menü aufnehmen: „Menü & Fußzeile“ → Eintrag hinzufügen → „Seite aus ‚Seiten‘ öffnen“ → Seite wählen → Speichern.',
+      ],
+    },
   ],
 }
 
@@ -504,6 +528,8 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Was soll der Eintrag tun?', text: '„Seite öffnen“ (eine eurer Seiten), „Adresse öffnen“ (z. B. /news oder eine fremde Website) oder „Aufklappmenü zeigen“ (Fußball, Breitensport oder Verein).' },
     { name: 'Adresse', text: 'Intern mit „/“: /news, /termine, /kontakt, /verein, /fussball, /breitensport, /mitglied-werden. Extern mit „https://“.' },
     { name: 'In neuem Tab öffnen', text: 'Sinnvoll für fremde Websites wie den Fan-Shop.' },
+    { name: 'Kontakt-Spalte', text: 'Die Spalte ganz rechts in der Fußzeile. Haken „anzeigen“ entfernen blendet sie aus. Die Adresse kommt aus den Vereinsdaten.' },
+    { name: 'Links unter der Adresse', text: 'Für Social Media und andere fremde Seiten: „Adresse öffnen“ wählen, komplette Adresse mit https:// einfügen, „In neuem Tab öffnen“ anhaken.' },
     { name: 'Griff (sechs Punkte)', text: 'Daran ziehst du einen Eintrag nach oben oder unten.' },
   ],
   verein: [
@@ -569,6 +595,16 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* Häufige Fragen                                                      */
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
+  {
+    frage: 'Ich habe ein Formular angelegt – wo sehe ich es?',
+    antwort: 'Ein Formular erscheint erst, wenn du es auf einer Seite einbaust: Seiten → Seite öffnen oder neu anlegen → „Inhalt (Bausteine)“ → „Baustein hinzufügen“ → „Formular“ → Formular auswählen → Veröffentlichen. Danach die Seite unter „Menü & Fußzeile“ ins Menü aufnehmen. Rechts im Formular siehst du, wo es schon eingebaut ist.',
+    bereich: 'forms',
+  },
+  {
+    frage: 'Wo ändere ich Instagram, Facebook und andere Links in der Fußzeile?',
+    antwort: 'Unter „Menü & Fußzeile“ → Reiter „Fußzeile unten“ → „Kontakt-Spalte“. Dort kannst du beliebig viele Links hinzufügen, umsortieren oder entfernen. Die Adresse darüber kommt aus den Vereinsdaten.',
+    bereich: 'menue',
+  },
   {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'In der Rollen-Übersicht (links unten in der Seitenleiste, nur für Admins). Dort gibt es drei Reiter: nach Person, nach Team und nach Rolle.',

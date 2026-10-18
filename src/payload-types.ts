@@ -2382,6 +2382,36 @@ export interface Menue {
         id?: string | null;
       }[]
     | null;
+  /**
+   * Adresse und Links zu Social Media, YouTube, WhatsApp-Kanal, FuPa usw.
+   */
+  kontakt?: {
+    anzeigen?: boolean | null;
+    titel?: string | null;
+    /**
+     * Die Adresse selbst änderst du unter Verwaltung → Vereinsdaten → „Sportplatz“.
+     */
+    adresseZeigen?: boolean | null;
+    /**
+     * Z. B. Instagram, Facebook, YouTube, TikTok, WhatsApp-Kanal oder FuPa. „Adresse öffnen“ wählen und die komplette Adresse mit https:// einfügen. Ein ↗ am Ende des Textes zeigt, dass es eine fremde Seite ist.
+     */
+    links?:
+      | {
+          label: string;
+          ziel?: ('seite' | 'adresse') | null;
+          /**
+           * Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.
+           */
+          seite?: (number | null) | Page;
+          /**
+           * Interne Seiten mit „/“ beginnen (z. B. /news, /termine, /kontakt), externe mit „https://“.
+           */
+          adresse?: string | null;
+          neuerTab?: boolean | null;
+          id?: string | null;
+        }[]
+      | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -2774,6 +2804,23 @@ export interface MenueSelect<T extends boolean = true> {
               id?: T;
             };
         id?: T;
+      };
+  kontakt?:
+    | T
+    | {
+        anzeigen?: T;
+        titel?: T;
+        adresseZeigen?: T;
+        links?:
+          | T
+          | {
+              label?: T;
+              ziel?: T;
+              seite?: T;
+              adresse?: T;
+              neuerTab?: T;
+              id?: T;
+            };
       };
   updatedAt?: T;
   createdAt?: T;

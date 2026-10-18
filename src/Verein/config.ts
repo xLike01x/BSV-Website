@@ -156,6 +156,8 @@ export const Verein: GlobalConfig = {
       type: 'group',
       name: 'social',
       label: 'Social Media',
+      // Wird jetzt unter „Menü & Fußzeile → Kontakt-Spalte“ gepflegt (dient nur noch als Startwert)
+      admin: { condition: () => false },
       fields: [
         { name: 'instagram', type: 'text', defaultValue: 'https://www.instagram.com/buedericher_spielverein/' },
         { name: 'facebook', type: 'text', defaultValue: 'https://www.facebook.com/bsv1919ev/' },

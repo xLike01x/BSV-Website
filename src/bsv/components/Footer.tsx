@@ -9,6 +9,8 @@ import { zuLinks, type MenueEintrag } from './menueLinks'
 export async function Footer() {
   const [v, menue, tx] = await Promise.all([getVerein(), getMenue(), getTexte()])
   const spalten = ((menue?.fusszeile ?? []) as { titel?: string | null; eintraege?: MenueEintrag[] | null }[]).map((sp) => ({ titel: sp.titel ?? '', links: zuLinks(sp.eintraege) }))
+  const kontakt = (menue as { kontakt?: { anzeigen?: boolean | null; titel?: string | null; adresseZeigen?: boolean | null; links?: MenueEintrag[] | null } } | null)?.kontakt
+  const kontaktLinks = zuLinks(kontakt?.links)
   const sponsor = v.hauptsponsor
   const logo = bildUrl(sponsor?.logo, 'small')
 
@@ -49,20 +51,23 @@ export async function Footer() {
               )}
             </div>
           ))}
-          <div>
-            <strong>Kontakt</strong>
-            <span style={{ display: 'block', whiteSpace: 'pre-line' }}>{v.sportpark}</span>
-            {v.social?.instagram && (
-              <a href={v.social.instagram} target="_blank" rel="noopener noreferrer" style={{ marginTop: 6 }}>
-                Instagram ↗
-              </a>
-            )}
-            {v.social?.facebook && (
-              <a href={v.social.facebook} target="_blank" rel="noopener noreferrer">
-                Facebook ↗
-              </a>
-            )}
-          </div>
+          {kontakt?.anzeigen !== false && (
+            <div>
+              <strong>{kontakt?.titel || 'Kontakt'}</strong>
+              {kontakt?.adresseZeigen !== false && v.sportpark && <span style={{ display: 'block', whiteSpace: 'pre-line', marginBottom: 6 }}>{v.sportpark}</span>}
+              {kontaktLinks.map((l) =>
+                l.external ? (
+                  <a key={l.href + l.label} href={l.href} target="_blank" rel="noopener noreferrer">
+                    {l.label}
+                  </a>
+                ) : (
+                  <Link key={l.href + l.label} href={l.href}>
+                    {l.label}
+                  </Link>
+                ),
+              )}
+            </div>
+          )}
         </div>
         <p className="foot-bottom">
           © {v.name} · Postanschrift: {(v.postanschrift ?? '').replace(/\n/g, ', ')} · <Link href="/kontakt">Kontakt</Link> ·{' '}
