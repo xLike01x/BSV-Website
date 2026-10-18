@@ -1,15 +1,16 @@
+import { hasRole } from '@/access/roles'
 import { ausblendenAusser } from '@/access/roles'
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { isAdmin } from '../access/roles'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
 
 /** Vereinsdaten an einer Stelle: Adressen, Kennzahlen, Beiträge, Hauptsponsor. */
 export const Verein: GlobalConfig = {
   slug: 'verein',
   label: 'Vereinsdaten',
-  access: { read: anyone, update: isAdmin },
+  // Redaktion (Vorstand, Bilder, Aktion) und Kasse (Beiträge) pflegen die Vereinsdaten mit
+  access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
   admin: { group: 'Verwaltung', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Bilder der Startseite.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
   hooks: { afterChange: [revalidateAllesGlobal] },
   fields: [

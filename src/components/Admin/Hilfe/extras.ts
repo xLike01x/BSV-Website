@@ -518,6 +518,9 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
     uebungsleitung: 'Du kannst Ausfälle nur für deine eigenen Teams melden.',
     teamredaktion: 'Du kannst Ausfälle nur für deine eigenen Teams melden.',
   },
+  probetraining: {
+    uebungsleitung: 'Du siehst nur Anfragen für deine eigenen Teams. Bitte zeitnah melden und danach den Status ändern.',
+  },
   mitgliedsantraege: { kasse: 'Als Kasse bist du hier hauptverantwortlich. Bitte Anträge zeitnah bearbeiten.' },
   users: { admin: 'Nur Admins sehen diesen Bereich. Vergib Rollen so sparsam wie möglich.' },
 }
@@ -638,7 +641,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   kasse: {
     label: 'Kasse',
     kurz: 'Du bearbeitest die Mitgliedsanträge und pflegst die Beiträge.',
-    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Beiträge in den Vereinsdaten pflegen'],
+    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen'],
     darfNicht: ['News und Seiten veröffentlichen', 'Benutzer verwalten'],
     anleitungen: [
       ['mitgliedsantraege', 'antrag-bearbeiten'],
@@ -648,7 +651,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   uebungsleitung: {
     label: 'Übungsleitung',
     kurz: 'Du pflegst deine eigenen Teams oder Kurse.',
-    darf: ['News für deine Teams schreiben', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern'],
+    darf: ['News für deine Teams schreiben', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern', 'Probetraining-Anfragen für deine Teams beantworten'],
     darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen'],
     anleitungen: [
       ['ausfaelle', 'ausfall-melden'],
