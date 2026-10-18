@@ -1,15 +1,26 @@
 'use client'
 
+import { GoogleKnopf } from '@/bsv/components/GoogleKnopf'
 import { sicheresZiel } from '@/bsv/sicheresZiel'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 
-export function LoginForm() {
+const GOOGLE_FEHLER: Record<string, string> = {
+  'google-aus': 'Die Anmeldung mit Google ist noch nicht eingerichtet.',
+  'google-abgelaufen': 'Die Anmeldung mit Google hat zu lange gedauert. Bitte noch einmal versuchen.',
+  'google-abgebrochen': 'Die Anmeldung mit Google wurde abgebrochen.',
+  'google-fehler': 'Die Anmeldung mit Google hat nicht geklappt. Bitte noch einmal versuchen.',
+  'zu-viele': 'Zu viele Versuche. Bitte in ein paar Minuten erneut probieren.',
+  gesperrt: 'Dieses Konto ist gerade gesperrt. Bitte später erneut versuchen.',
+  'nicht-eingerichtet': 'Die Website ist noch nicht eingerichtet.',
+}
+
+export function LoginForm({ google = false }: { google?: boolean }) {
   const router = useRouter()
   const sp = useSearchParams()
   const [modus, setModus] = useState<'login' | 'vergessen' | 'gesendet'>('login')
-  const [fehler, setFehler] = useState<string | null>(null)
+  const [fehler, setFehler] = useState<string | null>(GOOGLE_FEHLER[sp.get('fehler') ?? ''] ?? null)
   const [laedt, setLaedt] = useState(false)
 
   // Nur interne Ziele erlauben (kein Open Redirect)
@@ -75,6 +86,7 @@ export function LoginForm() {
 
   return (
     <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={modus === 'login' ? login : vergessen}>
+      {google && modus === 'login' && <GoogleKnopf weiter={weiter} text="Mit Google anmelden" />}
       <label className="field">
         E-Mail
         <input name="email" type="email" required autoComplete="username" autoFocus />
@@ -97,7 +109,7 @@ export function LoginForm() {
         <button type="button" onClick={() => (setFehler(null), setModus(modus === 'login' ? 'vergessen' : 'login'))} style={{ font: 'inherit', background: 'none', border: 0, color: 'var(--bsv-green)', cursor: 'pointer', padding: 0 }}>
           {modus === 'login' ? 'Passwort vergessen?' : 'Zurück zur Anmeldung'}
         </button>
-        <Link href="/mitglied-werden">Noch kein Mitglied?</Link>
+        <Link href={`/registrieren${weiter !== '/mitglieder' ? `?weiter=${encodeURIComponent(weiter)}` : ''}`}>Noch kein Konto? Registrieren</Link>
       </div>
     </form>
   )

@@ -1,4 +1,4 @@
-import { hasRole } from '@/access/roles'
+import { hasRole, istMitgliedOderMehr } from '@/access/roles'
 import { ausblendenAusser } from '@/access/roles'
 import type { GlobalConfig } from 'payload'
 
@@ -17,7 +17,7 @@ export const Verein: GlobalConfig = {
     // Über die öffentliche Schnittstelle niemals Dateien „Nur für Mitglieder“ verraten
     afterRead: [
       ({ doc, req }) => {
-        if (req.user || req.payloadAPI === 'local') return doc
+        if (istMitgliedOderMehr(req.user) || req.payloadAPI === 'local') return doc
         const d = doc as { downloads?: { nurMitglieder?: boolean | null; datei?: unknown; dokument?: unknown }[] }
         d.downloads = (d.downloads ?? []).map((x) => (x.nurMitglieder ? { ...x, datei: null, dokument: null } : x))
         return doc

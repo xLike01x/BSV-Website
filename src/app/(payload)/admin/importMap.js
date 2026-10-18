@@ -26,6 +26,7 @@ import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { default as default_32ec0822ebee3f70a808b72e6323c81c } from '@/components/Admin/MedienOrdner'
 import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { default as default_55f1f0469e11c520ea3427c3563b2e35 } from '@/components/Admin/Teilnehmende'
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { default as default_3128b959b5f53a177f9b2fbbb89048a9 } from '@/components/Admin/Sponsoren'
@@ -52,6 +53,7 @@ import { default as default_40ee7fa0a665ebc012dabaae94ee72db } from '@/component
 import { default as default_1fa6a1ae6ba337a6478dc96369447471 } from '@/components/Admin/HilfeCenter'
 import { default as default_2471f1cac5bfd6793014555a88ab468a } from '@/components/Admin/Rollen'
 import { default as default_9b2c38652bcb00d3df4e65f581c624fd } from '@/components/Admin/Sicherung'
+import { default as default_4855f11a2eb75fd86caa7fbee0a882ef } from '@/components/Admin/Registrierungen'
 import { default as default_3b78fde88b8d7c81dfd3772908e6ca41 } from '@/components/Admin/HilfeCenter/Kurzanleitung'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -85,6 +87,7 @@ export const importMap = {
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@/components/Admin/MedienOrdner#default": default_32ec0822ebee3f70a808b72e6323c81c,
   "@/components/Admin/Hinweise#SeitenHinweise": SeitenHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/Teilnehmende#default": default_55f1f0469e11c520ea3427c3563b2e35,
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Sponsoren#default": default_3128b959b5f53a177f9b2fbbb89048a9,
@@ -111,6 +114,7 @@ export const importMap = {
   "@/components/Admin/HilfeCenter#default": default_1fa6a1ae6ba337a6478dc96369447471,
   "@/components/Admin/Rollen#default": default_2471f1cac5bfd6793014555a88ab468a,
   "@/components/Admin/Sicherung#default": default_9b2c38652bcb00d3df4e65f581c624fd,
+  "@/components/Admin/Registrierungen#default": default_4855f11a2eb75fd86caa7fbee0a882ef,
   "@/components/Admin/HilfeCenter/Kurzanleitung#default": default_3b78fde88b8d7c81dfd3772908e6ca41,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

@@ -1,3 +1,4 @@
+import { registrierungEndpunkte } from '@/auth/registrierung'
 import { webadminLoeschSchutz, webadminSchutz } from './webadminSchutz'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
@@ -37,7 +38,7 @@ export const Users: CollectionConfig = {
     // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte
     strategies: [zweiFaktorStrategie],
   },
-  endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte],
+  endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte, ...registrierungEndpunkte],
   fields: [
     { name: 'name', label: 'Name', type: 'text', required: true, admin: { description: 'Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.' } },
     {
@@ -76,6 +77,40 @@ export const Users: CollectionConfig = {
         defaultColumns: ['title', 'bereich'],
       },
     },
+    {
+      name: 'profilbild',
+      label: 'Profilfoto',
+      type: 'upload',
+      relationTo: 'profilbilder',
+      // Setzt das Mitglied selbst im Mitgliederbereich (Hochladen trägt es automatisch ein)
+      access: { create: isAdminField, update: isAdminField },
+      admin: { position: 'sidebar', description: 'Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.' },
+    },
+    {
+      name: 'freigegeben',
+      label: 'Freigegeben',
+      type: 'checkbox',
+      defaultValue: true,
+      access: { create: isAdminField, update: isAdminField },
+      admin: {
+        position: 'sidebar',
+        description: 'Ohne Haken: selbst registriert, wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“.',
+      },
+    },
+    {
+      name: 'registriertUeber',
+      label: 'Registriert über',
+      type: 'select',
+      options: [
+        { label: 'Von der Verwaltung angelegt', value: 'verwaltung' },
+        { label: 'Selbst registriert (E-Mail)', value: 'email' },
+        { label: 'Selbst registriert (Google)', value: 'google' },
+      ],
+      access: { create: () => false, update: () => false },
+      admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.registriertUeber) },
+    },
+    // Verknüpfung mit dem Google-Konto (nie über die Schnittstelle sichtbar)
+    { name: 'googleId', type: 'text', index: true, access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
     ...zweiFaktorFelder,
     testkontoFeld,
     {
@@ -114,7 +149,13 @@ export const Users: CollectionConfig = {
       },
       webadminSchutz,
     ],
-    beforeDelete: [webadminLoeschSchutz],
+    beforeDelete: [
+      webadminLoeschSchutz,
+      // Konto wird gelöscht → Profilfoto mit löschen (vorher, solange die Verknüpfung noch besteht)
+      async ({ id, req }) => {
+        await req.payload.delete({ collection: 'profilbilder', where: { besitzer: { equals: id } }, overrideAccess: true, req }).catch(() => {})
+      },
+    ],
   },
   timestamps: true,
 }

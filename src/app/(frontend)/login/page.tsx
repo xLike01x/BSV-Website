@@ -3,6 +3,7 @@ import React, { Suspense } from 'react'
 
 import { LoginForm } from '@/bsv/components/LoginForm'
 
+export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Anmelden', robots: { index: false } }
 
 export default function LoginSeite() {
@@ -21,7 +22,7 @@ export default function LoginSeite() {
           </p>
         </div>
         <Suspense fallback={<div className="form" style={{ minHeight: 320 }} />}>
-          <LoginForm />
+          <LoginForm google={Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET)} />
         </Suspense>
       </div>
     </section>

@@ -466,3 +466,17 @@
 .gesuch-symbol { font-size: 36px; }
 .gesuch-aufwand { color: var(--bsv-green); font-weight: 600; font-size: 15px; }
 .gesuch-aktionen { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: auto; padding-top: 14px; }
+
+/* Anmelden / Registrieren mit Google */
+.google-block { display: flex; flex-direction: column; gap: 10px; }
+.bsv a.google-knopf, .google-knopf { display: flex; align-items: center; justify-content: center; gap: 10px; min-height: 52px; border-radius: 14px; border: 1px solid #dadce0; background: #fff; color: var(--bsv-ink); font-weight: 600; font-size: 16px; text-decoration: none; transition: background-color .2s, box-shadow .2s; }
+.bsv a.google-knopf:hover { background: #f8f9fa; box-shadow: 0 2px 8px rgba(0,0,0,.06); }
+.google-hinweis { margin: 0; font-size: 13px; color: var(--bsv-muted); text-align: center; }
+.oder { display: flex; align-items: center; gap: 12px; color: var(--bsv-muted); font-size: 13px; margin: 6px 0 2px; }
+.oder::before, .oder::after { content: ''; flex: 1; height: 1px; background: rgba(0,0,0,.1); }
+
+/* Profilfoto im Mitgliederbereich */
+.avatar { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; background: var(--bsv-green-tint); color: var(--bsv-green); display: inline-flex; align-items: center; justify-content: center; font-weight: 800; font-size: 26px; flex: 0 0 auto; }
+.avatar--gross { width: 112px; height: 112px; font-size: 44px; }
+.profilfoto { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
+.profilfoto-knoepfe { display: flex; gap: 10px; flex-wrap: wrap; }

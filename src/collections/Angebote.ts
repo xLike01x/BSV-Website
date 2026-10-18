@@ -1,3 +1,4 @@
+import { teilnehmendeEndpunkt } from '@/components/Admin/Teilnehmende/endpunkt'
 import { medienPruefen } from '@/hooks/medienPruefen'
 import { medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
@@ -32,6 +33,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],
   },
+  endpoints: [teilnehmendeEndpunkt],
   hooks: {
     beforeChange: [medienPruefen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
@@ -112,6 +114,8 @@ export const Angebote: CollectionConfig<'angebote'> = {
         { name: 'hinweis', label: 'Hinweis', type: 'text', admin: { placeholder: 'z. B. nur in ungeraden Kalenderwochen' } },
       ],
     },
+    // Mitglieder dieses Kurses mit Foto (nur Anzeige)
+    { name: 'teilnehmendeAnzeige', type: 'ui', admin: { components: { Field: '@/components/Admin/Teilnehmende' } } },
     {
       name: 'leitung',
       label: 'Verantwortliche (Benutzerkonten)',

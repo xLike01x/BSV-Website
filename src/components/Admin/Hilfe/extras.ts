@@ -666,6 +666,21 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Jemand hat sich auf der Website registriert – was muss ich tun?',
+    antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Ist die Person Mitglied, auf „Freigeben“ klicken – der Hinweis „Mitgliedsantrag vorhanden ✓“ hilft beim Prüfen. Sonst „Ablehnen“, dann wird das Konto gelöscht. Danach unter „Benutzer“ die Teams & Kurse des Mitglieds eintragen, damit es seine Ausfälle sieht.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Wie richte ich „Mit Google anmelden“ ein?',
+    antwort: 'Einmalig in der Google Cloud Console (console.cloud.google.com): 1. Neues Projekt „BSV-Website“ anlegen. 2. „APIs & Dienste“ → „OAuth-Zustimmungsbildschirm“: Typ „Extern“, App-Name „BSV 1919“, eure E-Mail eintragen, speichern. Solange die App im „Testmodus“ ist, können sich nur eingetragene Testnutzer anmelden – trag dort zum Ausprobieren deine eigene Google-Adresse ein; zum Live-Gang auf „App veröffentlichen“ klicken. 3. „Anmeldedaten“ → „Anmeldedaten erstellen“ → „OAuth-Client-ID“ → Typ „Webanwendung“. 4. Bei „Autorisierte Weiterleitungs-URIs“ eintragen: http://localhost:3000/api/users/google/callback (und später die echte Adresse, z. B. https://www.bsv1919.de/api/users/google/callback). 5. Client-ID und Clientschlüssel in die .env schreiben: GOOGLE_CLIENT_ID=… und GOOGLE_CLIENT_SECRET=… 6. Website neu starten (BSV-Website-Update.bat). Danach erscheint der Google-Knopf beim Anmelden und Registrieren.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Wer sieht die Profilfotos der Mitglieder?',
+    antwort: 'Nur das Mitglied selbst, Admin und Kasse sowie die Übungsleitung / Team-Redaktion der Kurse, in denen das Mitglied eingetragen ist (im Team unter „Mitglieder in diesem Team / Kurs“). Nie öffentlich. Das Mitglied kann sein Foto jederzeit selbst entfernen.',
+    bereich: 'users',
+  },
+  {
     frage: 'Wie stelle ich ein, dass die News auf der Startseite von selbst weiterlaufen?',
     antwort: 'Unter „Website-Texte“ → Startseite den Haken „News-Leiste läuft von selbst weiter“ setzen oder entfernen. Mit Haken wechselt die Leiste alle 6 Sekunden und pausiert, sobald jemand mit der Maus darauf zeigt. Welche News dort erscheinen, bestimmt bei jeder News der Haken „Auf Startseite“.',
     bereich: 'texte',

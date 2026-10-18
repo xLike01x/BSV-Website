@@ -82,6 +82,7 @@ export interface Config {
     sponsoren: Sponsoren;
     gesuche: Gesuche;
     users: User;
+    profilbilder: Profilbilder;
     'hilfe-feedback': HilfeFeedback;
     redirects: Redirect;
     forms: Form;
@@ -118,6 +119,7 @@ export interface Config {
     sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
     gesuche: GesucheSelect<false> | GesucheSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    profilbilder: ProfilbilderSelect<false> | ProfilbilderSelect<true>;
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -525,6 +527,16 @@ export interface User {
     totalDocs?: number;
   };
   /**
+   * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.
+   */
+  profilbild?: (number | null) | Profilbilder;
+  /**
+   * Ohne Haken: selbst registriert, wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“.
+   */
+  freigegeben?: boolean | null;
+  registriertUeber?: ('verwaltung' | 'email' | 'google') | null;
+  googleId?: string | null;
+  /**
    * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
    */
   zweiFaktorAktiv?: boolean | null;
@@ -575,6 +587,37 @@ export interface User {
     | null;
   password?: string | null;
   collection: 'users';
+}
+/**
+ * Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profilbilder".
+ */
+export interface Profilbilder {
+  id: number;
+  besitzer?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+  sizes?: {
+    klein?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
+  };
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1589,6 +1632,10 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'profilbilder';
+        value: number | Profilbilder;
+      } | null)
+    | ({
         relationTo: 'hilfe-feedback';
         value: number | HilfeFeedback;
       } | null)
@@ -2167,6 +2214,10 @@ export interface UsersSelect<T extends boolean = true> {
   roles?: T;
   angebote?: T;
   verantwortlichFuer?: T;
+  profilbild?: T;
+  freigegeben?: T;
+  registriertUeber?: T;
+  googleId?: T;
   zweiFaktorAktiv?: T;
   zweiFaktorGeheimnis?: T;
   zweiFaktorCodes?: T;
@@ -2190,6 +2241,38 @@ export interface UsersSelect<T extends boolean = true> {
         id?: T;
         createdAt?: T;
         expiresAt?: T;
+      };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "profilbilder_select".
+ */
+export interface ProfilbilderSelect<T extends boolean = true> {
+  besitzer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+  sizes?:
+    | T
+    | {
+        klein?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
       };
 }
 /**

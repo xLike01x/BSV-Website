@@ -15,6 +15,7 @@ export const WURZEL = process.cwd()
 export const SICHERUNGS_ORDNER = path.join(WURZEL, 'backups')
 const DATEI_ORDNER = [
   { name: 'media', pfad: path.join(WURZEL, 'medien') },
+  { name: 'profilbilder', pfad: path.join(WURZEL, 'profilbilder') },
   { name: 'dokumente', pfad: path.join(WURZEL, 'dokumente') },
 ]
 const VERSION = 1

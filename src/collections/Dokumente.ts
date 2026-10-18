@@ -2,7 +2,7 @@ import path from 'path'
 import type { CollectionConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { ausblendenAusser, hasRole } from '@/access/roles'
+import { ausblendenAusser, hasRole, istMitgliedOderMehr } from '@/access/roles'
 
 import { dokumenteUmziehen } from './dokumenteUmziehen'
 
@@ -19,7 +19,8 @@ export const Dokumente: CollectionConfig = {
   trash: true,
   endpoints: [dokumenteUmziehen],
   access: {
-    read: ({ req }) => Boolean(req.user),
+    // Nur freigegebene Mitglieder (und Verwaltung) – nicht wartende Registrierungen
+    read: ({ req }) => istMitgliedOderMehr(req.user),
     create: pflegen,
     update: pflegen,
     delete: pflegen,

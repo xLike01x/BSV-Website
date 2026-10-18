@@ -88,6 +88,12 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
   ```
   Danach je Video: `ffmpeg -ss 0.8 -i hilfe-videos-roh/<name>.webm -vf scale=1152:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/<name>.mp4` (Vorschaubild `<name>.jpg` daneben).
 
+## Registrierung, Google-Anmeldung, Profilfotos
+
+- `/registrieren`: Mitglieder erstellen selbst ein Konto (E-Mail + Passwort oder Google). Das Konto ist sofort angemeldet, hat aber **keine Rechte**, bis Admin oder Kasse es unter **Registrierungen** (`/admin/registrierungen`) freigibt. Ablehnen löscht das Konto.
+- Google: nur aktiv mit `GOOGLE_CLIENT_ID` und `GOOGLE_CLIENT_SECRET` in der `.env` (Weiterleitungs-URI `<Adresse>/api/users/google/callback`). Verknüpft über die Google-ID bzw. die von Google bestätigte E-Mail. Für Personal gilt danach weiter die Zwei-Faktor-Abfrage.
+- Profilfotos (`profilbilder/`, nicht öffentlich): Mitglied lädt im Mitgliederbereich hoch; sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse (im Team: „Mitglieder in diesem Team / Kurs“). Wird beim Löschen des Kontos mit gelöscht und ist Teil der Datensicherung.
+
 ## Website-Seiten (neu)
 
 - **/trainingszeiten** – Wochenplan aller Trainings (aus Teams & Kurse), filterbar nach Bereich und Alter

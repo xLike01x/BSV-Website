@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import React from 'react'
 
 import { AbmeldenButton } from '@/bsv/components/AbmeldenButton'
+import { Profilfoto } from '@/bsv/components/Profilfoto'
 import { aktuellerBenutzer, getAusfaelle, getTermine, getVerein, payload } from '@/bsv/data'
 import { bildUrl, datum, farbe, kurzZeit, uhrzeit } from '@/bsv/lib'
 import type { Angebote } from '@/payload-types'
@@ -26,6 +27,48 @@ export default async function MitgliederSeite() {
   if (!user) redirect('/login?weiter=/mitglieder')
 
   const p = await payload()
+  const vorname0 = (user.name ?? '').split(' ')[0]
+  // Profilfoto (eigenes – darf das Mitglied immer sehen)
+  const fotoDoc = user.profilbild && typeof user.profilbild === 'object' ? user.profilbild : null
+  const foto = fotoDoc ? (fotoDoc.sizes?.klein?.url ?? fotoDoc.url ?? null) : null
+  const fotoGross = fotoDoc?.url ?? null
+
+  // Selbst registriert, aber noch nicht freigegeben
+  if ((user as { _wartetAufFreigabe?: boolean })._wartetAufFreigabe) {
+    return (
+      <div style={{ background: 'var(--bsv-soft)', minHeight: '80vh' }}>
+        <section className="wrap-narrow" style={{ paddingTop: 72, paddingBottom: 32, display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', justifyContent: 'space-between' }}>
+          <div>
+            <p className="kicker in1" style={{ fontSize: 17 }}>Registriert</p>
+            <h1 className="t-page in2" style={{ fontSize: 'clamp(44px, 6vw, 72px)' }}>
+              Hallo {vorname0}!
+            </h1>
+          </div>
+          <AbmeldenButton />
+        </section>
+        <section className="wrap-narrow" style={{ paddingBottom: 100, display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 360px), 1fr))', gap: 20, alignItems: 'start' }}>
+          <div style={{ background: '#fff', borderRadius: 28, padding: 32 }}>
+            <h2 className="t-3" style={{ fontSize: 26, marginBottom: 12 }}>
+              Fast geschafft ✓
+            </h2>
+            <p style={{ margin: 0, lineHeight: 1.55 }}>
+              Danke für deine Registrierung! Die Verwaltung prüft kurz, ob du Mitglied im BSV bist, und schaltet deinen Zugang dann frei. Danach siehst du hier deine Kurse, Ausfälle, Termine und Downloads.
+            </p>
+            <p className="muted" style={{ fontSize: 15, margin: '14px 0 0' }}>
+              Noch kein Mitglied? <Link href="/mitglied-werden">Hier geht’s zum Mitgliedsantrag ›</Link>
+            </p>
+          </div>
+          <div style={{ background: '#fff', borderRadius: 28, padding: 32 }}>
+            <h2 className="t-3" style={{ fontSize: 26, marginBottom: 16 }}>
+              Mein Foto
+            </h2>
+            <Profilfoto name={user.name ?? ''} foto={fotoGross} fotoId={fotoDoc?.id ?? null} />
+          </div>
+        </section>
+      </div>
+    )
+  }
+
   // Ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte; die echten Rollen stehen in _rollen
   const zf = user as typeof user & { _rollen?: string[]; _zweiFaktorOffen?: boolean }
   const echteRollen = zf._rollen ?? user.roles ?? []
@@ -56,13 +99,16 @@ export default async function MitgliederSeite() {
   return (
     <div style={{ background: 'var(--bsv-soft)', minHeight: '80vh' }}>
       <section className="wrap-narrow" style={{ paddingTop: 72, paddingBottom: 32, display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', justifyContent: 'space-between' }}>
-        <div>
+        <div style={{ display: 'flex', gap: 18, alignItems: 'center' }}>
+          {foto ? <img src={foto} alt="" className="avatar in1" /> : <span className="avatar in1">{vorname.slice(0, 1).toUpperCase()}</span>}
+          <div>
           <p className="kicker in1" style={{ fontSize: 17 }}>
             {echteRollen.map((r) => ROLLE[r] ?? r).join(' · ')}
           </p>
           <h1 className="t-page in2" style={{ fontSize: 'clamp(44px, 6vw, 72px)' }}>
             Hallo {vorname}!
           </h1>
+          </div>
         </div>
         <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
           {istStaff && (
@@ -193,6 +239,13 @@ export default async function MitgliederSeite() {
               <strong>{d.titel}</strong>
             </a>
           ))}
+        </div>
+
+        <div style={{ background: '#fff', borderRadius: 28, padding: 32 }}>
+          <h2 className="t-3" style={{ fontSize: 26, marginBottom: 16 }}>
+            Mein Foto
+          </h2>
+          <Profilfoto name={user.name ?? ''} foto={fotoGross} fotoId={fotoDoc?.id ?? null} />
         </div>
 
         <div style={{ background: '#fff', borderRadius: 28, padding: 32 }}>

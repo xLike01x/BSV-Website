@@ -38,6 +38,11 @@ export default function NavFuss() {
           <span aria-hidden="true">👥</span> Rollen-Übersicht
         </a>
       )}
+      {(rollen.includes('admin') || rollen.includes('kasse')) && (
+        <a className="bsv-nav-hilfe" href="/admin/registrierungen">
+          <span aria-hidden="true">🙋</span> Registrierungen
+        </a>
+      )}
       {rollen.includes('webadmin') && (
         <a className="bsv-nav-hilfe" href="/admin/sicherung">
           <span aria-hidden="true">💾</span> Datensicherung

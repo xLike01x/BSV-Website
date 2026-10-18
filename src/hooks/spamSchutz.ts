@@ -36,6 +36,16 @@ const zuGross = (v: unknown, tiefe = 0): boolean => {
   return false
 }
 
+/** Für eigene Endpunkte (z. B. Registrierung): wirft 429, wenn von dieser Adresse zu viele Anfragen kommen */
+export function ratenGrenze(req: PayloadRequest, schluessel: string, max = MAX_PRO_FENSTER) {
+  const key = `${schluessel}:${clientIp(req)}`
+  const jetzt = Date.now()
+  const liste = (zaehler.get(key) ?? []).filter((t) => jetzt - t < FENSTER_MS)
+  if (liste.length >= max) throw new APIError('Zu viele Anfragen. Bitte versuche es in ein paar Minuten erneut.', 429)
+  liste.push(jetzt)
+  zaehler.set(key, liste)
+}
+
 export const spamSchutz =
   (schluessel: string): CollectionBeforeValidateHook =>
   ({ req, operation, data }) => {

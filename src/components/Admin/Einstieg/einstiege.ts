@@ -324,7 +324,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
 
   users: {
     titel: 'Wozu sind Benutzer da?',
-    text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle bestimmt, was die Person darf. Wer welche Rolle für welches Team hat, siehst du in der Rollen-Übersicht.',
+    text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle bestimmt, was die Person darf. Wer welche Rolle für welches Team hat, siehst du in der Rollen-Übersicht. Mitglieder können sich auch selbst registrieren – die warten dann unter „Registrierungen“ (links unten) auf Freigabe.',
     ablauf: [
       { key: 'anlegen', titel: 'Konto anlegen', text: 'Name, E-Mail, vorläufiges Passwort.' },
       { key: 'rolle', titel: 'Rolle wählen', text: 'Z. B. Übungsleitung oder Redaktion.' },

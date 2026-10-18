@@ -256,12 +256,17 @@ export const HILFE: Record<string, HilfeText> = {
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
       '• Übungsleitung / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
       'Bei Teams & Kursen unter „Verantwortliche“ legst du fest, welche Teams jemand pflegt.',
+      'Mitglieder können sich auch selbst registrieren (mit E-Mail oder Google). Solche Konten warten unter „Registrierungen“ (links unten) auf deine Freigabe.',
     ],
     wirkung: [
       'Alle außer „Mitglied“ müssen beim Anmelden zusätzlich einen Code aus einer Handy-App eingeben (Zwei-Faktor).',
       'Hat jemand sein Handy verloren, entfernt ein Admin in seinem Konto den Haken bei „Zwei-Faktor-Anmeldung eingerichtet“ – dann richtet die Person es neu ein.',
     ],
-    tipps: ['Rollen sparsam vergeben: Jeder bekommt nur, was er wirklich braucht.', 'Wer den Verein verlässt, dessen Konto bitte löschen.'],
+    tipps: [
+      'Rollen sparsam vergeben: Jeder bekommt nur, was er wirklich braucht.',
+      'Wer den Verein verlässt, dessen Konto bitte löschen – das Profilfoto wird dabei mit gelöscht.',
+      'Profilfotos laden Mitglieder selbst hoch. Sehen können sie nur das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.',
+    ],
   },
 
   menue: {

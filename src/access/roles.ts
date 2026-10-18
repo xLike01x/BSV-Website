@@ -36,6 +36,9 @@ export const hasRole = (user: MaybeUser, ...roles: Role[]): boolean =>
 
 const userOf = (req: PayloadRequest) => req.user as MaybeUser
 
+/** Angemeldet UND freigegeben (selbst registrierte Konten ohne Freigabe haben keine Rollen) */
+export const istMitgliedOderMehr = (user: unknown): boolean => Boolean(user && ((user as MaybeUser)?.roles ?? []).length > 0)
+
 /** Admin darf alles. */
 export const isAdmin: Access = ({ req }) => hasRole(userOf(req), 'admin')
 export const isAdminField: FieldAccess = ({ req }) => hasRole(userOf(req), 'admin')

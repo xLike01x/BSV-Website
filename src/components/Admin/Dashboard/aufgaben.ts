@@ -34,6 +34,11 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
       a.push({ key: 'zugaenge', art: 'info', symbol: '👥', text: `${totalDocs} ${totalDocs === 1 ? 'Zugang mit Verwaltungsrechten wurde' : 'Zugänge mit Verwaltungsrechten wurden'} seit über 6 Monaten nicht genutzt. Noch nötig?`, href: '/admin/rollen', link: 'Prüfen' })
   }
   if (admin || rollen.includes('kasse')) {
+    const wartend = await req.payload.count({ collection: 'users', where: { freigegeben: { equals: false } }, overrideAccess: true }).catch(() => ({ totalDocs: 0 }))
+    if (wartend.totalDocs)
+      a.push({ key: 'registrierungen', art: 'warn', symbol: '🙋', text: `${wartend.totalDocs} ${wartend.totalDocs === 1 ? 'neue Registrierung wartet' : 'neue Registrierungen warten'} auf Freigabe.`, href: '/admin/registrierungen', link: 'Ansehen' })
+  }
+  if (admin || rollen.includes('kasse')) {
     const f = await faellige(req.payload, rollen).catch(() => [])
     const summe = f.reduce((s, x) => s + x.anzahl, 0)
     if (summe)

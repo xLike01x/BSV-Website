@@ -89,6 +89,11 @@ export const zweiFaktorStrategie: AuthStrategy = {
           u._zweiFaktorOffen = true
         }
       }
+      // Selbst registriert und noch nicht freigegeben: angemeldet, aber ohne Rechte (auch kein Mitgliederbereich)
+      if ((u as { freigegeben?: boolean | null }).freigegeben === false) {
+        u.roles = []
+        ;(u as { _wartetAufFreigabe?: boolean })._wartetAufFreigabe = true
+      }
     } catch {
       // Im Zweifel geschlossen: lieber nur Mitglieds-Rechte als Verwaltung ohne zweiten Faktor
       u.roles = ['mitglied']

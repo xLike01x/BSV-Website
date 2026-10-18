@@ -2,12 +2,12 @@ import { hinweisFeld } from '@/fields/hinweise'
 import { ausblendenAusser } from '@/access/roles'
 import type { Access, CollectionConfig } from 'payload'
 
-import { hasRole, isEditor } from '../access/roles'
+import { hasRole, isEditor, istMitgliedOderMehr } from '../access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
 /** Öffentliche Termine für alle, Mitgliedertermine nur nach Login. */
 const readTermine: Access = ({ req }) => {
-  if (req.user) return true
+  if (istMitgliedOderMehr(req.user)) return true
   return { nurMitglieder: { not_equals: true } }
 }
 
