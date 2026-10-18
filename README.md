@@ -88,11 +88,28 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
   ```
   Danach je Video: `ffmpeg -ss 0.8 -i hilfe-videos-roh/<name>.webm -vf scale=1152:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/<name>.mp4` (Vorschaubild `<name>.jpg` daneben).
 
+## Datensicherung
+
+Verwaltung → **💾 Datensicherung** (nur Admins): „Sicherung jetzt erstellen“ legt Datenbank (alle Tabellen als JSON) und alle Dateien (`public/media`, `dokumente`) als **eine** Datei `backups/bsv-sicherung_JJJJ-MM-TT_HH-MM.tar.gz` ab – ohne pg_dump. Herunterladen und zusätzlich extern aufbewahren. Ohne Verwaltung: `pnpm sicherung:erstellen`.
+
+**Einspielen** (ersetzt alle Inhalte; vorher wird automatisch gesichert): Server stoppen, `pnpm sicherung:einspielen <datei>` (ohne Datei: neueste; mit `ja` am Ende ohne Rückfrage). Der `ENCRYPTION_KEY` ist nicht enthalten – getrennt aufbewahren.
+
+## Papierkorb & Datenschutz-Fristen
+
+Gelöschtes (außer Benutzerkonten) landet 30 Tage im **Papierkorb** (Reiter „Papierkorb“ in jeder Liste) und wird danach täglich automatisch endgültig gelöscht. **Einstellungen → Datenschutz-Fristen** legt fest, wann erledigte Anfragen, bearbeitete Mitgliedsanträge und Formular-Eingänge aufgeräumt werden – per Knopf oder automatisch. Das Dashboard erinnert.
+
+## Mitglieder-Dokumente
+
+Dateien „Nur für Mitglieder“ liegen in `dokumente/` (nicht öffentlich) und werden nur an Angemeldete ausgeliefert (`/api/dokumente/file/…`). Einbinden über Vereinsdaten → Satzung & Downloads. Alte öffentliche Dateien zieht der Knopf „In den geschützten Bereich umziehen“ um.
+
 ## Sicherheit
 
 - `.env` enthält Geheimnisse und wird **nie** eingecheckt (siehe `.env.example`).
 - IBANs werden mit AES-256-GCM verschlüsselt gespeichert. `ENCRYPTION_KEY` **nie ändern**, sonst sind gespeicherte IBANs nicht mehr lesbar – sicher aufbewahren (z. B. Passwortmanager des Vorstands).
 - Login-Sperre nach 5 Fehlversuchen für 10 Minuten.
+- Fotos: Beim Hochladen ist die Angabe „Sind Personen zu erkennen?“ Pflicht (Einwilligung).
+- Rollen-Übersicht zeigt die letzte Anmeldung; Zugänge mit Verwaltungsrechten, die seit 6 Monaten ungenutzt sind, werden markiert.
+- Verwaltung als App: `public/verwaltung.webmanifest` (Startbildschirm-Symbol).
 
 ## Aufbau
 

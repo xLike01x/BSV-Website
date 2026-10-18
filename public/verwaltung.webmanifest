@@ -1,0 +1,35 @@
+{
+  "name": "BSV Verwaltung",
+  "short_name": "BSV Verwaltung",
+  "description": "Verwaltung der Website des Büdericher SV 1919",
+  "start_url": "/admin",
+  "scope": "/admin",
+  "display": "standalone",
+  "background_color": "#f5f5f7",
+  "theme_color": "#157a43",
+  "lang": "de",
+  "icons": [
+    {
+      "src": "/app-icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/app-icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Ausfall melden",
+      "url": "/admin/collections/ausfaelle"
+    },
+    {
+      "name": "News schreiben",
+      "url": "/admin/collections/posts"
+    }
+  ]
+}

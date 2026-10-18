@@ -73,6 +73,13 @@ export const Users: CollectionConfig = {
     },
     ...zweiFaktorFelder,
     testkontoFeld,
+    {
+      name: 'letzteAnmeldung',
+      label: 'Zuletzt angemeldet',
+      type: 'date',
+      access: { create: () => false, update: () => false },
+      admin: { position: 'sidebar', readOnly: true, date: { displayFormat: 'dd.MM.yyyy HH:mm' }, description: 'Wird bei jeder Anmeldung automatisch gesetzt.' },
+    },
   ],
   hooks: {
     // Testkonten (ohne Zwei-Faktor) nur auf dem lokalen Server
@@ -80,6 +87,14 @@ export const Users: CollectionConfig = {
       ({ user }) => {
         if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt()) throw new APIError('Testkonten sind auf der Live-Website gesperrt.', 403)
         return user
+      },
+    ],
+    // Letzte Anmeldung merken (für „Alte Zugänge“ in der Rollen-Übersicht)
+    afterLogin: [
+      async ({ req, user }) => {
+        await req.payload
+          .update({ collection: 'users', id: user.id, data: { letzteAnmeldung: new Date().toISOString() } as never, overrideAccess: true, context: { zweiFaktorIntern: true }, req })
+          .catch(() => {})
       },
     ],
     afterChange: [zweiFaktorZuruecksetzen as never],

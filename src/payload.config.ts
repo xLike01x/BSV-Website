@@ -23,6 +23,12 @@ import { de } from '@payloadcms/translations/languages/de'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
+import { sicherungEndpunkte } from './sicherung/endpunkte'
+import { PAPIERKORB } from './utilities/papierkorb'
+import { taeglicheAufgaben } from './utilities/taeglich'
+import { Datenschutz } from './datenschutz/config'
+import { Dokumente } from './collections/Dokumente'
+import { datenschutzEndpunkte } from './datenschutz/aufraeumen'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
 
@@ -30,6 +36,11 @@ const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
 export default buildConfig({
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte],
+  // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
+  onInit: async (payload) => {
+    if (process.env.NEXT_PHASE !== 'phase-production-build') taeglicheAufgaben(payload)
+  },
   admin: {
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
@@ -40,6 +51,7 @@ export default buildConfig({
         hilfe: { Component: '@/components/Admin/HilfeCenter', path: '/hilfe', exact: true },
         // Wer hat welche Rolle für welche Teams? (nur Admin/Web-Admin)
         rollen: { Component: '@/components/Admin/Rollen', path: '/rollen', exact: true },
+        sicherung: { Component: '@/components/Admin/Sicherung', path: '/sicherung', exact: true },
         // Druckbare Kurzanleitung je Rolle
         kurzanleitung: { Component: '@/components/Admin/HilfeCenter/Kurzanleitung', path: '/hilfe/kurzanleitung', exact: true },
       },
@@ -48,7 +60,7 @@ export default buildConfig({
         Icon: '@/components/Admin/Icon',
       },
       beforeNavLinks: ['@/components/Admin/NavKopf'],
-      afterNavLinks: ['@/components/Admin/NavFuss'],
+      afterNavLinks: ['@/components/Admin/NavFuss', '@/components/Admin/AppSymbol'],
       // „? Hilfe“-Knopf oben rechts – erklärt jeden Bereich in einfachen Worten
       actions: ['@/components/Admin/Hilfe'],
     },
@@ -98,9 +110,12 @@ export default buildConfig({
     },
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
-  collections: [Posts, Termine, Media, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users, HilfeFeedback],
+  // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
+  collections: [Posts, Termine, Media, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users, HilfeFeedback].map((c) =>
+    PAPIERKORB.includes(c.slug) ? { ...c, trash: true } : c,
+  ),
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte],
+  globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte, Datenschutz],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

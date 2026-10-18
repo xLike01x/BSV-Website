@@ -1,0 +1,139 @@
+.bsv-sicherung {
+  max-width: 1000px;
+  padding: 16px 0 80px;
+  color: #1d1d1f;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  header p {
+    color: #6e6e73;
+    margin: 6px 0 18px;
+    max-width: 720px;
+  }
+
+  code {
+    background: #f0f2f1;
+    border-radius: 6px;
+    padding: 1px 6px;
+    font-size: 13px;
+  }
+}
+
+.bsv-sicherung__status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+  background: #e8f6ee;
+  border-radius: 20px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+
+  &.is-warn {
+    background: #fff4e5;
+  }
+
+  strong,
+  span {
+    display: block;
+  }
+
+  span {
+    color: #3a3a3c;
+    margin-top: 2px;
+  }
+
+  button {
+    border: 0;
+    background: #157a43;
+    color: #fff;
+    border-radius: 999px;
+    padding: 12px 22px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+  }
+}
+
+.bsv-sicherung__ok,
+.bsv-sicherung__fehler {
+  border-radius: 12px;
+  padding: 10px 14px;
+  margin: 0 0 14px;
+}
+
+.bsv-sicherung__ok {
+  background: #e8f6ee;
+}
+
+.bsv-sicherung__fehler {
+  background: #fdecea;
+  color: #b42318;
+}
+
+.bsv-sicherung__box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px 22px;
+  margin-bottom: 14px;
+
+  h2 {
+    margin: 0 0 10px;
+    font-size: 18px;
+    font-weight: 800;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+
+  th {
+    text-align: left;
+    font-size: 12px;
+    color: #6e6e73;
+    padding: 8px 6px;
+    border-bottom: 1px solid #e3e3e8;
+  }
+
+  td {
+    padding: 10px 6px;
+    border-bottom: 1px solid #f0f0f2;
+  }
+
+  a {
+    color: #157a43;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  li {
+    margin: 6px 0;
+    line-height: 1.5;
+  }
+
+  @media (max-width: 700px) {
+    th:nth-child(3),
+    td:nth-child(3) {
+      display: none;
+    }
+  }
+}
+
+.bsv-sicherung__klein {
+  color: #6e6e73;
+  font-size: 13px;
+  margin: 10px 0 0;
+}

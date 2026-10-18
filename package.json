@@ -21,7 +21,9 @@
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "seed:bsv": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/seed.ts",
-    "seed:beispiele": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/beispiele.ts"
+    "seed:beispiele": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/beispiele.ts",
+    "sicherung:erstellen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/erstellen.ts",
+    "sicherung:einspielen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/einspielen.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",
@@ -58,7 +60,8 @@
     "react-dom": "19.2.6",
     "react-hook-form": "7.71.1",
     "sharp": "0.35.4",
-    "tailwind-merge": "^3.4.0"
+    "tailwind-merge": "^3.4.0",
+    "tar": "7.5.22"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",

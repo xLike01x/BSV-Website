@@ -554,3 +554,70 @@
     color: #1d1d1f;
   }
 }
+
+.bsv-dash__aufgaben {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: grid;
+  gap: 8px;
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    border-radius: 16px;
+    padding: 12px 16px;
+    background: #fff;
+  }
+
+  li.is-warn {
+    background: #fff4e5;
+  }
+
+  span:nth-child(2) {
+    flex: 1;
+  }
+
+  a {
+    font-weight: 700;
+    color: #157a43;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+}
+
+/* Handy: kompakte Zahlen zu zweit, Schnellzugriff nach oben */
+@media (max-width: 700px) {
+  .bsv-dash {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .bsv-dash__raster {
+    order: 4;
+  }
+
+  .bsv-dash__karten {
+    order: 5;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .bsv-dash__bereiche {
+    order: 6;
+  }
+
+  .bsv-dash__karte {
+    padding: 14px 16px;
+    border-radius: 16px;
+  }
+
+  .bsv-dash__zahl {
+    font-size: 30px !important;
+  }
+
+  .bsv-dash__aufgaben li {
+    flex-wrap: wrap;
+  }
+}

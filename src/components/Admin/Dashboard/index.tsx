@@ -6,6 +6,7 @@ import React from 'react'
 import { hauptRolle, ROLLEN_PROFIL } from '../Hilfe/extras'
 import Tour from '../Tour'
 import ErsteSchritte from './ErsteSchritte'
+import { aufgabenFuer } from './aufgaben'
 import './index.scss'
 
 const ADMIN = '/admin'
@@ -179,6 +180,9 @@ export default async function Dashboard(props: AdminViewServerProps) {
             erledigt: (await zaehle('posts', { authors: { contains: user.id } })) > 0,
           }
 
+  // Wichtige Aufgaben (Datensicherung, Datenschutz, alte Zugänge) – je nach Rolle
+  const aufgaben = await aufgabenFuer(req, rollen)
+
   return (
     <div className="bsv-dash gutter--left gutter--right">
       <header className="bsv-dash__kopf">
@@ -243,6 +247,18 @@ export default async function Dashboard(props: AdminViewServerProps) {
           </div>
         </div>
       </details>
+
+      {aufgaben.length > 0 && (
+        <ul className="bsv-dash__aufgaben" aria-label="Zu erledigen">
+          {aufgaben.map((a) => (
+            <li key={a.key} className={`is-${a.art}`}>
+              <span aria-hidden="true">{a.symbol}</span>
+              <span>{a.text}</span>
+              <a href={a.href}>{a.link} ›</a>
+            </li>
+          ))}
+        </ul>
+      )}
 
       <ErsteSchritte
         hatName={Boolean((user as { name?: string }).name)}

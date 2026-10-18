@@ -88,6 +88,7 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       'Bilder oder PDFs hochladen – einfach per Drag & Drop oder über „Neu erstellen“.',
       'Eine kurze Bildbeschreibung eingeben: Was ist auf dem Bild zu sehen?',
+      'Pflicht beim Hochladen: angeben, ob Personen zu erkennen sind – und wenn ja, dass die Einwilligung vorliegt (bei Kindern von den Eltern).',
       'Ein Team zuordnen und „In Galerie zeigen“ anhaken, damit das Bild in der Galerie des Teams erscheint.',
       'Oben im Kasten „Ordner“ ein Team anklicken, um nur dessen Bilder zu sehen.',
       'Verschieben: ein Bild unten in der Liste mit der Maus auf einen Ordner ziehen. Angehakte Bilder wandern zusammen. Danach kannst du es mit „Rückgängig“ zurücknehmen.',
@@ -401,6 +402,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Reiter „Nach Team“: jedes Team und jeder Kurs mit den Verantwortlichen.',
       'Reiter „Nach Rolle“: alle Personen, gruppiert nach Rolle, mit Anzahl.',
       'Reiter „Testkonten“: Testkonten je Rolle, Abteilung und Team anlegen, um die Rechte auszuprobieren (nur lokal, ohne Zwei-Faktor).',
+      'Spalte „Zuletzt da“: Wer sich seit über 6 Monaten nicht angemeldet hat, ist mit ⚠️ markiert – Rechte noch nötig?',
       'Oben suchen: Name, Team oder Rolle eintippen.',
       'Rolle ändern: bei der Person auf „Bearbeiten“. Team zuordnen: beim Team auf „Zuordnen“ und unter „Verantwortliche“ eintragen.',
     ],
@@ -409,6 +411,55 @@ export const HILFE: Record<string, HilfeText> = {
       '⚠️ markiert Lücken: Übungsleitungen ohne Team, Teams ohne Verantwortliche, Zugänge ohne Zwei-Faktor.',
     ],
     tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Nur Admins und Web-Admins sehen diese Seite.'],
+  },
+
+  sicherung: {
+    titel: 'Datensicherung',
+    kurz: 'Alle Inhalte und alle Bilder in einer einzigen Datei sichern – und im Notfall zurückholen.',
+    wozu: {
+      text: 'Wenn die Festplatte kaputtgeht oder aus Versehen viel gelöscht wurde, holst du mit einer Sicherung den alten Stand zurück.',
+      beispiele: ['Einmal pro Woche sichern', 'Vor größeren Änderungen sichern', 'Sicherung zusätzlich auf einen USB-Stick legen'],
+    },
+    tun: [
+      '„Sicherung jetzt erstellen“ klicken – nach etwa einer Minute ist sie fertig.',
+      '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
+      'Zurückholen: Anleitung unten auf der Seite (Befehl „pnpm sicherung:einspielen“).',
+    ],
+    wirkung: ['Die Sicherung ändert nichts an der Website.', 'Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.'],
+    tipps: [
+      'Die Datei enthält persönliche Daten – nicht per E-Mail verschicken.',
+      'IBANs lassen sich nur mit dem ENCRYPTION_KEY aus der .env lesen. Den Schlüssel getrennt aufbewahren.',
+    ],
+  },
+
+  datenschutz: {
+    titel: 'Datenschutz-Fristen',
+    kurz: 'Wie lange persönliche Daten gespeichert bleiben – und was gerade aufgeräumt werden kann.',
+    wozu: {
+      text: 'Die DSGVO verlangt, persönliche Daten nur so lange zu speichern, wie sie gebraucht werden. Hier legst du die Fristen fest.',
+      beispiele: ['Erledigte Kontaktanfragen nach 6 Monaten', 'Mitgliedsanträge nach der Übernahme in die Mitgliederverwaltung', 'Anmeldungen zum Sommerfest nach einem Jahr'],
+    },
+    tun: [
+      'Oben siehst du, was gerade über der Frist ist – „Jetzt in den Papierkorb verschieben“ räumt auf.',
+      'Fristen in Monaten anpassen und speichern.',
+      'Optional „Automatisch aufräumen“ anhaken – dann passiert das einmal täglich von selbst.',
+    ],
+    wirkung: ['Aufgeräumtes landet zuerst im Papierkorb und lässt sich 30 Tage zurückholen. Danach ist es endgültig weg.'],
+    tipps: ['Mitgliedsanträge erst aufräumen, wenn die Daten in die Mitgliederverwaltung übernommen sind.'],
+  },
+
+  dokumente: {
+    titel: 'Mitglieder-Dokumente',
+    kurz: 'Geschützte Dateien, die nur angemeldete Mitglieder öffnen können – z. B. Protokolle.',
+    wozu: {
+      text: 'Normale Dateien in der Mediathek sind öffentlich: Wer den Link kennt, kann sie öffnen. Mitglieder-Dokumente sind wirklich geschützt.',
+      beispiele: ['Protokoll der Jahreshauptversammlung', 'Interne Rundschreiben'],
+    },
+    tun: [
+      'Am einfachsten unter „Vereinsdaten“ → „Satzung & Downloads“: Eintrag hinzufügen, „Nur für Mitglieder“ anhaken, bei „Geschützte Datei“ hochladen.',
+      'Alte Einträge, deren Datei noch öffentlich liegt, zieht der Knopf „In den geschützten Bereich umziehen“ um.',
+    ],
+    wirkung: ['Die Datei erscheint im Mitgliederbereich der Website unter „Downloads“ – nur für Angemeldete.'],
   },
 
   'hilfe-center': {

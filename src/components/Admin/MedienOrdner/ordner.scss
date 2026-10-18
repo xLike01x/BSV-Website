@@ -326,3 +326,16 @@
     background: #d6ebdf;
   }
 }
+
+.bsv-ordner__touch {
+  display: none;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .bsv-ordner__maus {
+    display: none;
+  }
+  .bsv-ordner__touch {
+    display: inline;
+  }
+}

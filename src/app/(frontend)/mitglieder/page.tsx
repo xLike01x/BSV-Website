@@ -45,7 +45,12 @@ export default async function MitgliederSeite() {
       ? p.count({ collection: 'probetraining', where: { and: [{ angebot: { in: geleitet.map((g) => g.id) } }, { status: { equals: 'neu' } }] }, overrideAccess: true })
       : Promise.resolve({ totalDocs: 0 }),
   ])
-  const downloads = (verein.downloads ?? []).filter((d) => d.nurMitglieder && bildUrl(d.datei))
+  // Geschützte Dateien kommen über /api/dokumente/file/… (prüft die Anmeldung); alte Einträge notfalls noch aus der Mediathek
+  const dateiUrl = (d: { dokument?: unknown; datei?: unknown }) => {
+    const dok = d.dokument as { url?: string | null } | null | undefined
+    return (typeof dok === 'object' && dok?.url) || bildUrl(d.datei as never) || null
+  }
+  const downloads = (verein.downloads ?? []).filter((d) => d.nurMitglieder && dateiUrl(d))
   const vorname = (user.name ?? '').split(' ')[0]
 
   return (
@@ -183,7 +188,7 @@ export default async function MitgliederSeite() {
             </p>
           )}
           {downloads.map((d, i) => (
-            <a key={d.id ?? i} href={bildUrl(d.datei)} target="_blank" rel="noopener" className="card card-soft" style={{ padding: 18, marginBottom: 10 }}>
+            <a key={d.id ?? i} href={dateiUrl(d) ?? '#'} target="_blank" rel="noopener" className="card card-soft" style={{ padding: 18, marginBottom: 10 }}>
               <span className="card-cat muted">{d.hinweis || 'PDF'}</span>
               <strong>{d.titel}</strong>
             </a>

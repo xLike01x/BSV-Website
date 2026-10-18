@@ -12,7 +12,18 @@ export const Verein: GlobalConfig = {
   // Redaktion (Vorstand, Bilder, Aktion) und Kasse (Beiträge) pflegen die Vereinsdaten mit
   access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
   admin: { group: 'Verwaltung', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Bilder der Startseite.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
-  hooks: { afterChange: [revalidateAllesGlobal] },
+  hooks: {
+    afterChange: [revalidateAllesGlobal],
+    // Über die öffentliche Schnittstelle niemals Dateien „Nur für Mitglieder“ verraten
+    afterRead: [
+      ({ doc, req }) => {
+        if (req.user || req.payloadAPI === 'local') return doc
+        const d = doc as { downloads?: { nurMitglieder?: boolean | null; datei?: unknown; dokument?: unknown }[] }
+        d.downloads = (d.downloads ?? []).map((x) => (x.nurMitglieder ? { ...x, datei: null, dokument: null } : x))
+        return doc
+      },
+    ],
+  },
   fields: [
     { name: 'name', label: 'Vereinsname', type: 'text', defaultValue: 'Büdericher Spielverein 1919 e.V.' },
     {
@@ -75,6 +86,7 @@ export const Verein: GlobalConfig = {
         { name: 'foto', label: 'Foto (optional)', type: 'upload', relationTo: 'media' },
       ],
     },
+    { name: 'downloadsSchutz', type: 'ui', admin: { components: { Field: '@/Verein/DownloadsSchutz' } } },
     {
       name: 'downloads',
       label: 'Satzung & Downloads',
@@ -88,8 +100,26 @@ export const Verein: GlobalConfig = {
             { name: 'hinweis', label: 'Hinweis', type: 'text', admin: { placeholder: 'PDF · 2026' } },
           ],
         },
-        { name: 'datei', label: 'Datei', type: 'upload', relationTo: 'media' },
-        { name: 'nurMitglieder', label: 'Nur für Mitglieder', type: 'checkbox' },
+        {
+          name: 'nurMitglieder',
+          label: 'Nur für Mitglieder',
+          type: 'checkbox',
+          admin: { description: 'Dann ist die Datei geschützt: nur angemeldete Mitglieder können sie öffnen – auch nicht mit dem Link.' },
+        },
+        {
+          name: 'datei',
+          label: 'Datei (öffentlich)',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { condition: (_, s) => !s?.nurMitglieder || Boolean(s?.datei && !s?.dokument), description: 'Für alle sichtbar, z. B. die Satzung.' },
+        },
+        {
+          name: 'dokument',
+          label: 'Geschützte Datei (nur Mitglieder)',
+          type: 'upload',
+          relationTo: 'dokumente',
+          admin: { condition: (_, s) => Boolean(s?.nurMitglieder) },
+        },
       ],
     },
     {

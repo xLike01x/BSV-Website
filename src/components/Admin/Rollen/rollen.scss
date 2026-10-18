@@ -47,7 +47,7 @@
 
 .bsv-rollen__zahlen {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   gap: 12px;
   margin-bottom: 16px;
 
@@ -355,4 +355,9 @@
   .app-header {
     display: none !important;
   }
+}
+
+.bsv-rollen__tabelle td:last-child a,
+.bsv-rollen__tabelle td:nth-last-child(2) {
+  white-space: nowrap;
 }

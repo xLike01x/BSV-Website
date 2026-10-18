@@ -17,6 +17,16 @@ export type RolleKey = 'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'uebungsle
 export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   dashboard: [
     {
+      id: 'handy',
+      titel: 'Die Verwaltung als App aufs Handy',
+      schritte: [
+        'Die Verwaltung im Handy-Browser öffnen und anmelden.',
+        'iPhone (Safari): unten auf das Teilen-Symbol □↑ → „Zum Home-Bildschirm“.',
+        'Android (Chrome): oben rechts ⋮ → „Zum Startbildschirm hinzufügen“ bzw. „App installieren“.',
+        'Jetzt startet die Verwaltung mit dem BSV-Symbol wie eine App – ganz oben liegt der Schnellzugriff, z. B. „Ausfall melden“.',
+      ],
+    },
+    {
       id: 'erste-schritte',
       titel: 'Die ersten fünf Minuten',
       schritte: [
@@ -322,6 +332,29 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
   ],
+  sicherung: [
+    {
+      id: 'sicherung-erstellen',
+      titel: 'Eine Sicherung erstellen und aufbewahren',
+      schritte: [
+        'Links unten auf „💾 Datensicherung“ klicken.',
+        '„Sicherung jetzt erstellen“ – etwa eine Minute warten.',
+        'Bei der neuen Sicherung „Herunterladen“ klicken.',
+        'Die Datei zusätzlich auf einen USB-Stick oder in eine Cloud kopieren.',
+      ],
+    },
+    {
+      id: 'sicherung-einspielen',
+      titel: 'Eine Sicherung zurückholen (Notfall)',
+      schritte: [
+        'Die Sicherungsdatei in den Ordner „backups“ im Projektordner legen.',
+        'Das Server-Fenster schließen.',
+        'Im Projektordner PowerShell öffnen: pnpm sicherung:einspielen DATEINAME (ohne Namen wird die neueste genommen).',
+        '„JA“ eintippen und warten, bis „Fertig“ erscheint. Der vorherige Stand wird vorher automatisch gesichert.',
+        'Die Website wie gewohnt mit BSV-Website-Update.bat starten.',
+      ],
+    },
+  ],
   rollen: [
     {
       id: 'testkonten',
@@ -509,6 +542,7 @@ export const FELDER: Record<string, Feld[]> = {
   ],
   media: [
     { name: 'Bildbeschreibung', text: 'Beschreibt, was zu sehen ist. Wichtig für Menschen, die sich Seiten vorlesen lassen.' },
+    { name: 'Sind Personen zu erkennen?', text: 'Pflicht beim Hochladen. „Ja“ nur, wenn die Einwilligung vorliegt – bei Kindern von den Eltern. In der Mediathek zeigt der Ordner „Angabe zu Personen fehlt“ alte Bilder ohne Angabe.' },
     { name: 'Ordner (Team / Kurs)', text: 'Der Ordner des Bildes. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.' },
     { name: 'Verein allgemein', text: 'Für Bilder ohne Team, z. B. Logo oder Sportplatz. Alle Trainer dürfen sie benutzen, aber nicht ändern. Setzen kann das nur die Redaktion.' },
     { name: 'Noch nicht zugeordnet', text: 'Bilder ohne Team und ohne „Verein allgemein“. Nur die Redaktion sieht sie – Trainer können sie nicht benutzen.' },
@@ -632,6 +666,23 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* Häufige Fragen                                                      */
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
+  {
+    frage: 'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
+    antwort: 'Nein – fast alles landet zuerst im Papierkorb: in der jeweiligen Liste oben auf „Papierkorb“ klicken, den Eintrag öffnen und „Wiederherstellen“ wählen. Nach 30 Tagen wird der Papierkorb automatisch geleert. Benutzerkonten werden sofort gelöscht.',
+  },
+  {
+    frage: 'Kann ich die Verwaltung auf dem Handy nutzen?',
+    antwort: 'Ja. Am besten als App-Symbol: Verwaltung im Handy-Browser öffnen und „Zum Startbildschirm hinzufügen“ wählen (iPhone: Teilen-Symbol → „Zum Home-Bildschirm“; Android: Menü ⋮ → „Zum Startbildschirm hinzufügen“). Ein Ausfall ist dann in drei Klicks gemeldet.',
+  },
+  {
+    frage: 'Wie sichere ich alle Daten?',
+    antwort: 'Links unten auf „Datensicherung“ (nur Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
+  },
+  {
+    frage: 'Warum muss ich beim Hochladen angeben, ob Personen zu erkennen sind?',
+    antwort: 'Fotos, auf denen Personen erkennbar sind, dürfen nur mit deren Einwilligung veröffentlicht werden – bei Kindern mit der Einwilligung der Eltern. Die Angabe schützt den Verein. Bewahre die schriftlichen Einwilligungen auf.',
+    bereich: 'media',
+  },
   {
     frage: 'Was ist der Kasten oben über den Listen?',
     antwort: 'Er erklärt, wozu der Bereich da ist, zeigt den Ablauf als Grafik und bietet – wo es passt – Vorlagen mit einem Klick (z. B. Spielbericht, Vereinsfest, Infoseite) oder eine Schnellmeldung für Trainingsausfälle. Brauchst du ihn nicht mehr: „Ausblenden“. Mit „Erklärung zeigen“ kommt er zurück.',

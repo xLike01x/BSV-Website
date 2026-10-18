@@ -24,7 +24,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
   ])
 
   const personen: Person[] = nutzer.docs.map((u) => {
-    const d = u as unknown as { id: number; name?: string; email: string; roles?: string[]; zweiFaktorAktiv?: boolean; testkonto?: boolean; angebote?: (number | { id: number })[] }
+    const d = u as unknown as { id: number; name?: string; email: string; roles?: string[]; zweiFaktorAktiv?: boolean; testkonto?: boolean; letzteAnmeldung?: string | null; createdAt?: string; angebote?: (number | { id: number })[] }
     const idv = (x: number | { id: number }) => (typeof x === 'object' ? x.id : x)
     return {
       id: d.id,
@@ -33,6 +33,8 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       rollen: d.roles ?? [],
       zweiFaktor: Boolean(d.zweiFaktorAktiv),
       testkonto: Boolean(d.testkonto),
+      letzteAnmeldung: d.letzteAnmeldung ?? null,
+      angelegt: d.createdAt ?? null,
       verantwortlich: angebote.docs.filter((a) => (a.leitung ?? []).some((l) => idv(l as never) === d.id)).map((a) => ({ id: a.id, title: a.title })),
       mitgliedIn: (d.angebote ?? []).map(idv),
     }

@@ -52,6 +52,20 @@ export default function Einstieg() {
       .catch(() => {})
   }, [e?.teamFeld, istTeamRolle, user?.id])
 
+  if (pfad.endsWith('/trash'))
+    return (
+      <section className="bsv-einstieg">
+        <div className="bsv-einstieg__kopf">
+          <div>
+            <h2>🗑️ Papierkorb</h2>
+            <p>
+              Hier liegt, was in den letzten 30 Tagen gelöscht wurde. <strong>Zurückholen:</strong> Eintrag öffnen → „Wiederherstellen“. Nach 30 Tagen wird alles automatisch
+              endgültig gelöscht.
+            </p>
+          </div>
+        </div>
+      </section>
+    )
   if (!e || zu === null) return null
 
   const umschalten = () => {

@@ -20,7 +20,7 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
   const redaktion = hasRole(user as never, 'admin', 'redaktion')
 
   const [medien, angebote] = await Promise.all([
-    payload.find({ collection: 'media', limit: 10000, depth: 0, pagination: false, select: { team: true, allgemein: true }, overrideAccess: true }),
+    payload.find({ collection: 'media', limit: 10000, depth: 0, pagination: false, select: { team: true, allgemein: true, personen: true }, overrideAccess: true }),
     payload.find({
       collection: 'angebote',
       limit: 500,
@@ -36,7 +36,9 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
   const proTeam = new Map<number, number>()
   let allgemein = 0
   let offen = 0
-  for (const m of medien.docs as unknown as { team?: unknown; allgemein?: boolean | null }[]) {
+  let ohneEinwilligung = 0
+  for (const m of medien.docs as unknown as { team?: unknown; allgemein?: boolean | null; personen?: string | null }[]) {
+    if (!m.personen) ohneEinwilligung++
     const t = idVon(m.team)
     if (t) proTeam.set(t, (proTeam.get(t) ?? 0) + 1)
     else if (m.allgemein) allgemein++
@@ -65,6 +67,9 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
             warn: offen > 0,
             ziel: { art: 'offen' } as const,
           },
+          ...(ohneEinwilligung
+            ? [{ key: 'einwilligung', titel: 'Angabe zu Personen fehlt', anzahl: ohneEinwilligung, query: 'where[personen][exists]=false', symbol: '👤', warn: true }]
+            : []),
         ]
       : []),
   ]

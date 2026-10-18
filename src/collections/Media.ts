@@ -57,6 +57,25 @@ export const Media: CollectionConfig = {
       type: 'text',
       admin: { description: 'Was ist zu sehen? Z. B. „Die F1 jubelt mit dem Pokal“. Hilft Menschen, die sich Seiten vorlesen lassen.' },
     },
+    {
+      name: 'personen',
+      label: 'Sind Personen zu erkennen?',
+      type: 'radio',
+      options: [
+        { label: 'Nein – keine Personen erkennbar (z. B. Plakat, Logo, Sportplatz)', value: 'keine' },
+        { label: 'Ja – und die Einwilligung liegt vor (bei Kindern von den Eltern)', value: 'einwilligung' },
+      ],
+      admin: {
+        layout: 'vertical',
+        description: 'Pflicht beim Hochladen. Fotos, auf denen Personen erkennbar sind, nur mit Einwilligung – bei Kindern unter 16 Jahren der Eltern.',
+      },
+      validate: (wert: unknown, opts: unknown) => {
+        // Pflicht nur beim Hochladen durch Personen – nicht bei Startinhalten (Seed) und nicht rückwirkend für alte Bilder
+        const o = opts as { operation?: string; req?: { user?: unknown } }
+        if (wert || o.operation !== 'create' || !o.req?.user) return true
+        return 'Bitte angeben, ob Personen zu erkennen sind.'
+      },
+    },
     hinweisFeld('MedienHinweise'),
     {
       name: 'team',

@@ -70,6 +70,7 @@ export interface Config {
     posts: Post;
     termine: Termine;
     media: Media;
+    dokumente: Dokumente;
     pages: Page;
     categories: Category;
     angebote: Angebote;
@@ -102,6 +103,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     termine: TermineSelect<false> | TermineSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    dokumente: DokumenteSelect<false> | DokumenteSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     angebote: AngeboteSelect<false> | AngeboteSelect<true>;
@@ -133,6 +135,7 @@ export interface Config {
     verein: Verein;
     texte: Texte;
     hilfe: Hilfe;
+    datenschutz: Datenschutz;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -141,6 +144,7 @@ export interface Config {
     verein: VereinSelect<false> | VereinSelect<true>;
     texte: TexteSelect<false> | TexteSelect<true>;
     hilfe: HilfeSelect<false> | HilfeSelect<true>;
+    datenschutz: DatenschutzSelect<false> | DatenschutzSelect<true>;
   };
   locale: null;
   widgets: {
@@ -258,6 +262,7 @@ export interface Post {
   slug: string;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -272,6 +277,10 @@ export interface Media {
    * Was ist zu sehen? Z. B. „Die F1 jubelt mit dem Pokal“. Hilft Menschen, die sich Seiten vorlesen lassen.
    */
   alt?: string | null;
+  /**
+   * Pflicht beim Hochladen. Fotos, auf denen Personen erkennbar sind, nur mit Einwilligung – bei Kindern unter 16 Jahren der Eltern.
+   */
+  personen?: ('keine' | 'einwilligung') | null;
   /**
    * Der Ordner, in dem das Bild liegt. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.
    */
@@ -302,6 +311,7 @@ export interface Media {
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   url?: string | null;
   thumbnailURL?: string | null;
   filename?: string | null;
@@ -478,6 +488,7 @@ export interface Angebote {
   slug: string;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.
@@ -535,6 +546,10 @@ export interface User {
    * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Rollen-Übersicht → „Alle Testkonten löschen“.
    */
   testkonto?: boolean | null;
+  /**
+   * Wird bei jeder Anmeldung automatisch gesetzt.
+   */
+  letzteAnmeldung?: string | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -612,6 +627,7 @@ export interface Category {
     | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Veranstaltungen für den Vereinskalender auf der Seite „Termine“.
@@ -643,6 +659,32 @@ export interface Termine {
   anmeldung?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Dateien nur für angemeldete Mitglieder, z. B. Protokolle. Sie sind nicht öffentlich erreichbar – auch nicht mit dem Link. Eingebunden werden sie unter „Vereinsdaten“ → „Satzung & Downloads“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dokumente".
+ */
+export interface Dokumente {
+  id: number;
+  /**
+   * Nur intern, z. B. „Protokoll JHV 2026“.
+   */
+  titel?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
 }
 /**
  * Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü & Fußzeile“.
@@ -722,6 +764,7 @@ export interface Page {
   slug: string;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
   _status?: ('draft' | 'published') | null;
 }
 /**
@@ -1074,6 +1117,7 @@ export interface Form {
     | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Fällt ein Training aus? Hier eintragen – es erscheint sofort auf der Seite des Teams.
@@ -1102,6 +1146,7 @@ export interface Ausfaelle {
   benachrichtigen?: boolean | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.
@@ -1122,6 +1167,7 @@ export interface Probetraining {
   status?: ('neu' | 'zugesagt' | 'alternativ' | 'erledigt') | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln.
@@ -1161,6 +1207,7 @@ export interface Mitgliedsantraege {
   notizen?: string | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.
@@ -1182,6 +1229,7 @@ export interface Kontaktanfragen {
   datenschutz: boolean;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Was Nutzer über die Hilfetexte gesagt haben. Viele 👎 bei einem Bereich = Text verbessern.
@@ -1240,6 +1288,7 @@ export interface FormSubmission {
     | null;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
@@ -1401,6 +1450,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'dokumente';
+        value: number | Dokumente;
+      } | null)
+    | ({
         relationTo: 'pages';
         value: number | Page;
       } | null)
@@ -1529,6 +1582,7 @@ export interface PostsSelect<T extends boolean = true> {
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -1546,6 +1600,7 @@ export interface TermineSelect<T extends boolean = true> {
   anmeldung?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1553,6 +1608,7 @@ export interface TermineSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  personen?: T;
   team?: T;
   allgemein?: T;
   inGalerie?: T;
@@ -1560,6 +1616,7 @@ export interface MediaSelect<T extends boolean = true> {
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   url?: T;
   thumbnailURL?: T;
   filename?: T;
@@ -1646,6 +1703,25 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dokumente_select".
+ */
+export interface DokumenteSelect<T extends boolean = true> {
+  titel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages_select".
  */
 export interface PagesSelect<T extends boolean = true> {
@@ -1693,6 +1769,7 @@ export interface PagesSelect<T extends boolean = true> {
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
   _status?: T;
 }
 /**
@@ -1798,6 +1875,7 @@ export interface CategoriesSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1844,6 +1922,7 @@ export interface AngeboteSelect<T extends boolean = true> {
   slug?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1857,6 +1936,7 @@ export interface AusfaelleSelect<T extends boolean = true> {
   benachrichtigen?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1874,6 +1954,7 @@ export interface ProbetrainingSelect<T extends boolean = true> {
   status?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1907,6 +1988,7 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
   notizen?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1922,6 +2004,7 @@ export interface KontaktanfragenSelect<T extends boolean = true> {
   datenschutz?: T;
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1938,6 +2021,7 @@ export interface UsersSelect<T extends boolean = true> {
   zweiFaktorSitzungen?: T;
   zweiFaktorLetzterSchritt?: T;
   testkonto?: T;
+  letzteAnmeldung?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -2116,6 +2200,7 @@ export interface FormsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2132,6 +2217,7 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
       };
   updatedAt?: T;
   createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2472,8 +2558,15 @@ export interface Verein {
     | {
         titel: string;
         hinweis?: string | null;
-        datei?: (number | null) | Media;
+        /**
+         * Dann ist die Datei geschützt: nur angemeldete Mitglieder können sie öffnen – auch nicht mit dem Link.
+         */
         nurMitglieder?: boolean | null;
+        /**
+         * Für alle sichtbar, z. B. die Satzung.
+         */
+        datei?: (number | null) | Media;
+        dokument?: (number | null) | Dokumente;
         id?: string | null;
       }[]
     | null;
@@ -2718,6 +2811,28 @@ export interface Hilfe {
   createdAt?: string | null;
 }
 /**
+ * Persönliche Daten nur so lange speichern, wie sie gebraucht werden (DSGVO). Hier legst du fest, wann erledigte Einträge aufgeräumt werden.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "datenschutz".
+ */
+export interface Datenschutz {
+  id: number;
+  probetrainingMonate?: number | null;
+  kontaktMonate?: number | null;
+  /**
+   * Erst löschen, wenn die Daten in die Mitgliederverwaltung übernommen sind.
+   */
+  antraegeMonate?: number | null;
+  eingaengeMonate?: number | null;
+  /**
+   * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
+   */
+  automatisch?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2877,8 +2992,9 @@ export interface VereinSelect<T extends boolean = true> {
     | {
         titel?: T;
         hinweis?: T;
-        datei?: T;
         nurMitglieder?: T;
+        datei?: T;
+        dokument?: T;
         id?: T;
       };
   dsgvo?:
@@ -3079,6 +3195,20 @@ export interface HilfeSelect<T extends boolean = true> {
         bereich?: T;
         id?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "datenschutz_select".
+ */
+export interface DatenschutzSelect<T extends boolean = true> {
+  probetrainingMonate?: T;
+  kontaktMonate?: T;
+  antraegeMonate?: T;
+  eingaengeMonate?: T;
+  automatisch?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

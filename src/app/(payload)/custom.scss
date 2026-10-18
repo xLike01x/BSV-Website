@@ -314,7 +314,7 @@ body {
 }
 
 /* Mediathek: Ordner kommen aus „Team / Kurs“ (siehe Ordner-Kasten) – Payloads eigene Ordner-Ansicht ausblenden */
-.collection-list--media .default-list-view-tabs {
+.collection-list--media .default-list-view-tabs > :nth-child(2):not(#trash-view-pill) {
   display: none;
 }
 .move-doc-to-folder,
@@ -341,4 +341,77 @@ body {
   color: #6e6e73;
   font-weight: 400;
   margin: 6px 0 0;
+}
+
+/* Datenschutz-Fristen */
+.bsv-datenschutz {
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px 20px;
+  margin-bottom: 24px;
+
+  h3 {
+    margin: 0 0 8px;
+  }
+
+  ul {
+    margin: 0 0 12px;
+    padding-left: 20px;
+  }
+
+  li {
+    margin: 4px 0;
+  }
+
+  a {
+    color: #157a43;
+    font-weight: 600;
+  }
+
+  button {
+    border: 0;
+    background: #157a43;
+    color: #fff;
+    border-radius: 999px;
+    padding: 10px 18px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+    }
+  }
+}
+
+.bsv-datenschutz__ok {
+  background: #e8f6ee;
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin: 8px 0 0;
+}
+
+.bsv-datenschutz__klein {
+  color: #6e6e73;
+  font-size: 13px;
+  margin: 12px 0 0;
+}
+
+/* Handy: nichts seitlich herausragen lassen */
+@media (max-width: 768px) {
+  .list-header__actions,
+  .default-list-view-tabs {
+    flex-wrap: wrap;
+    max-width: 100%;
+  }
+
+  .collection-list .table-wrap {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Ablauf-Grafik im Einstiegs-Kasten auf dem Handy weglassen (steht weiter in der Hilfe) */
+  .bsv-einstieg__inhalt > .bsv-zusammenhang {
+    display: none;
+  }
 }

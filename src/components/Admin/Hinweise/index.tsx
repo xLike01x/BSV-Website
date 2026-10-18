@@ -197,6 +197,7 @@ export function MedienHinweise() {
   const galerie = useFormFields(([f]) => f.inGalerie?.value as boolean | undefined)
   const team = useFormFields(([f]) => f.team?.value)
   const allgemein = useFormFields(([f]) => f.allgemein?.value as boolean | undefined)
+  const personen = useFormFields(([f]) => f.personen?.value as string | undefined)
 
   const bytes = (datei && typeof datei === 'object' && 'size' in datei ? datei.size : undefined) ?? groesse
   const h: Hinweis[] = []
@@ -209,7 +210,9 @@ export function MedienHinweise() {
     h.push({ art: 'warn', text: 'Noch kein Ordner: rechts ein Team wählen oder „Verein allgemein“ anhaken. Sonst können Trainer das Bild nicht benutzen.' })
   if (!idVon(team) && allgemein) h.push({ art: 'ok', text: 'Liegt in „Verein allgemein“ – alle Trainer dürfen es benutzen.' })
   if (idVon(team)) h.push({ art: 'ok', text: 'Liegt im Ordner des gewählten Teams.' })
-  h.push({ art: 'info', text: 'Fotos von Kindern nur mit Einverständnis der Eltern.' })
+  if (!personen) h.push({ art: 'warn', text: 'Noch keine Angabe, ob Personen zu erkennen sind. Bitte oben auswählen.' })
+  else if (personen === 'einwilligung') h.push({ art: 'ok', text: 'Einwilligung liegt vor – bitte die schriftliche Einwilligung aufbewahren.' })
+  else h.push({ art: 'ok', text: 'Keine Personen erkennbar.' })
   return <HinweisBox hinweise={h} />
 }
 

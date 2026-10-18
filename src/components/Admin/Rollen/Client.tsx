@@ -9,6 +9,8 @@ export type Person = {
   rollen: string[]
   zweiFaktor: boolean
   testkonto?: boolean
+  letzteAnmeldung?: string | null
+  angelegt?: string | null
   verantwortlich: { id: number; title: string }[]
   mitgliedIn: number[]
 }
@@ -44,6 +46,15 @@ const Chip = ({ rolle }: { rolle: string }) => {
   )
 }
 
+const MONAT = 30 * 86400000
+/** Verwaltungs-Zugang, aber seit über 6 Monaten nicht angemeldet (oder nie, obwohl das Konto älter als 1 Monat ist) */
+export const istAlt = (p: Person) => {
+  if (p.testkonto || !p.rollen.some((r) => r !== 'mitglied')) return false
+  if (p.letzteAnmeldung) return Date.now() - new Date(p.letzteAnmeldung).getTime() > 6 * MONAT
+  return Boolean(p.angelegt && Date.now() - new Date(p.angelegt).getTime() > MONAT)
+}
+const zuletzt = (p: Person) => (p.letzteAnmeldung ? new Date(p.letzteAnmeldung).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' }) : 'noch nie')
+
 type Tab = 'personen' | 'teams' | 'rollen' | 'test'
 
 export default function RollenClient({ personen, teams, test }: { personen: Person[]; teams: Team[]; test: { erlaubt: boolean; passwort: string } }) {
@@ -64,6 +75,7 @@ export default function RollenClient({ personen, teams, test }: { personen: Pers
     [teams, q],
   )
   const ohneVerantwortliche = teams.filter((t) => t.aktiv && t.verantwortliche.length === 0).length
+  const alteZugaenge = personen.filter(istAlt).length
   const ohne2fa = personen.filter((p) => !p.testkonto && p.rollen.some((r) => r !== 'mitglied') && !p.zweiFaktor).length
 
   return (
@@ -90,6 +102,10 @@ export default function RollenClient({ personen, teams, test }: { personen: Pers
         <div className={ohne2fa ? 'is-warn' : ''}>
           <strong>{ohne2fa}</strong>
           <span>Zugänge noch ohne Zwei-Faktor</span>
+        </div>
+        <div className={alteZugaenge ? 'is-warn' : ''}>
+          <strong>{alteZugaenge}</strong>
+          <span>Zugänge seit 6 Monaten ungenutzt</span>
         </div>
       </div>
 
@@ -123,6 +139,7 @@ export default function RollenClient({ personen, teams, test }: { personen: Pers
                 <th>Rollen</th>
                 <th>Verantwortlich für</th>
                 <th>Zwei-Faktor</th>
+                <th>Zuletzt da</th>
                 <th />
               </tr>
             </thead>
@@ -160,6 +177,7 @@ export default function RollenClient({ personen, teams, test }: { personen: Pers
                       )}
                     </td>
                     <td>{p.testkonto ? <span className="bsv-rollen__klein">Testkonto – nicht nötig</span> : p.rollen.some((r) => r !== 'mitglied') ? (p.zweiFaktor ? '✅ eingerichtet' : <span className="bsv-rollen__warn">⏳ noch nicht</span>) : <span className="bsv-rollen__klein">nicht nötig</span>}</td>
+                    <td>{istAlt(p) ? <span className="bsv-rollen__warn">⚠️ {zuletzt(p)}</span> : <span className="bsv-rollen__klein">{zuletzt(p)}</span>}</td>
                     <td>
                       <a href={`/admin/collections/users/${p.id}`}>Bearbeiten ›</a>
                     </td>

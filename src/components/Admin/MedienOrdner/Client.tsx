@@ -184,7 +184,7 @@ export default function MedienOrdnerClient({ oben, gruppen, redaktion }: { oben:
     setLaeuft('')
   }
 
-  if (zu === null) return null
+  if (zu === null || (typeof window !== 'undefined' && window.location.pathname.endsWith('/trash'))) return null
 
   const Kachel = ({ o }: { o: Ordner }) => (
     <li>
@@ -213,7 +213,12 @@ export default function MedienOrdnerClient({ oben, gruppen, redaktion }: { oben:
           {!zu && (
             <p>
               Jedes Bild liegt im Ordner seines Teams. {redaktion ? 'Trainer sehen nur die Ordner ihrer Teams und „Verein allgemein“.' : 'Du siehst die Ordner deiner Teams und „Verein allgemein“ (nur zum Benutzen).'}{' '}
-              <strong>Verschieben: Bild unten in der Liste mit der Maus auf einen Ordner ziehen</strong> – angehakte Bilder wandern zusammen. Oder Bild öffnen → rechts „Ordner (Team / Kurs)“.
+              <span className="bsv-ordner__maus">
+                <strong>Verschieben: Bild unten in der Liste mit der Maus auf einen Ordner ziehen</strong> – angehakte Bilder wandern zusammen. Oder Bild öffnen → rechts „Ordner (Team / Kurs)“.
+              </span>
+              <span className="bsv-ordner__touch">
+                <strong>Verschieben:</strong> Bild öffnen → „Ordner (Team / Kurs)“ ändern. Am Computer geht es auch per Ziehen.
+              </span>
             </p>
           )}
         </div>

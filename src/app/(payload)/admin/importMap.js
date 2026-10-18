@@ -37,16 +37,20 @@ import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/
 import { default as default_1f04e621a7b43e47a2ae8cbbbc2da9b5 } from '@/Menue/Einstieg'
 import { default as default_d9ad9595ea4f39c57478e527de33797c } from '@/Menue/RowLabel'
 import { default as default_46234c6f88ae2e73ec168e941d39add2 } from '@/Menue/SpaltenLabel'
+import { default as default_dcec8d0f4a86291f22ff050ef8209c59 } from '@/Verein/DownloadsSchutz'
 import { default as default_d0d2d8ba323ca751d647155bafea5b5d } from '@/Texte/WoSteht'
+import { default as default_ee61798dbac84d4559f918344d524ea7 } from '@/datenschutz/Uebersicht'
 import { default as default_e26d2ce2fb829c050970d592e6488485 } from '@/components/Admin/Icon'
 import { default as default_1519062be06c6f010a03d3cd4e40f8fb } from '@/components/Admin/Logo'
 import { default as default_3aa723e87d072df22350edc5f0ba8872 } from '@/components/Admin/Hilfe'
 import { default as default_8199d17e4dde2fb5d0783261ffe692e2 } from '@/components/Admin/NavFuss'
+import { default as default_6f2fa0a1b4cdd4874a42ed1b4a8e64a1 } from '@/components/Admin/AppSymbol'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { default as default_2a05e20fc48656657d58aa03a61ed1db } from '@/components/Admin/NavKopf'
 import { default as default_40ee7fa0a665ebc012dabaae94ee72db } from '@/components/Admin/Dashboard'
 import { default as default_1fa6a1ae6ba337a6478dc96369447471 } from '@/components/Admin/HilfeCenter'
 import { default as default_2471f1cac5bfd6793014555a88ab468a } from '@/components/Admin/Rollen'
+import { default as default_9b2c38652bcb00d3df4e65f581c624fd } from '@/components/Admin/Sicherung'
 import { default as default_3b78fde88b8d7c81dfd3772908e6ca41 } from '@/components/Admin/HilfeCenter/Kurzanleitung'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -91,16 +95,20 @@ export const importMap = {
   "@/Menue/Einstieg#default": default_1f04e621a7b43e47a2ae8cbbbc2da9b5,
   "@/Menue/RowLabel#default": default_d9ad9595ea4f39c57478e527de33797c,
   "@/Menue/SpaltenLabel#default": default_46234c6f88ae2e73ec168e941d39add2,
+  "@/Verein/DownloadsSchutz#default": default_dcec8d0f4a86291f22ff050ef8209c59,
   "@/Texte/WoSteht#default": default_d0d2d8ba323ca751d647155bafea5b5d,
+  "@/datenschutz/Uebersicht#default": default_ee61798dbac84d4559f918344d524ea7,
   "@/components/Admin/Icon#default": default_e26d2ce2fb829c050970d592e6488485,
   "@/components/Admin/Logo#default": default_1519062be06c6f010a03d3cd4e40f8fb,
   "@/components/Admin/Hilfe#default": default_3aa723e87d072df22350edc5f0ba8872,
   "@/components/Admin/NavFuss#default": default_8199d17e4dde2fb5d0783261ffe692e2,
+  "@/components/Admin/AppSymbol#default": default_6f2fa0a1b4cdd4874a42ed1b4a8e64a1,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@/components/Admin/NavKopf#default": default_2a05e20fc48656657d58aa03a61ed1db,
   "@/components/Admin/Dashboard#default": default_40ee7fa0a665ebc012dabaae94ee72db,
   "@/components/Admin/HilfeCenter#default": default_1fa6a1ae6ba337a6478dc96369447471,
   "@/components/Admin/Rollen#default": default_2471f1cac5bfd6793014555a88ab468a,
+  "@/components/Admin/Sicherung#default": default_9b2c38652bcb00d3df4e65f581c624fd,
   "@/components/Admin/HilfeCenter/Kurzanleitung#default": default_3b78fde88b8d7c81dfd3772908e6ca41,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }
