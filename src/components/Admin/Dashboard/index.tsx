@@ -22,15 +22,6 @@ async function sicher<T>(fn: () => Promise<T>, fallback: T): Promise<T> {
   }
 }
 
-function begruessung(): string {
-  const stunde = Number(new Intl.DateTimeFormat('de-DE', { hour: 'numeric', hourCycle: 'h23', timeZone: TZ }).format(new Date()))
-  if (stunde < 5) return 'Gute Nacht'
-  if (stunde < 11) return 'Guten Morgen'
-  if (stunde < 17) return 'Hallo'
-  if (stunde < 22) return 'Guten Abend'
-  return 'Gute Nacht'
-}
-
 function vorWann(iso: string): string {
   const diff = Date.now() - new Date(iso).getTime()
   const min = Math.round(diff / 60000)
@@ -191,7 +182,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
       <header className="bsv-dash__kopf">
         <div>
           <h1>
-            {begruessung()}, {vorname}.
+            Hallo, {vorname}.
           </h1>
           <p>
             Das ist heute im Verein los.
