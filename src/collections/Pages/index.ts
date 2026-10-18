@@ -60,6 +60,7 @@ export const Pages: CollectionConfig<'pages'> = {
   fields: [
     {
       name: 'title',
+      label: 'Titel',
       type: 'text',
       required: true,
     },
