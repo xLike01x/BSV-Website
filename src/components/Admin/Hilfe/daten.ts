@@ -77,6 +77,7 @@ export function ansichtAus(pfad: string): Ansicht {
   if (teile[0] === 'collections' && teile[1]) return { schluessel: teile[1], art: teile[2] ? 'bearbeiten' : 'liste' }
   if (teile[0] === 'globals' && teile[1]) return { schluessel: teile[1], art: 'bearbeiten' }
   if (teile[0] === 'account') return { schluessel: 'account', art: 'bearbeiten' }
+  if (teile[0] === 'rollen') return { schluessel: 'rollen', art: 'seite' }
   if (teile[0] === 'hilfe') return { schluessel: 'hilfe-center', art: 'seite' }
   return { schluessel: 'dashboard', art: 'seite' }
 }

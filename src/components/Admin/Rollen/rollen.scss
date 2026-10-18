@@ -1,0 +1,275 @@
+.bsv-rollen {
+  max-width: 1200px;
+  padding: 16px 0 80px;
+  color: #1d1d1f;
+
+  a {
+    color: #157a43;
+    font-weight: 600;
+    text-decoration: none;
+  }
+}
+
+.bsv-rollen__kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 38px);
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  p {
+    margin: 6px 0 0;
+    color: #6e6e73;
+    max-width: 720px;
+  }
+
+}
+
+.bsv-rollen a.bsv-rollen__neu {
+  background: #157a43;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 20px;
+  white-space: nowrap;
+
+  &:hover {
+    background: #11643a;
+  }
+}
+
+.bsv-rollen__zahlen {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+  margin-bottom: 16px;
+
+  div {
+    background: #fff;
+    border-radius: 18px;
+    padding: 16px 20px;
+    display: flex;
+    flex-direction: column;
+  }
+
+  strong {
+    font-size: 30px;
+    font-weight: 800;
+    color: #157a43;
+  }
+
+  span {
+    color: #6e6e73;
+    font-size: 14px;
+  }
+
+  .is-warn strong {
+    color: #e8590c;
+  }
+}
+
+.bsv-rollen__leiste {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.bsv-rollen__tabs {
+  display: inline-flex;
+  background: #e8e8ed;
+  border-radius: 999px;
+  padding: 4px;
+
+  button {
+    border: 0;
+    background: transparent;
+    font: inherit;
+    font-weight: 600;
+    padding: 8px 18px;
+    border-radius: 999px;
+    cursor: pointer;
+    color: #3a3a3c;
+
+    &.is-aktiv {
+      background: #fff;
+      color: #1d1d1f;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+    }
+  }
+}
+
+.bsv-rollen__suche {
+  font: inherit;
+  min-width: 280px;
+  padding: 10px 16px;
+  border: 1px solid #e3e3e8;
+  border-radius: 999px;
+  background: #fff;
+}
+
+.bsv-rollen__box {
+  background: #fff;
+  border-radius: 20px;
+  padding: 18px 22px;
+}
+
+.bsv-rollen__filter {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+  color: #3a3a3c;
+  margin-bottom: 8px;
+}
+
+.bsv-rollen__tabelle {
+  width: 100%;
+  border-collapse: collapse;
+
+  th {
+    text-align: left;
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: #6e6e73;
+    padding: 10px 8px;
+    border-bottom: 1px solid #e3e3e8;
+  }
+
+  td {
+    padding: 12px 8px;
+    border-bottom: 1px solid #f0f0f2;
+    vertical-align: top;
+  }
+
+  td strong {
+    display: block;
+  }
+
+  tr.is-inaktiv td {
+    opacity: 0.55;
+  }
+}
+
+.bsv-rollen__klein {
+  display: block;
+  color: #6e6e73;
+  font-size: 13px;
+  margin: 0;
+}
+
+.bsv-rollen__chips,
+.bsv-rollen__teams,
+.bsv-rollen__personen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.bsv-rollen__teams a {
+  background: #e8f6ee;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 13px;
+}
+
+.bsv-rollen__personen a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f5f5f7;
+  border-radius: 999px;
+  padding: 3px 4px 3px 12px;
+  color: #1d1d1f;
+}
+
+.bsv-rollen__chip {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 700;
+  border: 1px solid;
+  border-radius: 999px;
+  padding: 1px 9px;
+  white-space: nowrap;
+}
+
+.bsv-rollen__warn {
+  color: #b45309;
+  font-size: 14px;
+}
+
+.bsv-rollen__bereich + .bsv-rollen__bereich {
+  margin-top: 22px;
+}
+
+.bsv-rollen__bereich h2 {
+  margin: 4px 0 6px;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.bsv-rollen__raster {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.bsv-rollen__karte {
+  background: #fff;
+  border-radius: 18px;
+  padding: 16px 18px;
+
+  ul {
+    list-style: none;
+    margin: 10px 0 0;
+    padding: 0;
+  }
+
+  li {
+    padding: 5px 0;
+    border-top: 1px solid #f0f0f2;
+  }
+}
+
+.bsv-rollen__karte-kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  strong {
+    font-size: 22px;
+    font-weight: 800;
+  }
+}
+
+@media (max-width: 760px) {
+  .bsv-rollen__tabelle thead {
+    display: none;
+  }
+  .bsv-rollen__tabelle tr,
+  .bsv-rollen__tabelle td {
+    display: block;
+  }
+  .bsv-rollen__tabelle td {
+    border: 0;
+    padding: 4px 0;
+  }
+  .bsv-rollen__tabelle tr {
+    border-bottom: 1px solid #e3e3e8;
+    padding: 10px 0;
+  }
+  .bsv-rollen__suche {
+    min-width: 0;
+    width: 100%;
+  }
+}

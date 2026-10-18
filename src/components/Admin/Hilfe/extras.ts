@@ -9,7 +9,7 @@ export type Feld = { name: string; text: string }
 export type Faq = { frage: string; antwort: string; bereich?: string }
 
 /** Rollen-Schlüssel wie in den Benutzerkonten */
-export type RolleKey = 'admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
+export type RolleKey = 'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
 
 /* ------------------------------------------------------------------ */
 /* Schritt-für-Schritt-Anleitungen                                     */
@@ -289,6 +289,28 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
   ],
+  rollen: [
+    {
+      id: 'rollen-pruefen',
+      titel: 'Prüfen, wer für ein Team zuständig ist',
+      schritte: [
+        'Links unten auf „Rollen-Übersicht“ klicken.',
+        'Reiter „Nach Team“ wählen oder den Teamnamen oben ins Suchfeld tippen.',
+        'Neben dem Team stehen die Verantwortlichen mit ihren Rollen.',
+        'Niemand eingetragen? Auf „Zuordnen“ klicken und die Person unter „Verantwortliche“ auswählen. Speichern.',
+      ],
+    },
+    {
+      id: 'rollen-aufraeumen',
+      titel: 'Rechte aufräumen, wenn jemand aufhört',
+      schritte: [
+        'In der Rollen-Übersicht die Person suchen.',
+        'Auf „Bearbeiten“ klicken.',
+        'Bei „Rollen“ alles außer „Mitglied“ entfernen (oder das Konto löschen) und speichern.',
+        'Beim Team unter „Verantwortliche“ die Person entfernen.',
+      ],
+    },
+  ],
   users: [
     {
       id: 'konto-anlegen',
@@ -300,6 +322,16 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Bei „Rollen“ „Übungsleitung“ (oder „Team-Redaktion“) wählen und speichern.',
         'Unter „Teams & Kurse“ die Person beim Team als „Verantwortliche“ eintragen.',
         'Der Person E-Mail und Passwort persönlich mitteilen. Beim ersten Anmelden richtet sie die Zwei-Faktor-App ein.',
+      ],
+    },
+    {
+      id: 'admin-rechte',
+      titel: 'Jemanden zum Admin oder Web-Admin machen (nur Web-Admin)',
+      schritte: [
+        'Unter „Benutzer“ das Konto öffnen.',
+        'Bei „Rollen“ „Admin“ oder „Web-Admin (Technik, oberste Rechte)“ hinzufügen.',
+        'Speichern. Web-Admins bekommen „Admin“ automatisch mit dazu.',
+        'Tipp: Es sollte immer mindestens zwei Web-Admins geben, damit niemand ausgesperrt wird. Den letzten Web-Admin kann man nicht entfernen.',
       ],
     },
     {
@@ -454,6 +486,11 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Grund', text: 'Zur Auswahl: Krankheit, Halle belegt, Ferien, Wetter, Sonstiges.' },
     { name: 'Hinweis', text: 'Optionaler Zusatz, z. B. ein Nachholtermin.' },
   ],
+  rollen: [
+    { name: 'Verantwortlich für', text: 'Teams, die die Person pflegen darf. Eingetragen wird das beim Team unter „Verantwortliche“.' },
+    { name: 'Zwei-Faktor', text: 'Ob die Handy-App für die Anmeldung eingerichtet ist. Pflicht für alle außer „Mitglied“.' },
+    { name: '⚠️', text: 'Hier fehlt etwas: z. B. eine Übungsleitung ohne Team oder ein Team ohne Verantwortliche.' },
+  ],
   users: [
     { name: 'Name', text: 'Erscheint in der Verwaltung und als Autor:in von News.' },
     { name: 'E-Mail', text: 'Damit meldet sich die Person an.' },
@@ -522,13 +559,21 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
     uebungsleitung: 'Du siehst nur Anfragen für deine eigenen Teams. Bitte zeitnah melden und danach den Status ändern.',
   },
   mitgliedsantraege: { kasse: 'Als Kasse bist du hier hauptverantwortlich. Bitte Anträge zeitnah bearbeiten.' },
-  users: { admin: 'Nur Admins sehen diesen Bereich. Vergib Rollen so sparsam wie möglich.' },
+  users: {
+    admin: 'Du kannst Konten anlegen und Rollen vergeben – außer Admin und Web-Admin. Konten von Web-Admins kannst du nicht ändern.',
+    webadmin: 'Nur du kannst Admin- und Web-Admin-Rechte vergeben. Vergib sie so sparsam wie möglich.',
+  },
 }
 
 /* ------------------------------------------------------------------ */
 /* Häufige Fragen                                                      */
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
+  {
+    frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
+    antwort: 'In der Rollen-Übersicht (links unten in der Seitenleiste, nur für Admins). Dort gibt es drei Reiter: nach Person, nach Team und nach Rolle.',
+    bereich: 'users',
+  },
   {
     frage: 'Warum sehe ich meine News nicht auf der Startseite?',
     antwort:
@@ -614,11 +659,28 @@ export type RollenProfil = {
 }
 
 export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
+  webadmin: {
+    label: 'Web-Admin',
+    kurz: 'Du bist für die Technik verantwortlich und hast die obersten Rechte.',
+    darf: [
+      'Alles, was ein Admin darf',
+      'Admin- und Web-Admin-Rechte vergeben und entziehen',
+      'Konten anderer Admins und Web-Admins ändern',
+      'Technik-Bereiche: Weiterleitungen und Suchindex',
+    ],
+    darfNicht: [],
+    anleitungen: [
+      ['users', 'konto-anlegen'],
+      ['users', 'admin-rechte'],
+      ['users', 'handy-verloren'],
+      ['menue', 'menue-link'],
+    ],
+  },
   admin: {
     label: 'Admin',
-    kurz: 'Du darfst alles – inklusive Benutzer und Rollen.',
-    darf: ['Alle Inhalte bearbeiten', 'Benutzer anlegen und Rollen vergeben', 'Zwei-Faktor zurücksetzen', 'Technische Einstellungen (Weiterleitungen)'],
-    darfNicht: [],
+    kurz: 'Du darfst fast alles – inklusive Benutzer und Rollen.',
+    darf: ['Alle Inhalte bearbeiten', 'Benutzer anlegen und Rollen vergeben (außer Admin/Web-Admin)', 'Zwei-Faktor zurücksetzen', 'Mitgliedsanträge und Vereinsdaten'],
+    darfNicht: ['Admin- oder Web-Admin-Rechte vergeben (macht der Web-Admin)', 'Konten von Web-Admins ändern', 'Technik-Bereiche (Weiterleitungen, Suchindex)'],
     anleitungen: [
       ['users', 'konto-anlegen'],
       ['angebote', 'team-verantwortliche'],
@@ -680,7 +742,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   },
 }
 
-export const ROLLEN_REIHENFOLGE: RolleKey[] = ['admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion']
+export const ROLLEN_REIHENFOLGE: RolleKey[] = ['webadmin', 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion']
 
 /** Wichtigste Rolle eines Kontos (für Begrüßung und Hinweise) */
 export function hauptRolle(rollen: string[] | undefined | null): RolleKey {

@@ -38,6 +38,8 @@ export default buildConfig({
         dashboard: { Component: '@/components/Admin/Dashboard' },
         // Hilfe-Center mit Suche, Anleitungen, Videos und FAQ
         hilfe: { Component: '@/components/Admin/HilfeCenter', path: '/hilfe', exact: true },
+        // Wer hat welche Rolle für welche Teams? (nur Admin/Web-Admin)
+        rollen: { Component: '@/components/Admin/Rollen', path: '/rollen', exact: true },
         // Druckbare Kurzanleitung je Rolle
         kurzanleitung: { Component: '@/components/Admin/HilfeCenter/Kurzanleitung', path: '/hilfe/kurzanleitung', exact: true },
       },

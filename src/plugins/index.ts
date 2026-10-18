@@ -7,8 +7,6 @@ import { Plugin } from 'payload'
 import { anyone } from '@/access/anyone'
 import { ausblendenAusser, isAdmin, isEditor } from '@/access/roles'
 
-/** Selten gebrauchte Technik-Bereiche nur für Admins einblenden */
-const nurAdminSichtbar = ({ user }: { user: unknown }) => !((user as { roles?: string[] } | null)?.roles ?? []).includes('admin')
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -33,7 +31,7 @@ export const plugins: Plugin[] = [
     collections: ['pages', 'posts'],
     overrides: {
       labels: { singular: 'Weiterleitung', plural: 'Weiterleitungen' },
-      admin: { group: 'Einstellungen', hidden: nurAdminSichtbar },
+      admin: { group: 'Einstellungen', hidden: ausblendenAusser('webadmin') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
@@ -122,7 +120,7 @@ export const plugins: Plugin[] = [
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       labels: { singular: 'Suchindex-Eintrag', plural: 'Suchindex' },
-      admin: { group: 'Einstellungen', hidden: nurAdminSichtbar },
+      admin: { group: 'Einstellungen', hidden: ausblendenAusser('webadmin') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]

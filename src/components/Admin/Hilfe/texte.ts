@@ -189,8 +189,10 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Alle Personen, die sich anmelden können – vom Mitglied bis zum Admin.',
     tun: [
       'Neue Konten anlegen und Rollen vergeben.',
+      'Schnell sehen, wer welche Rolle für welches Team hat: links unten „Rollen-Übersicht“.',
       'Über die Rolle legst du fest, was jemand darf:',
-      '• Admin: alles · Redaktion: News, Seiten, Texte · Kasse: Mitgliedsanträge',
+      '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
+      '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
       '• Übungsleitung / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
       'Bei Teams & Kursen unter „Verantwortliche“ legst du fest, welche Teams jemand pflegt.',
     ],
@@ -292,6 +294,23 @@ export const HILFE: Record<string, HilfeText> = {
     tun: ['Normalerweise nichts – die Einträge entstehen von selbst, wenn News veröffentlicht werden.'],
     wirkung: ['Änderungen hier beeinflussen nur die Suchergebnisse.'],
     tipps: ['Hier bitte nichts von Hand löschen.'],
+  },
+
+  rollen: {
+    titel: 'Rollen-Übersicht',
+    kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich?',
+    tun: [
+      'Reiter „Nach Person“: jede Person mit ihren Rollen, ihren Teams und ob die Zwei-Faktor-Anmeldung eingerichtet ist.',
+      'Reiter „Nach Team“: jedes Team und jeder Kurs mit den Verantwortlichen.',
+      'Reiter „Nach Rolle“: alle Personen, gruppiert nach Rolle, mit Anzahl.',
+      'Oben suchen: Name, Team oder Rolle eintippen.',
+      'Rolle ändern: bei der Person auf „Bearbeiten“. Team zuordnen: beim Team auf „Zuordnen“ und unter „Verantwortliche“ eintragen.',
+    ],
+    wirkung: [
+      'Die Übersicht zeigt nur an – geändert wird beim Benutzer bzw. beim Team.',
+      '⚠️ markiert Lücken: Übungsleitungen ohne Team, Teams ohne Verantwortliche, Zugänge ohne Zwei-Faktor.',
+    ],
+    tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Nur Admins und Web-Admins sehen diese Seite.'],
   },
 
   'hilfe-center': {

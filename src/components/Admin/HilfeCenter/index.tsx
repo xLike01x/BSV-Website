@@ -39,6 +39,7 @@ export default async function HilfeCenter({ initPageResult, params, searchParams
       permissions={permissions}
       searchParams={searchParams}
       user={user}
+      viewActions={req.payload.config.admin?.components?.actions}
       visibleEntities={visibleEntities}
     >
       <Gutter>
@@ -46,7 +47,7 @@ export default async function HilfeCenter({ initPageResult, params, searchParams
           bereiche={bereiche}
           faq={alleFaq(global)}
           rolle={rolle}
-          rollenAuswahl={rolle === 'admin' ? ROLLEN_REIHENFOLGE.map((r) => ({ key: r, label: ROLLEN_PROFIL[r].label })) : []}
+          rollenAuswahl={rolle === 'admin' || rolle === 'webadmin' ? ROLLEN_REIHENFOLGE.map((r) => ({ key: r, label: ROLLEN_PROFIL[r].label })) : []}
           profil={ROLLEN_PROFIL[rolle]}
           ansprechperson={global?.ansprechperson ?? null}
         />

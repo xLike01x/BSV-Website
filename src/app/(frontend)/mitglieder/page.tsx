@@ -12,6 +12,7 @@ export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Mein BSV', robots: { index: false } }
 
 const ROLLE: Record<string, string> = {
+  webadmin: 'Web-Admin',
   admin: 'Admin',
   redaktion: 'Redaktion',
   kasse: 'Kasse',

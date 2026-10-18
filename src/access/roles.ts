@@ -2,7 +2,9 @@ import type { Access, FieldAccess, PayloadRequest, Where } from 'payload'
 
 /**
  * Rollen im BSV. Ein Login für alle – die Rolle bestimmt die Rechte.
- * - admin:          alles, inkl. Rollen vergeben
+ * - webadmin:       Technik-Verantwortliche/r: alles wie Admin, dazu Technik-Bereiche und Schutz der
+ *                   obersten Konten (nur Web-Admins vergeben Admin-/Web-Admin-Rechte). Hat automatisch auch „admin“.
+ * - admin:          alles, inkl. Rollen vergeben (außer Admin/Web-Admin)
  * - redaktion:      News für die Startseite, Termine, Seiten, alle Teams & Kurse
  * - kasse:          Mitgliedsanträge inkl. Bankdaten
  * - uebungsleitung: eigene Teams/Kurse pflegen, Ausfälle, Probetraining-Anfragen, Team-News und -Bilder
@@ -11,10 +13,11 @@ import type { Access, FieldAccess, PayloadRequest, Where } from 'payload'
  *
  * „Eigene“ Teams sind die, bei denen die Person im Angebot unter „Verantwortliche“ eingetragen ist.
  */
-export const ROLES = ['admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion', 'mitglied'] as const
+export const ROLES = ['webadmin', 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion', 'mitglied'] as const
 export type Role = (typeof ROLES)[number]
 
 export const ROLE_OPTIONS: { label: string; value: Role }[] = [
+  { label: 'Web-Admin (Technik, oberste Rechte)', value: 'webadmin' },
   { label: 'Admin', value: 'admin' },
   { label: 'Redaktion (Startseite & alle News)', value: 'redaktion' },
   { label: 'Kasse', value: 'kasse' },
@@ -36,6 +39,9 @@ const userOf = (req: PayloadRequest) => req.user as MaybeUser
 /** Admin darf alles. */
 export const isAdmin: Access = ({ req }) => hasRole(userOf(req), 'admin')
 export const isAdminField: FieldAccess = ({ req }) => hasRole(userOf(req), 'admin')
+
+/** Web-Admin: oberste Rolle (Technik, Admin-Konten verwalten) */
+export const istWebAdmin = (user: unknown): boolean => hasRole(user as MaybeUser, 'webadmin')
 
 /** Inhalte pflegen: Admin + Redaktion. */
 export const isEditor: Access = ({ req }) => hasRole(userOf(req), 'admin', 'redaktion')

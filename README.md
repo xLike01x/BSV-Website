@@ -36,12 +36,15 @@ pnpm seed:beispiele --loeschen   # wieder entfernen
 
 | Rolle | Darf |
 |---|---|
-| Admin | alles, Rollen vergeben |
+| Web-Admin | alles, inkl. Technik (Weiterleitungen, Suche) und Admin-/Web-Admin-Rechte vergeben; der letzte Web-Admin ist geschützt |
+| Admin | alles außer Admin-Rechte vergeben und Technik |
 | Redaktion | News, Termine, Seiten, Teams & Kurse |
 | Kasse | Mitgliedsanträge inkl. Bankdaten |
 | Übungsleitung | eigene Teams/Kurse pflegen, Ausfälle, Team-News und -Bilder, eigene Probetraining-Anfragen |
 | Team-Redaktion | eigene Teams/Kurse: Team-News, Bilder, Zeiten, Ausfälle (z. B. Pressewart einer Mannschaft) |
 | Mitglied | nur Mitgliederbereich auf der Website |
+
+**Rollen-Übersicht** (`/admin/rollen`, nur Admins): wer welche Rolle hat und für welche Teams – mit Reitern nach Person, Team und Rolle.
 
 „Eigene“ Teams: im jeweiligen Team/Kurs unter **Verantwortliche** eintragen. Team-News erscheinen auf der Teamseite; auf Startseite und im Newsroom erst, wenn die Redaktion den Haken „Auch auf Startseite“ setzt.
 

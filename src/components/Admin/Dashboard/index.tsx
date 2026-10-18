@@ -36,6 +36,7 @@ function vorWann(iso: string): string {
 }
 
 const ROLLEN_LABEL: Record<string, string> = {
+  webadmin: 'Web-Admin',
   admin: 'Admin',
   redaktion: 'Redaktion',
   kasse: 'Kasse',
@@ -116,6 +117,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   if (darfGlobal('texte')) aktionen.push({ label: 'Website-Texte', href: `${ADMIN}/globals/texte` })
   if (darfGlobal('menue')) aktionen.push({ label: 'Menü & Fußzeile', href: `${ADMIN}/globals/menue` })
   if (darf('pages', 'create')) aktionen.push({ label: 'Seite bearbeiten', href: `${ADMIN}/collections/pages` })
+  if (rollen.includes('admin')) aktionen.push({ label: 'Rollen-Übersicht', href: `${ADMIN}/rollen` })
   if (darfGlobal('verein')) aktionen.push({ label: 'Vereinsdaten & Vorstand', href: `${ADMIN}/globals/verein` })
 
   // Letzte Aktivitäten aus mehreren Bereichen zusammenführen
@@ -186,7 +188,14 @@ export default async function Dashboard(props: AdminViewServerProps) {
           </h1>
           <p>
             Das ist heute im Verein los.
-            {rollen.length > 0 && <span className="bsv-dash__rolle">{rollen.map((r) => ROLLEN_LABEL[r] ?? r).join(' · ')}</span>}
+            {rollen.length > 0 && (
+              <span className="bsv-dash__rolle">
+                {rollen
+                  .filter((r) => !(r === 'admin' && rollen.includes('webadmin')))
+                  .map((r) => ROLLEN_LABEL[r] ?? r)
+                  .join(' · ')}
+              </span>
+            )}
           </p>
         </div>
         <div className="bsv-dash__kopf-aktionen">

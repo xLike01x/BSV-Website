@@ -18,7 +18,7 @@ export default async function Kurzanleitung({ initPageResult, params, searchPara
   const eigene = hauptRolle((user as { roles?: string[] }).roles)
   const gewuenscht = String((searchParams as Record<string, string> | undefined)?.rolle ?? '') as RolleKey
   // Admins dürfen jede Rolle drucken (zum Verteilen), alle anderen nur die eigene
-  const rolle: RolleKey = eigene === 'admin' && ROLLEN_PROFIL[gewuenscht] ? gewuenscht : eigene
+  const rolle: RolleKey = (eigene === 'admin' || eigene === 'webadmin') && ROLLEN_PROFIL[gewuenscht] ? gewuenscht : eigene
   const profil = ROLLEN_PROFIL[rolle]
   const anleitungen = profil.anleitungen.map(([b, id]) => anleitungFinden(b, id)).filter(Boolean)
   const global = (await req.payload.findGlobal({ slug: 'hilfe', depth: 0, user, overrideAccess: false }).catch(() => null)) as HilfeGlobal | null
@@ -34,6 +34,7 @@ export default async function Kurzanleitung({ initPageResult, params, searchPara
       permissions={permissions}
       searchParams={searchParams}
       user={user}
+      viewActions={req.payload.config.admin?.components?.actions}
       visibleEntities={visibleEntities}
     >
       <Gutter>

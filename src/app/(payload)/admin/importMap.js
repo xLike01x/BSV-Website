@@ -40,6 +40,7 @@ import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/component
 import { default as default_2a05e20fc48656657d58aa03a61ed1db } from '@/components/Admin/NavKopf'
 import { default as default_40ee7fa0a665ebc012dabaae94ee72db } from '@/components/Admin/Dashboard'
 import { default as default_1fa6a1ae6ba337a6478dc96369447471 } from '@/components/Admin/HilfeCenter'
+import { default as default_2471f1cac5bfd6793014555a88ab468a } from '@/components/Admin/Rollen'
 import { default as default_3b78fde88b8d7c81dfd3772908e6ca41 } from '@/components/Admin/HilfeCenter/Kurzanleitung'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -87,6 +88,7 @@ export const importMap = {
   "@/components/Admin/NavKopf#default": default_2a05e20fc48656657d58aa03a61ed1db,
   "@/components/Admin/Dashboard#default": default_40ee7fa0a665ebc012dabaae94ee72db,
   "@/components/Admin/HilfeCenter#default": default_1fa6a1ae6ba337a6478dc96369447471,
+  "@/components/Admin/Rollen#default": default_2471f1cac5bfd6793014555a88ab468a,
   "@/components/Admin/HilfeCenter/Kurzanleitung#default": default_3b78fde88b8d7c81dfd3772908e6ca41,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

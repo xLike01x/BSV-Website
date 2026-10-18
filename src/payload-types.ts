@@ -488,9 +488,9 @@ export interface User {
    */
   name: string;
   /**
-   * Admin: alles · Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
+   * Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
    */
-  roles: ('admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied')[];
+  roles: ('webadmin' | 'admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied')[];
   /**
    * Angebote, an denen diese Person als Mitglied teilnimmt.
    */
@@ -2606,6 +2606,7 @@ export interface Hilfe {
           | 'form-submissions'
           | 'redirects'
           | 'search'
+          | 'rollen'
           | 'hilfe-center'
           | 'hilfe'
           | 'hilfe-feedback'
@@ -2663,6 +2664,7 @@ export interface Hilfe {
               | 'form-submissions'
               | 'redirects'
               | 'search'
+              | 'rollen'
               | 'hilfe-center'
               | 'hilfe'
               | 'hilfe-feedback'

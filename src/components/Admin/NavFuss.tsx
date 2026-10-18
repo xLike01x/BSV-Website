@@ -3,6 +3,7 @@ import { useAuth } from '@payloadcms/ui'
 import React from 'react'
 
 const ROLLEN: Record<string, string> = {
+  webadmin: 'Web-Admin',
   admin: 'Admin',
   redaktion: 'Redaktion',
   kasse: 'Kasse',
@@ -22,12 +23,21 @@ export default function NavFuss() {
     .slice(0, 2)
     .map((t) => t[0]?.toUpperCase())
     .join('')
-  const rolle = (user.roles ?? []).map((r) => ROLLEN[r] ?? r).join(' · ')
+  const rollen = user.roles ?? []
+  const rolle = rollen
+    .filter((r) => !(r === 'admin' && rollen.includes('webadmin')))
+    .map((r) => ROLLEN[r] ?? r)
+    .join(' · ')
   return (
     <div className="bsv-nav-fuss">
       <a className="bsv-nav-hilfe" href="/admin/hilfe">
         <span aria-hidden="true">📖</span> Hilfe-Center
       </a>
+      {rollen.includes('admin') && (
+        <a className="bsv-nav-hilfe" href="/admin/rollen">
+          <span aria-hidden="true">👥</span> Rollen-Übersicht
+        </a>
+      )}
       <a className="bsv-nav-person" href="/admin/account">
         <span className="bsv-nav-kuerzel" aria-hidden="true">
           {kuerzel}

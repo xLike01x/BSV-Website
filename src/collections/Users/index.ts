@@ -1,3 +1,4 @@
+import { webadminLoeschSchutz, webadminSchutz } from './webadminSchutz'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
@@ -44,7 +45,7 @@ export const Users: CollectionConfig = {
         create: isAdminField,
         update: isAdminField,
       },
-      admin: { description: 'Admin: alles · Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
+      admin: { description: 'Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
     },
     {
       name: 'angebote',
@@ -72,15 +73,17 @@ export const Users: CollectionConfig = {
   hooks: {
     afterChange: [zweiFaktorZuruecksetzen as never],
     beforeChange: [
-      // Die allererste Person, die sich anlegt, wird automatisch Admin.
+      // Die allererste Person, die sich anlegt, wird automatisch Web-Admin.
       async ({ req, operation, data }) => {
         if (operation === 'create') {
           const { totalDocs } = await req.payload.count({ collection: 'users', overrideAccess: true })
-          if (totalDocs === 0) data.roles = ['admin']
+          if (totalDocs === 0) data.roles = ['webadmin', 'admin']
         }
         return data
       },
+      webadminSchutz,
     ],
+    beforeDelete: [webadminLoeschSchutz],
   },
   timestamps: true,
 }
