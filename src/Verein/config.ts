@@ -60,6 +60,7 @@ export const Verein: GlobalConfig = {
     {
       name: 'vorstand',
       label: 'Vorstand und Ansprechpersonen',
+      labels: { singular: 'Person', plural: 'Personen' },
       type: 'array',
       admin: { description: 'Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular, keine Telefonnummern.' },
       fields: [
@@ -76,6 +77,7 @@ export const Verein: GlobalConfig = {
     {
       name: 'downloads',
       label: 'Satzung & Downloads',
+      labels: { singular: 'Download', plural: 'Downloads' },
       type: 'array',
       fields: [
         {

@@ -1,3 +1,4 @@
+import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
 import {
@@ -43,9 +44,11 @@ export const Media: CollectionConfig = {
   fields: [
     {
       name: 'alt',
-      label: 'Bildbeschreibung (für Screenreader)',
+      label: 'Bildbeschreibung',
       type: 'text',
+      admin: { description: 'Was ist zu sehen? Z. B. „Die F1 jubelt mit dem Pokal“. Hilft Menschen, die sich Seiten vorlesen lassen.' },
     },
+    hinweisFeld('MedienHinweise'),
     {
       name: 'team',
       label: 'Team / Kurs',
@@ -62,6 +65,7 @@ export const Media: CollectionConfig = {
     },
     {
       name: 'caption',
+      label: 'Bildunterschrift (optional)',
       type: 'richText',
       editor: lexicalEditor({
         features: ({ rootFeatures }) => {

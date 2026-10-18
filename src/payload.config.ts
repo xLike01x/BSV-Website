@@ -18,6 +18,7 @@ import { Kontaktanfragen } from './collections/Kontaktanfragen'
 import { Verein } from './Verein/config'
 import { Texte } from './Texte/config'
 import { Menue } from './Menue/config'
+import { HilfeFeedback, HilfeInhalte } from './Hilfe/config'
 import { de } from '@payloadcms/translations/languages/de'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -35,6 +36,10 @@ export default buildConfig({
       // Eigenes, helles Dashboard (Begrüßung, Kennzahlen, Schnellzugriff, Aktivitäten)
       views: {
         dashboard: { Component: '@/components/Admin/Dashboard' },
+        // Hilfe-Center mit Suche, Anleitungen, Videos und FAQ
+        hilfe: { Component: '@/components/Admin/HilfeCenter', path: '/hilfe', exact: true },
+        // Druckbare Kurzanleitung je Rolle
+        kurzanleitung: { Component: '@/components/Admin/HilfeCenter/Kurzanleitung', path: '/hilfe/kurzanleitung', exact: true },
       },
       graphics: {
         Logo: '@/components/Admin/Logo',
@@ -91,9 +96,9 @@ export default buildConfig({
     },
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
-  collections: [Posts, Termine, Media, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users],
+  collections: [Posts, Termine, Media, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users, HilfeFeedback],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Menue, Verein, Texte],
+  globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

@@ -3,6 +3,9 @@ import { getNavGroups } from '@payloadcms/ui/shared'
 import type { AdminViewServerProps, CollectionSlug, Where } from 'payload'
 import React from 'react'
 
+import { hauptRolle, ROLLEN_PROFIL } from '../Hilfe/extras'
+import Tour from '../Tour'
+import ErsteSchritte from './ErsteSchritte'
 import './index.scss'
 
 const ADMIN = '/admin'
@@ -162,6 +165,27 @@ export default async function Dashboard(props: AdminViewServerProps) {
 
   const gruppen = getNavGroups(permissions, visibleEntities, payload.config, i18n)
 
+  // Willkommen: Was darf ich mit meiner Rolle?
+  const rolle = hauptRolle(rollen)
+  const profil = ROLLEN_PROFIL[rolle]
+  const teamNamen = eigeneTeams.map((t) => t.title)
+
+  // Erste Schritte: erste eigene News (bzw. Ausfall für Übungsleitungen)
+  const ersteAufgabe =
+    rolle === 'kasse'
+      ? undefined
+      : rolle === 'uebungsleitung'
+        ? {
+            label: 'Zum Üben einen Trainingsausfall anlegen (danach gern wieder löschen)',
+            href: `${ADMIN}/collections/ausfaelle/create`,
+            erledigt: aktivitaeten.some((a) => a.href.includes('/ausfaelle/')),
+          }
+        : {
+            label: 'Eine erste News als Entwurf anlegen',
+            href: `${ADMIN}/collections/posts/create`,
+            erledigt: (await zaehle('posts', { authors: { contains: user.id } })) > 0,
+          }
+
   return (
     <div className="bsv-dash gutter--left gutter--right">
       <header className="bsv-dash__kopf">
@@ -174,10 +198,57 @@ export default async function Dashboard(props: AdminViewServerProps) {
             {rollen.length > 0 && <span className="bsv-dash__rolle">{rollen.map((r) => ROLLEN_LABEL[r] ?? r).join(' · ')}</span>}
           </p>
         </div>
-        <a className="bsv-dash__website" href="/" target="_blank" rel="noopener">
-          Website ansehen ↗
-        </a>
+        <div className="bsv-dash__kopf-aktionen">
+          <Tour />
+          <a className="bsv-dash__website" href="/" target="_blank" rel="noopener">
+            Website ansehen ↗
+          </a>
+        </div>
       </header>
+
+      <details className="bsv-dash__willkommen" open={!((user as { name?: string }).name)}>
+        <summary>
+          <strong>
+            Du bist {profil.label}
+            {teamNamen.length > 0 && <> für {teamNamen.join(', ')}</>}.
+          </strong>{' '}
+          <span>{profil.kurz}</span>
+        </summary>
+        <div className="bsv-dash__willkommen-inhalt">
+          <div>
+            <h3>Das kannst du</h3>
+            <ul>
+              {profil.darf.map((d) => (
+                <li key={d}>✓ {d}</li>
+              ))}
+            </ul>
+          </div>
+          {profil.darfNicht.length > 0 && (
+            <div>
+              <h3>Das machen andere</h3>
+              <ul className="bsv-dash__willkommen-nicht">
+                {profil.darfNicht.map((d) => (
+                  <li key={d}>– {d}</li>
+                ))}
+              </ul>
+            </div>
+          )}
+          <div className="bsv-dash__willkommen-links">
+            <a className="bsv-dash__btn" href={`${ADMIN}/hilfe/kurzanleitung?rolle=${rolle}`}>
+              🖨️ Kurzanleitung für {profil.label}
+            </a>
+            <a className="bsv-dash__btn" href={`${ADMIN}/hilfe`}>
+              📖 Hilfe-Center
+            </a>
+          </div>
+        </div>
+      </details>
+
+      <ErsteSchritte
+        hatName={Boolean((user as { name?: string }).name)}
+        zweiFaktor={Boolean((user as { zweiFaktorAktiv?: boolean }).zweiFaktorAktiv)}
+        ersteAufgabe={ersteAufgabe}
+      />
 
       <section className="bsv-dash__karten" aria-label="Kennzahlen">
         {karten.slice(0, 4).map((k) => {
@@ -234,7 +305,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
           )}
         </section>
 
-        <section className="bsv-dash__box">
+        <section className="bsv-dash__box bsv-dash__aktivitaeten">
           <h2>Letzte Aktivitäten</h2>
           {aktivitaeten.length === 0 && <p className="bsv-dash__leer">Noch nichts passiert.</p>}
           <ul className="bsv-dash__liste">

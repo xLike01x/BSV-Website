@@ -1,3 +1,4 @@
+import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
@@ -30,7 +31,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
   },
   hooks: { beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
-    { name: 'title', label: 'Name', type: 'text', required: true },
+    { name: 'title', label: 'Name', type: 'text', required: true, admin: { description: 'So heißt das Team oder der Kurs überall auf der Website.' } },
     {
       type: 'row',
       fields: [
@@ -44,6 +45,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
             { label: 'BSV Kids', value: 'kids' },
             { label: 'Erwachsene & Senioren', value: 'erwachsene' },
           ],
+          admin: { description: 'Bestimmt, in welchem Menü das Angebot erscheint.' },
         },
         {
           name: 'untergruppe',
@@ -55,7 +57,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
             { label: 'Senioren', value: 'senioren' },
             { label: 'Seniorinnen', value: 'seniorinnen' },
           ],
-          admin: { condition: (data) => data?.bereich === 'fussball' },
+          admin: { condition: (data) => data?.bereich === 'fussball', description: 'Spalte im Fußball-Menü.' },
         },
         {
           name: 'kategorie',
@@ -70,19 +72,20 @@ export const Angebote: CollectionConfig<'angebote'> = {
     {
       type: 'row',
       fields: [
-        { name: 'alterText', label: 'Alter (Anzeige)', type: 'text', admin: { placeholder: 'z. B. 3–6 Jahre' } },
-        { name: 'alterVon', label: 'Alter von', type: 'number', min: 0, max: 99 },
-        { name: 'alterBis', label: 'Alter bis', type: 'number', min: 0, max: 99 },
+        { name: 'alterText', label: 'Alter (Anzeige)', type: 'text', admin: { placeholder: 'z. B. 3–6 Jahre', description: 'Steht im Menü und auf den Karten.' } },
+        { name: 'alterVon', label: 'Alter von', type: 'number', min: 0, max: 99, admin: { description: 'Für den Angebotsfinder.' } },
+        { name: 'alterBis', label: 'Alter bis', type: 'number', min: 0, max: 99, admin: { description: 'Für den Angebotsfinder.' } },
       ],
     },
-    { name: 'kurzbeschreibung', label: 'Kurzbeschreibung', type: 'textarea', maxLength: 240 },
-    { name: 'beschreibung', label: 'Beschreibung', type: 'richText' },
-    { name: 'bild', label: 'Titelbild', type: 'upload', relationTo: 'media' },
+    { name: 'kurzbeschreibung', label: 'Kurzbeschreibung', type: 'textarea', maxLength: 240, admin: { description: 'Ein Satz für Übersichtskarten (höchstens 240 Zeichen).' } },
+    { name: 'beschreibung', label: 'Beschreibung', type: 'richText', admin: { description: 'Ausführlicher Text auf der Seite des Teams.' } },
+    { name: 'bild', label: 'Titelbild', type: 'upload', relationTo: 'media', admin: { description: 'Großes Bild oben auf der Teamseite und auf Karten.' } },
     {
       name: 'zeiten',
       label: 'Trainingszeiten',
       type: 'array',
       labels: { singular: 'Termin', plural: 'Termine' },
+      admin: { description: 'Wann und wo trainiert wird – erscheint auf der Teamseite.' },
       fields: [
         {
           type: 'row',
@@ -115,6 +118,8 @@ export const Angebote: CollectionConfig<'angebote'> = {
     {
       name: 'team',
       label: 'Trainer- und Betreuerteam (Anzeige)',
+      labels: { singular: 'Person', plural: 'Personen' },
+      admin: { description: 'Nur zur Anzeige auf der Teamseite. Wer bearbeiten darf, steht oben bei „Verantwortliche“.' },
       type: 'array',
       fields: [
         {
@@ -146,8 +151,9 @@ export const Angebote: CollectionConfig<'angebote'> = {
         { name: 'fussballDeTeamId', label: 'FUSSBALL.DE Team-ID (Spielplan/Tabelle)', type: 'text' },
       ],
     },
-    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar' } },
-    { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
+    hinweisFeld('AngebotHinweise'),
+    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne.' } },
+    { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
     slugField({ position: 'sidebar' }),
   ],
 }

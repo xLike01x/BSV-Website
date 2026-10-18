@@ -1,3 +1,4 @@
+import { hinweisFeld } from '@/fields/hinweise'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
@@ -115,8 +116,10 @@ export const Pages: CollectionConfig<'pages'> = {
         },
       ],
     },
+    hinweisFeld('SeitenHinweise'),
     {
       name: 'publishedAt',
+      label: 'Veröffentlicht am',
       type: 'date',
       admin: {
         position: 'sidebar',

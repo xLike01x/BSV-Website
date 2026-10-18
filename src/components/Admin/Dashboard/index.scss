@@ -362,3 +362,195 @@
     animation: none;
   }
 }
+
+/* ---------- Willkommen, Erste Schritte, Tour ---------- */
+.bsv-dash__kopf-aktionen {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  align-items: center;
+
+  .bsv-dash__btn {
+    background: #fff;
+    border: 0;
+    font: inherit;
+    font-weight: 600;
+    cursor: pointer;
+  }
+}
+
+.bsv-dash__willkommen {
+  background: #e8f6ee;
+  border-radius: 20px;
+  padding: 16px 22px;
+  margin-bottom: 16px;
+  color: #0f3d24;
+
+  summary {
+    cursor: pointer;
+    list-style: none;
+    line-height: 1.5;
+
+    &::-webkit-details-marker {
+      display: none;
+    }
+
+    &::after {
+      content: ' Mehr ›';
+      color: #157a43;
+      font-weight: 600;
+      white-space: nowrap;
+    }
+
+    span {
+      color: #2f5d43;
+    }
+  }
+
+  &[open] summary::after {
+    content: ' Weniger';
+  }
+
+  h3 {
+    margin: 0 0 6px;
+    font-size: 14px;
+    font-weight: 700;
+    color: #0f3d24;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+}
+
+.bsv-dash__willkommen-inhalt {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 14px;
+}
+
+.bsv-dash__willkommen-nicht {
+  color: #4b6b58;
+}
+
+.bsv-dash__willkommen-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+
+  .bsv-dash__btn {
+    background: #fff;
+  }
+}
+
+.bsv-erste-schritte {
+  margin-bottom: 16px;
+  position: relative;
+
+  ul {
+    list-style: none;
+    margin: 12px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+    gap: 8px 20px;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    a,
+    button {
+      color: #157a43;
+      font: inherit;
+      font-weight: 600;
+      background: none;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    &.is-erledigt span:last-child {
+      color: #6e6e73;
+      text-decoration: line-through;
+    }
+  }
+}
+
+.bsv-erste-schritte__kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 10px;
+  padding-right: 90px;
+
+  h2 {
+    margin: 0 !important;
+  }
+
+  span {
+    color: #6e6e73;
+    font-size: 14px;
+  }
+}
+
+.bsv-erste-schritte__balken {
+  height: 6px;
+  border-radius: 99px;
+  background: #f0f0f2;
+  margin-top: 10px;
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: #157a43;
+    border-radius: 99px;
+    transition: width 0.4s;
+  }
+}
+
+.bsv-erste-schritte__haken {
+  width: 22px;
+  height: 22px;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  border: 2px solid #d2d2d7;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+
+  .is-erledigt & {
+    background: #157a43;
+    border-color: #157a43;
+  }
+}
+
+.bsv-erste-schritte__ausblenden {
+  position: absolute;
+  top: 20px;
+  right: 22px;
+  border: 0;
+  background: none;
+  color: #6e6e73;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+
+  &:hover {
+    color: #1d1d1f;
+  }
+}

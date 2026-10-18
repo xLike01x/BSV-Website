@@ -25,6 +25,9 @@ export default function NavFuss() {
   const rolle = (user.roles ?? []).map((r) => ROLLEN[r] ?? r).join(' · ')
   return (
     <div className="bsv-nav-fuss">
+      <a className="bsv-nav-hilfe" href="/admin/hilfe">
+        <span aria-hidden="true">📖</span> Hilfe-Center
+      </a>
       <a className="bsv-nav-person" href="/admin/account">
         <span className="bsv-nav-kuerzel" aria-hidden="true">
           {kuerzel}

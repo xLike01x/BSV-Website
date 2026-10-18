@@ -1,3 +1,4 @@
+import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
 import {
@@ -108,6 +109,7 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Titel',
       type: 'text',
       required: true,
+      admin: { description: 'Kurz und konkret, z. B. „F1 gewinnt Hallenturnier“.' },
     },
     {
       type: 'tabs',
@@ -119,6 +121,7 @@ export const Posts: CollectionConfig<'posts'> = {
               label: 'Titelbild',
               type: 'upload',
               relationTo: 'media',
+              admin: { description: 'Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.' },
             },
             {
               name: 'content',
@@ -202,6 +205,7 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
+    hinweisFeld('NewsHinweise'),
     {
       name: 'team',
       label: 'Team / Kurs',
@@ -250,8 +254,11 @@ export const Posts: CollectionConfig<'posts'> = {
       name: 'authors',
       label: 'Autor:in',
       type: 'relationship',
+      // Wer die News anlegt, steht automatisch als Autor:in drin
+      defaultValue: ({ user }) => (user ? [user.id] : []),
       admin: {
         position: 'sidebar',
+        description: 'Wird automatisch mit deinem Namen vorbelegt.',
       },
       hasMany: true,
       relationTo: 'users',

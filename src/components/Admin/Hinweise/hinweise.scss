@@ -1,0 +1,46 @@
+.bsv-hinweise {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  border: 1px solid #e3e3e8;
+  font-size: 14px;
+  line-height: 1.45;
+
+  ul {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  li {
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+  }
+
+  a {
+    color: #157a43;
+    font-weight: 600;
+  }
+}
+
+.bsv-hinweise__titel {
+  margin: 0 0 8px;
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #6e6e73;
+}
+
+.bsv-hinweise__warn {
+  color: #8a3b0b;
+}
+
+.bsv-hinweise__ok {
+  color: #0f5a32;
+}

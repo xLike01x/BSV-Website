@@ -70,7 +70,7 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Alle Bilder und Dateien der Website an einem Ort.',
     tun: [
       'Bilder oder PDFs hochladen – einfach per Drag & Drop oder über „Neu erstellen“.',
-      'Einen kurzen Bildtext (Alternativtext) eingeben: Was ist auf dem Bild zu sehen?',
+      'Eine kurze Bildbeschreibung eingeben: Was ist auf dem Bild zu sehen?',
       'Ein Team zuordnen und „In Galerie zeigen“ anhaken, damit das Bild in der Galerie des Teams erscheint.',
     ],
     wirkung: [
@@ -80,7 +80,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     tipps: [
       'Fotos von Kindern nur mit Einverständnis der Eltern hochladen.',
-      'Der Bildtext hilft Menschen, die die Seite vorgelesen bekommen – und Google.',
+      'Die Bildbeschreibung hilft Menschen, die die Seite vorgelesen bekommen – und Google.',
       'Ein Bild löschen, das noch irgendwo benutzt wird, hinterlässt dort eine Lücke.',
     ],
   },
@@ -136,7 +136,7 @@ export const HILFE: Record<string, HilfeText> = {
   ausfaelle: {
     titel: 'Trainingsausfälle',
     kurz: 'Hier meldest du, wenn ein Training ausfällt – z. B. weil die Halle belegt ist.',
-    tun: ['Team oder Kurs wählen, Datum eintragen und kurz den Grund nennen.', 'Ist der Ausfall vorbei, verschwindet er von selbst.'],
+    tun: ['Team oder Kurs wählen, Datum eintragen und den Grund auswählen.', 'Ist der Ausfall vorbei, verschwindet er von selbst.'],
     wirkung: [
       'Der Ausfall erscheint sofort gut sichtbar auf der Seite des Teams und im Mitgliederbereich.',
       'Eltern und Mitglieder sehen so schnell, dass sie nicht kommen müssen.',
@@ -281,6 +281,38 @@ export const HILFE: Record<string, HilfeText> = {
     tun: ['Normalerweise nichts – die Einträge entstehen von selbst, wenn News veröffentlicht werden.'],
     wirkung: ['Änderungen hier beeinflussen nur die Suchergebnisse.'],
     tipps: ['Hier bitte nichts von Hand löschen.'],
+  },
+
+  'hilfe-center': {
+    titel: 'Hilfe-Center',
+    kurz: 'Alle Anleitungen und häufigen Fragen an einem Ort – mit Suche.',
+    tun: [
+      'Oben ins Suchfeld tippen, z. B. „Bild“ oder „Ausfall“.',
+      'Eine Anleitung anklicken, um die Schritte zu sehen.',
+      'Die Kurzanleitung für deine Rolle ausdrucken oder als PDF speichern.',
+    ],
+    wirkung: ['Hier änderst du nichts – es ist nur zum Nachlesen.'],
+  },
+  hilfe: {
+    titel: 'Hilfe-Texte',
+    kurz: 'Hier ergänzt ihr die Hilfe selbst – eigene Tipps, Anleitungen und häufige Fragen.',
+    tun: [
+      'Bei „Ergänzungen je Bereich“ einen Bereich wählen und Tipps oder Anleitungen hinzufügen.',
+      'Bei Anleitungen gilt: eine Zeile = ein Schritt.',
+      'Bei „Häufige Fragen“ neue Fragen mit Antwort anlegen.',
+      'Oben die Ansprechperson eintragen, die bei Fragen hilft.',
+    ],
+    wirkung: [
+      'Eure Ergänzungen erscheinen sofort im „? Hilfe“-Fenster und im Hilfe-Center.',
+      'Die eingebauten Texte bleiben immer erhalten.',
+    ],
+    tipps: ['Schaut unter „Hilfe-Rückmeldungen“, welche Hilfen als nicht hilfreich markiert wurden.'],
+  },
+  'hilfe-feedback': {
+    titel: 'Hilfe-Rückmeldungen',
+    kurz: 'Was Nutzer unter „Hat dir das geholfen?“ angeklickt und geschrieben haben.',
+    tun: ['Rückmeldungen lesen und unklare Hilfetexte unter „Hilfe-Texte“ verbessern.'],
+    wirkung: ['Nur Admins sehen diese Liste.'],
   },
 
   account: {

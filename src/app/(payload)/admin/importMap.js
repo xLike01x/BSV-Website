@@ -16,9 +16,15 @@ import { MetaTitleComponent as MetaTitleComponent_a8a977ebc872c5d5ea7ee689724c08
 import { MetaImageComponent as MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
+import { NewsHinweise as NewsHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { TerminHinweise as TerminHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { MedienHinweise as MedienHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -32,6 +38,8 @@ import { default as default_8199d17e4dde2fb5d0783261ffe692e2 } from '@/component
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { default as default_2a05e20fc48656657d58aa03a61ed1db } from '@/components/Admin/NavKopf'
 import { default as default_40ee7fa0a665ebc012dabaae94ee72db } from '@/components/Admin/Dashboard'
+import { default as default_1fa6a1ae6ba337a6478dc96369447471 } from '@/components/Admin/HilfeCenter'
+import { default as default_3b78fde88b8d7c81dfd3772908e6ca41 } from '@/components/Admin/HilfeCenter/Kurzanleitung'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
 /** @type import('payload').ImportMap */
@@ -54,9 +62,15 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#MetaImageComponent": MetaImageComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#MetaDescriptionComponent": MetaDescriptionComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
+  "@/components/Admin/Hinweise#NewsHinweise": NewsHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
+  "@/components/Admin/Hinweise#TerminHinweise": TerminHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/Hinweise#MedienHinweise": MedienHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@/components/Admin/Hinweise#SeitenHinweise": SeitenHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
@@ -70,5 +84,7 @@ export const importMap = {
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@/components/Admin/NavKopf#default": default_2a05e20fc48656657d58aa03a61ed1db,
   "@/components/Admin/Dashboard#default": default_40ee7fa0a665ebc012dabaae94ee72db,
+  "@/components/Admin/HilfeCenter#default": default_1fa6a1ae6ba337a6478dc96369447471,
+  "@/components/Admin/HilfeCenter/Kurzanleitung#default": default_3b78fde88b8d7c81dfd3772908e6ca41,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

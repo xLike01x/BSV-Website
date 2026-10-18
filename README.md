@@ -53,6 +53,20 @@ Alle Rollen außer „Mitglied“ brauchen für die Verwaltung zusätzlich einen
 
 Alle Überschriften und festen Texte der Website stehen in der Verwaltung unter **Inhalte → Website-Texte**. Platzhalter wie `{teams}` oder `{mitglieder}` werden automatisch durch aktuelle Zahlen ersetzt.
 
+## Menü
+
+Die Links im Hauptmenü (neben „Fußball“, „Breitensport“, „Verein“) und das Aufklappmenü „Verein“ pflegt die Redaktion unter **Inhalte → Menü**. Leere Liste = Standardmenü.
+
+## Hilfe in der Verwaltung
+
+- **„? Hilfe“** oben rechts auf jeder Seite: Erklärung des Bereichs, Schritt-für-Schritt-Anleitungen, Feld-Erklärungen, Hinweise je Rolle, FAQ, Rückmeldung 👍/👎, „Frage an den Admin“ (landet bei den Kontaktanfragen).
+- **Hilfe-Center** (`/admin/hilfe`): Suche, Videos, alle Anleitungen und Fragen. **Kurzanleitung je Rolle** zum Drucken: `/admin/hilfe/kurzanleitung`.
+- **Live-Hinweise** beim Bearbeiten (News, Teams, Termine, Ausfälle, Seiten, Bilder): warnen z. B. vor fehlendem Titelbild und zeigen, wo ein Eintrag erscheint.
+- **Tour** und **Erste Schritte** auf dem Dashboard für neue Nutzer.
+- Eingebaute Texte: `src/components/Admin/Hilfe/texte.ts` und `extras.ts`. Eigene Ergänzungen ohne Code unter **Einstellungen → Hilfe-Texte**; Rückmeldungen unter **Einstellungen → Hilfe-Rückmeldungen** (nur Admins).
+- Videos neu aufnehmen (nach Design-Änderungen, nur lokal mit Testdaten): `scripts/hilfe-videos.mjs`, danach z. B.
+  `ffmpeg -ss 1 -i hilfe-videos-roh/news-schreiben.webm -vf scale=1024:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/news-schreiben.mp4`
+
 ## Sicherheit
 
 - `.env` enthält Geheimnisse und wird **nie** eingecheckt (siehe `.env.example`).

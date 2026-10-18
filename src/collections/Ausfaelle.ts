@@ -1,3 +1,4 @@
+import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 import { APIError } from 'payload'
 
@@ -25,8 +26,18 @@ export const Ausfaelle: CollectionConfig = {
   },
   defaultSort: '-datum',
   fields: [
-    { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true },
-    { name: 'datum', label: 'Datum', type: 'date', required: true, admin: { date: { displayFormat: 'dd.MM.yyyy' } } },
+    hinweisFeld('AusfallHinweise', false),
+    {
+      name: 'angebot',
+      label: 'Angebot',
+      type: 'relationship',
+      relationTo: 'angebote',
+      required: true,
+      // Team-Rollen sehen in der Auswahl nur ihre eigenen Teams
+      filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+      admin: { description: 'Welches Team oder welcher Kurs ausfällt.' },
+    },
+    { name: 'datum', label: 'Datum', type: 'date', required: true, admin: { description: 'Nach diesem Tag verschwindet der Hinweis automatisch.', date: { displayFormat: 'dd.MM.yyyy' } } },
     {
       name: 'grund',
       label: 'Grund',
@@ -34,8 +45,8 @@ export const Ausfaelle: CollectionConfig = {
       defaultValue: 'Krankheit',
       options: ['Krankheit', 'Halle belegt', 'Ferien / Feiertag', 'Wetter', 'Sonstiges'].map((g) => ({ label: g, value: g })),
     },
-    { name: 'hinweis', label: 'Hinweis an die Teilnehmenden', type: 'textarea' },
-    { name: 'benachrichtigen', label: 'Teilnehmende per E-Mail/Push benachrichtigen', type: 'checkbox', defaultValue: true },
+    { name: 'hinweis', label: 'Hinweis an die Teilnehmenden', type: 'textarea', admin: { description: 'Optional, z. B. „Nachholtermin am Freitag“.' } },
+    { name: 'benachrichtigen', label: 'Teilnehmende per E-Mail/Push benachrichtigen', type: 'checkbox', defaultValue: true, admin: { description: 'Kommt mit dem E-Mail-Versand – aktuell wird noch nichts verschickt.' } },
   ],
   hooks: {
     afterChange: [revalidateAllesNachAenderung],

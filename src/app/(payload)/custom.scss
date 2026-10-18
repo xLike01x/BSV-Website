@@ -293,3 +293,19 @@ body {
 .doc-header:after {
   display: none;
 }
+
+.bsv-nav-hilfe {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  margin-bottom: 4px;
+  border-radius: 12px;
+  color: var(--bsv-ink);
+  font-weight: 600;
+  text-decoration: none;
+
+  &:hover {
+    background: var(--bsv-soft);
+  }
+}

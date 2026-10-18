@@ -78,6 +78,7 @@ export interface Config {
     mitgliedsantraege: Mitgliedsantraege;
     kontaktanfragen: Kontaktanfragen;
     users: User;
+    'hilfe-feedback': HilfeFeedback;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -109,6 +110,7 @@ export interface Config {
     mitgliedsantraege: MitgliedsantraegeSelect<false> | MitgliedsantraegeSelect<true>;
     kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -130,6 +132,7 @@ export interface Config {
     menue: Menue;
     verein: Verein;
     texte: Texte;
+    hilfe: Hilfe;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -137,6 +140,7 @@ export interface Config {
     menue: MenueSelect<false> | MenueSelect<true>;
     verein: VereinSelect<false> | VereinSelect<true>;
     texte: TexteSelect<false> | TexteSelect<true>;
+    hilfe: HilfeSelect<false> | HilfeSelect<true>;
   };
   locale: null;
   widgets: {
@@ -180,7 +184,13 @@ export interface UserAuthOperations {
  */
 export interface Post {
   id: number;
+  /**
+   * Kurz und konkret, z. B. „F1 gewinnt Hallenturnier“.
+   */
   title: string;
+  /**
+   * Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.
+   */
   heroImage?: (number | null) | Media;
   content: {
     root: {
@@ -216,6 +226,9 @@ export interface Post {
    */
   aufStartseite?: boolean | null;
   publishedAt?: string | null;
+  /**
+   * Wird automatisch mit deinem Namen vorbelegt.
+   */
   authors?: (number | User)[] | null;
   populatedAuthors?:
     | {
@@ -240,6 +253,9 @@ export interface Post {
  */
 export interface Media {
   id: number;
+  /**
+   * Was ist zu sehen? Z. B. „Die F1 jubelt mit dem Pokal“. Hilft Menschen, die sich Seiten vorlesen lassen.
+   */
   alt?: string | null;
   /**
    * Bilder eines Teams kann dessen Team-Redaktion verwalten.
@@ -343,15 +359,39 @@ export interface Media {
  */
 export interface Angebote {
   id: number;
+  /**
+   * So heißt das Team oder der Kurs überall auf der Website.
+   */
   title: string;
+  /**
+   * Bestimmt, in welchem Menü das Angebot erscheint.
+   */
   bereich: 'fussball' | 'kids' | 'erwachsene';
+  /**
+   * Spalte im Fußball-Menü.
+   */
   untergruppe?: ('junioren' | 'juniorinnen' | 'senioren' | 'seniorinnen') | null;
   kategorie?:
     ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
+  /**
+   * Steht im Menü und auf den Karten.
+   */
   alterText?: string | null;
+  /**
+   * Für den Angebotsfinder.
+   */
   alterVon?: number | null;
+  /**
+   * Für den Angebotsfinder.
+   */
   alterBis?: number | null;
+  /**
+   * Ein Satz für Übersichtskarten (höchstens 240 Zeichen).
+   */
   kurzbeschreibung?: string | null;
+  /**
+   * Ausführlicher Text auf der Seite des Teams.
+   */
   beschreibung?: {
     root: {
       type: string;
@@ -367,7 +407,13 @@ export interface Angebote {
     };
     [k: string]: unknown;
   } | null;
+  /**
+   * Großes Bild oben auf der Teamseite und auf Karten.
+   */
   bild?: (number | null) | Media;
+  /**
+   * Wann und wo trainiert wird – erscheint auf der Teamseite.
+   */
   zeiten?:
     | {
         tag?: ('Montag' | 'Dienstag' | 'Mittwoch' | 'Donnerstag' | 'Freitag' | 'Samstag' | 'Sonntag') | null;
@@ -382,6 +428,9 @@ export interface Angebote {
    * Personen mit Rolle Übungsleitung oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.
    */
   leitung?: (number | User)[] | null;
+  /**
+   * Nur zur Anzeige auf der Teamseite. Wer bearbeiten darf, steht oben bei „Verantwortliche“.
+   */
   team?:
     | {
         name: string;
@@ -395,7 +444,13 @@ export interface Angebote {
   spielklasse?: string | null;
   fupaWidgetId?: string | null;
   fussballDeTeamId?: string | null;
+  /**
+   * Kleinere Zahl = weiter vorne.
+   */
   reihenfolge?: number | null;
+  /**
+   * Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.
+   */
   aktiv?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
@@ -534,12 +589,24 @@ export interface Category {
  */
 export interface Termine {
   id: number;
+  /**
+   * Name der Veranstaltung, z. B. „Sommerfest“.
+   */
   title: string;
   beginn: string;
+  /**
+   * Optional.
+   */
   ende?: string | null;
   ort?: string | null;
+  /**
+   * Bestimmt die Farbe im Kalender.
+   */
   bereich?: ('verein' | 'fussball' | 'kids' | 'erwachsene') | null;
   beschreibung?: string | null;
+  /**
+   * Dann sehen den Termin nur angemeldete Mitglieder.
+   */
   nurMitglieder?: boolean | null;
   anmeldung?: boolean | null;
   updatedAt: string;
@@ -957,10 +1024,22 @@ export interface Form {
  */
 export interface Ausfaelle {
   id: number;
+  /**
+   * Welches Team oder welcher Kurs ausfällt.
+   */
   angebot: number | Angebote;
+  /**
+   * Nach diesem Tag verschwindet der Hinweis automatisch.
+   */
   datum: string;
   grund?: ('Krankheit' | 'Halle belegt' | 'Ferien / Feiertag' | 'Wetter' | 'Sonstiges') | null;
+  /**
+   * Optional, z. B. „Nachholtermin am Freitag“.
+   */
   hinweis?: string | null;
+  /**
+   * Kommt mit dem E-Mail-Versand – aktuell wird noch nichts verschickt.
+   */
   benachrichtigen?: boolean | null;
   updatedAt: string;
   createdAt: string;
@@ -1042,6 +1121,21 @@ export interface Kontaktanfragen {
   betreff: string;
   nachricht: string;
   datenschutz: boolean;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Was Nutzer über die Hilfetexte gesagt haben. Viele 👎 bei einem Bereich = Text verbessern.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hilfe-feedback".
+ */
+export interface HilfeFeedback {
+  id: number;
+  bereich: string;
+  hilfreich?: boolean | null;
+  kommentar?: string | null;
+  benutzer?: (number | null) | User;
   updatedAt: string;
   createdAt: string;
 }
@@ -1278,6 +1372,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'users';
         value: number | User;
+      } | null)
+    | ({
+        relationTo: 'hilfe-feedback';
+        value: number | HilfeFeedback;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -1796,6 +1894,18 @@ export interface UsersSelect<T extends boolean = true> {
         createdAt?: T;
         expiresAt?: T;
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hilfe-feedback_select".
+ */
+export interface HilfeFeedbackSelect<T extends boolean = true> {
+  bereich?: T;
+  hilfreich?: T;
+  kommentar?: T;
+  benutzer?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2358,6 +2468,109 @@ export interface Texte {
   createdAt?: string | null;
 }
 /**
+ * Eigene Ergänzungen für den „? Hilfe“-Knopf und das Hilfe-Center. Die eingebauten Texte bleiben erhalten – was du hier einträgst, kommt dazu.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hilfe".
+ */
+export interface Hilfe {
+  id: number;
+  /**
+   * Steht unten in jeder Hilfe, z. B. „Thomas Wilms (Admin)“.
+   */
+  ansprechperson?: string | null;
+  bereiche?:
+    | {
+        bereich:
+          | 'dashboard'
+          | 'posts'
+          | 'termine'
+          | 'media'
+          | 'pages'
+          | 'categories'
+          | 'angebote'
+          | 'ausfaelle'
+          | 'probetraining'
+          | 'mitgliedsantraege'
+          | 'kontaktanfragen'
+          | 'users'
+          | 'menue'
+          | 'verein'
+          | 'texte'
+          | 'forms'
+          | 'form-submissions'
+          | 'redirects'
+          | 'search'
+          | 'hilfe-center'
+          | 'hilfe'
+          | 'hilfe-feedback'
+          | 'account';
+        /**
+         * Leer lassen, um den eingebauten Text zu behalten.
+         */
+        kurz?: string | null;
+        /**
+         * Eine Zeile = ein Tipp. Erscheint unter „Gut zu wissen“.
+         */
+        tipps?: string | null;
+        anleitungen?:
+          | {
+              titel: string;
+              /**
+               * Eine Zeile = ein Schritt. Die Nummerierung kommt automatisch.
+               */
+              schritte: string;
+              /**
+               * Kurzes Bildschirmvideo (MP4 oder WebM).
+               */
+              video?: (number | null) | Media;
+              id?: string | null;
+            }[]
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Ergänzt die eingebauten Fragen im Hilfe-Center.
+   */
+  faq?:
+    | {
+        frage: string;
+        antwort: string;
+        bereich?:
+          | (
+              | 'dashboard'
+              | 'posts'
+              | 'termine'
+              | 'media'
+              | 'pages'
+              | 'categories'
+              | 'angebote'
+              | 'ausfaelle'
+              | 'probetraining'
+              | 'mitgliedsantraege'
+              | 'kontaktanfragen'
+              | 'users'
+              | 'menue'
+              | 'verein'
+              | 'texte'
+              | 'forms'
+              | 'form-submissions'
+              | 'redirects'
+              | 'search'
+              | 'hilfe-center'
+              | 'hilfe'
+              | 'hilfe-feedback'
+              | 'account'
+            )
+          | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2618,6 +2831,40 @@ export interface TexteSelect<T extends boolean = true> {
     | T
     | {
         titel?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "hilfe_select".
+ */
+export interface HilfeSelect<T extends boolean = true> {
+  ansprechperson?: T;
+  bereiche?:
+    | T
+    | {
+        bereich?: T;
+        kurz?: T;
+        tipps?: T;
+        anleitungen?:
+          | T
+          | {
+              titel?: T;
+              schritte?: T;
+              video?: T;
+              id?: T;
+            };
+        id?: T;
+      };
+  faq?:
+    | T
+    | {
+        frage?: T;
+        antwort?: T;
+        bereich?: T;
+        id?: T;
       };
   updatedAt?: T;
   createdAt?: T;
