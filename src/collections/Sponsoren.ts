@@ -14,7 +14,7 @@ export const Sponsoren: CollectionConfig = {
     useAsTitle: 'name',
     defaultColumns: ['name', 'stufe', 'aktiv', 'reihenfolge'],
     hidden: ausblendenAusser('admin', 'redaktion'),
-    components: { beforeList: ['@/components/Admin/Einstieg'] },
+    components: { beforeList: ['@/components/Admin/Einstieg', '@/components/Admin/Sponsoren'] },
     description: 'Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.',
   },
   defaultSort: 'reihenfolge',

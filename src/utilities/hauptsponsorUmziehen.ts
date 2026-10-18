@@ -7,10 +7,10 @@ type Alt = { name?: string | null; url?: string | null; logo?: number | { id: nu
  * anderen in „Sponsoren“ gepflegt (Art „Hauptsponsor“). Beim Start wird er dorthin
  * übernommen und das alte Feld geleert, damit es nur noch eine Stelle gibt.
  */
-export async function hauptsponsorUmziehen(payload: Payload) {
+export async function hauptsponsorUmziehen(payload: Payload): Promise<string | null> {
   const verein = (await payload.findGlobal({ slug: 'verein', depth: 0, overrideAccess: true })) as unknown as { hauptsponsor?: Alt }
   const alt = verein.hauptsponsor
-  if (!alt?.name?.trim()) return
+  if (!alt?.name?.trim()) return null
 
   const vorhanden = await payload.find({
     collection: 'sponsoren',
@@ -21,7 +21,8 @@ export async function hauptsponsorUmziehen(payload: Payload) {
     overrideAccess: true,
   })
   const context = { disableRevalidate: true }
-  if (vorhanden.totalDocs === 0) {
+  const neu = vorhanden.totalDocs === 0
+  if (neu) {
     await payload.create({
       collection: 'sponsoren',
       overrideAccess: true,
@@ -40,4 +41,5 @@ export async function hauptsponsorUmziehen(payload: Payload) {
   }
   // Leerer Text (statt leer) = schon übernommen, kommt nicht wieder
   await payload.updateGlobal({ slug: 'verein', overrideAccess: true, context, data: { hauptsponsor: { name: '', url: '', logo: null } } as never })
+  return neu ? alt.name : null
 }

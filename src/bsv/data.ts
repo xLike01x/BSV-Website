@@ -7,6 +7,7 @@ import { cache } from 'react'
 
 import { Texte as TexteConfig } from '@/Texte/config'
 import { standardTexte, zusammenfuehren } from '@/Texte/standard'
+import { hauptsponsorUmziehen } from '@/utilities/hauptsponsorUmziehen'
 
 import type { Angebote, Post, Termine, Texte, User, Verein } from '@/payload-types'
 
@@ -182,7 +183,14 @@ export const getSponsoren = cache(async () => {
 })
 
 /** Hauptsponsor (Art „Hauptsponsor“, kleinste Reihenfolge) – für Fußzeile und Sponsoren-Seite */
-export const getHauptsponsor = cache(async () => (await getSponsoren()).find((s) => s.stufe === 'haupt') ?? null)
+export const getHauptsponsor = cache(async () => {
+  const haupt = (await getSponsoren()).find((s) => s.stufe === 'haupt')
+  if (haupt) return haupt
+  // Noch nicht übernommen? Dann jetzt – damit die Fußzeile nie leer bleibt
+  const p = await payload()
+  if (await hauptsponsorUmziehen(p).catch(() => null)) return (await p.find({ collection: 'sponsoren', where: { stufe: { equals: 'haupt' } }, sort: 'reihenfolge', limit: 1, depth: 1 })).docs[0] ?? null
+  return null
+})
 
 /** Sichtbare Fotoalben (optional nur eines Teams) */
 export const getAlben = cache(async (teamId?: number, limit = 60) => {
