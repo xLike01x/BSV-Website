@@ -667,6 +667,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wo sehe ich genau, was eine Rolle darf?',
+    antwort: 'In der Rollen-Übersicht im Reiter „Rechte je Rolle“: Rolle anklicken, dann siehst du für jeden Bereich Sehen, Anlegen, Bearbeiten und Löschen. Die Tabelle wird aus den echten Regeln berechnet und stimmt deshalb immer.',
+    bereich: 'users',
+  },
+  {
     frage: 'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
     antwort: 'Nein – fast alles landet zuerst im Papierkorb: in der jeweiligen Liste oben auf „Papierkorb“ klicken, den Eintrag öffnen und „Wiederherstellen“ wählen. Nach 30 Tagen wird der Papierkorb automatisch geleert. Benutzerkonten werden sofort gelöscht.',
   },

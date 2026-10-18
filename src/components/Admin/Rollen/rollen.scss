@@ -361,3 +361,103 @@
 .bsv-rollen__tabelle td:nth-last-child(2) {
   white-space: nowrap;
 }
+
+.bsv-rechte__rollen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+
+  button {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 2px solid transparent;
+    background: #f5f7f6;
+    border-radius: 999px;
+    padding: 6px 12px 6px 8px;
+    font: inherit;
+    cursor: pointer;
+
+    small {
+      color: #6e6e73;
+      font-size: 12px;
+    }
+
+    &.is-aktiv {
+      border-color: #157a43;
+      background: #e8f6ee;
+    }
+  }
+}
+
+.bsv-rechte__beschreibung {
+  color: #3a3a3c;
+  margin: 0 0 8px;
+}
+
+.bsv-rechte__tabelle {
+  th:not(:first-child),
+  td:not(:first-child) {
+    width: 16%;
+  }
+
+  tr.is-gesperrt td {
+    opacity: 0.5;
+  }
+}
+
+.bsv-rechte__stufe {
+  display: inline-block;
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+
+  &.is-ja {
+    background: #e8f6ee;
+    color: #11643a;
+  }
+
+  &.is-eigene {
+    background: #e7f0ff;
+    color: #1d4ed8;
+  }
+
+  &.is-nein {
+    color: #8a8a8e;
+  }
+
+  &.is-website {
+    background: #f5f5f7;
+    color: #3a3a3c;
+    font-weight: 500;
+  }
+}
+
+.bsv-rechte__legende {
+  list-style: none;
+  padding: 0;
+  margin: 18px 0 8px;
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+
+@media (max-width: 760px) {
+  .bsv-rechte__tabelle thead {
+    display: table-header-group;
+  }
+  .bsv-rechte__tabelle tr {
+    display: table-row;
+  }
+  .bsv-rechte__tabelle td {
+    display: table-cell;
+    padding: 6px 4px;
+  }
+  .bsv-rechte__stufe {
+    padding: 2px 6px;
+    font-size: 12px;
+  }
+}

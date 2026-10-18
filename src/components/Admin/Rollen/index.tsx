@@ -9,6 +9,7 @@ import { hasRole } from '@/access/roles'
 import { TESTPASSWORT, testkontenErlaubt } from '@/auth/testkonten'
 
 import RollenClient, { type Person, type Team } from './Client'
+import { rechteBerechnen } from './rechte'
 import './rollen.scss'
 
 /** /admin/rollen – wer hat welche Rolle, für welche Teams? (nur Admin/Web-Admin) */
@@ -61,7 +62,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(), passwort: TESTPASSWORT }} />
+        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(), passwort: TESTPASSWORT }} rechte={await rechteBerechnen(req)} />
       </Gutter>
     </DefaultTemplate>
   )

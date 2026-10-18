@@ -2,6 +2,8 @@
 import { useRouter } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 
+import type { RechteMatrix, Stufe } from './rechte'
+
 export type Person = {
   id: number
   name: string
@@ -55,9 +57,9 @@ export const istAlt = (p: Person) => {
 }
 const zuletzt = (p: Person) => (p.letzteAnmeldung ? new Date(p.letzteAnmeldung).toLocaleDateString('de-DE', { day: 'numeric', month: 'short', year: 'numeric' }) : 'noch nie')
 
-type Tab = 'personen' | 'teams' | 'rollen' | 'test'
+type Tab = 'personen' | 'teams' | 'rollen' | 'rechte' | 'test'
 
-export default function RollenClient({ personen, teams, test }: { personen: Person[]; teams: Team[]; test: { erlaubt: boolean; passwort: string } }) {
+export default function RollenClient({ personen, teams, test, rechte }: { personen: Person[]; teams: Team[]; test: { erlaubt: boolean; passwort: string }; rechte: RechteMatrix }) {
   const [tab, setTab] = useState<Tab>('personen')
   const [suche, setSuche] = useState('')
   const [nurPersonal, setNurPersonal] = useState(true)
@@ -116,6 +118,7 @@ export default function RollenClient({ personen, teams, test }: { personen: Pers
               ['personen', 'Nach Person'],
               ['teams', 'Nach Team'],
               ['rollen', 'Nach Rolle'],
+              ['rechte', 'Rechte je Rolle'],
               ['test', `Testkonten${personen.some((p) => p.testkonto) ? ` (${personen.filter((p) => p.testkonto).length})` : ''}`],
             ] as [Tab, string][]
           ).map(([k, l]) => (
@@ -243,6 +246,8 @@ export default function RollenClient({ personen, teams, test }: { personen: Pers
           })}
         </section>
       )}
+
+      {tab === 'rechte' && <RechteJeRolle rechte={rechte} q={q} />}
 
       {tab === 'test' && <Testkonten personen={personen.filter((p) => p.testkonto)} test={test} />}
 
@@ -375,6 +380,91 @@ function Testkonten({ personen, test }: { personen: Person[]; test: { erlaubt: b
           )}
         </>
       )}
+    </section>
+  )
+}
+
+const STUFE: Record<Stufe, { text: string; klasse: string }> = {
+  ja: { text: '✓ ja', klasse: 'is-ja' },
+  eigene: { text: '◐ nur eigene Teams', klasse: 'is-eigene' },
+  nein: { text: '–', klasse: 'is-nein' },
+  website: { text: 'über die Website', klasse: 'is-website' },
+}
+
+/** „Rechte je Rolle“ – wie eine Regel-Übersicht, aber nur zum Ansehen (berechnet aus den echten Regeln) */
+function RechteJeRolle({ rechte, q }: { rechte: RechteMatrix; q: string }) {
+  const [rolle, setRolle] = useState<string>('uebungsleitung')
+  const zeilen = (rechte[rolle] ?? []).filter((z) => !q || z.titel.toLocaleLowerCase('de-DE').includes(q))
+  const gruppen = [...new Set(zeilen.map((z) => z.gruppe))]
+  const anzahl = (r: string) => (rechte[r] ?? []).filter((z) => z.ansehen !== 'nein').length
+  return (
+    <section className="bsv-rollen__box">
+      <h2 className="bsv-rollen__h2">Was darf welche Rolle?</h2>
+      <p className="bsv-rollen__klein" style={{ marginBottom: 12 }}>
+        Rolle wählen. Die Übersicht wird direkt aus den echten Zugriffsregeln berechnet – sie stimmt also immer. Ändern lässt sich hier nichts: Rechte vergibst du über die Rolle beim Benutzer.
+      </p>
+      <div className="bsv-rechte__rollen" role="tablist" aria-label="Rolle">
+        {ROLLEN.map((r) => (
+          <button key={r.key} type="button" role="tab" aria-selected={rolle === r.key} className={rolle === r.key ? 'is-aktiv' : ''} onClick={() => setRolle(r.key)}>
+            <Chip rolle={r.key} /> <small>{anzahl(r.key)} Bereiche</small>
+          </button>
+        ))}
+      </div>
+      <p className="bsv-rechte__beschreibung">{ROLLE[rolle]?.text}</p>
+      {gruppen.map((g) => (
+        <div key={g} className="bsv-rollen__bereich">
+          <h2>{g}</h2>
+          <table className="bsv-rollen__tabelle bsv-rechte__tabelle">
+            <thead>
+              <tr>
+                <th>Bereich</th>
+                <th>Sehen</th>
+                <th>Anlegen</th>
+                <th>Bearbeiten</th>
+                <th>Löschen</th>
+              </tr>
+            </thead>
+            <tbody>
+              {zeilen
+                .filter((z) => z.gruppe === g)
+                .map((z) => (
+                  <tr key={z.slug} className={z.ansehen === 'nein' ? 'is-gesperrt' : ''}>
+                    <td>
+                      <strong>{z.titel}</strong>
+                      {z.art === 'einstellung' && <span className="bsv-rollen__klein">Einstellungsseite</span>}
+                    </td>
+                    {(['ansehen', 'anlegen', 'bearbeiten', 'loeschen'] as const).map((op) =>
+                      z.art === 'einstellung' && (op === 'anlegen' || op === 'loeschen') ? (
+                        <td key={op} className="is-leer" />
+                      ) : (
+                        <td key={op}>
+                          <span className={`bsv-rechte__stufe ${STUFE[z[op]].klasse}`}>{STUFE[z[op]].text}</span>
+                        </td>
+                      ),
+                    )}
+                  </tr>
+                ))}
+            </tbody>
+          </table>
+        </div>
+      ))}
+      <ul className="bsv-rechte__legende">
+        <li>
+          <span className="bsv-rechte__stufe is-ja">✓ ja</span> darf das überall
+        </li>
+        <li>
+          <span className="bsv-rechte__stufe is-eigene">◐ nur eigene Teams</span> nur bei Teams, bei denen die Person unter „Verantwortliche“ steht
+        </li>
+        <li>
+          <span className="bsv-rechte__stufe is-nein">–</span> darf das nicht
+        </li>
+        <li>
+          <span className="bsv-rechte__stufe is-website">über die Website</span> Einträge entstehen durch Besucher (z. B. Formulare), nicht in der Verwaltung
+        </li>
+      </ul>
+      <p className="bsv-rollen__klein">
+        Zusätzlich gilt: Admin- und Web-Admin-Rechte vergibt nur ein Web-Admin. Bankdaten sind verschlüsselt. „Nur eigene Teams“ bei der Mediathek heißt: Ordner der eigenen Teams plus „Verein allgemein“ (nur benutzen).
+      </p>
     </section>
   )
 }

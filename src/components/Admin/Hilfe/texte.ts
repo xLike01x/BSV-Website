@@ -401,6 +401,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Reiter „Nach Person“: jede Person mit ihren Rollen, ihren Teams und ob die Zwei-Faktor-Anmeldung eingerichtet ist.',
       'Reiter „Nach Team“: jedes Team und jeder Kurs mit den Verantwortlichen.',
       'Reiter „Nach Rolle“: alle Personen, gruppiert nach Rolle, mit Anzahl.',
+      'Reiter „Rechte je Rolle“: Rolle anklicken und sehen, welche Bereiche sie sehen, anlegen, bearbeiten und löschen darf – berechnet aus den echten Regeln.',
       'Reiter „Testkonten“: Testkonten je Rolle, Abteilung und Team anlegen, um die Rechte auszuprobieren (nur lokal, ohne Zwei-Faktor).',
       'Spalte „Zuletzt da“: Wer sich seit über 6 Monaten nicht angemeldet hat, ist mit ⚠️ markiert – Rechte noch nötig?',
       'Oben suchen: Name, Team oder Rolle eintippen.',
