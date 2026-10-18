@@ -1,5 +1,6 @@
 'use client'
 
+import { sicheresZiel } from '@/bsv/sicheresZiel'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
@@ -12,10 +13,7 @@ export function LoginForm() {
   const [laedt, setLaedt] = useState(false)
 
   // Nur interne Ziele erlauben (kein Open Redirect)
-  const weiter = (() => {
-    const w = sp.get('weiter') ?? '/mitglieder'
-    return w.startsWith('/') && !w.startsWith('//') ? w : '/mitglieder'
-  })()
+  const weiter = sicheresZiel(sp.get('weiter'), '/mitglieder')
 
   async function login(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()

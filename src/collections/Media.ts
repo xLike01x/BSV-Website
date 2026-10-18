@@ -9,7 +9,6 @@ import {
 import path from 'path'
 import { fileURLToPath } from 'url'
 
-import { anyone } from '../access/anyone'
 import type { CollectionBeforeChangeHook } from 'payload'
 import { APIError } from 'payload'
 
@@ -36,7 +35,11 @@ export const Media: CollectionConfig = {
   access: {
     create: canUpload,
     delete: redaktionOderEigeneTeams('team'),
-    read: anyone,
+    // Öffentlich lesbar – aber Dateien im Papierkorb nur noch für die Verwaltung (z. B. nach Widerruf einer Foto-Einwilligung)
+    read: ({ req, isReadingStaticFile }) => {
+      if (!isReadingStaticFile || canUpload({ req })) return true
+      return { deletedAt: { exists: false } }
+    },
     update: redaktionOderEigeneTeams('team'),
   },
   labels: { singular: 'Bild / Datei', plural: 'Mediathek' },
@@ -118,8 +121,11 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
-    // Upload to the public/media directory in Next.js making them publicly accessible even outside of Payload
-    staticDir: path.resolve(dirname, '../../public/media'),
+    // Bewusst NICHT in public/: Dateien laufen nur über /api/media/file/… und damit über die Zugriffsregeln
+    // (Papierkorb-Bilder sind sofort weg, Payload setzt sichere Header)
+    staticDir: path.resolve(dirname, '../../medien'),
+    // Nur Bilder und PDFs – keine HTML/XML/SVG-Dateien, die im Browser Skripte ausführen könnten
+    mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'application/pdf'],
     adminThumbnail: 'thumbnail',
     focalPoint: true,
     imageSizes: [

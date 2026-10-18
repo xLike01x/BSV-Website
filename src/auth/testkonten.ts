@@ -10,7 +10,20 @@ import { hasRole } from '@/access/roles'
  */
 export const TESTPASSWORT = 'BSV-Test-2026!'
 export const TESTDOMAIN = 'bsv.test'
-export const testkontenErlaubt = () => process.env.NODE_ENV !== 'production' || process.env.BSV_TESTKONTEN === 'an'
+const LOKAL = ['localhost', '127.0.0.1', '[::1]', '::1']
+const hostname = (h?: string | null) => (h ?? '').split(',')[0].trim().toLowerCase().replace(/:\d+$/, '')
+/**
+ * Testkonten nur auf dem eigenen PC: im Entwicklungs-Server UND nur bei Aufruf über localhost.
+ * Über einen Tunnel (z. B. Vorschau für Kollegen) oder auf der Live-Website sind sie gesperrt.
+ */
+export const testkontenErlaubt = (headers?: Headers | null) => {
+  if (process.env.BSV_TESTKONTEN === 'an') return true
+  if (process.env.NODE_ENV === 'production') return false
+  if (!headers) return true
+  const weitergeleitet = headers.get('x-forwarded-host')
+  if (weitergeleitet && !LOKAL.includes(hostname(weitergeleitet))) return false
+  return LOKAL.includes(hostname(headers.get('host')))
+}
 
 export const testkontoFeld: Field = {
   name: 'testkonto',
@@ -110,7 +123,7 @@ export const testkontenEndpunkte: Endpoint[] = [
     method: 'post',
     handler: async (req) => {
       if (!hasRole(req.user as never, 'admin')) return Response.json({ fehler: 'Nur für Admins.' }, { status: 403 })
-      if (!testkontenErlaubt()) return Response.json({ fehler: 'Testkonten gibt es nur auf dem lokalen Server.' }, { status: 400 })
+      if (!testkontenErlaubt(req.headers)) return Response.json({ fehler: 'Testkonten gibt es nur auf dem lokalen Server.' }, { status: 400 })
       const konten = await anlegen(req)
       return Response.json({ konten, passwort: TESTPASSWORT })
     },

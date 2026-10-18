@@ -1,3 +1,4 @@
+import { sichereAdresse } from '@/fields/sichereAdresse'
 import type { ArrayField, Field, GlobalConfig } from 'payload'
 
 import { ausblendenAusser, isEditor } from '@/access/roles'
@@ -116,7 +117,7 @@ export const Menue: GlobalConfig = {
       handler: async (req) => {
         if (!(await isEditor({ req } as never))) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
         const body = (await req.json?.().catch(() => ({}))) as { label?: string; adresse?: string; wo?: 'fusszeile' | 'vereinMehr' }
-        if (!body.label || !body.adresse?.startsWith('/')) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
+        if (!body.label || !body.adresse?.startsWith('/') || sichereAdresse(body.adresse) !== true) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
         const m = (await req.payload.findGlobal({ slug: 'menue', depth: 0, req })) as unknown as {
           vereinMehr?: Record<string, unknown>[]
           fusszeile?: { titel?: string; eintraege?: Record<string, unknown>[] }[]

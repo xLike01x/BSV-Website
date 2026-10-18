@@ -10,7 +10,9 @@ import { getServerSideURL } from '@/utilities/getURL'
  */
 export async function GET(request: Request) {
   const payload = await getPayload({ config: configPromise })
-  const id = new URL(request.url).searchParams.get('id')
+  const roh = new URL(request.url).searchParams.get('id')
+  if (roh !== null && !/^\d{1,9}$/.test(roh)) return new Response('Termin nicht gefunden', { status: 404 })
+  const id = roh
   const ab = new Date()
   ab.setMonth(ab.getMonth() - 1)
   const res = await payload.find({

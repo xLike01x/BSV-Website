@@ -14,7 +14,7 @@ import './sicherung.scss'
 export default async function Sicherung({ initPageResult, params, searchParams }: AdminViewServerProps) {
   const { req, permissions, visibleEntities, locale } = initPageResult
   if (!req.user) redirect('/login?weiter=/admin/sicherung')
-  if (!hasRole(req.user as never, 'admin')) redirect('/admin')
+  if (!hasRole(req.user as never, 'webadmin')) redirect('/admin')
   return (
     <DefaultTemplate
       i18n={req.i18n}

@@ -3,6 +3,7 @@ import path from 'path'
 import type { Endpoint } from 'payload'
 
 import { hasRole } from '@/access/roles'
+import { MEDIEN_ORDNER } from '@/utilities/medienUmziehen'
 
 type Download = { id?: string; titel?: string; nurMitglieder?: boolean | null; datei?: number | { id: number; filename?: string } | null; dokument?: unknown }
 
@@ -26,7 +27,7 @@ export const dokumenteUmziehen: Endpoint = {
         neu.push({ ...d, datei: m ? m.id : (d.datei as number | null), dokument: d.dokument && typeof d.dokument === 'object' ? (d.dokument as { id: number }).id : d.dokument })
         continue
       }
-      const quelle = path.join(process.cwd(), 'public', 'media', m.filename)
+      const quelle = path.join(MEDIEN_ORDNER, m.filename)
       if (!fs.existsSync(quelle)) {
         neu.push({ ...d, datei: m.id })
         continue

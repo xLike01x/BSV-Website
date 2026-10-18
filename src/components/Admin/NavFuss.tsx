@@ -38,7 +38,7 @@ export default function NavFuss() {
           <span aria-hidden="true">👥</span> Rollen-Übersicht
         </a>
       )}
-      {rollen.includes('admin') && (
+      {rollen.includes('webadmin') && (
         <a className="bsv-nav-hilfe" href="/admin/sicherung">
           <span aria-hidden="true">💾</span> Datensicherung
         </a>

@@ -63,7 +63,32 @@ const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operatio
   if (!ids.includes(ziel)) throw new APIError('Bitte wähle eines deiner Teams aus. Du kannst nur News für eigene Teams schreiben.', 403)
   if (operation === 'create') data.aufStartseite = false
   else if (originalDoc) data.aufStartseite = originalDoc.aufStartseite
+  // Diese Felder entscheidet die Redaktion – Team-Rollen können sie auch über die Schnittstelle nicht setzen
+  const ids2 = (v: unknown) => (Array.isArray(v) ? v.map((x) => (x && typeof x === 'object' ? (x as { id: number }).id : x)) : [])
+  const uid = (user as { id?: number }).id
+  if (operation === 'create' || !originalDoc) {
+    data.categories = []
+    data.relatedPosts = []
+    data.authors = uid ? [uid] : []
+    data.publishedAt = data._status === 'published' ? new Date().toISOString() : null
+  } else {
+    data.categories = ids2(originalDoc.categories)
+    data.relatedPosts = ids2(originalDoc.relatedPosts)
+    data.authors = ids2(originalDoc.authors)
+    data.publishedAt = originalDoc.publishedAt ?? (data._status === 'published' ? new Date().toISOString() : null)
+  }
   return data
+}
+
+/** Versionen/Entwürfe: Redaktion alle, Team-Rollen nur die ihrer Teams, sonst niemand */
+const versionenLesen: Access = async ({ req }) => {
+  const user = req.user as { roles?: string[] } | null
+  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  if (hasRole(user as never, ...TEAM_ROLLEN)) {
+    const ids = await eigeneAngebotIds(req)
+    if (ids.length) return { 'version.team': { in: ids } } as Where
+  }
+  return false
 }
 
 export const Posts: CollectionConfig<'posts'> = {
@@ -73,6 +98,7 @@ export const Posts: CollectionConfig<'posts'> = {
     create: newsAnlegen,
     delete: redaktionOderEigeneTeams('team'),
     read: newsLesen,
+    readVersions: versionenLesen,
     update: redaktionOderEigeneTeams('team'),
   },
   // This config controls what's populated by default when a post is referenced

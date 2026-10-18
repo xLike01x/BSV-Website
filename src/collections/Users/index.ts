@@ -15,7 +15,10 @@ export const Users: CollectionConfig = {
     create: isAdmin,
     delete: isAdmin,
     read: isAdminOrSelf,
-    update: isAdminOrSelf,
+    // Ohne bestätigten zweiten Faktor darf niemand Passwort/E-Mail ändern (sonst könnte jemand mit nur dem Passwort den echten Inhaber aussperren)
+    update: (args) => !(args.req.user as { _zweiFaktorOffen?: boolean } | null)?._zweiFaktorOffen && isAdminOrSelf(args),
+    // Gesperrte Konten (zu viele Fehlversuche) entsperren nur Admins
+    unlock: isAdmin,
   },
   admin: {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
@@ -28,6 +31,8 @@ export const Users: CollectionConfig = {
   auth: {
     tokenExpiration: 60 * 60 * 8, // 8 Stunden
     maxLoginAttempts: 5,
+    // Anmelde-Cookie: nur über HTTPS (Live-Website), nicht für fremde Seiten
+    cookies: { secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' },
     lockTime: 10 * 60 * 1000, // 10 Minuten Sperre nach 5 Fehlversuchen
     // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte
     strategies: [zweiFaktorStrategie],
@@ -84,8 +89,8 @@ export const Users: CollectionConfig = {
   hooks: {
     // Testkonten (ohne Zwei-Faktor) nur auf dem lokalen Server
     beforeLogin: [
-      ({ user }) => {
-        if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt()) throw new APIError('Testkonten sind auf der Live-Website gesperrt.', 403)
+      ({ user, req }) => {
+        if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt(req?.headers)) throw new APIError('Testkonten gehen nur lokal auf dem eigenen PC (nicht über einen Tunnel oder die Live-Website).', 403)
         return user
       },
     ],

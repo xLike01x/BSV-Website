@@ -1,5 +1,6 @@
 'use client'
 
+import { sicheresZiel } from '@/bsv/sicheresZiel'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
@@ -17,8 +18,6 @@ const post = async (pfad: string, body?: unknown) => {
   return { ok: res.ok, data }
 }
 
-/** Nur interne Ziele erlauben (kein Open Redirect) */
-const sicheresZiel = (w: string | null, fallback: string) => (w && w.startsWith('/') && !w.startsWith('//') ? w : fallback)
 
 export function ZweiFaktor() {
   const router = useRouter()

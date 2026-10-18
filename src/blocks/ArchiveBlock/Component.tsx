@@ -30,6 +30,8 @@ export const ArchiveBlock: React.FC<
       collection: 'posts',
       depth: 1,
       limit,
+      // Nur Veröffentlichtes – wie für Besucher ohne Anmeldung
+      overrideAccess: false,
       ...(flattenedCategories && flattenedCategories.length > 0
         ? {
             where: {

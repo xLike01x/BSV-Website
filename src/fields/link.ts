@@ -1,3 +1,4 @@
+import { sichereAdresse } from './sichereAdresse'
 import type { Field, GroupField } from 'payload'
 
 import deepMerge from '@/utilities/deepMerge'
@@ -88,6 +89,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
       },
       label: 'Adresse (z. B. /termine oder https://…)',
       required: true,
+      validate: (wert: unknown, { siblingData }: { siblingData: Record<string, unknown> }) => (siblingData?.type !== 'custom' ? true : sichereAdresse(wert)),
     },
   ]
 

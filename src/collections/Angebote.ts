@@ -5,7 +5,7 @@ import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { canEditAngebot, isEditor } from '../access/roles'
+import { canEditAngebot, isEditor, isEditorField } from '../access/roles'
 import { slugFromTitle } from '../hooks/slugFromTitle'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
@@ -44,6 +44,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
           label: 'Bereich',
           type: 'select',
           required: true,
+          access: { update: isEditorField },
           options: [
             { label: 'Fußball', value: 'fussball' },
             { label: 'BSV Kids', value: 'kids' },
@@ -117,6 +118,8 @@ export const Angebote: CollectionConfig<'angebote'> = {
       type: 'relationship',
       relationTo: 'users',
       hasMany: true,
+      // Wer ein Team betreuen darf, entscheiden Admin/Redaktion – nicht die Trainer selbst
+      access: { create: isEditorField, update: isEditorField },
       admin: { description: 'Personen mit Rolle Übungsleitung oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.' },
     },
     {
@@ -157,7 +160,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     },
     hinweisFeld('AngebotHinweise'),
     { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne.' } },
-    { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
+    { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, access: { create: isEditorField, update: isEditorField }, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
     slugField({ position: 'sidebar' }),
   ],
 }

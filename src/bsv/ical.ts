@@ -1,7 +1,14 @@
 import type { Termine } from '@/payload-types'
 
 /** iCalendar (.ics) für Termine – für Handy-, Outlook- und Google-Kalender */
-const esc = (s: string) => s.replace(/\\/g, '\\\\').replace(/;/g, '\;').replace(/,/g, '\\,').replace(/\r?\n/g, '\\n')
+const esc = (s: string) =>
+  s
+    .replace(/\\/g, '\\\\')
+    .replace(/;/g, '\\;')
+    .replace(/,/g, '\\,')
+    .replace(/\r\n|\r|\n/g, '\\n')
+    // übrige Steuerzeichen entfernen (kein Einschleusen weiterer Kalender-Zeilen)
+    .replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, '')
 const zeit = (iso: string) => new Date(iso).toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '')
 /** Zeilen nach 75 Bytes umbrechen (RFC 5545) */
 const falten = (zeile: string) => {

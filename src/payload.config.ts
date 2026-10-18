@@ -1,7 +1,7 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import sharp from 'sharp'
 import path from 'path'
-import { buildConfig, PayloadRequest } from 'payload'
+import { buildConfig, type CollectionConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
@@ -24,8 +24,9 @@ import { Footer } from './Footer/config'
 import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { sicherungEndpunkte } from './sicherung/endpunkte'
-import { PAPIERKORB } from './utilities/papierkorb'
+import { PAPIERKORB, papierkorbSchutz } from './utilities/papierkorb'
 import { hauptsponsorUmziehen } from './utilities/hauptsponsorUmziehen'
+import { medienUmziehen } from './utilities/medienUmziehen'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { Datenschutz } from './datenschutz/config'
 import { Dokumente } from './collections/Dokumente'
@@ -39,11 +40,14 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
+import { canUpload, hasRole, isEditor } from './access/roles'
+
 export default buildConfig({
   endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
+    medienUmziehen(payload)
     await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
     taeglicheAufgaben(payload)
   },
@@ -107,6 +111,8 @@ export default buildConfig({
   // Ordner-Ansicht nicht als eigenen Menüpunkt zeigen (Ordner bleiben in der Mediathek nutzbar)
   folders: {
     browseByFolder: false,
+    // Payload-eigene Ordner (nicht genutzt) – ohne diese Zeile dürfte sie jeder Angemeldete bearbeiten
+    collectionOverrides: [({ collection }) => ({ ...collection, access: { read: canUpload, create: isEditor, update: isEditor, delete: isEditor } })],
   },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
@@ -118,9 +124,29 @@ export default buildConfig({
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
   collections: [Posts, Termine, Media, Alben, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Sponsoren, Gesuche, Users, HilfeFeedback].map((c) =>
-    PAPIERKORB.includes(c.slug) ? { ...c, trash: true } : c,
+    PAPIERKORB.includes(c.slug)
+      ? (() => {
+          const schutz = papierkorbSchutz(c.slug)
+          return {
+            ...(c as CollectionConfig),
+            trash: true,
+            hooks: {
+              ...c.hooks,
+              beforeChange: [...schutz.beforeChange, ...(c.hooks?.beforeChange ?? [])],
+              beforeDelete: [...schutz.beforeDelete, ...(c.hooks?.beforeDelete ?? [])],
+            },
+          }
+        })()
+      : c,
   ),
   cors: [getServerSideURL()].filter(Boolean),
+  // Live-Website: Anmelde-Cookie nur bei Anfragen von der eigenen Adresse gültig (Schutz gegen CSRF).
+  // Lokal bewusst offen, damit der Zugriff z. B. per Handy im WLAN klappt.
+  csrf: process.env.NODE_ENV === 'production' ? [getServerSideURL()].filter(Boolean) : [],
+  // Wird nicht genutzt – abgeschaltet heißt eine Angriffsfläche weniger
+  graphQL: { disable: true },
+  // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
+  upload: { limits: { fileSize: 25 * 1024 * 1024 } },
   globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte, Datenschutz],
   i18n: {
     supportedLanguages: { de },
@@ -170,8 +196,8 @@ export default buildConfig({
   jobs: {
     access: {
       run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Allow logged in users to execute this endpoint (default)
-        if (req.user) return true
+        // Nur Admins (oder ein Zeitplan mit CRON_SECRET) dürfen Hintergrund-Aufgaben anstoßen
+        if (hasRole(req.user as never, 'admin')) return true
 
         const secret = process.env.CRON_SECRET
         if (!secret) return false

@@ -109,9 +109,14 @@ export const Mitgliedsantraege: CollectionConfig = {
             // Hinweis: In Payload laufen Feld-Hooks vor der Validierung. Deshalb
             // prüfen wir die IBAN hier im Klartext und verschlüsseln erst danach.
             beforeChange: [
-              ({ value, collection }) => {
+              ({ value, collection, operation, originalDoc }) => {
                 if (typeof value !== 'string' || !value) return value
-                if (value.startsWith('enc:')) return value
+                // Bereits verschlüsselt: nur beim Ändern eines bestehenden Antrags mit unverändertem Wert –
+                // niemals von außen eingeschmuggelt (sonst ungeprüfter Inhalt, der die Liste der Kasse kaputt macht)
+                if (value.startsWith('enc:')) {
+                  if (operation === 'update' && originalDoc && (originalDoc as { iban?: string }).iban === value) return value
+                  throw new ValidationError({ collection: collection?.slug, errors: [{ path: 'iban', message: 'Die IBAN ist ungültig. Bitte prüfen.' }] })
+                }
                 const iban = value.replace(/\s+/g, '').toUpperCase()
                 if (!isValidIBAN(iban)) {
                   throw new ValidationError({
@@ -122,7 +127,16 @@ export const Mitgliedsantraege: CollectionConfig = {
                 return encrypt(iban)
               },
             ],
-            afterRead: [({ value }) => (typeof value === 'string' ? decrypt(value) : value)],
+            afterRead: [
+              ({ value }) => {
+                if (typeof value !== 'string') return value
+                try {
+                  return decrypt(value)
+                } catch {
+                  return '⚠ nicht lesbar'
+                }
+              },
+            ],
           },
         },
         { name: 'sepaMandat', label: 'SEPA-Mandat erteilt', type: 'checkbox', required: true },

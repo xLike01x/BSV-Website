@@ -1,4 +1,5 @@
 import type { PayloadRequest } from 'payload'
+import { hasRole } from '@/access/roles'
 import { getPayload } from 'payload'
 import { getSafeRedirect } from 'payload/shared'
 
@@ -55,7 +56,11 @@ export async function GET(req: NextRequest): Promise<Response> {
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
-  // You can add additional checks here to see if the user is allowed to preview this page
+  // Vorschau nur für Personen, die Inhalte bearbeiten (nicht für Mitglieder)
+  if (!hasRole(user as never, 'admin', 'redaktion', 'uebungsleitung', 'teamredaktion')) {
+    draft.disable()
+    return new Response('You are not allowed to preview this page', { status: 403 })
+  }
 
   draft.enable()
 

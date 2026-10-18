@@ -70,5 +70,16 @@ export const neueWiederherstellungscodes = (anzahl = 10): string[] => {
   })
 }
 
-export const hashCode = (code: string) =>
-  crypto.createHash('sha256').update(code.replace(/[\s-]/g, '').toUpperCase()).digest('hex')
+const normal = (code: string) => code.replace(/[\s-]/g, '').toUpperCase()
+/** Wiederherstellungscode speichern: HMAC mit Server-Schlüssel (ein Datenbank-Auszug allein reicht nicht zum Durchprobieren) */
+export const hashCode = (code: string) => {
+  const schluessel = process.env.ENCRYPTION_KEY || process.env.PAYLOAD_SECRET || ''
+  return 'h1:' + crypto.createHmac('sha256', schluessel).update(normal(code)).digest('hex')
+}
+/** Prüft gegen neues (h1:) und altes Format (reines SHA-256) – zeitkonstant */
+export const codePasst = (eingabe: string, gespeichert: string) => {
+  const soll = gespeichert.startsWith('h1:') ? hashCode(eingabe) : crypto.createHash('sha256').update(normal(eingabe)).digest('hex')
+  const a = Buffer.from(soll)
+  const b = Buffer.from(gespeichert)
+  return a.length === b.length && crypto.timingSafeEqual(a, b)
+}

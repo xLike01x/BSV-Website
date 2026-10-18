@@ -10,7 +10,7 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
   const a: Aufgabe[] = []
   const admin = rollen.includes('admin')
 
-  if (admin) {
+  if (rollen.includes('webadmin')) {
     const letzte = sicherungenAuflisten()[0]
     const tage = letzte ? Math.floor((Date.now() - new Date(letzte.erstellt).getTime()) / 86400000) : null
     if (tage === null) a.push({ key: 'sicherung', art: 'warn', symbol: '💾', text: 'Es gibt noch keine Datensicherung.', href: '/admin/sicherung', link: 'Jetzt sichern' })

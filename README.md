@@ -103,7 +103,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 
 ## Datensicherung
 
-Verwaltung → **💾 Datensicherung** (nur Admins): „Sicherung jetzt erstellen“ legt Datenbank (alle Tabellen als JSON) und alle Dateien (`public/media`, `dokumente`) als **eine** Datei `backups/bsv-sicherung_JJJJ-MM-TT_HH-MM.tar.gz` ab – ohne pg_dump. Herunterladen und zusätzlich extern aufbewahren. Ohne Verwaltung: `pnpm sicherung:erstellen`.
+Verwaltung → **💾 Datensicherung** (nur Web-Admins): „Sicherung jetzt erstellen“ legt Datenbank (alle Tabellen als JSON) und alle Dateien (`medien`, `dokumente`) als **eine** Datei `backups/bsv-sicherung_JJJJ-MM-TT_HH-MM.tar.gz` ab – ohne pg_dump. Herunterladen und zusätzlich extern aufbewahren. Ohne Verwaltung: `pnpm sicherung:erstellen`.
 
 **Einspielen** (ersetzt alle Inhalte; vorher wird automatisch gesichert): Server stoppen, `pnpm sicherung:einspielen <datei>` (ohne Datei: neueste; mit `ja` am Ende ohne Rückfrage). Der `ENCRYPTION_KEY` ist nicht enthalten – getrennt aufbewahren.
 

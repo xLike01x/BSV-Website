@@ -62,7 +62,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(), passwort: TESTPASSWORT }} rechte={await rechteBerechnen(req)} />
+        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(req.headers), passwort: TESTPASSWORT }} rechte={await rechteBerechnen(req)} />
       </Gutter>
     </DefaultTemplate>
   )

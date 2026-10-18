@@ -105,7 +105,9 @@ export const getNewsArtikel = cache(async (slug: string, draft = false): Promise
     depth: 2,
     limit: 1,
     draft,
-    overrideAccess: draft,
+    // Vorschau: nur das, was der angemeldete Benutzer auch im Admin sehen darf
+    overrideAccess: false,
+    ...(draft ? { user: await aktuellerBenutzer() } : {}),
   })
   return res.docs[0] ?? null
 })

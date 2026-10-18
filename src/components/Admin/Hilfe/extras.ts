@@ -685,7 +685,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie sichere ich alle Daten?',
-    antwort: 'Links unten auf „Datensicherung“ (nur Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
+    antwort: 'Links unten auf „Datensicherung“ (nur Web-Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
   },
   {
     frage: 'Warum muss ich beim Hochladen angeben, ob Personen zu erkennen sind?',

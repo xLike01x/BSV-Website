@@ -1276,7 +1276,7 @@ export interface Sponsoren {
   id: number;
   name: string;
   /**
-   * Am besten mit transparentem oder weißem Hintergrund (PNG oder SVG), quer.
+   * Am besten mit transparentem oder weißem Hintergrund (PNG), quer.
    */
   logo?: (number | null) | Media;
   url?: string | null;

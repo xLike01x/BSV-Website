@@ -30,6 +30,7 @@ export const Pages: CollectionConfig<'pages'> = {
     create: isEditor,
     delete: isEditor,
     read: editorOrPublished,
+    readVersions: isEditor,
     update: isEditor,
   },
   // This config controls what's populated by default when a page is referenced

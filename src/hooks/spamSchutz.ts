@@ -14,10 +14,26 @@ const FENSTER_MS = 10 * 60 * 1000
 const MAX_PRO_FENSTER = 8
 const zaehler = new Map<string, number[]>()
 
+/**
+ * IP-Adresse des Besuchers. Der vorderste Eintrag in X-Forwarded-For kann vom Besucher selbst
+ * erfunden werden – verlässlich ist nur, was der eigene Proxy (Webserver davor) einträgt:
+ * X-Real-IP bzw. der LETZTE Eintrag in X-Forwarded-For.
+ */
 const clientIp = (req: PayloadRequest): string => {
+  const real = req.headers.get('x-real-ip')
+  if (real) return real.trim()
   const fwd = req.headers.get('x-forwarded-for')
-  if (fwd) return fwd.split(',')[0]!.trim()
-  return req.headers.get('x-real-ip') ?? 'unbekannt'
+  if (fwd) return fwd.split(',').pop()!.trim()
+  return 'unbekannt'
+}
+
+/** Übergroße Eingaben abweisen (Texte über 5.000 Zeichen, Listen über 20 Einträge) */
+const zuGross = (v: unknown, tiefe = 0): boolean => {
+  if (tiefe > 5) return true
+  if (typeof v === 'string') return v.length > 5000
+  if (Array.isArray(v)) return v.length > 20 || v.some((x) => zuGross(x, tiefe + 1))
+  if (v && typeof v === 'object') return Object.values(v).some((x) => zuGross(x, tiefe + 1))
+  return false
 }
 
 export const spamSchutz =
@@ -31,6 +47,7 @@ export const spamSchutz =
     if (typeof roh.website === 'string' && roh.website.trim() !== '') {
       throw new APIError('Die Anfrage konnte nicht verarbeitet werden.', 400)
     }
+    if (zuGross(data) || zuGross(roh)) throw new APIError('Die Eingabe ist zu lang. Bitte kürzen.', 400)
 
     const key = `${schluessel}:${clientIp(req)}`
     const jetzt = Date.now()

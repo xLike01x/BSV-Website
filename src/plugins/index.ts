@@ -6,7 +6,8 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { anyone } from '@/access/anyone'
-import { ausblendenAusser, isAdmin, isEditor } from '@/access/roles'
+import { ausblendenAusser, isAdmin, isEditor, isEditorField } from '@/access/roles'
+import { spamSchutz } from '@/hooks/spamSchutz'
 
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
@@ -71,6 +72,8 @@ export const plugins: Plugin[] = [
       trash: true,
       admin: { group: 'Eigene Formulare', hidden: ausblendenAusser('admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
       access: { create: anyone, read: isEditor, update: isAdmin, delete: isAdmin },
+      // Gleicher Schutz wie bei Kontakt & Co.: Anfragen pro Adresse begrenzen, übergroße Eingaben abweisen
+      hooks: { beforeValidate: [spamSchutz('formular')] },
     },
     formOverrides: {
       labels: { singular: 'Formular', plural: 'Formulare' },
@@ -93,9 +96,11 @@ export const plugins: Plugin[] = [
           emails: { label: 'E-Mail-Benachrichtigungen', description: 'Funktioniert erst, wenn der E-Mail-Versand eingerichtet ist.' },
         }
         return defaultFields.map((roh) => {
-          const field = ('name' in roh && beschriftung[roh.name]
+          let field = ('name' in roh && beschriftung[roh.name]
             ? { ...roh, label: beschriftung[roh.name]!.label, admin: { ...(roh.admin ?? {}), description: beschriftung[roh.name]!.description } }
             : roh) as typeof roh
+          // Empfänger-Adressen der Benachrichtigungen sind nicht öffentlich
+          if ('name' in field && field.name === 'emails') field = { ...field, access: { read: isEditorField } } as typeof field
           if ('name' in field && field.name === 'confirmationType' && 'options' in field) {
             const text: Record<string, string> = { message: 'Danke-Nachricht zeigen', redirect: 'Auf eine Seite weiterleiten' }
             return {

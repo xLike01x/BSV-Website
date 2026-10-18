@@ -428,7 +428,9 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: ['Die Sicherung ändert nichts an der Website.', 'Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.'],
     tipps: [
+      'Nur Web-Admins sehen die Datensicherung – die Datei enthält alle Daten, auch die Zugänge.',
       'Die Datei enthält persönliche Daten – nicht per E-Mail verschicken.',
+      'Nur selbst erstellte Sicherungen einspielen – nie eine Datei, die dir jemand schickt.',
       'IBANs lassen sich nur mit dem ENCRYPTION_KEY aus der .env lesen. Den Schlüssel getrennt aufbewahren.',
     ],
   },

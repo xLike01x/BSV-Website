@@ -1,7 +1,7 @@
 import type { Access, CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { hasRole } from '../access/roles'
+import { hasRole, isEditorField } from '../access/roles'
 import { spamSchutz } from '../hooks/spamSchutz'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
@@ -41,18 +41,19 @@ export const Probetraining: CollectionConfig = {
   defaultSort: '-createdAt',
   hooks: { beforeValidate: [spamSchutz('probetraining')] },
   fields: [
-    { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true },
+    // Nachträglich umhängen nur Admin/Redaktion (sonst könnten Trainer Anfragen samt Daten anderen Teams zuschieben)
+    { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true, access: { update: isEditorField } },
     {
       type: 'row',
       fields: [
-        { name: 'name', label: 'Name', type: 'text', required: true },
+        { name: 'name', label: 'Name', type: 'text', required: true, maxLength: 120 },
         { name: 'email', label: 'E-Mail', type: 'email', required: true },
       ],
     },
-    { name: 'teilnehmer', label: 'Teilnehmer/in (z. B. Kind)', type: 'text' },
-    { name: 'alter', label: 'Alter', type: 'number' },
-    { name: 'wunschtermin', label: 'Wunschtermin', type: 'text' },
-    { name: 'nachricht', label: 'Nachricht', type: 'textarea' },
+    { name: 'teilnehmer', label: 'Teilnehmer/in (z. B. Kind)', type: 'text', maxLength: 120 },
+    { name: 'alter', label: 'Alter', type: 'number', min: 0, max: 120 },
+    { name: 'wunschtermin', label: 'Wunschtermin', type: 'text', maxLength: 200 },
+    { name: 'nachricht', label: 'Nachricht', type: 'textarea', maxLength: 3000 },
     { name: 'datenschutz', label: 'Datenschutzhinweise gelesen', type: 'checkbox', required: true },
     {
       name: 'status',

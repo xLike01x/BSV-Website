@@ -1,5 +1,6 @@
 import type { Metadata } from 'next'
 
+import { aktuellerBenutzer } from '@/bsv/data'
 import { PayloadRedirects } from '@/components/PayloadRedirects'
 import configPromise from '@payload-config'
 import { getPayload, type RequiredDataFromCollectionSlug } from 'payload'
@@ -103,7 +104,9 @@ const queryPageBySlug = cache(async ({ slug }: { slug: string }) => {
     draft,
     limit: 1,
     pagination: false,
-    overrideAccess: draft,
+    // Vorschau: nur das, was der angemeldete Benutzer auch im Admin sehen darf
+    overrideAccess: false,
+    ...(draft ? { user: await aktuellerBenutzer() } : {}),
     where: {
       slug: {
         equals: slug,

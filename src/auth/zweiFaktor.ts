@@ -4,7 +4,7 @@ import QRCode from 'qrcode'
 
 import { decrypt, encrypt } from '../utilities/crypto'
 import { testkontenErlaubt } from './testkonten'
-import { hashCode, neueWiederherstellungscodes, neuesGeheimnis, otpauthUri, pruefeCode } from './totp'
+import { codePasst, hashCode, neueWiederherstellungscodes, neuesGeheimnis, otpauthUri, pruefeCode } from './totp'
 
 /**
  * Zwei-Faktor-Anmeldung (Authenticator-App) für alle Rollen außer „Mitglied“.
@@ -77,15 +77,22 @@ export const zweiFaktorStrategie: AuthStrategy = {
     const u = res.user as unknown as ZfUser | null
     if (!u) return res
     u._rollen = [...(u.roles ?? [])]
-    // Testkonten (nur lokal) brauchen keinen zweiten Faktor
-    const testOhne2fa = Boolean(u.testkonto) && testkontenErlaubt()
-    if (!AUS() && !testOhne2fa && istPersonal(u.roles)) {
-      const jetzt = Date.now()
-      const ok = Boolean(u._sid && (u.zweiFaktorSitzungen ?? []).some((s) => s.sid === u._sid && new Date(s.bis).getTime() > jetzt))
-      if (!ok) {
-        u.roles = ['mitglied']
-        u._zweiFaktorOffen = true
+    try {
+      // Testkonten (nur lokal) brauchen keinen zweiten Faktor
+      const testOhne2fa = Boolean(u.testkonto) && testkontenErlaubt(args.headers)
+      if (!AUS() && !testOhne2fa && istPersonal(u.roles)) {
+        const jetzt = Date.now()
+        const sitzungen = Array.isArray(u.zweiFaktorSitzungen) ? u.zweiFaktorSitzungen : []
+        const ok = Boolean(u._sid && sitzungen.some((s) => s?.sid === u._sid && new Date(s.bis).getTime() > jetzt))
+        if (!ok) {
+          u.roles = ['mitglied']
+          u._zweiFaktorOffen = true
+        }
       }
+    } catch {
+      // Im Zweifel geschlossen: lieber nur Mitglieds-Rechte als Verwaltung ohne zweiten Faktor
+      u.roles = ['mitglied']
+      u._zweiFaktorOffen = true
     }
     entferneGeheimes(u)
     return res
@@ -93,9 +100,19 @@ export const zweiFaktorStrategie: AuthStrategy = {
 }
 
 // --- Fehlversuche begrenzen (pro Benutzer, im Arbeitsspeicher) ---
+// Jeder Versuch wird VOR der Prüfung gezählt (ohne await dazwischen), damit viele gleichzeitige
+// Anfragen die Sperre nicht umgehen. Ein richtiger Code gibt seinen Versuch wieder frei.
 const fehlversuche = new Map<number, number[]>()
-const gesperrt = (id: number) => (fehlversuche.get(id) ?? []).filter((t) => Date.now() - t < 10 * 60 * 1000).length >= 5
-const fehlversuch = (id: number) => fehlversuche.set(id, [...(fehlversuche.get(id) ?? []), Date.now()].slice(-10))
+const aktuelle = (id: number) => (fehlversuche.get(id) ?? []).filter((t) => Date.now() - t < 10 * 60 * 1000)
+/** Gibt einen Zeitstempel zurück, wenn ein Versuch erlaubt ist – sonst null (gesperrt) */
+const versuchReservieren = (id: number): number | null => {
+  const liste = aktuelle(id)
+  if (liste.length >= 5) return null
+  const t = Date.now() + Math.random()
+  fehlversuche.set(id, [...liste, t])
+  return t
+}
+const versuchFreigeben = (id: number, t: number) => fehlversuche.set(id, aktuelle(id).filter((x) => x !== t))
 
 const json = (body: unknown, status = 200) => Response.json(body, { status })
 
@@ -136,7 +153,7 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
         personal: istPersonal(rollen),
         eingerichtet: Boolean(u.zweiFaktorAktiv),
         offen: Boolean(u._zweiFaktorOffen),
-        abgeschaltet: AUS() || (Boolean(u.testkonto) && testkontenErlaubt()),
+        abgeschaltet: AUS() || (Boolean(u.testkonto) && testkontenErlaubt(req.headers)),
       })
     },
   },
@@ -171,14 +188,13 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Bereits eingerichtet.' }, 400)
-      if (gesperrt(u.id)) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+      const versuch = versuchReservieren(u.id)
+      if (versuch === null) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
       const body = (await req.json?.().catch(() => ({}))) as { code?: string }
       const geheimnis = u.zweiFaktorGeheimnis ? decrypt(u.zweiFaktorGeheimnis) : null
       const schritt = geheimnis ? pruefeCode(geheimnis, String(body?.code ?? '')) : null
-      if (!schritt) {
-        fehlversuch(u.id)
-        return json({ fehler: 'Der Code stimmt nicht. Bitte den aktuellen Code aus der App eingeben.' }, 400)
-      }
+      if (!schritt) return json({ fehler: 'Der Code stimmt nicht. Bitte den aktuellen Code aus der App eingeben.' }, 400)
+      versuchFreigeben(u.id, versuch)
       const codes = neueWiederherstellungscodes()
       await sitzungFreischalten(req, u, { zweiFaktorAktiv: true, zweiFaktorCodes: codes.map(hashCode), zweiFaktorLetzterSchritt: schritt })
       return json({ ok: true, wiederherstellungscodes: codes })
@@ -192,26 +208,28 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (!u.zweiFaktorAktiv || !u.zweiFaktorGeheimnis) return json({ fehler: 'Noch nicht eingerichtet.' }, 400)
-      if (gesperrt(u.id)) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+      const versuch = versuchReservieren(u.id)
+      if (versuch === null) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
       const body = (await req.json?.().catch(() => ({}))) as { code?: string }
       const eingabe = String(body?.code ?? '').trim()
 
       if (/^\d{6}$/.test(eingabe.replace(/\s/g, ''))) {
         const schritt = pruefeCode(decrypt(u.zweiFaktorGeheimnis), eingabe, u.zweiFaktorLetzterSchritt ?? 0)
         if (schritt) {
+          versuchFreigeben(u.id, versuch)
           await sitzungFreischalten(req, u, { zweiFaktorLetzterSchritt: schritt })
           return json({ ok: true })
         }
       } else {
-        const h = hashCode(eingabe)
         const codes = u.zweiFaktorCodes ?? []
-        if (codes.includes(h)) {
+        const h = codes.find((c) => codePasst(eingabe, c))
+        if (h) {
+          versuchFreigeben(u.id, versuch)
           const rest = codes.filter((c) => c !== h)
           await sitzungFreischalten(req, u, { zweiFaktorCodes: rest })
           return json({ ok: true, verbleibend: rest.length })
         }
       }
-      fehlversuch(u.id)
       return json({ fehler: 'Der Code stimmt nicht.' }, 400)
     },
   },

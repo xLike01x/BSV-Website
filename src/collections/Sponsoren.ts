@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '@/access/anyone'
+import { sichereAdresse } from '@/fields/sichereAdresse'
 import { ausblendenAusser, isEditor } from '@/access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '@/hooks/revalidateAlles'
 
@@ -26,9 +27,9 @@ export const Sponsoren: CollectionConfig = {
       label: 'Logo',
       type: 'upload',
       relationTo: 'media',
-      admin: { description: 'Am besten mit transparentem oder weißem Hintergrund (PNG oder SVG), quer.' },
+      admin: { description: 'Am besten mit transparentem oder weißem Hintergrund (PNG), quer.' },
     },
-    { name: 'url', label: 'Website', type: 'text', admin: { placeholder: 'https://…' } },
+    { name: 'url', label: 'Website', type: 'text', validate: sichereAdresse, admin: { placeholder: 'https://…' } },
     { name: 'text', label: 'Kurzer Text (optional)', type: 'textarea', maxLength: 200, admin: { description: 'Z. B. „Unterstützt seit 2015 unsere Jugend“.' } },
     {
       name: 'stufe',

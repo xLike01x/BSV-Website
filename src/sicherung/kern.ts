@@ -14,7 +14,7 @@ import * as tar from 'tar'
 export const WURZEL = process.cwd()
 export const SICHERUNGS_ORDNER = path.join(WURZEL, 'backups')
 const DATEI_ORDNER = [
-  { name: 'media', pfad: path.join(WURZEL, 'public', 'media') },
+  { name: 'media', pfad: path.join(WURZEL, 'medien') },
   { name: 'dokumente', pfad: path.join(WURZEL, 'dokumente') },
 ]
 const VERSION = 1
@@ -113,7 +113,23 @@ async function reihenfolge(pool: Pool, namen: string[]): Promise<string[]> {
 export async function sicherungEinspielen(pool: Pool, archiv: string, log: (s: string) => void = () => {}) {
   const tmp = fs.mkdtempSync(path.join(os.tmpdir(), 'bsv-einspielen-'))
   try {
-    await tar.x({ file: archiv, cwd: tmp })
+    // Nur normale Dateien und Ordner entpacken – keine Verknüpfungen (Symlinks), die auf Server-Dateien
+    // wie die .env zeigen könnten. Dazu eine Größengrenze gegen „Zip-Bomben“.
+    let groesse = 0
+    const MAX = 20 * 1024 * 1024 * 1024
+    await tar.x({
+      file: archiv,
+      cwd: tmp,
+      strict: true,
+      preservePaths: false,
+      filter: (_pfad, eintrag) => {
+        const e = eintrag as { type?: string; size?: number }
+        if (e.type !== 'File' && e.type !== 'OldFile' && e.type !== 'Directory') return false
+        groesse += e.size ?? 0
+        if (groesse > MAX) throw new Error('Die Sicherung ist unerwartet groß – Abbruch.')
+        return true
+      },
+    })
     const info = JSON.parse(fs.readFileSync(path.join(tmp, 'info.json'), 'utf8')) as { version: number; erstellt: string }
     log(`Sicherung vom ${new Date(info.erstellt).toLocaleString('de-DE')}`)
     const dbOrdner = path.join(tmp, 'datenbank')
@@ -201,7 +217,7 @@ export async function sicherungEinspielen(pool: Pool, archiv: string, log: (s: s
       const quelle = path.join(tmp, o.name)
       if (!fs.existsSync(quelle)) continue
       fs.mkdirSync(o.pfad, { recursive: true })
-      fs.cpSync(quelle, o.pfad, { recursive: true, force: true })
+      fs.cpSync(quelle, o.pfad, { recursive: true, force: true, verbatimSymlinks: false, filter: (q) => !fs.lstatSync(q).isSymbolicLink() })
       log(`  Dateien „${o.name}“ zurückgelegt`)
     }
     return info
