@@ -38,7 +38,7 @@ export const Media: CollectionConfig = {
     update: redaktionOderEigeneTeams('team'),
   },
   labels: { singular: 'Bild / Datei', plural: 'Mediathek' },
-  admin: { group: 'Inhalte', defaultColumns: ['filename', 'alt', 'team', 'inGalerie'] },
+  admin: { description: 'Alle Bilder und Dateien. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.', group: 'Inhalte', defaultColumns: ['filename', 'alt', 'team', 'inGalerie'] },
   hooks: { beforeChange: [teamBildPruefen] },
   fields: [
     {

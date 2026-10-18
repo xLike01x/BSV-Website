@@ -89,17 +89,23 @@ export function NavClient({ menus, links }: { menus: NavMenu[]; links: NavItem[]
                 {m.label}
               </button>
             ))}
-            {links.map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="nav-link"
-                aria-current={aktiv(l.href) ? 'page' : undefined}
-                onMouseEnter={() => setOpen(null)}
-              >
-                {l.label}
-              </Link>
-            ))}
+            {links.map((l) =>
+              l.external ? (
+                <a key={l.href + l.label} href={l.href} target="_blank" rel="noopener noreferrer" className="nav-link" onMouseEnter={() => setOpen(null)}>
+                  {l.label}
+                </a>
+              ) : (
+                <Link
+                  key={l.href + l.label}
+                  href={l.href}
+                  className="nav-link"
+                  aria-current={aktiv(l.href) ? 'page' : undefined}
+                  onMouseEnter={() => setOpen(null)}
+                >
+                  {l.label}
+                </Link>
+              ),
+            )}
           </nav>
           <div className="nav-actions" onMouseEnter={() => setOpen(null)}>
             <Link href={eingeloggt ? '/mitglieder' : '/login'} className="nav-login">
@@ -170,9 +176,7 @@ export function NavClient({ menus, links }: { menus: NavMenu[]; links: NavItem[]
             </details>
           ))}
           {links.map((l) => (
-            <Link key={l.href} href={l.href} className="mnav-top">
-              {l.label}
-            </Link>
+            <ItemLink key={l.href + l.label} it={l} className="mnav-top" />
           ))}
           <div className="mnav-actions">
             <Link href="/mitglied-werden" className="btn btn-primary">

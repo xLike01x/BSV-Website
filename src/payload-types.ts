@@ -127,12 +127,14 @@ export interface Config {
   globals: {
     header: Header;
     footer: Footer;
+    menue: Menue;
     verein: Verein;
     texte: Texte;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
+    menue: MenueSelect<false> | MenueSelect<true>;
     verein: VereinSelect<false> | VereinSelect<true>;
     texte: TexteSelect<false> | TexteSelect<true>;
   };
@@ -171,6 +173,8 @@ export interface UserAuthOperations {
   };
 }
 /**
+ * Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts".
  */
@@ -229,6 +233,8 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Alle Bilder und Dateien. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
  */
@@ -330,6 +336,8 @@ export interface Media {
   };
 }
 /**
+ * Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "angebote".
  */
@@ -398,6 +406,8 @@ export interface Angebote {
   createdAt: string;
 }
 /**
+ * Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users".
  */
@@ -491,6 +501,8 @@ export interface FolderInterface {
   createdAt: string;
 }
 /**
+ * Schlagworte, nach denen Besucher die News filtern können.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "categories".
  */
@@ -515,6 +527,8 @@ export interface Category {
   createdAt: string;
 }
 /**
+ * Veranstaltungen für den Vereinskalender auf der Seite „Termine“.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "termine".
  */
@@ -532,6 +546,8 @@ export interface Termine {
   createdAt: string;
 }
 /**
+ * Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü“.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "pages".
  */
@@ -934,6 +950,8 @@ export interface Form {
   createdAt: string;
 }
 /**
+ * Fällt ein Training aus? Hier eintragen – es erscheint sofort auf der Seite des Teams.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "ausfaelle".
  */
@@ -948,6 +966,8 @@ export interface Ausfaelle {
   createdAt: string;
 }
 /**
+ * Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "probetraining".
  */
@@ -966,6 +986,8 @@ export interface Probetraining {
   createdAt: string;
 }
 /**
+ * Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "mitgliedsantraege".
  */
@@ -1003,6 +1025,8 @@ export interface Mitgliedsantraege {
   createdAt: string;
 }
 /**
+ * Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "kontaktanfragen".
  */
@@ -2107,6 +2131,76 @@ export interface Footer {
   createdAt?: string | null;
 }
 /**
+ * Links im Hauptmenü oben. „Fußball“ und „Breitensport“ füllen sich automatisch aus „Teams & Kurse“. Eine leere Liste zeigt das Standardmenü.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menue".
+ */
+export interface Menue {
+  id: number;
+  /**
+   * Erscheinen rechts neben „Verein“ – am besten höchstens 5, sonst wird es eng.
+   */
+  links?:
+    | {
+        label: string;
+        ziel?: ('seite' | 'adresse') | null;
+        /**
+         * Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.
+         */
+        seite?: (number | null) | Page;
+        /**
+         * Interne Seiten mit „/“ beginnen, externe mit „https://“.
+         */
+        adresse?: string | null;
+        neuerTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Linke Spalte im Aufklappmenü „Verein“.
+   */
+  vereinUeberUns?:
+    | {
+        label: string;
+        ziel?: ('seite' | 'adresse') | null;
+        /**
+         * Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.
+         */
+        seite?: (number | null) | Page;
+        /**
+         * Interne Seiten mit „/“ beginnen, externe mit „https://“.
+         */
+        adresse?: string | null;
+        neuerTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Rechte Spalte im Aufklappmenü „Verein“.
+   */
+  vereinMehr?:
+    | {
+        label: string;
+        ziel?: ('seite' | 'adresse') | null;
+        /**
+         * Die Seite muss veröffentlicht sein, sonst führt der Link ins Leere.
+         */
+        seite?: (number | null) | Page;
+        /**
+         * Interne Seiten mit „/“ beginnen, externe mit „https://“.
+         */
+        adresse?: string | null;
+        neuerTab?: boolean | null;
+        id?: string | null;
+      }[]
+    | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Bilder der Startseite.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "verein".
  */
@@ -2303,6 +2397,45 @@ export interface FooterSelect<T extends boolean = true> {
               url?: T;
               label?: T;
             };
+        id?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "menue_select".
+ */
+export interface MenueSelect<T extends boolean = true> {
+  links?:
+    | T
+    | {
+        label?: T;
+        ziel?: T;
+        seite?: T;
+        adresse?: T;
+        neuerTab?: T;
+        id?: T;
+      };
+  vereinUeberUns?:
+    | T
+    | {
+        label?: T;
+        ziel?: T;
+        seite?: T;
+        adresse?: T;
+        neuerTab?: T;
+        id?: T;
+      };
+  vereinMehr?:
+    | T
+    | {
+        label?: T;
+        ziel?: T;
+        seite?: T;
+        adresse?: T;
+        neuerTab?: T;
         id?: T;
       };
   updatedAt?: T;

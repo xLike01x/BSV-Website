@@ -22,6 +22,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
   },
   defaultPopulate: { title: true, slug: true, bereich: true, kategorie: true, alterText: true, bild: true },
   admin: {
+    description: 'Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.',
     group: 'Sport',
     useAsTitle: 'title',
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],

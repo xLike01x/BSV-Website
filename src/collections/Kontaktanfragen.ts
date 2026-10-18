@@ -15,6 +15,7 @@ export const Kontaktanfragen: CollectionConfig = {
     delete: isAdmin,
   },
   admin: {
+    description: 'Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.',
     group: 'Verwaltung',
     useAsTitle: 'betreff',
     defaultColumns: ['betreff', 'name', 'an', 'status', 'createdAt'],

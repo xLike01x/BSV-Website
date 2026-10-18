@@ -10,7 +10,7 @@ export const Verein: GlobalConfig = {
   slug: 'verein',
   label: 'Vereinsdaten',
   access: { read: anyone, update: isAdmin },
-  admin: { group: 'Verwaltung', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
+  admin: { group: 'Verwaltung', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Bilder der Startseite.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
   hooks: { afterChange: [revalidateAllesGlobal] },
   fields: [
     { name: 'name', label: 'Vereinsname', type: 'text', defaultValue: 'Büdericher Spielverein 1919 e.V.' },

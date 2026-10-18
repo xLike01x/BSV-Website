@@ -20,6 +20,7 @@ export const Mitgliedsantraege: CollectionConfig = {
     delete: isFinance,
   },
   admin: {
+    description: 'Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln.',
     group: 'Verwaltung',
     useAsTitle: 'nachname',
     defaultColumns: ['nachname', 'vorname', 'mitgliedsart', 'status', 'createdAt'],

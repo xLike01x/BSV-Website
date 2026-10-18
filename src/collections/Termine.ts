@@ -20,6 +20,7 @@ export const Termine: CollectionConfig = {
     delete: isEditor,
   },
   admin: {
+    description: 'Veranstaltungen für den Vereinskalender auf der Seite „Termine“.',
     group: 'Inhalte',
     hidden: ausblendenAusser('admin', 'redaktion'),
     useAsTitle: 'title',

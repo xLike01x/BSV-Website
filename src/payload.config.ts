@@ -17,6 +17,7 @@ import { Ausfaelle } from './collections/Ausfaelle'
 import { Kontaktanfragen } from './collections/Kontaktanfragen'
 import { Verein } from './Verein/config'
 import { Texte } from './Texte/config'
+import { Menue } from './Menue/config'
 import { de } from '@payloadcms/translations/languages/de'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -41,6 +42,8 @@ export default buildConfig({
       },
       beforeNavLinks: ['@/components/Admin/NavKopf'],
       afterNavLinks: ['@/components/Admin/NavFuss'],
+      // „? Hilfe“-Knopf oben rechts – erklärt jeden Bereich in einfachen Worten
+      actions: ['@/components/Admin/Hilfe'],
     },
     // Immer hell und freundlich – kein Dunkelmodus
     theme: 'light',
@@ -90,7 +93,7 @@ export default buildConfig({
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   collections: [Posts, Termine, Media, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Verein, Texte],
+  globals: [Header, Footer, Menue, Verein, Texte],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

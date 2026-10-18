@@ -23,6 +23,16 @@ export const getVerein = cache(async (): Promise<Verein> => {
   return p.findGlobal({ slug: 'verein', depth: 1 })
 })
 
+/** Pflegbare Menü-Links (Global „Menü“) */
+export const getMenue = cache(async () => {
+  const p = await payload()
+  try {
+    return await p.findGlobal({ slug: 'menue', depth: 1 })
+  } catch {
+    return null
+  }
+})
+
 /** Alle aktiven Angebote, sortiert nach Reihenfolge und Name */
 export const getAngebote = cache(async (): Promise<Angebote[]> => {
   const p = await payload()

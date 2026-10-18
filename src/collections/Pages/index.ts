@@ -38,6 +38,7 @@ export const Pages: CollectionConfig<'pages'> = {
     slug: true,
   },
   admin: {
+    description: 'Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü“.',
     group: 'Inhalte',
     hidden: ausblendenAusser('admin', 'redaktion'),
     defaultColumns: ['title', 'slug', 'updatedAt'],
