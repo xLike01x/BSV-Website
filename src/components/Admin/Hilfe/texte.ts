@@ -302,7 +302,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Vorstand und Ansprechpersonen eintragen, mit Funktion und optional Foto.',
       'Satzung und andere Dokumente zum Herunterladen hinterlegen.',
       'Unter „Startseite“: die Bilder oben, die zwei Schilder, die Kachel-Bilder und die grüne Aktions-Box.',
-      'Hauptsponsor und Social-Media-Links für die Fußzeile pflegen.',
+      'Der Hauptsponsor wird unter „Sponsoren“ gepflegt (Art „Hauptsponsor“), die Links der Fußzeile unter „Menü & Fußzeile“.',
     ],
     wirkung: [
       'Die Zahlen tauchen auf der Startseite und in Texten auf.',
@@ -468,7 +468,7 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Alle Sponsoren und Partner des Vereins – für die Seite „Sponsoren“ und das Logo-Laufband auf der Startseite.',
     wozu: { text: 'Sponsoren freuen sich über Sichtbarkeit. Hier pflegst du sie an einer Stelle.', beispiele: ['Neuer Trikotsponsor', 'Bandenwerbung', 'Förderer der Jugend'] },
     tun: ['„Neu erstellen“: Name, Logo, Website, kurzer Text.', 'Rechts die Art wählen (Premium, Partner, Förderer) und die Reihenfolge.', '„Im Laufband“ anhaken, damit das Logo auf der Startseite mitläuft.'],
-    wirkung: ['Die Seite /sponsoren zeigt alle aktiven Sponsoren nach Art gruppiert.', 'Das Laufband erscheint ab drei Logos unten auf der Startseite.', 'Der Hauptsponsor in der Fußzeile steht weiter unter „Vereinsdaten“.'],
+    wirkung: ['Die Seite /sponsoren zeigt alle aktiven Sponsoren nach Art gruppiert.', 'Das Laufband erscheint ab drei Logos unten auf der Startseite.', 'Ein Sponsor mit der Art „Hauptsponsor“ steht ganz oben auf der Seite und zusätzlich unten in der Fußzeile jeder Seite.'],
     tipps: ['Logos am besten als PNG mit transparentem Hintergrund, im Querformat.'],
   },
 

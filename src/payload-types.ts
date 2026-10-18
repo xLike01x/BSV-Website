@@ -1267,7 +1267,7 @@ export interface Kontaktanfragen {
   deletedAt?: string | null;
 }
 /**
- * Alle Sponsoren und Partner. Der Hauptsponsor in der Fußzeile steht weiterhin unter „Vereinsdaten“.
+ * Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "sponsoren".
@@ -1285,9 +1285,9 @@ export interface Sponsoren {
    */
   text?: string | null;
   /**
-   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite.
+   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite. „Hauptsponsor“ steht ganz oben und in der Fußzeile (bei mehreren: der mit der kleinsten Reihenfolge-Zahl).
    */
-  stufe?: ('premium' | 'partner' | 'foerderer') | null;
+  stufe?: ('haupt' | 'premium' | 'partner' | 'foerderer') | null;
   /**
    * Nur mit Logo.
    */
@@ -2671,6 +2671,9 @@ export interface Menue {
  */
 export interface Verein {
   id: number;
+  /**
+   * Offizieller Name laut Vereinsregister – kann hier nicht geändert werden.
+   */
   name?: string | null;
   mitglieder?: number | null;
   kinderFussball?: number | null;

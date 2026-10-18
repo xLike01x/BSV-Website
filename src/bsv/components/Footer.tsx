@@ -1,17 +1,16 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { getMenue, getTexte, getVerein } from '@/bsv/data'
+import { getHauptsponsor, getMenue, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl } from '@/bsv/lib'
 
 import { zuLinks, type MenueEintrag } from './menueLinks'
 
 export async function Footer() {
-  const [v, menue, tx] = await Promise.all([getVerein(), getMenue(), getTexte()])
+  const [v, sponsor, menue, tx] = await Promise.all([getVerein(), getHauptsponsor(), getMenue(), getTexte()])
   const spalten = ((menue?.fusszeile ?? []) as { titel?: string | null; eintraege?: MenueEintrag[] | null }[]).map((sp) => ({ titel: sp.titel ?? '', links: zuLinks(sp.eintraege) }))
   const kontakt = (menue as { kontakt?: { anzeigen?: boolean | null; titel?: string | null; adresseZeigen?: boolean | null; links?: MenueEintrag[] | null } } | null)?.kontakt
   const kontaktLinks = zuLinks(kontakt?.links)
-  const sponsor = v.hauptsponsor
   const logo = bildUrl(sponsor?.logo, 'small')
 
   return (

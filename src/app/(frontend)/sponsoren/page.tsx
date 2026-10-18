@@ -6,7 +6,7 @@ import React from 'react'
 
 import { Bild } from '@/bsv/components/Bild'
 import { T } from '@/bsv/components/Text'
-import { getPlatzhalter, getSponsoren, getTexte, getVerein } from '@/bsv/data'
+import { getPlatzhalter, getSponsoren, getTexte } from '@/bsv/data'
 
 export const revalidate = 60
 export const metadata: Metadata = seite('Sponsoren & Partner', 'Die Sponsoren und Partner des Büdericher Spielvereins 1919 – danke für eure Unterstützung!')
@@ -18,8 +18,8 @@ const STUFEN: [string, string][] = [
 ]
 
 export default async function SponsorenSeite() {
-  const [sponsoren, tx, w, v] = await Promise.all([getSponsoren(), getTexte(), getPlatzhalter(), getVerein()])
-  const haupt = v.hauptsponsor
+  const [sponsoren, tx, w] = await Promise.all([getSponsoren(), getTexte(), getPlatzhalter()])
+  const haupt = sponsoren.find((s) => s.stufe === 'haupt')
   return (
     <>
       <section className="wrap-narrow center" style={{ paddingTop: 88, paddingBottom: 40 }}>
@@ -40,10 +40,11 @@ export default async function SponsorenSeite() {
               <a href={haupt.url || '#'} target="_blank" rel="noopener noreferrer">
                 {haupt.logo && typeof haupt.logo === 'object' ? <Bild media={haupt.logo} size="medium" sizes="320px" alt={haupt.name} /> : <strong>{haupt.name}</strong>}
               </a>
+              {haupt.text && <p className="muted" style={{ margin: '12px 0 0' }}>{haupt.text}</p>}
             </div>
           )}
           {STUFEN.map(([key, label]) => {
-            const liste = sponsoren.filter((s) => (s.stufe ?? 'partner') === key)
+            const liste = sponsoren.filter((s) => s.id !== haupt?.id && (s.stufe === 'haupt' ? 'premium' : (s.stufe ?? 'partner')) === key)
             if (!liste.length) return null
             return (
               <div key={key} style={{ marginTop: 48 }}>
@@ -75,7 +76,7 @@ export default async function SponsorenSeite() {
               </div>
             )
           })}
-          {sponsoren.length === 0 && !haupt?.name && <p className="muted">Hier stellen wir bald unsere Partner vor.</p>}
+          {sponsoren.length === 0 && <p className="muted">Hier stellen wir bald unsere Partner vor.</p>}
           <div className="sponsor-cta rv">
             <div>
               <strong>Sponsor werden</strong>

@@ -292,10 +292,10 @@ export const EINSTIEGE: Record<string, Einstieg> = {
 
   sponsoren: {
     titel: 'Wozu ist die Sponsoren-Liste da?',
-    text: 'Alle Sponsoren und Partner erscheinen auf der Seite /sponsoren – nach Art gruppiert. Mit Logo und Haken „Im Laufband“ laufen sie zusätzlich unten über die Startseite (ab drei Logos).',
+    text: 'Alle Sponsoren und Partner – auch der Hauptsponsor – erscheinen auf der Seite /sponsoren, nach Art gruppiert. Der Hauptsponsor steht zusätzlich unten in der Fußzeile jeder Seite. Mit Logo und Haken „Im Laufband“ laufen sie zusätzlich unten über die Startseite (ab drei Logos).',
     ablauf: [
       { key: 'anlegen', titel: 'Sponsor anlegen', text: 'Name, Website und Logo (am besten PNG mit transparentem Hintergrund).' },
-      { key: 'art', titel: 'Art wählen', text: 'Premium-Partner, Partner oder Förderer – bestimmt Gruppe und Größe.' },
+      { key: 'art', titel: 'Art wählen', text: 'Hauptsponsor, Premium-Partner, Partner oder Förderer – bestimmt Gruppe und Größe.' },
       { key: 'website', titel: 'Erscheint auf der Website', text: 'Seite „Sponsoren“ und Logo-Laufband auf der Startseite.', href: '/sponsoren', wo: 'Website → Sponsoren' },
     ],
   },

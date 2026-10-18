@@ -25,6 +25,7 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { sicherungEndpunkte } from './sicherung/endpunkte'
 import { PAPIERKORB } from './utilities/papierkorb'
+import { hauptsponsorUmziehen } from './utilities/hauptsponsorUmziehen'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { Datenschutz } from './datenschutz/config'
 import { Dokumente } from './collections/Dokumente'
@@ -42,7 +43,9 @@ export default buildConfig({
   endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
-    if (process.env.NEXT_PHASE !== 'phase-production-build') taeglicheAufgaben(payload)
+    if (process.env.NEXT_PHASE === 'phase-production-build') return
+    await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
+    taeglicheAufgaben(payload)
   },
   admin: {
     components: {

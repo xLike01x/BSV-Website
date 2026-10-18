@@ -25,7 +25,15 @@ export const Verein: GlobalConfig = {
     ],
   },
   fields: [
-    { name: 'name', label: 'Vereinsname', type: 'text', defaultValue: 'Büdericher Spielverein 1919 e.V.' },
+    {
+      name: 'name',
+      label: 'Vereinsname',
+      type: 'text',
+      defaultValue: 'Büdericher Spielverein 1919 e.V.',
+      // Offizieller Name laut Vereinsregister – fest, damit er nicht versehentlich geändert wird
+      access: { update: () => false },
+      admin: { readOnly: true, description: 'Offizieller Name laut Vereinsregister – kann hier nicht geändert werden.' },
+    },
     {
       type: 'row',
       fields: [
@@ -83,6 +91,8 @@ export const Verein: GlobalConfig = {
       type: 'group',
       name: 'hauptsponsor',
       label: 'Hauptsponsor',
+      // Veraltet: wird beim Start nach „Sponsoren“ übernommen (Art „Hauptsponsor“)
+      admin: { hidden: true },
       fields: [
         { name: 'name', label: 'Name', type: 'text', defaultValue: 'Dachdeckerbetrieb Kutscher-Remy' },
         { name: 'url', label: 'Website', type: 'text', defaultValue: 'https://remy-dach.de' },

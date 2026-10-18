@@ -128,7 +128,7 @@ Dateien „Nur für Mitglieder“ liegen in `dokumente/` (nicht öffentlich) und
 
 - `src/collections` – Datenmodell (Angebote, Termine, Ausfälle, Probetraining, Mitgliedsanträge, News, Seiten, Medien, Benutzer)
 - `src/access/roles.ts` – alle Zugriffsregeln an einer Stelle
-- `src/Verein/config.ts` – Vereinsdaten (Adressen, Beiträge, Sponsor)
+- `src/Verein/config.ts` – Vereinsdaten (Adressen, Beiträge; Hauptsponsor jetzt in „Sponsoren“)
 - `src/app/(frontend)` – die öffentliche Website (Seiten)
 - `src/bsv` – BSV-Design: Bausteine (`components`), Datenabfragen (`data.ts`), Hilfsfunktionen (`lib.ts`), Startinhalte (`seed`)
 - `src/app/(frontend)/bsv.css` – Farben, Schriften, Abstände und Animationen an einer Stelle

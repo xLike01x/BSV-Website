@@ -181,6 +181,9 @@ export const getSponsoren = cache(async () => {
   return res.docs
 })
 
+/** Hauptsponsor (Art „Hauptsponsor“, kleinste Reihenfolge) – für Fußzeile und Sponsoren-Seite */
+export const getHauptsponsor = cache(async () => (await getSponsoren()).find((s) => s.stufe === 'haupt') ?? null)
+
 /** Sichtbare Fotoalben (optional nur eines Teams) */
 export const getAlben = cache(async (teamId?: number, limit = 60) => {
   const p = await payload()

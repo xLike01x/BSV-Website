@@ -609,7 +609,6 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'SEPA-Gläubiger-ID', text: 'Steht im Lastschriftmandat des Antrags.' },
     { name: 'Vorstand', text: 'Name, Funktion, optional Foto. Erscheint auf der Vereinsseite.' },
     { name: 'Satzung & Downloads', text: 'Dateien zum Herunterladen auf der Vereinsseite.' },
-    { name: 'Hauptsponsor', text: 'Name, Website und Logo – erscheint unten auf der Website.' },
     { name: 'Startseite: Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
     { name: 'Texte der Startseite', text: 'Alle Überschriften und Texte der Startseite – auch die Zahlen-Leiste und die drei Schritte – stehen unter „Website-Texte“.' },
     { name: 'Startseite: Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness – und die Titelbilder der Bereichs- und Vereinsseite.' },
