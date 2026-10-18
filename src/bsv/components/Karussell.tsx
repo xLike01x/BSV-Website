@@ -6,12 +6,18 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
  * - Wischen/Scrollen bleibt möglich, die Karten rasten sauber ein
  * - Punkte zeigen, wo man ist – der aktive wird zur Pille; Klick springt hin
  * - Pfeile links/rechts (am Handy ausgeblendet, dort wischt man)
- * - Bei „weniger Bewegung“ im System ohne Animation
+ * - Läuft von selbst weiter (optional). Pause, solange die Maus darauf zeigt, man wischt, es nicht
+ *   zu sehen ist oder der Tab im Hintergrund liegt. Die aktive Pille füllt sich als Fortschritt.
+ * - Bei „weniger Bewegung“ im System ohne Animation und ohne automatisches Weiterlaufen
  */
-export function Karussell({ children, label = 'Beiträge' }: { children: React.ReactNode; label?: string }) {
+export function Karussell({ children, label = 'Beiträge', automatisch = 0 }: { children: React.ReactNode; label?: string; automatisch?: number }) {
   const leiste = useRef<HTMLDivElement>(null)
+  const huelle = useRef<HTMLDivElement>(null)
   const [stellen, setStellen] = useState<number[]>([0])
   const [aktiv, setAktiv] = useState(0)
+  const verstrichen = useRef(0)
+  const pause = useRef({ maus: false, fokus: false, finger: false, unsichtbar: false })
+  const [laeuft, setLaeuft] = useState(false)
 
   // Mögliche Einrast-Stellen berechnen (am Ende passen mehrere Karten auf einmal → weniger Punkte als Karten)
   const messen = useCallback(() => {
@@ -75,8 +81,59 @@ export function Karussell({ children, label = 'Beiträge' }: { children: React.R
 
   const mehrere = stellen.length > 1
 
+  // Neuer Punkt → Fortschritt von vorn
+  useEffect(() => {
+    verstrichen.current = 0
+    huelle.current?.style.setProperty('--fortschritt', '0')
+  }, [aktiv])
+
+  // Automatisch weiter
+  useEffect(() => {
+    if (!automatisch || !mehrere || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    setLaeuft(true)
+    const el = huelle.current
+    const io = new IntersectionObserver(([e]) => (pause.current.unsichtbar = !e?.isIntersecting), { threshold: 0.4 })
+    if (el) io.observe(el)
+    let raf = 0
+    let zuletzt = performance.now()
+    const schritt = (jetzt: number) => {
+      const p = pause.current
+      if (!(p.maus || p.fokus || p.finger || p.unsichtbar || document.hidden)) {
+        verstrichen.current += jetzt - zuletzt
+        el?.style.setProperty('--fortschritt', String(Math.min(1, verstrichen.current / automatisch)))
+        if (verstrichen.current >= automatisch) {
+          verstrichen.current = 0
+          setAktiv((a) => {
+            const naechster = a + 1 >= stellen.length ? 0 : a + 1
+            leiste.current?.scrollTo({ left: stellen[naechster], behavior: 'smooth' })
+            return naechster
+          })
+        }
+      }
+      zuletzt = jetzt
+      raf = requestAnimationFrame(schritt)
+    }
+    raf = requestAnimationFrame(schritt)
+    return () => {
+      cancelAnimationFrame(raf)
+      io.disconnect()
+    }
+  }, [automatisch, mehrere, stellen])
+
   return (
-    <div className="karussell" role="region" aria-roledescription="Karussell" aria-label={label}>
+    <div
+      className={`karussell${laeuft ? ' karussell--auto' : ''}`}
+      role="region"
+      aria-roledescription="Karussell"
+      aria-label={label}
+      ref={huelle}
+      onMouseEnter={() => (pause.current.maus = true)}
+      onMouseLeave={() => (pause.current.maus = false)}
+      onFocus={() => (pause.current.fokus = true)}
+      onBlur={() => (pause.current.fokus = false)}
+      onTouchStart={() => (pause.current.finger = true)}
+      onTouchEnd={() => setTimeout(() => (pause.current.finger = false), 4000)}
+    >
       <div
         className="news-rail karussell-leiste"
         ref={leiste}
@@ -105,7 +162,9 @@ export function Karussell({ children, label = 'Beiträge' }: { children: React.R
                 aria-label={`Zu Position ${i + 1} von ${stellen.length}`}
                 aria-current={i === aktiv ? 'true' : undefined}
                 onClick={() => gehe(i)}
-              />
+              >
+                {i === aktiv && <span className="karussell-fortschritt" />}
+              </button>
             ))}
           </div>
           <div className="karussell-pfeile">

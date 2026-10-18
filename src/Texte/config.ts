@@ -87,6 +87,13 @@ export const Texte: GlobalConfig = {
             // Name bewusst nicht „newsTitel“: der kollidierte in der Datenbank mit Gruppe „news“ → „titel“
             text('newsUeberschrift', 'News: Überschrift', 'Neues aus dem BSV.'),
             text('newsLink', 'News: Link-Text', 'Alle News ›'),
+            {
+              name: 'newsAutomatisch',
+              label: 'News-Leiste läuft von selbst weiter',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: { description: 'Alle 6 Sekunden zur nächsten News – Pause, sobald jemand mit der Maus darauf zeigt oder wischt. Ohne Haken blättert man nur selbst (Punkte, Pfeile, Wischen).' },
+            },
             text('mitgliedTitel', 'Mitglied werden: Überschrift', 'In fünf Minuten\nMitglied.', true),
             text('mitgliedText', 'Mitglied werden: Text', 'Ab 5 € im Monat, alle Kurse inklusive. Antrag, Beitragsrechner und SEPA-Mandat – alles online.', true),
             gruppe('schritte', 'Mitglied werden: drei Schritte', [

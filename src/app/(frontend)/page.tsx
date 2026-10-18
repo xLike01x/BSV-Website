@@ -295,7 +295,7 @@ export default async function Startseite() {
               {tx.newsLink}
             </Link>
           </div>
-          <Karussell label="Neues aus dem BSV">
+          <Karussell label="Neues aus dem BSV" automatisch={(tx as { newsAutomatisch?: boolean | null }).newsAutomatisch === false ? 0 : 6000}>
               {news.docs.map((n) => (
                 <Link key={n.id} href={`/news/${n.slug}`} className="tile news-card">
                   <span style={{ display: 'block', aspectRatio: '4 / 3', overflow: 'hidden', background: 'var(--bsv-green-tint)' }}>

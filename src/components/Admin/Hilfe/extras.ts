@@ -666,6 +666,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wie stelle ich ein, dass die News auf der Startseite von selbst weiterlaufen?',
+    antwort: 'Unter „Website-Texte“ → Startseite den Haken „News-Leiste läuft von selbst weiter“ setzen oder entfernen. Mit Haken wechselt die Leiste alle 6 Sekunden und pausiert, sobald jemand mit der Maus darauf zeigt. Welche News dort erscheinen, bestimmt bei jeder News der Haken „Auf Startseite“.',
+    bereich: 'texte',
+  },
+  {
     frage: 'Wie kommen die neuen Seiten (Trainingszeiten, Galerie, Sponsoren, Mitmachen) ins Menü?',
     antwort: 'Unter „Menü & Fußzeile“ zeigt der Kasten oben, welche Seiten noch nirgends verlinkt sind – ein Klick auf „In die Fußzeile“ oder „Ins Menü Verein“ trägt sie ein.',
     bereich: 'menue',

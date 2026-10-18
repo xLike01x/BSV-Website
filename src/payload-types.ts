@@ -2812,6 +2812,10 @@ export interface Texte {
   finderLink?: string | null;
   newsUeberschrift?: string | null;
   newsLink?: string | null;
+  /**
+   * Alle 6 Sekunden zur nächsten News – Pause, sobald jemand mit der Maus darauf zeigt oder wischt. Ohne Haken blättert man nur selbst (Punkte, Pfeile, Wischen).
+   */
+  newsAutomatisch?: boolean | null;
   mitgliedTitel?: string | null;
   mitgliedText?: string | null;
   schritte?: {
@@ -3279,6 +3283,7 @@ export interface TexteSelect<T extends boolean = true> {
   finderLink?: T;
   newsUeberschrift?: T;
   newsLink?: T;
+  newsAutomatisch?: T;
   mitgliedTitel?: T;
   mitgliedText?: T;
   schritte?:
