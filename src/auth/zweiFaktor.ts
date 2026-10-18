@@ -3,6 +3,7 @@ import { JWTAuthentication } from 'payload'
 import QRCode from 'qrcode'
 
 import { decrypt, encrypt } from '../utilities/crypto'
+import { testkontenErlaubt } from './testkonten'
 import { hashCode, neueWiederherstellungscodes, neuesGeheimnis, otpauthUri, pruefeCode } from './totp'
 
 /**
@@ -31,6 +32,7 @@ type ZfUser = {
   zweiFaktorLetzterSchritt?: number | null
   _rollen?: string[]
   _zweiFaktorOffen?: boolean
+  testkonto?: boolean | null
 }
 
 const istPersonal = (roles?: string[] | null) => (roles ?? []).some((r) => r !== 'mitglied')
@@ -75,7 +77,9 @@ export const zweiFaktorStrategie: AuthStrategy = {
     const u = res.user as unknown as ZfUser | null
     if (!u) return res
     u._rollen = [...(u.roles ?? [])]
-    if (!AUS() && istPersonal(u.roles)) {
+    // Testkonten (nur lokal) brauchen keinen zweiten Faktor
+    const testOhne2fa = Boolean(u.testkonto) && testkontenErlaubt()
+    if (!AUS() && !testOhne2fa && istPersonal(u.roles)) {
       const jetzt = Date.now()
       const ok = Boolean(u._sid && (u.zweiFaktorSitzungen ?? []).some((s) => s.sid === u._sid && new Date(s.bis).getTime() > jetzt))
       if (!ok) {
@@ -132,7 +136,7 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
         personal: istPersonal(rollen),
         eingerichtet: Boolean(u.zweiFaktorAktiv),
         offen: Boolean(u._zweiFaktorOffen),
-        abgeschaltet: AUS(),
+        abgeschaltet: AUS() || (Boolean(u.testkonto) && testkontenErlaubt()),
       })
     },
   },

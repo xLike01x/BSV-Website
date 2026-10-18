@@ -46,6 +46,8 @@ pnpm seed:beispiele --loeschen   # wieder entfernen
 
 **Rollen-Übersicht** (`/admin/rollen`, nur Admins): wer welche Rolle hat und für welche Teams – mit Reitern nach Person, Team und Rolle.
 
+**Testkonten** (Rollen-Übersicht → Reiter „Testkonten“): je Rolle, Abteilung und Team ein Konto `…@bsv.test` mit Passwort `BSV-Test-2026!`, ohne Zwei-Faktor. Funktionieren nur mit `pnpm dev` (in Produktion gesperrt, außer `BSV_TESTKONTEN=an`). Mit „Alle Testkonten löschen“ wieder entfernen.
+
 „Eigene“ Teams: im jeweiligen Team/Kurs unter **Verantwortliche** eintragen. Team-News erscheinen auf der Teamseite; auf Startseite und im Newsroom erst, wenn die Redaktion den Haken „Auch auf Startseite“ setzt.
 
 ## Zwei-Faktor-Anmeldung

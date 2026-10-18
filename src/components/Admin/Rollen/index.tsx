@@ -6,6 +6,8 @@ import React from 'react'
 
 import { hasRole } from '@/access/roles'
 
+import { TESTPASSWORT, testkontenErlaubt } from '@/auth/testkonten'
+
 import RollenClient, { type Person, type Team } from './Client'
 import './rollen.scss'
 
@@ -22,7 +24,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
   ])
 
   const personen: Person[] = nutzer.docs.map((u) => {
-    const d = u as unknown as { id: number; name?: string; email: string; roles?: string[]; zweiFaktorAktiv?: boolean; angebote?: (number | { id: number })[] }
+    const d = u as unknown as { id: number; name?: string; email: string; roles?: string[]; zweiFaktorAktiv?: boolean; testkonto?: boolean; angebote?: (number | { id: number })[] }
     const idv = (x: number | { id: number }) => (typeof x === 'object' ? x.id : x)
     return {
       id: d.id,
@@ -30,6 +32,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       email: d.email,
       rollen: d.roles ?? [],
       zweiFaktor: Boolean(d.zweiFaktorAktiv),
+      testkonto: Boolean(d.testkonto),
       verantwortlich: angebote.docs.filter((a) => (a.leitung ?? []).some((l) => idv(l as never) === d.id)).map((a) => ({ id: a.id, title: a.title })),
       mitgliedIn: (d.angebote ?? []).map(idv),
     }
@@ -56,7 +59,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RollenClient personen={personen} teams={teams} />
+        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(), passwort: TESTPASSWORT }} />
       </Gutter>
     </DefaultTemplate>
   )

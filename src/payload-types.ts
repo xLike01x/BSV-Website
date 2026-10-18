@@ -531,6 +531,10 @@ export interface User {
     | boolean
     | null;
   zweiFaktorLetzterSchritt?: number | null;
+  /**
+   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Rollen-Übersicht → „Alle Testkonten löschen“.
+   */
+  testkonto?: boolean | null;
   updatedAt: string;
   createdAt: string;
   email: string;
@@ -1933,6 +1937,7 @@ export interface UsersSelect<T extends boolean = true> {
   zweiFaktorCodes?: T;
   zweiFaktorSitzungen?: T;
   zweiFaktorLetzterSchritt?: T;
+  testkonto?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;

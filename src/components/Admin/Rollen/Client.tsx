@@ -1,4 +1,5 @@
 'use client'
+import { useRouter } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 
 export type Person = {
@@ -7,6 +8,7 @@ export type Person = {
   email: string
   rollen: string[]
   zweiFaktor: boolean
+  testkonto?: boolean
   verantwortlich: { id: number; title: string }[]
   mitgliedIn: number[]
 }
@@ -42,9 +44,9 @@ const Chip = ({ rolle }: { rolle: string }) => {
   )
 }
 
-type Tab = 'personen' | 'teams' | 'rollen'
+type Tab = 'personen' | 'teams' | 'rollen' | 'test'
 
-export default function RollenClient({ personen, teams }: { personen: Person[]; teams: Team[] }) {
+export default function RollenClient({ personen, teams, test }: { personen: Person[]; teams: Team[]; test: { erlaubt: boolean; passwort: string } }) {
   const [tab, setTab] = useState<Tab>('personen')
   const [suche, setSuche] = useState('')
   const [nurPersonal, setNurPersonal] = useState(true)
@@ -62,7 +64,7 @@ export default function RollenClient({ personen, teams }: { personen: Person[]; 
     [teams, q],
   )
   const ohneVerantwortliche = teams.filter((t) => t.aktiv && t.verantwortliche.length === 0).length
-  const ohne2fa = personen.filter((p) => p.rollen.some((r) => r !== 'mitglied') && !p.zweiFaktor).length
+  const ohne2fa = personen.filter((p) => !p.testkonto && p.rollen.some((r) => r !== 'mitglied') && !p.zweiFaktor).length
 
   return (
     <div className="bsv-rollen">
@@ -98,6 +100,7 @@ export default function RollenClient({ personen, teams }: { personen: Person[]; 
               ['personen', 'Nach Person'],
               ['teams', 'Nach Team'],
               ['rollen', 'Nach Rolle'],
+              ['test', `Testkonten${personen.some((p) => p.testkonto) ? ` (${personen.filter((p) => p.testkonto).length})` : ''}`],
             ] as [Tab, string][]
           ).map(([k, l]) => (
             <button key={k} type="button" role="tab" aria-selected={tab === k} className={tab === k ? 'is-aktiv' : ''} onClick={() => setTab(k)}>
@@ -129,7 +132,9 @@ export default function RollenClient({ personen, teams }: { personen: Person[]; 
                 return (
                   <tr key={p.id}>
                     <td>
-                      <strong>{p.name}</strong>
+                      <strong>
+                        {p.name} {p.testkonto && <span className="bsv-rollen__test">Test</span>}
+                      </strong>
                       <span className="bsv-rollen__klein">{p.email}</span>
                     </td>
                     <td>
@@ -154,7 +159,7 @@ export default function RollenClient({ personen, teams }: { personen: Person[]; 
                         <span className="bsv-rollen__klein">–</span>
                       )}
                     </td>
-                    <td>{p.rollen.some((r) => r !== 'mitglied') ? (p.zweiFaktor ? '✅ eingerichtet' : <span className="bsv-rollen__warn">⏳ noch nicht</span>) : <span className="bsv-rollen__klein">nicht nötig</span>}</td>
+                    <td>{p.testkonto ? <span className="bsv-rollen__klein">Testkonto – nicht nötig</span> : p.rollen.some((r) => r !== 'mitglied') ? (p.zweiFaktor ? '✅ eingerichtet' : <span className="bsv-rollen__warn">⏳ noch nicht</span>) : <span className="bsv-rollen__klein">nicht nötig</span>}</td>
                     <td>
                       <a href={`/admin/collections/users/${p.id}`}>Bearbeiten ›</a>
                     </td>
@@ -221,6 +226,8 @@ export default function RollenClient({ personen, teams }: { personen: Person[]; 
         </section>
       )}
 
+      {tab === 'test' && <Testkonten personen={personen.filter((p) => p.testkonto)} test={test} />}
+
       {tab === 'rollen' && (
         <section className="bsv-rollen__raster">
           {ROLLEN.map((r) => {
@@ -250,5 +257,106 @@ export default function RollenClient({ personen, teams }: { personen: Person[]; 
         </section>
       )}
     </div>
+  )
+}
+
+/** Testkonten anlegen/löschen – zum Ausprobieren der Rechte (nur lokal, ohne Zwei-Faktor) */
+function Testkonten({ personen, test }: { personen: Person[]; test: { erlaubt: boolean; passwort: string } }) {
+  const router = useRouter()
+  const [laeuft, setLaeuft] = useState<'' | 'anlegen' | 'loeschen'>('')
+  const [meldung, setMeldung] = useState<string | null>(null)
+
+  const los = async (art: 'anlegen' | 'loeschen') => {
+    if (art === 'loeschen' && !window.confirm('Alle Testkonten wirklich löschen? Echte Konten bleiben unberührt.')) return
+    setLaeuft(art)
+    setMeldung(null)
+    try {
+      const r = await fetch('/api/users/testkonten', { method: art === 'anlegen' ? 'POST' : 'DELETE', credentials: 'include' })
+      const d = await r.json()
+      if (!r.ok) throw new Error(d?.fehler)
+      setMeldung(art === 'anlegen' ? `${d.konten.length} Testkonten sind bereit.` : `${d.geloescht} Testkonten gelöscht.`)
+      router.refresh()
+    } catch (e) {
+      setMeldung((e as Error).message || 'Hat nicht geklappt.')
+    }
+    setLaeuft('')
+  }
+
+  const gruppen = personen.reduce<Record<string, Person[]>>((acc, p) => {
+    const g = p.rollen.includes('admin') || p.rollen.includes('redaktion') || p.rollen.includes('kasse') || p.rollen.every((r) => r === 'mitglied') ? 'Rollen' : p.email.startsWith('abteilung-') || p.email.startsWith('pressewart-') ? 'Abteilungen' : 'Trainer je Team'
+    ;(acc[g] ??= []).push(p)
+    return acc
+  }, {})
+
+  return (
+    <section className="bsv-rollen__box">
+      <h2 className="bsv-rollen__h2">Testkonten zum Ausprobieren</h2>
+      <p>
+        Ein Konto je Rolle, je Abteilung (Abteilungsleitung und Pressewart) und je Team (Trainer). So kannst du prüfen, ob jede Person nur das sieht und darf, was sie soll. Die
+        Testkonten melden sich <strong>ohne Zwei-Faktor</strong> an – deshalb funktionieren sie <strong>nur auf dem lokalen Server</strong>, nicht auf der Live-Website.
+      </p>
+      {!test.erlaubt && <p className="bsv-rollen__warn">Auf diesem Server sind Testkonten gesperrt.</p>}
+      <div className="bsv-rollen__reihe">
+        {test.erlaubt && (
+          <button type="button" className="bsv-rollen__neu" onClick={() => los('anlegen')} disabled={Boolean(laeuft)}>
+            {laeuft === 'anlegen' ? 'Wird angelegt …' : personen.length ? 'Testkonten aktualisieren' : 'Testkonten anlegen'}
+          </button>
+        )}
+        {personen.length > 0 && (
+          <button type="button" className="bsv-rollen__leise" onClick={() => los('loeschen')} disabled={Boolean(laeuft)}>
+            {laeuft === 'loeschen' ? 'Wird gelöscht …' : 'Alle Testkonten löschen'}
+          </button>
+        )}
+        {personen.length > 0 && (
+          <button type="button" className="bsv-rollen__leise" onClick={() => window.print()}>
+            🖨️ Liste drucken
+          </button>
+        )}
+      </div>
+      {meldung && <p className="bsv-rollen__meldung">{meldung}</p>}
+      {personen.length > 0 && (
+        <>
+          <p className="bsv-rollen__passwort">
+            Passwort für alle Testkonten: <code>{test.passwort}</code>
+          </p>
+          <p className="bsv-rollen__klein">Tipp: Zum Wechseln abmelden oder ein privates Browserfenster nutzen – dann kannst du zwei Konten gleichzeitig vergleichen.</p>
+          {['Rollen', 'Abteilungen', 'Trainer je Team'].map((g) =>
+            gruppen[g]?.length ? (
+              <div key={g} className="bsv-rollen__bereich">
+                <h2>{g}</h2>
+                <table className="bsv-rollen__tabelle">
+                  <thead>
+                    <tr>
+                      <th>Anmeldung (E-Mail)</th>
+                      <th>Name</th>
+                      <th>Rolle</th>
+                      <th>Teams</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {gruppen[g]!.map((p) => (
+                      <tr key={p.id}>
+                        <td>
+                          <code>{p.email}</code>
+                        </td>
+                        <td>{p.name}</td>
+                        <td>
+                          <span className="bsv-rollen__chips">
+                            {sichtbar(p.rollen).map((r) => (
+                              <Chip key={r} rolle={r} />
+                            ))}
+                          </span>
+                        </td>
+                        <td>{p.verantwortlich.length ? (p.verantwortlich.length > 3 ? `${p.verantwortlich.length} Teams` : p.verantwortlich.map((v) => v.title).join(', ')) : '–'}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            ) : null,
+          )}
+        </>
+      )}
+    </section>
   )
 }

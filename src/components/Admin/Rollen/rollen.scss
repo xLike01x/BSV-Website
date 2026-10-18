@@ -273,3 +273,86 @@
     width: 100%;
   }
 }
+
+.bsv-rollen__h2 {
+  margin: 0 0 6px;
+  font-size: 20px;
+  font-weight: 800;
+}
+
+.bsv-rollen__reihe {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin: 14px 0;
+
+  button {
+    font: inherit;
+    font-weight: 600;
+    border: 0;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+}
+
+.bsv-rollen button.bsv-rollen__neu {
+  background: #157a43;
+  color: #fff;
+  border-radius: 999px;
+  padding: 10px 20px;
+}
+
+.bsv-rollen__leise {
+  background: #f0f2f1;
+  color: #1d1d1f;
+  border-radius: 999px;
+  padding: 10px 18px;
+}
+
+.bsv-rollen__meldung {
+  background: #e8f6ee;
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.bsv-rollen__passwort {
+  font-size: 16px;
+
+  code {
+    background: #fff8e6;
+    border-radius: 8px;
+    padding: 3px 8px;
+    font-size: 16px;
+  }
+}
+
+.bsv-rollen__test {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  background: #fff1e0;
+  color: #b45309;
+  border-radius: 999px;
+  padding: 1px 7px;
+  vertical-align: middle;
+}
+
+.bsv-rollen__tabelle code {
+  font-size: 13px;
+}
+
+@media print {
+  .bsv-rollen__tabs,
+  .bsv-rollen__suche,
+  .bsv-rollen__zahlen,
+  .bsv-rollen__reihe,
+  .bsv-rollen__kopf a,
+  .template-default__nav,
+  .app-header {
+    display: none !important;
+  }
+}

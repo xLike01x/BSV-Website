@@ -3,6 +3,8 @@ import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, ROLE_OPTIONS } from '../../access/roles'
+import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
+import { APIError } from 'payload'
 import { zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
 export const Users: CollectionConfig = {
@@ -29,7 +31,7 @@ export const Users: CollectionConfig = {
     // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte
     strategies: [zweiFaktorStrategie],
   },
-  endpoints: zweiFaktorEndpunkte,
+  endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte],
   fields: [
     { name: 'name', label: 'Name', type: 'text', required: true, admin: { description: 'Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.' } },
     {
@@ -69,8 +71,16 @@ export const Users: CollectionConfig = {
       },
     },
     ...zweiFaktorFelder,
+    testkontoFeld,
   ],
   hooks: {
+    // Testkonten (ohne Zwei-Faktor) nur auf dem lokalen Server
+    beforeLogin: [
+      ({ user }) => {
+        if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt()) throw new APIError('Testkonten sind auf der Live-Website gesperrt.', 403)
+        return user
+      },
+    ],
     afterChange: [zweiFaktorZuruecksetzen as never],
     beforeChange: [
       // Die allererste Person, die sich anlegt, wird automatisch Web-Admin.

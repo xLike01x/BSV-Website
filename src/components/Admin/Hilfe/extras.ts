@@ -324,6 +324,18 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   ],
   rollen: [
     {
+      id: 'testkonten',
+      titel: 'Rechte mit Testkonten ausprobieren (nur lokal)',
+      schritte: [
+        'Rollen-Übersicht öffnen → Reiter „Testkonten“ → „Testkonten anlegen“.',
+        'Es entsteht je ein Konto pro Rolle (Admin, Redaktion, Kasse, Mitglied), pro Abteilung (Abteilungsleitung, Pressewart) und pro Team (Trainer). Alle mit demselben Passwort, das dort angezeigt wird.',
+        'Abmelden oder ein privates Browserfenster öffnen und mit einem Testkonto anmelden – ohne Zwei-Faktor.',
+        'Prüfen: Was sieht die Person? Was darf sie ändern? Welche Bilder kann sie auswählen?',
+        'Fertig? „Alle Testkonten löschen“. Echte Konten bleiben unberührt.',
+        'Testkonten funktionieren nur auf dem lokalen Server, nicht auf der Live-Website.',
+      ],
+    },
+    {
       id: 'rollen-pruefen',
       titel: 'Prüfen, wer für ein Team zuständig ist',
       schritte: [
