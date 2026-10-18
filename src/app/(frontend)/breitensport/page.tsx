@@ -4,7 +4,8 @@ import React from 'react'
 
 import { Bild } from '@/bsv/components/Bild'
 import { GruppenFilter, type Gruppe } from '@/bsv/components/GruppenFilter'
-import { getAngebote, getVerein } from '@/bsv/data'
+import { T } from '@/bsv/components/Text'
+import { getAngebote, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, farbe, kurzZeit } from '@/bsv/lib'
 
 export const revalidate = 60
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 }
 
 export default async function BreitensportSeite() {
-  const [angebote, verein] = await Promise.all([getAngebote(), getVerein()])
+  const [angebote, verein, tx, w] = await Promise.all([getAngebote(), getVerein(), getTexte(), getPlatzhalter()])
   const kids = angebote.filter((a) => a.bereich === 'kids')
   const erw = angebote.filter((a) => a.bereich === 'erwachsene')
   const s = verein.startseite
@@ -53,12 +54,10 @@ export default async function BreitensportSeite() {
           Breitensport
         </p>
         <h1 className="t-page in2" style={{ maxWidth: 960, margin: '0 auto' }}>
-          {kids.length + erw.length} Kurse.
-          <br />
-          Für jedes Alter.
+          <T text={tx.breitensport?.titel} werte={w} />
         </h1>
         <p className="lead in3" style={{ margin: '22px auto 0', maxWidth: 640 }}>
-          Von den Nappy Dancers ab 1,5 Jahren bis zum Seniorenturnen. Unsere Übungsleitenden sind zum Teil lizenziert – und Schnuppern ist ausdrücklich erwünscht.
+          <T text={tx.breitensport?.text} werte={w} />
         </p>
         <div className="in3" style={{ maxWidth: 1180, margin: '48px auto 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
           {[s?.bildBreitensport1, s?.bildBreitensport2, s?.bildBreitensport3].map((b, i) => (
@@ -75,12 +74,10 @@ export default async function BreitensportSeite() {
 
       <section className="sec center">
         <h2 className="t-sec rv" style={{ maxWidth: 820, margin: '0 auto', fontSize: 'clamp(40px, 6vw, 72px)' }}>
-          Erst schnuppern.
-          <br />
-          <span className="muted">Dann entscheiden.</span>
+          <T text={tx.breitensport?.schnupperTitel} werte={w} />
         </h2>
         <p className="rv lead" style={{ margin: '18px auto 0', maxWidth: 560, fontSize: 19 }}>
-          Unsere Angebote richten sich an Mitglieder. Zum Ausprobieren bist du trotzdem jederzeit willkommen – auf jeder Kursseite kannst du ein Probetraining anfragen.
+          <T text={tx.breitensport?.schnupperText} werte={w} />
         </p>
         <div className="rv" style={{ marginTop: 32, display: 'flex', gap: '14px 28px', justifyContent: 'center', flexWrap: 'wrap' }}>
           <Link href="/#finder" className="btn btn-primary">

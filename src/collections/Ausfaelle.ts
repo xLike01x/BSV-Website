@@ -1,34 +1,19 @@
-import type { Access, CollectionConfig } from 'payload'
+import type { CollectionConfig } from 'payload'
 import { APIError } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { hasRole } from '../access/roles'
+import { eigeneAngebotIds, hasRole, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
-/** Ausfall melden: Admin/Redaktion für alle, Übungsleitung nur für eigene Angebote. */
-const canManage: Access = async ({ req }) => {
-  const user = req.user as { id: number } | null
-  if (!user) return false
-  if (hasRole(user as never, 'admin', 'redaktion')) return true
-  if (hasRole(user as never, 'uebungsleitung')) {
-    const eigene = await req.payload.find({
-      collection: 'angebote',
-      where: { leitung: { contains: user.id } },
-      depth: 0,
-      limit: 100,
-      overrideAccess: true,
-    })
-    return { angebot: { in: eigene.docs.map((d) => d.id) } }
-  }
-  return false
-}
+/** Ausfall melden: Admin/Redaktion für alle, Team-Rollen nur für eigene Angebote. */
+const canManage = redaktionOderEigeneTeams('angebot')
 
 export const Ausfaelle: CollectionConfig = {
   slug: 'ausfaelle',
   labels: { singular: 'Trainingsausfall', plural: 'Trainingsausfälle' },
   access: {
     read: anyone,
-    create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'uebungsleitung'),
+    create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', ...TEAM_ROLLEN),
     update: canManage,
     delete: canManage,
   },
@@ -55,14 +40,13 @@ export const Ausfaelle: CollectionConfig = {
     afterChange: [revalidateAllesNachAenderung],
     afterDelete: [revalidateAllesNachLoeschen],
     beforeChange: [
-      // Übungsleitungen dürfen Ausfälle nur für eigene Angebote anlegen.
+      // Team-Rollen dürfen Ausfälle nur für eigene Angebote anlegen.
       async ({ req, data, operation }) => {
         const user = req.user as { id: number } | null
         if (operation === 'create' && user && !hasRole(user as never, 'admin', 'redaktion')) {
-          const angebot = await req.payload.findByID({ collection: 'angebote', id: data.angebot, depth: 0, overrideAccess: true })
-          const leitung = (angebot?.leitung ?? []) as (number | { id: number })[]
-          const ok = leitung.some((l) => (typeof l === 'object' ? l.id : l) === user.id)
-          if (!ok) throw new APIError('Du kannst nur für deine eigenen Angebote einen Ausfall melden.', 403)
+          const ids = await eigeneAngebotIds(req)
+          const ziel = typeof data.angebot === 'object' ? data.angebot?.id : data.angebot
+          if (!ids.includes(Number(ziel))) throw new APIError('Du kannst nur für deine eigenen Angebote einen Ausfall melden.', 403)
         }
         return data
       },

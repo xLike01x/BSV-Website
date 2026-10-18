@@ -7,7 +7,9 @@ import RichText from '@/components/RichText'
 import { Bild } from '@/bsv/components/Bild'
 import { ExternesWidget } from '@/bsv/components/ExternesWidget'
 import { ProbetrainingForm } from '@/bsv/components/ProbetrainingForm'
-import { getAngebot, getAngebote, getAusfaelle } from '@/bsv/data'
+import { Galerie } from '@/bsv/components/Galerie'
+import { T } from '@/bsv/components/Text'
+import { getAngebot, getAngebote, getAusfaelle, getPlatzhalter, getTeamGalerie, getTeamNews, getTexte } from '@/bsv/data'
 import { BEREICH_LABEL, bildUrl, datum, farbe, initialen, UNTERGRUPPE_LABEL, zeitText } from '@/bsv/lib'
 
 export const revalidate = 60
@@ -52,7 +54,7 @@ export default async function AngebotSeite({ params }: Args) {
   const a = await getAngebot(decodeURIComponent(slug))
   if (!a) notFound()
 
-  const [alle, ausfaelle] = await Promise.all([getAngebote(), getAusfaelle([a.id])])
+  const [alle, ausfaelle, teamNews, galerie, tx, w] = await Promise.all([getAngebote(), getAusfaelle([a.id]), getTeamNews(a.id), getTeamGalerie(a.id), getTexte(), getPlatzhalter()])
   const [tint] = farbe(a.kategorie)
   const istFussball = a.bereich === 'fussball'
   const bereichHref = istFussball ? '/fussball' : '/breitensport'
@@ -200,10 +202,47 @@ export default async function AngebotSeite({ params }: Args) {
         </section>
       )}
 
+      {teamNews.length > 0 && (
+        <section className="wrap-narrow" style={{ paddingBottom: 72 }}>
+          <h2 className="t-3" style={{ marginBottom: 20 }}>
+            Neues {istFussball ? 'aus dem Team' : 'aus der Gruppe'}
+          </h2>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 300px), 1fr))', gap: '24px 20px' }}>
+            {teamNews.map((n) => (
+              <Link key={n.id} href={`/news/${n.slug}`} className="card card-soft" style={{ gap: 0 }}>
+                <span className="card-img" style={{ aspectRatio: '16 / 9' }}>
+                  {n.heroImage && typeof n.heroImage === 'object' ? <Bild media={n.heroImage} size="small" sizes="360px" /> : null}
+                </span>
+                <span className="card-body">
+                  <span className="card-cat green">{datum(n.publishedAt)}</span>
+                  <strong className="card-title">{n.title}</strong>
+                </span>
+              </Link>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {galerie.length > 0 && (
+        <section className="wrap-narrow" style={{ paddingBottom: 72 }}>
+          <h2 className="t-3" style={{ marginBottom: 20 }}>
+            Bilder
+          </h2>
+          <Galerie
+            bilder={galerie.map((m) => ({
+              id: m.id,
+              klein: bildUrl(m, 'square') ?? '',
+              gross: bildUrl(m, 'xlarge') ?? '',
+              alt: m.alt ?? '',
+            }))}
+          />
+        </section>
+      )}
+
       <section id="probe" className="sec-soft" style={{ padding: '100px 22px', scrollMarginTop: 56 }}>
         <div style={{ maxWidth: 760, margin: '0 auto' }}>
           <h2 className="t-sec rv center" style={{ fontSize: 'clamp(40px, 5vw, 60px)' }}>
-            Einfach mal reinschnuppern.
+            <T text={tx.probetraining?.titel} werte={w} />
           </h2>
           <p className="rv lead center" style={{ margin: '14px auto 36px', maxWidth: 520, fontSize: 19 }}>
             {leitung ? `Die Anfrage geht direkt an ${leitung.name}.` : 'Die Anfrage geht direkt an die Übungsleitung.'} Wir melden uns per E-Mail.

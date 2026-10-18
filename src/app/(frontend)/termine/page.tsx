@@ -2,7 +2,8 @@ import type { Metadata } from 'next'
 import Link from 'next/link'
 import React from 'react'
 
-import { aktuellerBenutzer, getTermine } from '@/bsv/data'
+import { T } from '@/bsv/components/Text'
+import { aktuellerBenutzer, getPlatzhalter, getTermine, getTexte } from '@/bsv/data'
 import { datum, uhrzeit } from '@/bsv/lib'
 
 export const dynamic = 'force-dynamic'
@@ -19,7 +20,7 @@ const BEREICH: Record<string, [string, string, string]> = {
 }
 
 export default async function TerminSeite() {
-  const [termine, user] = await Promise.all([getTermine(100), aktuellerBenutzer()])
+  const [termine, user, tx, w] = await Promise.all([getTermine(100), aktuellerBenutzer(), getTexte(), getPlatzhalter()])
 
   // Nach Monat gruppieren
   const monate = new Map<string, typeof termine>()
@@ -32,10 +33,10 @@ export default async function TerminSeite() {
     <>
       <section className="wrap-narrow" style={{ paddingTop: 80, paddingBottom: 40 }}>
         <h1 className="t-page in1" style={{ fontSize: 'clamp(56px, 8vw, 96px)', lineHeight: 1 }}>
-          Termine
+          <T text={tx.termine?.titel} werte={w} />
         </h1>
         <p className="lead in2" style={{ margin: '14px 0 0' }}>
-          Feste, Turniere, Versammlungen – alles, was im BSV ansteht.
+          <T text={tx.termine?.text} werte={w} />
           {!user && ' Mitglieder sehen nach dem Login weitere Termine.'}
         </p>
       </section>

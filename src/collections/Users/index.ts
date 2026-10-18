@@ -1,6 +1,7 @@
 import type { CollectionConfig } from 'payload'
 
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, ROLE_OPTIONS } from '../../access/roles'
+import { zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -21,7 +22,10 @@ export const Users: CollectionConfig = {
     tokenExpiration: 60 * 60 * 8, // 8 Stunden
     maxLoginAttempts: 5,
     lockTime: 10 * 60 * 1000, // 10 Minuten Sperre nach 5 Fehlversuchen
+    // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte
+    strategies: [zweiFaktorStrategie],
   },
+  endpoints: zweiFaktorEndpunkte,
   fields: [
     { name: 'name', label: 'Name', type: 'text', required: true },
     {
@@ -46,11 +50,24 @@ export const Users: CollectionConfig = {
       relationTo: 'angebote',
       hasMany: true,
       admin: {
-        description: 'Bei Mitgliedern: angemeldete Angebote. Bei Übungsleitungen siehe „Leitung“ im Angebot.',
+        description: 'Angebote, an denen diese Person als Mitglied teilnimmt.',
       },
     },
+    {
+      name: 'verantwortlichFuer',
+      label: 'Verantwortlich für (Team-Rechte)',
+      type: 'join',
+      collection: 'angebote',
+      on: 'leitung',
+      admin: {
+        description: 'Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Übungsleitung oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.',
+        defaultColumns: ['title', 'bereich'],
+      },
+    },
+    ...zweiFaktorFelder,
   ],
   hooks: {
+    afterChange: [zweiFaktorZuruecksetzen as never],
     beforeChange: [
       // Die allererste Person, die sich anlegt, wird automatisch Admin.
       async ({ req, operation, data }) => {
@@ -66,4 +83,4 @@ export const Users: CollectionConfig = {
 }
 
 export const isStaffUser = (user: unknown) =>
-  hasRole(user as never, 'admin', 'redaktion', 'kasse', 'uebungsleitung')
+  hasRole(user as never, 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion')

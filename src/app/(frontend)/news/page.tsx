@@ -4,7 +4,8 @@ import React from 'react'
 
 import { Bild } from '@/bsv/components/Bild'
 import { NewsListe, type NewsKarte } from '@/bsv/components/NewsListe'
-import { getNews } from '@/bsv/data'
+import { T } from '@/bsv/components/Text'
+import { getNews, getPlatzhalter, getTexte } from '@/bsv/data'
 import { bildUrl, datum, fokus } from '@/bsv/lib'
 import type { Category, Post } from '@/payload-types'
 
@@ -20,7 +21,7 @@ const kategorie = (p: Post) => {
 }
 
 export default async function NewsSeite() {
-  const news = await getNews(60)
+  const [news, tx, w] = await Promise.all([getNews(60), getTexte(), getPlatzhalter()])
   const [top, ...rest] = news.docs
 
   const items: NewsKarte[] = rest.map((n) => ({
@@ -38,10 +39,10 @@ export default async function NewsSeite() {
     <>
       <section className="wrap-narrow" style={{ paddingTop: 80, paddingBottom: 40 }}>
         <h1 className="t-page in1" style={{ fontSize: 'clamp(56px, 8vw, 96px)', lineHeight: 1 }}>
-          Newsroom
+          <T text={tx.news?.titel} werte={w} />
         </h1>
         <p className="lead in2" style={{ margin: '14px 0 0' }}>
-          Was im BSV los ist – auf dem Platz, in der Halle, im Verein.
+          <T text={tx.news?.text} werte={w} />
         </p>
       </section>
 

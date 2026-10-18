@@ -20,7 +20,8 @@
     "test": "pnpm run test:int && pnpm run test:e2e",
     "test:e2e": "cross-env NODE_OPTIONS=\"--no-deprecation --import=tsx/esm\" playwright test --config=playwright.config.ts",
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
-    "seed:bsv": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/seed.ts"
+    "seed:bsv": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/seed.ts",
+    "seed:beispiele": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/beispiele.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",
@@ -51,6 +52,7 @@
     "next-sitemap": "^4.2.3",
     "payload": "3.91.0",
     "prism-react-renderer": "^2.3.1",
+    "qrcode": "^1.5.4",
     "react": "19.2.6",
     "react-dom": "19.2.6",
     "react-hook-form": "7.71.1",
@@ -65,6 +67,7 @@
     "@testing-library/react": "16.3.0",
     "@types/escape-html": "^1.0.2",
     "@types/node": "22.19.9",
+    "@types/qrcode": "^1.5.6",
     "@types/react": "19.2.14",
     "@types/react-dom": "19.2.3",
     "@vitejs/plugin-react": "4.5.2",

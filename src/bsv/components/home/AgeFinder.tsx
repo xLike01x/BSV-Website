@@ -6,7 +6,7 @@ import React, { useMemo, useState } from 'react'
 export type Vorschlag = { name: string; href: string; von: number; bis: number; img?: string; bg: string }
 
 /** „Wie alt bist du?“ – Schieberegler, der passende Angebote vorschlägt */
-export function AgeFinder({ angebote }: { angebote: Vorschlag[] }) {
+export function AgeFinder({ angebote, frage = 'Wie alt bist du?' }: { angebote: Vorschlag[]; frage?: string }) {
   const [alter, setAlter] = useState(5)
 
   const treffer = useMemo(() => {
@@ -22,7 +22,7 @@ export function AgeFinder({ angebote }: { angebote: Vorschlag[] }) {
   return (
     <div className="agebox in4">
       <label htmlFor="alter">
-        <span>Wie alt bist du?</span>
+        <span>{frage}</span>
         <output htmlFor="alter" aria-live="polite">
           {alter} {alter === 1 ? 'Jahr' : 'Jahre'}
         </output>

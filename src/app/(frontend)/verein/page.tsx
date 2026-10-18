@@ -3,7 +3,8 @@ import Link from 'next/link'
 import React from 'react'
 
 import { Bild } from '@/bsv/components/Bild'
-import { getVerein } from '@/bsv/data'
+import { T } from '@/bsv/components/Text'
+import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, initialen, zahl } from '@/bsv/lib'
 
 export const revalidate = 60
@@ -13,7 +14,7 @@ export const metadata: Metadata = {
 }
 
 export default async function VereinSeite() {
-  const v = await getVerein()
+  const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])
   const beitraege = v.beitraege ?? []
   const guenstigster = Math.min(...beitraege.map((b) => b.quartal / 3))
 
@@ -24,12 +25,10 @@ export default async function VereinSeite() {
           Über uns
         </p>
         <h1 className="t-page in2" style={{ maxWidth: 980, margin: '0 auto', fontSize: 'clamp(60px, 10vw, 140px)', lineHeight: 0.95, letterSpacing: '-0.05em' }}>
-          Seit {v.gruendung}
-          <br />
-          in Büderich.
+          <T text={tx.verein?.titel} werte={w} />
         </h1>
         <p className="lead in3" style={{ margin: '26px auto 0', maxWidth: 620 }}>
-          {zahl(v.mitglieder)} Mitglieder, ein Verein für Fußball und Breitensport – getragen von Ehrenamtlichen, Übungsleitenden und vielen helfenden Händen.
+          <T text={tx.verein?.text} werte={w} />
         </p>
         <nav aria-label="Auf dieser Seite" className="in3 chips" style={{ marginTop: 36, justifyContent: 'center' }}>
           {[
@@ -58,7 +57,7 @@ export default async function VereinSeite() {
               Vorstand
             </h2>
             <p className="rv lead" style={{ margin: '8px 0 40px', fontSize: 19 }}>
-              Ansprechpersonen für alles rund um den Verein. Kontakt läuft über das Formular – E-Mail-Adressen und Telefonnummern bleiben geschützt.
+              <T text={tx.verein?.vorstandText} werte={w} />
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16 }}>
               {v.vorstand!.map((b, i) => (
@@ -86,7 +85,7 @@ export default async function VereinSeite() {
             Ab {Number.isFinite(guenstigster) ? Math.round(guenstigster) : 5} € im Monat.
           </h2>
           <p className="rv lead center" style={{ margin: '16px auto 48px', maxWidth: 560, fontSize: 19 }}>
-            Vierteljährlich per Lastschrift, jeweils zum 1. eines Quartals. Alle Kurse und Teams inklusive.
+            <T text={tx.verein?.beitraegeText} werte={w} />
           </p>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
             {beitraege.map((b) => {
@@ -162,7 +161,7 @@ export default async function VereinSeite() {
       <section id="shop" className="sec sec-soft" style={{ scrollMarginTop: 56 }}>
         <div className="wrap-narrow" style={{ padding: 0 }}>
           <h2 className="t-sec rv center" style={{ fontSize: 'clamp(40px, 5vw, 64px)', marginBottom: 32 }}>
-            Zeig, wo du hingehörst.
+            <T text={tx.verein?.shopTitel} werte={w} />
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))', gap: 20 }}>
             <a href="https://team.jako.de/de/team/buederichersv/" target="_blank" rel="noopener noreferrer" className="tile rv" style={{ background: 'var(--bsv-green-tint)', padding: 44, minHeight: 280, justifyContent: 'space-between' }}>

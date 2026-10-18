@@ -35,7 +35,8 @@ export default async function Artikel({ params }: Args) {
   if (!post) notFound()
 
   const weitere = (await getNews(4)).docs.filter((n) => n.id !== post.id).slice(0, 3)
-  const kat = post.categories?.find((c): c is Category => typeof c === 'object')?.title ?? 'Verein'
+  const team = typeof post.team === 'object' && post.team ? post.team : null
+  const kat = team?.title ?? post.categories?.find((c): c is Category => typeof c === 'object')?.title ?? 'Verein'
   const minuten = lesezeit(lexicalText(post.content))
   const autor = post.populatedAuthors?.[0]?.name
 
@@ -45,7 +46,7 @@ export default async function Artikel({ params }: Args) {
       <article>
         <header className="wrap-text" style={{ maxWidth: 820, paddingTop: 72, paddingBottom: 40 }}>
           <nav aria-label="Brotkrumen" className="crumbs in1" style={{ fontSize: 14, marginBottom: 20 }}>
-            <Link href="/news">News</Link> › {kat}
+            <Link href="/news">News</Link> › {team ? <Link href={`/angebote/${team.slug}`}>{team.title}</Link> : kat}
           </nav>
           <p className="green in1" style={{ margin: '0 0 10px', fontSize: 15, fontWeight: 600 }}>
             {kat} · {datum(post.publishedAt)} · {minuten} Min. Lesezeit

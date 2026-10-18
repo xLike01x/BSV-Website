@@ -2,6 +2,9 @@ import type { NextConfig } from 'next'
 
 export const redirects: NextConfig['redirects'] = async () => {
   return [
+    // Verwaltung: Anmeldung immer über die BSV-Login-Seite (mit Zwei-Faktor-Schritt)
+    { source: '/admin/login', destination: '/login?weiter=/admin', permanent: false },
+    { source: '/admin/unauthorized', destination: '/login/zwei-faktor?weiter=/admin', permanent: false },
     // Alte Vorlagen-Pfade
     { source: '/posts', destination: '/news', permanent: true },
     { source: '/posts/:slug', destination: '/news/:slug', permanent: true },

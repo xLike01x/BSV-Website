@@ -9,7 +9,21 @@ import path from 'path'
 import { fileURLToPath } from 'url'
 
 import { anyone } from '../access/anyone'
-import { canUpload, isEditor } from '../access/roles'
+import type { CollectionBeforeChangeHook } from 'payload'
+import { APIError } from 'payload'
+
+import { canUpload, eigeneAngebotIds, hasRole, redaktionOderEigeneTeams } from '../access/roles'
+
+/** Team-Rollen laden Bilder immer für eines ihrer Teams hoch */
+const teamBildPruefen: CollectionBeforeChangeHook = async ({ req, data, operation }) => {
+  const user = req.user as { roles?: string[] } | null
+  if (!user || hasRole(user as never, 'admin', 'redaktion')) return data
+  const ids = await eigeneAngebotIds(req)
+  if (!data.team && ids.length === 1) data.team = ids[0]
+  const ziel = Number(typeof data.team === 'object' && data.team ? data.team.id : data.team)
+  if ((operation === 'create' || data.team !== undefined) && !ids.includes(ziel)) throw new APIError('Bitte ordne das Bild einem deiner Teams zu.', 403)
+  return data
+}
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -19,15 +33,32 @@ export const Media: CollectionConfig = {
   folders: true,
   access: {
     create: canUpload,
-    delete: isEditor,
+    delete: redaktionOderEigeneTeams('team'),
     read: anyone,
-    update: canUpload,
+    update: redaktionOderEigeneTeams('team'),
   },
+  labels: { singular: 'Bild / Datei', plural: 'Mediathek' },
+  admin: { group: 'Inhalte', defaultColumns: ['filename', 'alt', 'team', 'inGalerie'] },
+  hooks: { beforeChange: [teamBildPruefen] },
   fields: [
     {
       name: 'alt',
+      label: 'Bildbeschreibung (für Screenreader)',
       type: 'text',
-      //required: true,
+    },
+    {
+      name: 'team',
+      label: 'Team / Kurs',
+      type: 'relationship',
+      relationTo: 'angebote',
+      filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+      admin: { position: 'sidebar', description: 'Bilder eines Teams kann dessen Team-Redaktion verwalten.' },
+    },
+    {
+      name: 'inGalerie',
+      label: 'In der Bildergalerie des Teams zeigen',
+      type: 'checkbox',
+      admin: { position: 'sidebar', description: 'Nur Fotos mit Einwilligung der abgebildeten Personen – bei Kindern der Eltern.' },
     },
     {
       name: 'caption',

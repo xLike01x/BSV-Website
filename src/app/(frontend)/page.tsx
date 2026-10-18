@@ -5,16 +5,33 @@ import { Bild } from '@/bsv/components/Bild'
 import { AgeFinder, type Vorschlag } from '@/bsv/components/home/AgeFinder'
 import { CountUp } from '@/bsv/components/home/CountUp'
 import { OfferFinder, type FinderItem } from '@/bsv/components/OfferFinder'
-import { getAngebote, getNews, getVerein } from '@/bsv/data'
+import { T } from '@/bsv/components/Text'
+import { getAngebote, getNews, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, datum, farbe } from '@/bsv/lib'
 
 export const revalidate = 60
 
 export default async function Startseite() {
-  const [verein, angebote, news] = await Promise.all([getVerein(), getAngebote(), getNews(6)])
+  const [verein, angebote, news, tx, w] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter()])
+  /** Erste Zeile normal, weitere Zeilen grün hervorgehoben */
+  const zweifarbig = (text?: string | null) => {
+    const [erste, ...rest] = (text ?? '').split('\n')
+    return (
+      <>
+        <T text={erste} werte={w} />
+        {rest.length > 0 && (
+          <>
+            <br />
+            <span className="green">
+              <T text={rest.join('\n')} werte={w} />
+            </span>
+          </>
+        )}
+      </>
+    )
+  }
   const s = verein.startseite
   const hero = (s?.heroBilder ?? []).filter((b) => typeof b === 'object')
-  const anzahlFussball = angebote.filter((a) => a.bereich === 'fussball').length
 
   const finder: FinderItem[] = angebote.map((a) => {
     const [tint, tintBg] = farbe(a.kategorie)
@@ -51,17 +68,15 @@ export default async function Startseite() {
               {verein.name}
             </p>
             <h1 className="t-hero in2">
-              Bewegung
-              <br />
-              für alle.
+              <T text={tx.heroTitel} werte={w} />
             </h1>
             <p className="hand in2" style={{ margin: '6px 0 0', fontSize: 'clamp(38px, 4.5vw, 56px)', lineHeight: 1, transform: 'rotate(-3deg)', transformOrigin: 'left' }}>
-              von 1 bis 99 Jahren
+              <T text={tx.heroHand} werte={w} />
             </p>
             <p className="in3" style={{ margin: '22px 0 0', maxWidth: 500, fontSize: 20, lineHeight: 1.5, color: 'var(--bsv-ink-2)' }}>
-              Tanzen, Turnen, Fußball, Fitness, Yoga und Walking am Rhein – in Büderich, mit über {(Math.floor((verein.mitglieder ?? 1000) / 100) * 100).toLocaleString('de-DE')} Mitgliedern und ganz viel Herz. Schnuppern ist überall erwünscht!
+              <T text={tx.heroText} werte={w} />
             </p>
-            <AgeFinder angebote={vorschlaege} />
+            <AgeFinder angebote={vorschlaege} frage={tx.alterFrage ?? undefined} />
           </div>
 
           <div aria-hidden="true" className="hero-art">
@@ -125,17 +140,17 @@ export default async function Startseite() {
       <section id="welten" style={{ padding: '0 22px 110px' }}>
         <div className="wrap" style={{ padding: 0 }}>
           <h2 className="t-sec rv center" style={{ marginBottom: 48 }}>
-            Ein Verein.
-            <br />
-            <span className="green">Drei Welten.</span>
+            {zweifarbig(tx.weltenTitel)}
           </h2>
           <div className="worlds">
             <Link href="/fussball" className="tile tile-wide rv" style={{ minHeight: 500, justifyContent: 'flex-end', color: '#fff' }}>
               <Bild media={s?.bildFussball} size="xlarge" sizes="(max-width: 760px) 100vw, 820px" style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
               <div style={{ position: 'relative', margin: 20, background: 'rgba(255,255,255,0.94)', color: 'var(--bsv-ink)', borderRadius: 24, padding: '26px 28px', maxWidth: 520, backdropFilter: 'blur(8px)' }}>
                 <p className="tile-label green">Fußball</p>
-                <h3>{anzahlFussball} Teams. Ein neuer Kunstrasen.</h3>
-                <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)' }}>Von Buddy’s Fußballzwergen ab 3 Jahren bis zu den Alten Herren – dazu Damen und Mädchenteams.</p>
+                <h3>
+                  <T text={tx.kachelFussball?.titel} werte={w} />
+                </h3>
+                <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)' }}><T text={tx.kachelFussball?.text} werte={w} /></p>
                 <span style={{ display: 'inline-block', marginTop: 10, color: 'var(--bsv-green)', fontWeight: 600 }}>Teams entdecken ›</span>
               </div>
             </Link>
@@ -145,7 +160,9 @@ export default async function Startseite() {
                 <p className="tile-label" style={{ color: 'var(--bsv-coral-dark)' }}>
                   BSV Kids
                 </p>
-                <h3>Hüpfen. Tanzen. Turnen.</h3>
+                <h3>
+                  <T text={tx.kachelKids?.titel} werte={w} />
+                </h3>
                 <div aria-hidden="true" style={{ display: 'flex', gap: 12, alignItems: 'flex-end', height: 56, marginTop: 10 }}>
                   <span className="b1" style={{ width: 22, height: 22, borderRadius: '50%', background: '#FF7A59' }} />
                   <span className="b2" style={{ width: 22, height: 22, borderRadius: '50%', background: '#FFB938' }} />
@@ -162,8 +179,10 @@ export default async function Startseite() {
                 <p className="tile-label" style={{ color: 'var(--bsv-blue)' }}>
                   Fitness &amp; Gesundheit
                 </p>
-                <h3>Dein Puls. Dein Tempo.</h3>
-                <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)' }}>Step &amp; Burn, Zumba, Pilates, Yoga, Spinning, Rehasport und mehr.</p>
+                <h3>
+                  <T text={tx.kachelFitness?.titel} werte={w} />
+                </h3>
+                <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)' }}><T text={tx.kachelFitness?.text} werte={w} /></p>
               </div>
               <div className="tile-media" style={{ minHeight: 200 }}>
                 <Bild media={s?.bildFitness} size="medium" sizes="(max-width: 760px) 100vw, 400px" />
@@ -174,12 +193,10 @@ export default async function Startseite() {
               <div style={{ flex: '1 1 320px' }}>
                 <p className="tile-label green">Mitgliederbereich</p>
                 <h3 style={{ fontSize: 'clamp(32px, 4vw, 48px)' }}>
-                  Training fällt aus?
-                  <br />
-                  Du weißt es zuerst.
+                  <T text={tx.kachelMitglieder?.titel} werte={w} />
                 </h3>
                 <p style={{ margin: '12px 0 0', maxWidth: 400, color: 'var(--bsv-ink-2)', fontSize: 18 }}>
-                  Ausfälle deiner Kurse, Vereinstermine und deine Anmeldungen – alles an einem Ort, auch auf dem Handy.
+                  <T text={tx.kachelMitglieder?.text} werte={w} />
                 </p>
                 <Link href="/mitglieder" className="link-more" style={{ display: 'inline-block', marginTop: 18 }}>
                   Zum Mitgliederbereich ›
@@ -204,7 +221,9 @@ export default async function Startseite() {
 
       <section id="finder" className="sec sec-warm">
         <div className="wrap" style={{ padding: 0 }}>
-          <h2 className="t-sec rv center">Finde deinen Sport.</h2>
+          <h2 className="t-sec rv center">
+            <T text={tx.finderTitel} werte={w} />
+          </h2>
           <OfferFinder items={gemischt} />
         </div>
       </section>
@@ -245,7 +264,7 @@ export default async function Startseite() {
         <section id="news" className="sec-soft" style={{ padding: '110px 0' }}>
           <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16 }}>
             <h2 className="rv" style={{ margin: 0, fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1.05, fontWeight: 800, letterSpacing: '-0.04em' }}>
-              Neues aus dem BSV.
+              <T text={tx.newsTitel} werte={w} />
             </h2>
             <Link href="/news" className="link-more" style={{ fontSize: 19 }}>
               Alle News ›
@@ -271,12 +290,10 @@ export default async function Startseite() {
 
       <section id="mitglied" className="center" style={{ padding: '120px 22px' }}>
         <h2 className="rv" style={{ margin: '0 auto', maxWidth: 900, fontSize: 'clamp(48px, 7vw, 92px)', lineHeight: 1.02, fontWeight: 800, letterSpacing: '-0.05em' }}>
-          In fünf Minuten
-          <br />
-          <span className="green">Mitglied.</span>
+          {zweifarbig(tx.mitgliedTitel)}
         </h2>
         <p className="rv lead" style={{ margin: '18px auto 0', maxWidth: 560 }}>
-          Ab 5 € im Monat, alle Kurse inklusive. Antrag, Beitragsrechner und SEPA-Mandat – alles online.
+          <T text={tx.mitgliedText} werte={w} />
         </p>
         <div className="steps3">
           {[

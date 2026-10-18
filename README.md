@@ -24,6 +24,12 @@ pnpm seed:bsv
 ```
 Lädt Teams & Kurse, News, Vorstand, Bilder und die Seiten Kunstrasen, Impressum und Datenschutz aus der bisherigen WordPress-Seite. Mehrfaches Ausführen ist unschädlich – Vorhandenes wird aktualisiert, nicht doppelt angelegt. Achtung: Änderungen, die du in der Verwaltung an diesen Startinhalten gemacht hast, werden dabei überschrieben.
 
+**Beispiel-News** für alle Teams und Kurse (zum Ausprobieren):
+```powershell
+pnpm seed:beispiele              # anlegen
+pnpm seed:beispiele --loeschen   # wieder entfernen
+```
+
 **Beenden:** `Strg + C`, danach `docker compose down`.
 
 ## Rollen
@@ -33,8 +39,19 @@ Lädt Teams & Kurse, News, Vorstand, Bilder und die Seiten Kunstrasen, Impressum
 | Admin | alles, Rollen vergeben |
 | Redaktion | News, Termine, Seiten, Teams & Kurse |
 | Kasse | Mitgliedsanträge inkl. Bankdaten |
-| Übungsleitung | eigene Angebote pflegen, Ausfälle melden, eigene Probetraining-Anfragen |
+| Übungsleitung | eigene Teams/Kurse pflegen, Ausfälle, Team-News und -Bilder, eigene Probetraining-Anfragen |
+| Team-Redaktion | eigene Teams/Kurse: Team-News, Bilder, Zeiten, Ausfälle (z. B. Pressewart einer Mannschaft) |
 | Mitglied | nur Mitgliederbereich auf der Website |
+
+„Eigene“ Teams: im jeweiligen Team/Kurs unter **Verantwortliche** eintragen. Team-News erscheinen auf der Teamseite; auf Startseite und im Newsroom erst, wenn die Redaktion den Haken „Auch auf Startseite“ setzt.
+
+## Zwei-Faktor-Anmeldung
+
+Alle Rollen außer „Mitglied“ brauchen für die Verwaltung zusätzlich einen Code aus einer Authenticator-App (Google/Microsoft Authenticator, iPhone-Passwörter …). Beim ersten Login wird die App per QR-Code verbunden; dabei gibt es 10 Wiederherstellungscodes für den Notfall. Handy verloren? Ein Admin entfernt im Benutzer den Haken „Zwei-Faktor-Anmeldung eingerichtet“ – beim nächsten Login wird neu eingerichtet. Lokal zum Entwickeln abschaltbar mit `ZWEI_FAKTOR=aus` in der `.env`.
+
+## Texte ändern
+
+Alle Überschriften und festen Texte der Website stehen in der Verwaltung unter **Inhalte → Website-Texte**. Platzhalter wie `{teams}` oder `{mitglieder}` werden automatisch durch aktuelle Zahlen ersetzt.
 
 ## Sicherheit
 

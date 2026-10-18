@@ -9,11 +9,15 @@ import {
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
-import { editorOrPublished, isEditor } from '../../access/roles'
+import type { Access, CollectionBeforeChangeHook, Where } from 'payload'
+import { APIError } from 'payload'
+
+import { eigeneAngebotIds, hasRole, isEditorField, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../../access/roles'
 import { Banner } from '../../blocks/Banner/config'
 import { Code } from '../../blocks/Code/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
+import { slugFromTitle } from '../../hooks/slugFromTitle'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
 
@@ -26,14 +30,45 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
 
+/** Redaktion: alle News. Team-Rollen: News ihrer eigenen Teams (auch Entwürfe). Alle anderen: Veröffentlichtes. */
+const newsLesen: Access = async ({ req }) => {
+  const user = req.user as { roles?: string[] } | null
+  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  if (hasRole(user as never, ...TEAM_ROLLEN)) {
+    const ids = await eigeneAngebotIds(req)
+    if (ids.length) return { or: [{ _status: { equals: 'published' } }, { team: { in: ids } }] } as Where
+  }
+  return { _status: { equals: 'published' } }
+}
+
+const newsAnlegen: Access = async ({ req }) => {
+  const user = req.user as { roles?: string[] } | null
+  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  return hasRole(user as never, ...TEAM_ROLLEN) && (await eigeneAngebotIds(req)).length > 0
+}
+
+/** Team-News: nur für eigene Teams, Startseite entscheidet die Redaktion */
+const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operation, originalDoc }) => {
+  const user = req.user as { roles?: string[] } | null
+  if (!user || hasRole(user as never, 'admin', 'redaktion')) return data
+  const ids = await eigeneAngebotIds(req)
+  const team = typeof data.team === 'object' && data.team ? data.team.id : data.team
+  if (!team && ids.length === 1) data.team = ids[0]
+  const ziel = Number(typeof data.team === 'object' && data.team ? data.team.id : data.team)
+  if (!ids.includes(ziel)) throw new APIError('Bitte wähle eines deiner Teams aus. Du kannst nur News für eigene Teams schreiben.', 403)
+  if (operation === 'create') data.aufStartseite = false
+  else if (originalDoc) data.aufStartseite = originalDoc.aufStartseite
+  return data
+}
+
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   labels: { singular: 'News', plural: 'News' },
   access: {
-    create: isEditor,
-    delete: isEditor,
-    read: editorOrPublished,
-    update: isEditor,
+    create: newsAnlegen,
+    delete: redaktionOderEigeneTeams('team'),
+    read: newsLesen,
+    update: redaktionOderEigeneTeams('team'),
   },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -49,7 +84,7 @@ export const Posts: CollectionConfig<'posts'> = {
   },
   admin: {
     group: 'Inhalte',
-    defaultColumns: ['title', 'slug', 'updatedAt'],
+    defaultColumns: ['title', 'team', 'aufStartseite', '_status', 'publishedAt'],
     livePreview: {
       url: ({ data, req }) =>
         generatePreviewPath({
@@ -163,6 +198,29 @@ export const Posts: CollectionConfig<'posts'> = {
       ],
     },
     {
+      name: 'team',
+      label: 'Team / Kurs',
+      type: 'relationship',
+      relationTo: 'angebote',
+      // Team-Rollen sehen in der Auswahl nur ihre eigenen Teams
+      filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+      admin: {
+        position: 'sidebar',
+        description: 'Erscheint auf der Seite dieses Teams. Leer lassen für Vereins-News.',
+      },
+    },
+    {
+      name: 'aufStartseite',
+      label: 'Auch auf Startseite und unter „News“ zeigen',
+      type: 'checkbox',
+      defaultValue: true,
+      access: { create: isEditorField, update: isEditorField },
+      admin: {
+        position: 'sidebar',
+        description: 'Entscheidet die Redaktion. Team-News erscheinen zunächst nur auf der Teamseite.',
+      },
+    },
+    {
       name: 'publishedAt',
       type: 'date',
       admin: {
@@ -218,6 +276,8 @@ export const Posts: CollectionConfig<'posts'> = {
     slugField(),
   ],
   hooks: {
+    beforeValidate: [slugFromTitle],
+    beforeChange: [teamNewsPruefen],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

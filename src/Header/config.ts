@@ -4,8 +4,10 @@ import type { GlobalConfig } from 'payload'
 import { link } from '@/fields/link'
 import { revalidateHeader } from './hooks/revalidateHeader'
 
+// Aus der Vorlage; Menü und Fußzeile kommen jetzt automatisch aus Teams & Kursen bzw. den Vereinsdaten
 export const Header: GlobalConfig = {
   slug: 'header',
+  admin: { hidden: true },
   access: {
     read: () => true,
     update: isEditor,

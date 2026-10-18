@@ -3,7 +3,8 @@ import React, { Suspense } from 'react'
 
 import { Karte } from '@/bsv/components/Karte'
 import { KontaktForm } from '@/bsv/components/KontaktForm'
-import { getVerein } from '@/bsv/data'
+import { T } from '@/bsv/components/Text'
+import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 
 export const revalidate = 60
 export const metadata: Metadata = {
@@ -12,17 +13,17 @@ export const metadata: Metadata = {
 }
 
 export default async function KontaktSeite() {
-  const v = await getVerein()
+  const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])
   const empfaenger = (v.vorstand ?? []).map((b) => `${b.name} (${b.rolle})`)
 
   return (
     <>
       <section className="wrap-narrow center" style={{ paddingTop: 96, paddingBottom: 48 }}>
         <h1 className="t-page in1" style={{ fontSize: 'clamp(52px, 8vw, 96px)', lineHeight: 1 }}>
-          Sag Hallo.
+          <T text={tx.kontakt?.titel} werte={w} />
         </h1>
         <p className="lead in2" style={{ margin: '16px auto 0', maxWidth: 560 }}>
-          Fragen zu Teams, Kursen, Mitgliedschaft oder Sponsoring? Schreib uns – die Nachricht landet direkt bei der richtigen Person.
+          <T text={tx.kontakt?.text} werte={w} />
         </p>
       </section>
 

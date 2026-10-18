@@ -16,6 +16,7 @@ import { Probetraining } from './collections/Probetraining'
 import { Ausfaelle } from './collections/Ausfaelle'
 import { Kontaktanfragen } from './collections/Kontaktanfragen'
 import { Verein } from './Verein/config'
+import { Texte } from './Texte/config'
 import { de } from '@payloadcms/translations/languages/de'
 import { Footer } from './Footer/config'
 import { Header } from './Header/config'
@@ -40,6 +41,8 @@ export default buildConfig({
       baseDir: path.resolve(dirname),
     },
     user: Users.slug,
+    // Keine Profilbilder von Gravatar laden (Datenschutz)
+    avatar: 'default',
     meta: {
       titleSuffix: ' – BSV Verwaltung',
     },
@@ -75,7 +78,7 @@ export default buildConfig({
   }),
   collections: [Pages, Posts, Termine, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Media, Categories, Users],
   cors: [getServerSideURL()].filter(Boolean),
-  globals: [Header, Footer, Verein],
+  globals: [Header, Footer, Verein, Texte],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

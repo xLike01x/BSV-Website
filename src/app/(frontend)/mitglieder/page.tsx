@@ -16,6 +16,7 @@ const ROLLE: Record<string, string> = {
   redaktion: 'Redaktion',
   kasse: 'Kasse',
   uebungsleitung: 'Übungsleitung',
+  teamredaktion: 'Team-Redaktion',
   mitglied: 'Mitglied',
 }
 
@@ -24,10 +25,14 @@ export default async function MitgliederSeite() {
   if (!user) redirect('/login?weiter=/mitglieder')
 
   const p = await payload()
+  // Ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte; die echten Rollen stehen in _rollen
+  const zf = user as typeof user & { _rollen?: string[]; _zweiFaktorOffen?: boolean }
+  const echteRollen = zf._rollen ?? user.roles ?? []
   const rollen = user.roles ?? []
   const istStaff = rollen.some((r) => r !== 'mitglied')
+  const zweiFaktorOffen = Boolean(zf._zweiFaktorOffen)
   const meine = (user.angebote ?? []).filter((a): a is Angebote => typeof a === 'object')
-  const geleitet = rollen.includes('uebungsleitung')
+  const geleitet = rollen.includes('uebungsleitung') || rollen.includes('teamredaktion')
     ? (await p.find({ collection: 'angebote', where: { leitung: { contains: user.id } }, depth: 0, limit: 50, overrideAccess: true })).docs
     : []
   const alleIds = Array.from(new Set([...meine, ...geleitet].map((a) => a.id)))
@@ -35,7 +40,7 @@ export default async function MitgliederSeite() {
     alleIds.length ? getAusfaelle(alleIds) : Promise.resolve([]),
     getTermine(6),
     getVerein(),
-    geleitet.length
+    geleitet.length && rollen.includes('uebungsleitung')
       ? p.count({ collection: 'probetraining', where: { and: [{ angebot: { in: geleitet.map((g) => g.id) } }, { status: { equals: 'neu' } }] }, overrideAccess: true })
       : Promise.resolve({ totalDocs: 0 }),
   ])
@@ -47,7 +52,7 @@ export default async function MitgliederSeite() {
       <section className="wrap-narrow" style={{ paddingTop: 72, paddingBottom: 32, display: 'flex', flexWrap: 'wrap', gap: 20, alignItems: 'flex-end', justifyContent: 'space-between' }}>
         <div>
           <p className="kicker in1" style={{ fontSize: 17 }}>
-            {rollen.map((r) => ROLLE[r] ?? r).join(' · ')}
+            {echteRollen.map((r) => ROLLE[r] ?? r).join(' · ')}
           </p>
           <h1 className="t-page in2" style={{ fontSize: 'clamp(44px, 6vw, 72px)' }}>
             Hallo {vorname}!
@@ -58,6 +63,11 @@ export default async function MitgliederSeite() {
             <a href="/admin" className="btn btn-primary">
               Zur Verwaltung
             </a>
+          )}
+          {zweiFaktorOffen && (
+            <Link href="/login/zwei-faktor?weiter=/admin" className="btn btn-primary">
+              Zur Verwaltung (Code bestätigen)
+            </Link>
           )}
           <AbmeldenButton />
         </div>
@@ -79,7 +89,7 @@ export default async function MitgliederSeite() {
           <div style={{ background: '#fff', borderRadius: 28, padding: 32, gridColumn: '1 / -1' }}>
             <div style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 12, alignItems: 'baseline' }}>
               <h2 className="t-3" style={{ fontSize: 26 }}>
-                Meine Gruppen als Übungsleitung
+                Meine Teams &amp; Kurse zum Pflegen
               </h2>
               {anfragen.totalDocs > 0 && (
                 <a href="/admin/collections/probetraining" className="link-more">
@@ -95,6 +105,9 @@ export default async function MitgliederSeite() {
                   <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 8, fontSize: 15 }}>
                     <a href={`/admin/collections/ausfaelle/create`} className="link-more">
                       Ausfall melden ›
+                    </a>
+                    <a href={`/admin/collections/posts/create`} className="link-more">
+                      News schreiben ›
                     </a>
                     <a href={`/admin/collections/angebote/${a.id}`} className="link-more">
                       Bearbeiten ›

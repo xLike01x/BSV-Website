@@ -63,11 +63,14 @@ export const plugins: Plugin[] = [
       payment: false,
     },
     formSubmissionOverrides: {
-      admin: { group: 'Inhalte' },
+      // Formulare aus dem Baukasten (Seiten). Eigene BSV-Formulare liegen unter „Verwaltung“.
+      labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
+      admin: { group: 'Baukasten' },
       access: { create: anyone, read: isEditor, update: isAdmin, delete: isAdmin },
     },
     formOverrides: {
-      admin: { group: 'Inhalte' },
+      labels: { singular: 'Formular', plural: 'Formulare' },
+      admin: { group: 'Baukasten' },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {

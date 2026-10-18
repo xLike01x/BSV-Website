@@ -90,6 +90,9 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
+    users: {
+      verantwortlichFuer: 'angebote';
+    };
     'payload-folders': {
       documentsAndFolders: 'payload-folders' | 'media';
     };
@@ -125,11 +128,13 @@ export interface Config {
     header: Header;
     footer: Footer;
     verein: Verein;
+    texte: Texte;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     verein: VereinSelect<false> | VereinSelect<true>;
+    texte: TexteSelect<false> | TexteSelect<true>;
   };
   locale: null;
   widgets: {
@@ -267,6 +272,14 @@ export interface Post {
     image?: (number | null) | Media;
     description?: string | null;
   };
+  /**
+   * Erscheint auf der Seite dieses Teams. Leer lassen für Vereins-News.
+   */
+  team?: (number | null) | Angebote;
+  /**
+   * Entscheidet die Redaktion. Team-News erscheinen zunächst nur auf der Teamseite.
+   */
+  aufStartseite?: boolean | null;
   publishedAt?: string | null;
   authors?: (number | User)[] | null;
   populatedAuthors?:
@@ -291,6 +304,14 @@ export interface Post {
 export interface Media {
   id: number;
   alt?: string | null;
+  /**
+   * Bilder eines Teams kann dessen Team-Redaktion verwalten.
+   */
+  team?: (number | null) | Angebote;
+  /**
+   * Nur Fotos mit Einwilligung der abgebildeten Personen – bei Kindern der Eltern.
+   */
+  inGalerie?: boolean | null;
   caption?: {
     root: {
       type: string;
@@ -379,6 +400,141 @@ export interface Media {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "angebote".
+ */
+export interface Angebote {
+  id: number;
+  title: string;
+  bereich: 'fussball' | 'kids' | 'erwachsene';
+  untergruppe?: ('junioren' | 'juniorinnen' | 'senioren' | 'seniorinnen') | null;
+  kategorie?:
+    ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
+  alterText?: string | null;
+  alterVon?: number | null;
+  alterBis?: number | null;
+  kurzbeschreibung?: string | null;
+  beschreibung?: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  } | null;
+  bild?: (number | null) | Media;
+  zeiten?:
+    | {
+        tag?: ('Montag' | 'Dienstag' | 'Mittwoch' | 'Donnerstag' | 'Freitag' | 'Samstag' | 'Sonntag') | null;
+        von?: string | null;
+        bis?: string | null;
+        ort?: string | null;
+        hinweis?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Personen mit Rolle Übungsleitung oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.
+   */
+  leitung?: (number | User)[] | null;
+  team?:
+    | {
+        name: string;
+        rolle?: string | null;
+        foto?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  plaetzeBegrenzt?: boolean | null;
+  maxPlaetze?: number | null;
+  spielklasse?: string | null;
+  fupaWidgetId?: string | null;
+  fussballDeTeamId?: string | null;
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  name: string;
+  /**
+   * Bestimmt, was diese Person sehen und bearbeiten darf.
+   */
+  roles: ('admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied')[];
+  /**
+   * Angebote, an denen diese Person als Mitglied teilnimmt.
+   */
+  angebote?: (number | Angebote)[] | null;
+  /**
+   * Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Übungsleitung oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.
+   */
+  verantwortlichFuer?: {
+    docs?: (number | Angebote)[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  /**
+   * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
+   */
+  zweiFaktorAktiv?: boolean | null;
+  zweiFaktorGeheimnis?: string | null;
+  zweiFaktorCodes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  zweiFaktorSitzungen?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  zweiFaktorLetzterSchritt?: number | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-folders".
  */
 export interface FolderInterface {
@@ -424,109 +580,6 @@ export interface Category {
         id?: string | null;
       }[]
     | null;
-  updatedAt: string;
-  createdAt: string;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  name: string;
-  /**
-   * Bestimmt, was diese Person sehen und bearbeiten darf.
-   */
-  roles: ('admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'mitglied')[];
-  /**
-   * Bei Mitgliedern: angemeldete Angebote. Bei Übungsleitungen siehe „Leitung“ im Angebot.
-   */
-  angebote?: (number | Angebote)[] | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "angebote".
- */
-export interface Angebote {
-  id: number;
-  title: string;
-  bereich: 'fussball' | 'kids' | 'erwachsene';
-  untergruppe?: ('junioren' | 'juniorinnen' | 'senioren' | 'seniorinnen') | null;
-  kategorie?:
-    ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
-  alterText?: string | null;
-  alterVon?: number | null;
-  alterBis?: number | null;
-  kurzbeschreibung?: string | null;
-  beschreibung?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  bild?: (number | null) | Media;
-  zeiten?:
-    | {
-        tag?: ('Montag' | 'Dienstag' | 'Mittwoch' | 'Donnerstag' | 'Freitag' | 'Samstag' | 'Sonntag') | null;
-        von?: string | null;
-        bis?: string | null;
-        ort?: string | null;
-        hinweis?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Diese Personen dürfen das Angebot selbst bearbeiten und Ausfälle melden.
-   */
-  leitung?: (number | User)[] | null;
-  team?:
-    | {
-        name: string;
-        rolle?: string | null;
-        foto?: (number | null) | Media;
-        id?: string | null;
-      }[]
-    | null;
-  plaetzeBegrenzt?: boolean | null;
-  maxPlaetze?: number | null;
-  spielklasse?: string | null;
-  fupaWidgetId?: string | null;
-  fussballDeTeamId?: string | null;
-  reihenfolge?: number | null;
-  aktiv?: boolean | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
   updatedAt: string;
   createdAt: string;
 }
@@ -1416,6 +1469,8 @@ export interface PostsSelect<T extends boolean = true> {
         image?: T;
         description?: T;
       };
+  team?: T;
+  aufStartseite?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -1576,6 +1631,8 @@ export interface KontaktanfragenSelect<T extends boolean = true> {
  */
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
+  team?: T;
+  inGalerie?: T;
   caption?: T;
   folder?: T;
   updatedAt?: T;
@@ -1692,6 +1749,12 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
   angebote?: T;
+  verantwortlichFuer?: T;
+  zweiFaktorAktiv?: T;
+  zweiFaktorGeheimnis?: T;
+  zweiFaktorCodes?: T;
+  zweiFaktorSitzungen?: T;
+  zweiFaktorLetzterSchritt?: T;
   updatedAt?: T;
   createdAt?: T;
   email?: T;
@@ -2129,6 +2192,78 @@ export interface Verein {
   createdAt?: string | null;
 }
 /**
+ * Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "texte".
+ */
+export interface Texte {
+  id: number;
+  heroTitel?: string | null;
+  heroHand?: string | null;
+  heroText?: string | null;
+  alterFrage?: string | null;
+  weltenTitel?: string | null;
+  kachelFussball?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  kachelKids?: {
+    titel?: string | null;
+  };
+  kachelFitness?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  kachelMitglieder?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  finderTitel?: string | null;
+  newsTitel?: string | null;
+  mitgliedTitel?: string | null;
+  mitgliedText?: string | null;
+  fussball?: {
+    titel?: string | null;
+    text?: string | null;
+    mitspielenTitel?: string | null;
+  };
+  breitensport?: {
+    titel?: string | null;
+    text?: string | null;
+    schnupperTitel?: string | null;
+    schnupperText?: string | null;
+  };
+  verein?: {
+    titel?: string | null;
+    text?: string | null;
+    vorstandText?: string | null;
+    beitraegeText?: string | null;
+    shopTitel?: string | null;
+  };
+  news?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  termine?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  kontakt?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  antrag?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  probetraining?: {
+    titel?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "header_select".
  */
@@ -2256,6 +2391,100 @@ export interface VereinSelect<T extends boolean = true> {
     | {
         instagram?: T;
         facebook?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "texte_select".
+ */
+export interface TexteSelect<T extends boolean = true> {
+  heroTitel?: T;
+  heroHand?: T;
+  heroText?: T;
+  alterFrage?: T;
+  weltenTitel?: T;
+  kachelFussball?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  kachelKids?:
+    | T
+    | {
+        titel?: T;
+      };
+  kachelFitness?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  kachelMitglieder?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  finderTitel?: T;
+  newsTitel?: T;
+  mitgliedTitel?: T;
+  mitgliedText?: T;
+  fussball?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+        mitspielenTitel?: T;
+      };
+  breitensport?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+        schnupperTitel?: T;
+        schnupperText?: T;
+      };
+  verein?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+        vorstandText?: T;
+        beitraegeText?: T;
+        shopTitel?: T;
+      };
+  news?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  termine?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  kontakt?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  antrag?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  probetraining?:
+    | T
+    | {
+        titel?: T;
       };
   updatedAt?: T;
   createdAt?: T;

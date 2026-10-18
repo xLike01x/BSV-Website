@@ -30,7 +30,9 @@ export function LoginForm() {
         body: JSON.stringify({ email: f.get('email'), password: f.get('passwort') }),
       })
       if (res.ok) {
-        router.push(weiter)
+        // Personal (alle außer Mitglied) bestätigt die Anmeldung mit dem zweiten Faktor
+        const st = await fetch('/api/users/zwei-faktor/status', { credentials: 'same-origin' }).then((r) => r.json()).catch(() => null)
+        router.push(st?.offen ? `/login/zwei-faktor?weiter=${encodeURIComponent(weiter.startsWith('/mitglieder') ? '/mitglieder' : weiter)}` : weiter)
         router.refresh()
         return
       }

@@ -105,11 +105,11 @@ export const Angebote: CollectionConfig<'angebote'> = {
     },
     {
       name: 'leitung',
-      label: 'Leitung (Benutzerkonten)',
+      label: 'Verantwortliche (Benutzerkonten)',
       type: 'relationship',
       relationTo: 'users',
       hasMany: true,
-      admin: { description: 'Diese Personen dürfen das Angebot selbst bearbeiten und Ausfälle melden.' },
+      admin: { description: 'Personen mit Rolle Übungsleitung oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.' },
     },
     {
       name: 'team',
