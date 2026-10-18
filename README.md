@@ -70,6 +70,10 @@ Jedes Bild hat einen Ordner = „Team / Kurs“ oder „Verein allgemein“. Tra
 
 Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferliste, Sammelbestellung). Im Formular erstellt „Neue Seite mit diesem Formular erstellen“ direkt eine Seite mit dem Formular-Baustein. Antworten landen unter **Formular-Eingänge**. Vorlagen: `src/components/Admin/Formulare/vorlagen.ts`.
 
+## Einstiegs-Kästen
+
+Über den Listen (News, Termine, Ausfälle, Seiten, Formulare, Teams, Anfragen, Anträge, Benutzer) erklärt ein Kasten das Wozu, zeigt den Ablauf und bietet Vorlagen bzw. die Ausfall-Schnellmeldung. Inhalte und Vorlagen: `src/components/Admin/Einstieg/einstiege.ts`.
+
 ## Hilfe in der Verwaltung
 
 - **„? Hilfe“** oben rechts auf jeder Seite: Erklärung des Bereichs, Schritt-für-Schritt-Anleitungen, Feld-Erklärungen, Hinweise je Rolle, FAQ, Rückmeldung 👍/👎, „Frage an den Admin“ (landet bei den Kontaktanfragen).

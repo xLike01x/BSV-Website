@@ -39,6 +39,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Spielbericht vom Wochenende', '„Neue Trainingszeiten ab September“', 'Rückblick aufs Sommerfest mit Fotos'],
     },
     tun: [
+      'Oben in der Liste eine Vorlage wählen (Spielbericht, Ankündigung, Rückblick) – die News wird als Entwurf angelegt und geöffnet.',
       '„Neu erstellen“ anklicken. Alles steht auf einer Seite: Titel, Titelbild, Text.',
       'Rechts das Team oder den Kurs wählen – wer nur ein Team betreut, hat es schon vorausgewählt. Leer = Vereins-News.',
       '„Entwurf speichern“ sichert deine Arbeit, ohne dass sie jemand sieht.',
@@ -65,6 +66,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Jahreshauptversammlung', 'Sommerfest', 'Hallenturnier der E-Jugend'],
     },
     tun: [
+      'Oben in der Liste eine Vorlage wählen (Vereinsfest, Versammlung, Turnier) – die Felder sind dann schon ausgefüllt. Gespeichert wird erst mit „Speichern“.',
       'Einen Termin mit Titel, Beginn, Ende und Ort anlegen.',
       'Den Bereich wählen (Verein, Fußball, Kids, Breitensport) – davon hängt die Farbe ab.',
       'Mit „nur für Mitglieder“ ist der Termin nur nach dem Login sichtbar.',
@@ -117,6 +119,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Seite „Sommerfest 2027“ mit Infos, Bild und Anmeldeformular', 'Seite „Helfer gesucht“', 'Feste Seiten wie Impressum oder Kunstrasen'],
     },
     tun: [
+      'Oben in der Liste eine Vorlage wählen (Infoseite, Veranstaltung) – die Seite wird als Entwurf mit passenden Bausteinen angelegt.',
       '„Neu erstellen“ anklicken und einen Titel vergeben.',
       'Reiter „Kopfbereich“: der große Bereich ganz oben (Art, Überschrift, Buttons, Bild).',
       'Reiter „Inhalt (Bausteine)“: die Seite aus Bausteinen zusammenstellen – Text, Bild, Hinweis-Kasten mit Button, News-Liste, Formular.',
@@ -195,6 +198,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Eltern melden ihr Kind zum Schnuppertraining an', 'Erwachsene fragen nach einer Probestunde'],
     },
     tun: [
+      'Am schnellsten: oben „Schnell melden“ – Team, Tag (Heute/Morgen) und Grund wählen, fertig.',
       'Neue Anfragen öffnen und lesen.',
       'Die Person kontaktieren und danach den Status ändern, z. B. auf „Zugesagt“ oder „Erledigt“.',
     ],

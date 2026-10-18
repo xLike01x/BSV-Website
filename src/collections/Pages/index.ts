@@ -40,6 +40,7 @@ export const Pages: CollectionConfig<'pages'> = {
     slug: true,
   },
   admin: {
+    components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü & Fußzeile“.',
     group: 'Inhalte',
     hidden: ausblendenAusser('admin', 'redaktion'),

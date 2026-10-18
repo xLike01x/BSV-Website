@@ -18,6 +18,7 @@ export const Users: CollectionConfig = {
     update: isAdminOrSelf,
   },
   admin: {
+    components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.',
     group: 'Verwaltung',
     hidden: ausblendenAusser('admin'),

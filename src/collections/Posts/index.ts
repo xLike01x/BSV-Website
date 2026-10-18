@@ -88,6 +88,7 @@ export const Posts: CollectionConfig<'posts'> = {
     },
   },
   admin: {
+    components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.',
     group: 'Inhalte',
     defaultColumns: ['title', 'team', 'aufStartseite', '_status', 'publishedAt'],

@@ -18,6 +18,8 @@ import { MetaDescriptionComponent as MetaDescriptionComponent_a8a977ebc872c5d5ea
 import { PreviewComponent as PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860 } from '@payloadcms/plugin-seo/client'
 import { NewsHinweise as NewsHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
+import { default as default_d0d19d9db7a4a6fd2771bbabbf3e87c6 } from '@/components/Admin/Einstieg'
+import { default as default_3c44ae4db322ab6667b5755c4caea543 } from '@/components/Admin/Einstieg/VorlageUebernehmen'
 import { TerminHinweise as TerminHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { MedienHinweise as MedienHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
@@ -27,7 +29,6 @@ import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } fro
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { FormularHinweise as FormularHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
-import { default as default_f9caa14ad54853b251d4a6b878f91617 } from '@/components/Admin/Formulare/Einstieg'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
@@ -69,6 +70,8 @@ export const importMap = {
   "@payloadcms/plugin-seo/client#PreviewComponent": PreviewComponent_a8a977ebc872c5d5ea7ee689724c0860,
   "@/components/Admin/Hinweise#NewsHinweise": NewsHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
+  "@/components/Admin/Einstieg#default": default_d0d19d9db7a4a6fd2771bbabbf3e87c6,
+  "@/components/Admin/Einstieg/VorlageUebernehmen#default": default_3c44ae4db322ab6667b5755c4caea543,
   "@/components/Admin/Hinweise#TerminHinweise": TerminHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#MedienHinweise": MedienHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
@@ -78,7 +81,6 @@ export const importMap = {
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#FormularHinweise": FormularHinweise_37fae30b24d1a12bf2667fda13922509,
-  "@/components/Admin/Formulare/Einstieg#default": default_f9caa14ad54853b251d4a6b878f91617,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,

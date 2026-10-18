@@ -19,6 +19,7 @@ export const Ausfaelle: CollectionConfig = {
     delete: canManage,
   },
   admin: {
+    components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Fällt ein Training aus? Hier eintragen – es erscheint sofort auf der Seite des Teams.',
     group: 'Sport',
     useAsTitle: 'grund',

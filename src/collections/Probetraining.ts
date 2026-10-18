@@ -32,6 +32,7 @@ export const Probetraining: CollectionConfig = {
     delete: ({ req }) => hasRole(req.user as never, 'admin'),
   },
   admin: {
+    components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.',
     group: 'Sport',
     useAsTitle: 'name',

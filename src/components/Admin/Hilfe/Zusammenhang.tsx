@@ -1,32 +1,33 @@
 import React from 'react'
 
-/** Bereiche, in deren Hilfe der Ablauf „Formular → Seite → Menü → Eingänge“ erscheint */
-export const ZUSAMMENHANG = ['forms', 'pages', 'menue', 'form-submissions']
 
-const SCHRITTE: { key: string; nr: string; titel: string; text: string; href?: string; wo: string }[] = [
-  { key: 'forms', nr: '1', titel: 'Formular bauen', text: 'Felder festlegen: Name, E-Mail, Anzahl …', href: '/admin/collections/forms', wo: 'Eigene Formulare → Formulare' },
-  { key: 'pages', nr: '2', titel: 'Auf eine Seite setzen', text: 'Seite anlegen, Baustein „Formular“ einfügen, veröffentlichen.', href: '/admin/collections/pages', wo: 'Inhalte → Seiten' },
-  { key: 'menue', nr: '3', titel: 'Im Menü verlinken', text: 'Damit Besucher die Seite finden.', href: '/admin/globals/menue', wo: 'Inhalte → Menü & Fußzeile' },
-  { key: 'website', nr: '4', titel: 'Besucher füllen aus', text: 'Auf der Website, ohne Anmeldung.', wo: 'Website' },
-  { key: 'form-submissions', nr: '5', titel: 'Antworten lesen', text: 'Alle Eingänge gesammelt an einem Ort.', href: '/admin/collections/form-submissions', wo: 'Eigene Formulare → Formular-Eingänge' },
+export type Schritt = { key: string; titel: string; text: string; href?: string; wo?: string }
+
+const FORMULAR_SCHRITTE: Schritt[] = [
+  { key: 'forms', titel: 'Formular bauen', text: 'Felder festlegen: Name, E-Mail, Anzahl …', href: '/admin/collections/forms', wo: 'Eigene Formulare → Formulare' },
+  { key: 'pages', titel: 'Auf eine Seite setzen', text: 'Seite anlegen, Baustein „Formular“ einfügen, veröffentlichen.', href: '/admin/collections/pages', wo: 'Inhalte → Seiten' },
+  { key: 'menue', titel: 'Im Menü verlinken', text: 'Damit Besucher die Seite finden.', href: '/admin/globals/menue', wo: 'Inhalte → Menü & Fußzeile' },
+  { key: 'website', titel: 'Besucher füllen aus', text: 'Auf der Website, ohne Anmeldung.', wo: 'Website' },
+  { key: 'form-submissions', titel: 'Antworten lesen', text: 'Alle Eingänge gesammelt an einem Ort.', href: '/admin/collections/form-submissions', wo: 'Eigene Formulare → Formular-Eingänge' },
 ]
 
-/** Ablauf als Grafik: so wird aus einem Formular etwas auf der Website */
-export function Zusammenhang({ aktiv }: { aktiv?: string }) {
+/** Ablauf als nummerierte Grafik – für jeden Bereich wiederverwendbar */
+export function Ablauf({ schritte, aktiv, titel = 'So hängt alles zusammen' }: { schritte: Schritt[]; aktiv?: string; titel?: string }) {
+  const nr = schritte.findIndex((s) => s.key === aktiv)
   return (
-    <section className="bsv-zusammenhang" aria-label="So hängt alles zusammen">
-      <h3>So hängt alles zusammen</h3>
+    <section className="bsv-zusammenhang" aria-label={titel}>
+      <h3>{titel}</h3>
       <ol>
-        {SCHRITTE.map((s) => {
+        {schritte.map((s, i) => {
           const inhalt = (
             <>
               <span className="bsv-zusammenhang__nr" aria-hidden="true">
-                {s.nr}
+                {i + 1}
               </span>
               <span>
                 <strong>{s.titel}</strong>
                 <small>{s.text}</small>
-                <em>{s.wo}</em>
+                {s.wo && <em>{s.wo}</em>}
               </span>
             </>
           )
@@ -37,9 +38,14 @@ export function Zusammenhang({ aktiv }: { aktiv?: string }) {
           )
         })}
       </ol>
-      {aktiv && SCHRITTE.some((s) => s.key === aktiv) && <p className="bsv-zusammenhang__hier">Du bist gerade bei Schritt {SCHRITTE.find((s) => s.key === aktiv)!.nr}.</p>}
+      {nr >= 0 && <p className="bsv-zusammenhang__hier">Du bist gerade bei Schritt {nr + 1}.</p>}
     </section>
   )
+}
+
+/** Ablauf für eigene Formulare: Formular → Seite → Menü → Eingänge */
+export function Zusammenhang({ aktiv }: { aktiv?: string }) {
+  return <Ablauf schritte={FORMULAR_SCHRITTE} aktiv={aktiv} />
 }
 
 const WEGE: { ich: string; wo: string; href: string; symbol: string }[] = [

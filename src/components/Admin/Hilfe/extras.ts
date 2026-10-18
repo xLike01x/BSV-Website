@@ -633,6 +633,10 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Was ist der Kasten oben über den Listen?',
+    antwort: 'Er erklärt, wozu der Bereich da ist, zeigt den Ablauf als Grafik und bietet – wo es passt – Vorlagen mit einem Klick (z. B. Spielbericht, Vereinsfest, Infoseite) oder eine Schnellmeldung für Trainingsausfälle. Brauchst du ihn nicht mehr: „Ausblenden“. Mit „Erklärung zeigen“ kommt er zurück.',
+  },
+  {
     frage: 'Was passiert mit einem Bild auf der Website, wenn ich es in einen anderen Ordner verschiebe?',
     antwort: 'Nichts – es bleibt überall, wo es eingebaut ist (News, Seiten, Teamseiten). Der Ordner bestimmt nur, wer es in der Verwaltung sehen und neu auswählen darf. Ausnahme: Ist „In der Bildergalerie des Teams zeigen“ angehakt, wandert es in die Galerie des neuen Teams.',
     bereich: 'media',

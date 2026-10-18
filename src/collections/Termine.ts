@@ -21,6 +21,7 @@ export const Termine: CollectionConfig = {
     delete: isEditor,
   },
   admin: {
+    components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Veranstaltungen für den Vereinskalender auf der Seite „Termine“.',
     group: 'Inhalte',
     hidden: ausblendenAusser('admin', 'redaktion'),
@@ -30,6 +31,8 @@ export const Termine: CollectionConfig = {
   defaultSort: 'beginn',
   hooks: { afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
+    // Übernimmt Vorlagen aus dem Einstiegs-Kasten in „Neu erstellen“ (speichert nichts)
+    { name: 'vorlage', type: 'ui', admin: { components: { Field: '@/components/Admin/Einstieg/VorlageUebernehmen' } } },
     hinweisFeld('TerminHinweise', false),
     { name: 'title', label: 'Titel', type: 'text', required: true, admin: { description: 'Name der Veranstaltung, z. B. „Sommerfest“.' } },
     {

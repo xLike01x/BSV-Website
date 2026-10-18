@@ -4,7 +4,8 @@ import { usePathname } from 'next/navigation'
 import React, { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { Zusammenhang, ZUSAMMENHANG } from './Zusammenhang'
+import { EINSTIEGE } from '../Einstieg/einstiege'
+import { Ablauf, Zusammenhang } from './Zusammenhang'
 import { AnleitungBox, FaqBox, Feedback, FelderBox, FrageAnAdmin, tourStarten } from './bausteine'
 import { ansichtAus, hilfeFuer, ladeHilfeGlobal, type HilfeGlobal } from './daten'
 import { GLOSSAR, hauptRolle, ROLLEN_PROFIL } from './extras'
@@ -82,7 +83,11 @@ export default function Hilfe() {
                   )}
                 </section>
               )}
-              {ZUSAMMENHANG.includes(h.schluessel) && <Zusammenhang aktiv={h.schluessel} />}
+              {EINSTIEGE[h.schluessel]?.ablauf ? (
+                <Ablauf schritte={EINSTIEGE[h.schluessel]!.ablauf!} aktiv={EINSTIEGE[h.schluessel]!.aktiv} titel={EINSTIEGE[h.schluessel]!.ablaufTitel} />
+              ) : ['forms', 'menue', 'form-submissions'].includes(h.schluessel) ? (
+                <Zusammenhang aktiv={h.schluessel} />
+              ) : null}
 
               {h.rollenHinweis && (
                 <p className="bsv-hilfe__rolle">
