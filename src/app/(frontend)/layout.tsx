@@ -10,6 +10,7 @@ import '@fontsource/caveat/700.css'
 
 import { Footer } from '@/bsv/components/Footer'
 import { Nav } from '@/bsv/components/Nav'
+import { TextZeigen } from '@/bsv/components/TextZeigen'
 import { Providers } from '@/providers'
 import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
 import { draftMode } from 'next/headers'
@@ -40,6 +41,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
           <Nav />
           <main id="inhalt">{children}</main>
           <Footer />
+          <TextZeigen />
         </Providers>
       </body>
     </html>

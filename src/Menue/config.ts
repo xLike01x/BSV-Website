@@ -109,6 +109,8 @@ export const Menue: GlobalConfig = {
   },
   access: { read: () => true, update: isEditor },
   fields: [
+    // Erklärung, Ablauf und Live-Prüfung über den Reitern (speichert nichts)
+    { name: 'einstieg', type: 'ui', admin: { components: { Field: '@/Menue/Einstieg' } } },
     {
       type: 'tabs',
       tabs: [

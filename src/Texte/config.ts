@@ -11,8 +11,10 @@ import { standardTexte, zusammenfuehren } from './standard'
  * Platzhalter in geschweiften Klammern werden automatisch ersetzt:
  * {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}
  */
+// Unter jedem Feld: „Auf der Website zeigen ↗“ (öffnet die Seite und markiert den Text)
+const zeigen = { components: { afterInput: ['@/Texte/WoSteht'] } }
 const text = (name: string, label: string, defaultValue: string, lang = false): Field =>
-  lang ? { name, label, type: 'textarea', defaultValue } : { name, label, type: 'text', defaultValue }
+  lang ? { name, label, type: 'textarea', defaultValue, admin: zeigen } : { name, label, type: 'text', defaultValue, admin: zeigen }
 
 const gruppe = (name: string, label: string, fields: Field[]): Field => ({
   type: 'group',

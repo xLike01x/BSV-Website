@@ -322,3 +322,23 @@ body {
 .browse-by-folder-button {
   display: none !important;
 }
+
+/* Website-Texte: „Auf der Website zeigen“ */
+.bsv-wo-steht {
+  display: inline-block;
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #157a43;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
+}
+
+.bsv-wo-steht--leise {
+  color: #6e6e73;
+  font-weight: 400;
+  margin: 6px 0 0;
+}

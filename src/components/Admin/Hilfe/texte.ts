@@ -271,6 +271,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Seite „Sommerfest“ oben ins Menü', '„Fan-Shop“ als Link auf eine fremde Website', 'YouTube-Kanal in der Fußzeile'],
     },
     tun: [
+      'Oben prüft ein Kasten automatisch: Sind alle verlinkten Seiten veröffentlicht? Sind es zu viele Einträge?',
       'Reiter „Hauptmenü oben“: alle Einträge der Menüleiste, von links nach rechts.',
       'Reihenfolge ändern: einen Eintrag am Griff links (sechs Punkte) nach oben oder unten ziehen. Oben = weiter links auf der Website.',
       'Entfernen: rechts am Eintrag auf die drei Punkte (⋯) → „Entfernen“.',
@@ -318,6 +319,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Begrüßung auf der Startseite', 'Text im Bereich „Mitglied werden“'],
     },
     tun: [
+      'Unter jedem Text: „📍 Auf der Website zeigen“ öffnet die Seite und lässt genau diesen Text kurz grün aufleuchten.',
       'Oben einen Reiter wählen: Startseite, Fußball, Breitensport, Verein oder Weitere Seiten (News, Termine, Kontakt, Antrag, Probetraining, Fußzeile).',
       'Im Reiter „Startseite“ stehen die Felder in derselben Reihenfolge wie auf der Seite: Kopfbereich, Zahlen-Leiste, Kacheln, Angebotsfinder, News, „Mitglied werden“ mit den drei Schritten.',
       'Text im Feld ändern und oben rechts speichern.',
