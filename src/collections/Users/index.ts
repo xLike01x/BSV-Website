@@ -35,7 +35,7 @@ export const Users: CollectionConfig = {
     // Anmelde-Cookie: nur über HTTPS (Live-Website), nicht für fremde Seiten
     cookies: { secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' },
     lockTime: 10 * 60 * 1000, // 10 Minuten Sperre nach 5 Fehlversuchen
-    // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten nur Mitgliedsrechte
+    // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten keine Rollen
     strategies: [zweiFaktorStrategie],
   },
   endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte, ...registrierungEndpunkte],

@@ -26,6 +26,9 @@ export default async function MitgliederSeite() {
   const user = await aktuellerBenutzer()
   if (!user) redirect('/login?weiter=/mitglieder')
 
+  // Konten mit Verwaltungsrolle: erst den Code aus der App bestätigen, dann auch Mitgliederbereich
+  if ((user as { _zweiFaktorOffen?: boolean })._zweiFaktorOffen) redirect('/login/zwei-faktor?weiter=/mitglieder')
+
   const p = await payload()
   const vorname0 = (user.name ?? '').split(' ')[0]
   // Profilfoto (eigenes – darf das Mitglied immer sehen)

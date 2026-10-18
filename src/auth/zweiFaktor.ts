@@ -85,7 +85,8 @@ export const zweiFaktorStrategie: AuthStrategy = {
         const sitzungen = Array.isArray(u.zweiFaktorSitzungen) ? u.zweiFaktorSitzungen : []
         const ok = Boolean(u._sid && sitzungen.some((s) => s?.sid === u._sid && new Date(s.bis).getTime() > jetzt))
         if (!ok) {
-          u.roles = ['mitglied']
+          // Ohne bestätigten Code: angemeldet, aber ohne jede Rolle – auch der Mitgliederbereich öffnet sich erst nach dem Code
+          u.roles = []
           u._zweiFaktorOffen = true
         }
       }
@@ -95,8 +96,8 @@ export const zweiFaktorStrategie: AuthStrategy = {
         ;(u as { _wartetAufFreigabe?: boolean })._wartetAufFreigabe = true
       }
     } catch {
-      // Im Zweifel geschlossen: lieber nur Mitglieds-Rechte als Verwaltung ohne zweiten Faktor
-      u.roles = ['mitglied']
+      // Im Zweifel geschlossen: lieber gar keine Rechte als Verwaltung ohne zweiten Faktor
+      u.roles = []
       u._zweiFaktorOffen = true
     }
     entferneGeheimes(u)

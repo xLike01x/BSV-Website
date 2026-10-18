@@ -1,7 +1,6 @@
 'use client'
 
 import { sicheresZiel } from '@/bsv/sicheresZiel'
-import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -178,7 +177,17 @@ export function ZweiFaktor() {
         ) : (
           <span />
         )}
-        <Link href="/mitglieder">Nur Mitgliederbereich</Link>
+        <button
+          type="button"
+          onClick={async () => {
+            await fetch('/api/users/logout', { method: 'POST', credentials: 'same-origin' }).catch(() => null)
+            router.push('/')
+            router.refresh()
+          }}
+          style={{ font: 'inherit', background: 'none', border: 0, color: 'var(--bsv-green)', cursor: 'pointer', padding: 0 }}
+        >
+          Abmelden
+        </button>
       </div>
     </form>
   )

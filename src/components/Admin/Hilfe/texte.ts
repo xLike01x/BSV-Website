@@ -259,7 +259,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Mitglieder können sich auch selbst registrieren (mit E-Mail oder Google). Solche Konten warten unter „Registrierungen“ (links unten) auf deine Freigabe.',
     ],
     wirkung: [
-      'Alle außer „Mitglied“ müssen beim Anmelden zusätzlich einen Code aus einer Handy-App eingeben (Zwei-Faktor).',
+      'Alle außer „Mitglied“ müssen beim Anmelden zusätzlich einen Code aus einer Handy-App eingeben (Zwei-Faktor). Vorher öffnet sich weder die Verwaltung noch der Mitgliederbereich.',
       'Hat jemand sein Handy verloren, entfernt ein Admin in seinem Konto den Haken bei „Zwei-Faktor-Anmeldung eingerichtet“ – dann richtet die Person es neu ein.',
     ],
     tipps: [

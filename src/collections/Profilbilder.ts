@@ -41,7 +41,8 @@ export const Profilbilder: CollectionConfig = {
   labels: { singular: 'Profilfoto', plural: 'Profilfotos' },
   access: {
     read: fotoLesen,
-    create: ({ req }) => Boolean(req.user),
+    // Angemeldet – bei Verwaltungskonten erst nach bestätigtem Code
+    create: ({ req }) => Boolean(req.user) && !(req.user as { _zweiFaktorOffen?: boolean })._zweiFaktorOffen,
     update: eigenesOderAdmin,
     delete: eigenesOderAdmin,
   },
