@@ -264,7 +264,7 @@ export default async function Startseite() {
         <section id="news" className="sec-soft" style={{ padding: '110px 0' }}>
           <div className="wrap" style={{ display: 'flex', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'flex-end', gap: 16 }}>
             <h2 className="rv" style={{ margin: 0, fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1.05, fontWeight: 800, letterSpacing: '-0.04em' }}>
-              <T text={tx.newsTitel} werte={w} />
+              <T text={tx.newsUeberschrift} werte={w} />
             </h2>
             <Link href="/news" className="link-more" style={{ fontSize: 19 }}>
               {tx.newsLink}

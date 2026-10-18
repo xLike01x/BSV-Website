@@ -4,6 +4,7 @@ import type { Field, GlobalConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { isEditor } from '../access/roles'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
+import { standardTexte, zusammenfuehren } from './standard'
 
 /**
  * Alle festen Überschriften und Texte der Website an einer Stelle.
@@ -30,7 +31,11 @@ export const Texte: GlobalConfig = {
     hidden: ausblendenAusser('admin', 'redaktion'),
     description: 'Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.',
   },
-  hooks: { afterChange: [revalidateAllesGlobal] },
+  hooks: {
+    // Leere Felder zeigen in der Verwaltung den Text, der auch auf der Website steht
+    afterRead: [({ doc, global }) => zusammenfuehren(standardTexte(global.fields as Field[]), doc as Record<string, unknown>)],
+    afterChange: [revalidateAllesGlobal],
+  },
   fields: [
     {
       type: 'tabs',
@@ -77,7 +82,8 @@ export const Texte: GlobalConfig = {
             ]),
             text('finderTitel', 'Angebotsfinder: Überschrift', 'Finde deinen Sport.'),
             text('finderLink', 'Angebotsfinder: Text auf den Karten', 'Probetraining ›'),
-            text('newsTitel', 'News: Überschrift', 'Neues aus dem BSV.'),
+            // Name bewusst nicht „newsTitel“: der kollidierte in der Datenbank mit Gruppe „news“ → „titel“
+            text('newsUeberschrift', 'News: Überschrift', 'Neues aus dem BSV.'),
             text('newsLink', 'News: Link-Text', 'Alle News ›'),
             text('mitgliedTitel', 'Mitglied werden: Überschrift', 'In fünf Minuten\nMitglied.', true),
             text('mitgliedText', 'Mitglied werden: Text', 'Ab 5 € im Monat, alle Kurse inklusive. Antrag, Beitragsrechner und SEPA-Mandat – alles online.', true),

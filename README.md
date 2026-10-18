@@ -64,8 +64,12 @@ Alle Einträge im Hauptmenü (inkl. Reihenfolge), das Aufklappmenü „Verein“
 - **Live-Hinweise** beim Bearbeiten (News, Teams, Termine, Ausfälle, Seiten, Bilder): warnen z. B. vor fehlendem Titelbild und zeigen, wo ein Eintrag erscheint.
 - **Tour** und **Erste Schritte** auf dem Dashboard für neue Nutzer.
 - Eingebaute Texte: `src/components/Admin/Hilfe/texte.ts` und `extras.ts`. Eigene Ergänzungen ohne Code unter **Einstellungen → Hilfe-Texte**; Rückmeldungen unter **Einstellungen → Hilfe-Rückmeldungen** (nur Admins).
-- Videos neu aufnehmen (nach Design-Änderungen, nur lokal mit Testdaten): `scripts/hilfe-videos.mjs`, danach z. B.
-  `ffmpeg -ss 1 -i hilfe-videos-roh/news-schreiben.webm -vf scale=1024:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/news-schreiben.mp4`
+- **14 Hilfe-Videos** mit Untertiteln liegen in `public/hilfe/`. Neu aufnehmen (nach Design-Änderungen, nur lokal mit Testkonten – alles Angelegte wird danach wieder entfernt):
+  ```
+  BSV_URL=http://localhost:3000 BSV_ADMIN_EMAIL=… BSV_ADMIN_PASSWORT=… BSV_ADMIN_TOTP=… \
+  BSV_TEAM_EMAIL=… BSV_TEAM_PASSWORT=… BSV_TEAM_TOTP=… node scripts/hilfe-videos.mjs [name …]
+  ```
+  Danach je Video: `ffmpeg -ss 0.8 -i hilfe-videos-roh/<name>.webm -vf scale=1152:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/<name>.mp4` (Vorschaubild `<name>.jpg` daneben).
 
 ## Sicherheit
 

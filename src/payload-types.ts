@@ -2515,7 +2515,7 @@ export interface Texte {
   };
   finderTitel?: string | null;
   finderLink?: string | null;
-  newsTitel?: string | null;
+  newsUeberschrift?: string | null;
   newsLink?: string | null;
   mitgliedTitel?: string | null;
   mitgliedText?: string | null;
@@ -2912,7 +2912,7 @@ export interface TexteSelect<T extends boolean = true> {
       };
   finderTitel?: T;
   finderLink?: T;
-  newsTitel?: T;
+  newsUeberschrift?: T;
   newsLink?: T;
   mitgliedTitel?: T;
   mitgliedText?: T;
