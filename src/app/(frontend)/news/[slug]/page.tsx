@@ -8,6 +8,8 @@ import { LivePreviewListener } from '@/components/LivePreviewListener'
 import RichText from '@/components/RichText'
 import { Bild } from '@/bsv/components/Bild'
 import { Teilen } from '@/bsv/components/Teilen'
+import { JsonLd } from '@/bsv/components/JsonLd'
+import { absolut, brotkrumen } from '@/bsv/seo'
 import { getNews, getNewsArtikel } from '@/bsv/data'
 import { datum, lesezeit, lexicalText } from '@/bsv/lib'
 import type { Category } from '@/payload-types'
@@ -42,6 +44,25 @@ export default async function Artikel({ params }: Args) {
 
   return (
     <>
+      <JsonLd
+        daten={[
+          brotkrumen([
+            ['News', '/news'],
+            [post.title, `/news/${post.slug}`],
+          ]),
+          {
+            '@context': 'https://schema.org',
+            '@type': 'NewsArticle',
+            headline: post.title,
+            datePublished: post.publishedAt ?? post.createdAt,
+            dateModified: post.updatedAt,
+            image: post.heroImage && typeof post.heroImage === 'object' ? [absolut(post.heroImage.url)] : undefined,
+            author: autor ? { '@type': 'Person', name: autor } : { '@type': 'Organization', name: 'Büdericher SV 1919' },
+            publisher: { '@type': 'Organization', name: 'Büdericher Spielverein 1919 e.V.', logo: { '@type': 'ImageObject', url: absolut('/bsv-logo.png') } },
+            mainEntityOfPage: absolut(`/news/${post.slug}`),
+          },
+        ]}
+      />
       {draft && <LivePreviewListener />}
       <article>
         <header className="wrap-text" style={{ maxWidth: 820, paddingTop: 72, paddingBottom: 40 }}>
@@ -59,11 +80,14 @@ export default async function Artikel({ params }: Args) {
               {post.meta.description}
             </p>
           )}
-          {autor && (
-            <p className="in3 muted" style={{ marginTop: 20, fontSize: 15 }}>
-              von <strong style={{ color: 'var(--bsv-ink)' }}>{autor}</strong>
-            </p>
-          )}
+          <div className="in3" style={{ marginTop: 20, display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap' }}>
+            {autor && (
+              <p className="muted" style={{ margin: 0, fontSize: 15 }}>
+                von <strong style={{ color: 'var(--bsv-ink)' }}>{autor}</strong>
+              </p>
+            )}
+            <Teilen titel={post.title} text={post.title} />
+          </div>
         </header>
 
         {post.heroImage && typeof post.heroImage === 'object' && (

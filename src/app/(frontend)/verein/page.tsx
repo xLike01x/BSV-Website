@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { seite } from '@/bsv/seo'
 import Link from 'next/link'
 import React from 'react'
 
@@ -8,10 +10,7 @@ import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, initialen, zahl } from '@/bsv/lib'
 
 export const revalidate = 60
-export const metadata: Metadata = {
-  title: 'Verein',
-  description: 'Seit 1919 in Büderich: Vorstand, Mitgliedsbeiträge, Satzung und Datenschutz des Büdericher Spielvereins.',
-}
+export const metadata: Metadata = seite('Verein', 'Seit 1919 in Büderich: Vorstand, Mitgliedsbeiträge, Satzung und Datenschutz des Büdericher Spielvereins.')
 
 export default async function VereinSeite() {
   const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])

@@ -463,6 +463,32 @@ export const HILFE: Record<string, HilfeText> = {
     wirkung: ['Die Datei erscheint im Mitgliederbereich der Website unter „Downloads“ – nur für Angemeldete.'],
   },
 
+  sponsoren: {
+    titel: 'Sponsoren',
+    kurz: 'Alle Sponsoren und Partner des Vereins – für die Seite „Sponsoren“ und das Logo-Laufband auf der Startseite.',
+    wozu: { text: 'Sponsoren freuen sich über Sichtbarkeit. Hier pflegst du sie an einer Stelle.', beispiele: ['Neuer Trikotsponsor', 'Bandenwerbung', 'Förderer der Jugend'] },
+    tun: ['„Neu erstellen“: Name, Logo, Website, kurzer Text.', 'Rechts die Art wählen (Premium, Partner, Förderer) und die Reihenfolge.', '„Im Laufband“ anhaken, damit das Logo auf der Startseite mitläuft.'],
+    wirkung: ['Die Seite /sponsoren zeigt alle aktiven Sponsoren nach Art gruppiert.', 'Das Laufband erscheint ab drei Logos unten auf der Startseite.', 'Der Hauptsponsor in der Fußzeile steht weiter unter „Vereinsdaten“.'],
+    tipps: ['Logos am besten als PNG mit transparentem Hintergrund, im Querformat.'],
+  },
+
+  alben: {
+    titel: 'Fotoalben',
+    kurz: 'Fotos einer Veranstaltung als Album – für die Galerie auf der Website.',
+    wozu: { text: 'Statt einzelner Bilder zeigst du die schönsten Momente gesammelt.', beispiele: ['Sommerfest 2026', 'Hallenturnier der E-Jugend', 'Saisonabschluss'] },
+    tun: ['„Neu erstellen“: Titel und Datum.', 'Bei „Bilder“ mehrere Fotos auswählen oder neu hochladen. Das erste ist das Titelbild.', 'Optional ein Team wählen – dann erscheint das Album auch auf der Teamseite.'],
+    wirkung: ['Erscheint unter /galerie mit Großansicht zum Durchblättern.', 'Mit Team zusätzlich auf der Teamseite unter „Fotoalben“.'],
+    tipps: ['Nur Fotos, bei denen die Einwilligung der abgebildeten Personen vorliegt – bei Kindern der Eltern.'],
+  },
+
+  gesuche: {
+    titel: 'Ehrenamt & Mitmachen',
+    kurz: 'Wen der Verein gerade sucht – erscheint auf der Seite „Mitmachen“.',
+    wozu: { text: 'Ehrenamtliche findet man am besten, wenn klar ist, was gebraucht wird.', beispiele: ['Trainer/in für die F-Jugend', 'Helfer für den Grillstand', 'Schiedsrichter/in'] },
+    tun: ['„Neu erstellen“: Wen suchen wir? Beschreibung, Aufwand, Symbol.', 'Gefunden? Haken „Auf der Website zeigen“ entfernen.'],
+    wirkung: ['Erscheint unter /mitmachen mit Knopf „Ich bin dabei“ – Meldungen landen bei den Kontaktanfragen.'],
+  },
+
   'hilfe-center': {
     titel: 'Hilfe-Center',
     kurz: 'Alle Anleitungen und häufigen Fragen an einem Ort – mit Suche.',

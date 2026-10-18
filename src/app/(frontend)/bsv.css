@@ -308,3 +308,129 @@
 @keyframes bsv-text-zeigen { 50% { outline-color: rgba(21, 122, 67, 0.15); } }
 .bsv-text-zeigen-hinweis { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 100; display: flex; gap: 12px; align-items: center; max-width: min(640px, calc(100vw - 32px)); background: var(--bsv-ink); color: #fff; padding: 12px 18px; border-radius: 999px; font-size: 14px; box-shadow: 0 12px 40px rgba(0,0,0,.25); }
 .bsv-text-zeigen-hinweis button { background: none; border: 0; color: #fff; font-size: 18px; cursor: pointer; }
+
+/* Wochenplan */
+.plan-filter { display: flex; flex-direction: column; gap: 10px; margin-bottom: 36px; }
+.plan-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.plan-chips button { border: 1px solid var(--bsv-line); background: #fff; border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; color: var(--bsv-ink); }
+.plan-chips button[aria-pressed='true'] { background: var(--bsv-green); border-color: var(--bsv-green); color: #fff; }
+.plan-tag { margin-bottom: 40px; scroll-margin-top: 90px; }
+.plan-tag.is-heute h2 { color: var(--bsv-green); }
+.plan-heute { display: inline-block; vertical-align: middle; font-size: 13px; font-weight: 700; background: var(--bsv-green); color: #fff; border-radius: 999px; padding: 3px 10px; margin-left: 6px; letter-spacing: 0; }
+.plan-liste { list-style: none; margin: 14px 0 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 10px; }
+.bsv a.plan-karte { display: flex; gap: 16px; align-items: flex-start; background: #fff; border-radius: 18px; padding: 16px 18px; color: var(--bsv-ink); text-decoration: none; transition: transform .3s var(--bsv-ease), box-shadow .3s; height: 100%; }
+.bsv a.plan-karte:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,.07); }
+.plan-zeit { flex: none; width: 64px; font-size: 22px; font-weight: 800; letter-spacing: -0.02em; color: var(--bsv-ink); display: flex; flex-direction: column; line-height: 1.1; }
+.plan-zeit small { font-size: 13px; font-weight: 500; color: var(--bsv-muted); letter-spacing: 0; margin-top: 2px; }
+.plan-info { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.plan-kat { font-size: 13px; font-weight: 700; }
+.plan-info strong { font-size: 17px; }
+.plan-ort { font-size: 14px; }
+.plan-ohne { display: flex; flex-wrap: wrap; gap: 8px; }
+.bsv .plan-ohne a { background: #fff; border-radius: 999px; padding: 8px 14px; color: var(--bsv-ink); text-decoration: none; font-weight: 600; font-size: 15px; }
+.bsv .plan-ohne a:hover { color: var(--bsv-green); }
+
+/* Teilen */
+.teilen { position: relative; display: inline-block; }
+.teilen-knopf { display: inline-flex; align-items: center; gap: 7px; border: 1px solid var(--bsv-line); background: #fff; color: var(--bsv-ink); border-radius: 999px; padding: 9px 16px; font: inherit; font-size: 15px; font-weight: 600; cursor: pointer; }
+.teilen-knopf:hover { border-color: var(--bsv-green); color: var(--bsv-green); }
+.teilen-knopf--klein { padding: 6px 12px; font-size: 14px; }
+.teilen-menue { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; min-width: 180px; background: #fff; border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,.14); padding: 6px; display: flex; flex-direction: column; }
+.bsv .teilen-menue a, .teilen-menue button { display: block; text-align: left; padding: 10px 12px; border-radius: 10px; color: var(--bsv-ink); text-decoration: none; font: inherit; font-size: 15px; border: 0; background: none; cursor: pointer; }
+.bsv .teilen-menue a:hover, .teilen-menue button:hover { background: var(--bsv-soft); }
+
+/* Termin-Aktionen */
+.termin-aktionen { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+.bsv a.termin-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--bsv-line); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 600; color: var(--bsv-ink); text-decoration: none; }
+.bsv a.termin-link:hover { border-color: var(--bsv-green); color: var(--bsv-green); }
+.kalender-abo { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; background: #fff; border: 1px solid var(--bsv-line-2); border-radius: 22px; padding: 16px 20px; margin-bottom: 36px; }
+.kalender-abo p { margin: 0; flex: 1 1 280px; }
+
+/* Anfahrt-Karte */
+.karte { border-radius: 24px; background: var(--bsv-green-tint); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+.karte-kopf { display: flex; gap: 12px; align-items: center; }
+.karte-kopf strong { display: block; font-size: 22px; letter-spacing: -0.02em; }
+.karte-kopf .muted { display: block; }
+.karte-flaeche { border-radius: 18px; overflow: hidden; aspect-ratio: 16 / 10; background: #fff; }
+.karte-flaeche iframe { width: 100%; height: 100%; border: 0; display: block; }
+.karte-flaeche button { width: 100%; height: 100%; border: 1.5px dashed var(--bsv-line); border-radius: 18px; background: rgba(255,255,255,.7); display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 6px; padding: 24px; font: inherit; color: var(--bsv-ink); cursor: pointer; text-align: center; }
+.karte-flaeche button span { font-size: 34px; }
+.karte-flaeche button small { color: var(--bsv-muted); max-width: 320px; }
+.karte-flaeche button:hover { background: #fff; }
+.karte-knoepfe { display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* Suche im Menü */
+.bsv .nav-suche { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; border-radius: 12px; color: var(--bsv-ink); margin-left: 8px; }
+.bsv .nav-suche:hover { background: var(--bsv-soft); color: var(--bsv-green); }
+.mnav-suche { padding: 4px 0 12px; }
+.mnav-suche input { width: 100%; font: inherit; font-size: 17px; padding: 12px 16px; border-radius: 14px; border: 1px solid var(--bsv-line); background: var(--bsv-soft); }
+@media (max-width: 980px) { .bsv .nav-suche { margin-left: auto; } .bsv .nav-suche ~ .nav-burger { margin-left: 4px; } }
+
+/* Suchseite */
+.suche-form { display: flex; gap: 10px; max-width: 720px; }
+.suche-form input { flex: 1; font: inherit; font-size: 19px; padding: 14px 20px; border-radius: 999px; border: 1px solid var(--bsv-line); background: #fff; }
+.suche-gruppe { margin-top: 40px; }
+.suche-liste { list-style: none; margin: 12px 0 0; padding: 0; display: grid; gap: 10px; }
+.bsv a.suche-treffer { display: block; background: #fff; border-radius: 18px; padding: 16px 20px; color: var(--bsv-ink); text-decoration: none; transition: transform .3s var(--bsv-ease), box-shadow .3s; }
+.bsv a.suche-treffer:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,.07); }
+.suche-treffer small { display: block; font-size: 13px; font-weight: 700; color: var(--bsv-green); }
+.suche-treffer strong { display: block; font-size: 18px; margin: 2px 0; }
+.suche-treffer span { color: var(--bsv-muted); font-size: 15px; }
+
+/* Sponsoren */
+.sponsor-haupt { background: #fff; border-radius: 28px; padding: 32px; text-align: center; }
+.sponsor-haupt img { max-height: 120px; width: auto; max-width: 320px; margin: 8px auto 0; display: block; }
+.sponsor-raster { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.sponsor-raster--premium { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
+.sponsor-raster--foerderer { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
+.bsv a.sponsor-karte, .sponsor-karte { background: #fff; border-radius: 22px; padding: 22px; display: flex; flex-direction: column; gap: 6px; color: var(--bsv-ink); text-decoration: none; transition: transform .3s var(--bsv-ease), box-shadow .3s; }
+.bsv a.sponsor-karte:hover { transform: translateY(-2px); box-shadow: 0 12px 30px rgba(0,0,0,.07); }
+.sponsor-logo { height: 90px; display: flex; align-items: center; justify-content: center; }
+.sponsor-logo img { max-height: 90px; max-width: 100%; width: auto; height: auto; object-fit: contain; }
+.sponsor-raster--foerderer .sponsor-logo { height: 64px; }
+.sponsor-name { font-weight: 700; text-align: center; }
+.sponsor-text { font-size: 14px; text-align: center; }
+.sponsor-cta { margin-top: 56px; background: var(--bsv-green); color: #fff; border-radius: 28px; padding: 28px 32px; display: flex; gap: 20px; align-items: center; justify-content: space-between; flex-wrap: wrap; }
+.sponsor-cta strong { display: block; font-size: 24px; }
+.sponsor-cta span { opacity: .9; }
+.bsv .sponsor-cta .btn-primary { background: #fff; color: var(--bsv-green); }
+
+/* Laufband */
+.laufband-sec { padding: 40px 0 56px; border-top: 1px solid var(--bsv-line-2); }
+.laufband-kopf { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; }
+.laufband-kopf p { margin: 0; font-size: 15px; }
+.bsv .laufband-kopf a { color: var(--bsv-green); text-decoration: none; font-weight: 600; font-size: 15px; }
+.laufband { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.laufband-spur { display: flex; gap: 56px; width: max-content; animation: laufband 40s linear infinite; align-items: center; }
+.laufband:hover .laufband-spur { animation-play-state: paused; }
+.laufband-spur img { height: 54px; width: auto; max-width: 180px; object-fit: contain; filter: grayscale(1); opacity: .7; transition: filter .3s, opacity .3s; }
+.laufband-spur a:hover img { filter: none; opacity: 1; }
+@keyframes laufband { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) { .laufband-spur { animation: none; flex-wrap: wrap; width: auto; justify-content: center; } .laufband { mask-image: none; } }
+
+/* Galerie */
+.alben-raster { display: grid; gap: 18px; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); }
+.album-cover { display: block; aspect-ratio: 4 / 3; background: var(--bsv-green-tint); overflow: hidden; }
+.album-cover img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .6s var(--bsv-ease); }
+.album-karte:hover .album-cover img { transform: scale(1.04); }
+.foto-raster { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(min(46%, 240px), 1fr)); }
+.foto-raster button { border: 0; padding: 0; background: var(--bsv-soft); border-radius: 14px; overflow: hidden; cursor: zoom-in; aspect-ratio: 1; }
+.foto-raster img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform .5s var(--bsv-ease); }
+.foto-raster button:hover img { transform: scale(1.04); }
+.foto-gross { position: fixed; inset: 0; z-index: 200; background: rgba(10,10,12,.94); display: flex; align-items: center; justify-content: center; padding: 56px 16px; }
+.foto-gross img { max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; }
+.foto-gross button { position: absolute; border: 0; background: rgba(255,255,255,.12); color: #fff; width: 48px; height: 48px; border-radius: 50%; font-size: 30px; line-height: 1; cursor: pointer; }
+.foto-gross button:hover { background: rgba(255,255,255,.24); }
+.foto-zu { top: 14px; right: 14px; }
+.foto-pfeil--l { left: 14px; top: 50%; transform: translateY(-50%); }
+.foto-pfeil--r { right: 14px; top: 50%; transform: translateY(-50%); }
+.foto-zahl { position: absolute; bottom: 14px; left: 0; right: 0; text-align: center; color: rgba(255,255,255,.8); font-size: 14px; margin: 0; }
+
+/* Mitmachen */
+.gesuch-raster { display: grid; gap: 16px; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.gesuch-karte { background: #fff; border-radius: 26px; padding: 28px; display: flex; flex-direction: column; gap: 6px; }
+.gesuch-karte h2 { margin: 4px 0 0; font-size: 24px; letter-spacing: -0.02em; }
+.gesuch-karte p { margin: 4px 0 0; }
+.gesuch-symbol { font-size: 36px; }
+.gesuch-aufwand { color: var(--bsv-green); font-weight: 600; font-size: 15px; }
+.gesuch-aktionen { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; margin-top: auto; padding-top: 14px; }

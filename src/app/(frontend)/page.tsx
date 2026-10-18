@@ -1,3 +1,6 @@
+import { SponsorenLaufband } from '@/bsv/components/SponsorenLaufband'
+import { JsonLd } from '@/bsv/components/JsonLd'
+import { absolut } from '@/bsv/seo'
 import Link from 'next/link'
 import React from 'react'
 
@@ -55,8 +58,29 @@ export default async function Startseite() {
 
   const vorschlaege: Vorschlag[] = finder.map((f) => ({ name: f.name, href: f.href, von: f.von, bis: f.bis, img: bildUrl(angebote.find((a) => a.id === f.id)?.bild, 'thumbnail'), bg: f.tintBg }))
 
+  const verein_ld = {
+    '@context': 'https://schema.org',
+    '@type': 'SportsClub',
+    name: verein.name ?? 'Büdericher Spielverein 1919 e.V.',
+    alternateName: 'BSV 1919',
+    url: absolut('/'),
+    logo: absolut('/bsv-logo.png'),
+    image: absolut('/og-bsv.jpg'),
+    foundingDate: String(verein.gruendung ?? 1919),
+    sport: ['Fußball', 'Tanzen', 'Turnen', 'Fitness', 'Yoga', 'Walking'],
+    address: { '@type': 'PostalAddress', streetAddress: (verein.postanschrift ?? '').split('\n')[0], postalCode: '46487', addressLocality: 'Wesel', addressCountry: 'DE' },
+    location: {
+      '@type': 'SportsActivityLocation',
+      name: 'Kutscher-Remy-Sportpark',
+      address: { '@type': 'PostalAddress', streetAddress: 'Schützenstraße 25a', postalCode: '46487', addressLocality: 'Wesel', addressCountry: 'DE' },
+      geo: { '@type': 'GeoCoordinates', latitude: verein.sportparkLat ?? 51.62638, longitude: verein.sportparkLon ?? 6.58253 },
+    },
+    sameAs: [verein.social?.instagram, verein.social?.facebook].filter(Boolean),
+  }
+
   return (
     <>
+      <JsonLd daten={verein_ld} />
       <section className="hero">
         <div aria-hidden="true" className="blob blob1" style={{ left: -120, top: -80, width: 420, height: 420, background: '#FFE3D3', borderRadius: '42% 58% 63% 37% / 41% 44% 56% 59%' }} />
         <div aria-hidden="true" className="blob blob2" style={{ right: -140, bottom: -160, width: 520, height: 520, background: '#DDF3E5', borderRadius: '58% 42% 38% 62% / 52% 61% 39% 48%' }} />
@@ -87,7 +111,7 @@ export default async function Startseite() {
               { cls: 'c4', style: { right: '4%', bottom: '2%', width: '50%', height: '46%', borderRadius: '52% 48% 40% 60% / 46% 56% 44% 54%' } },
             ].map((p, i) => (
               <div key={p.cls} className={`ph ${p.cls}`} style={p.style as React.CSSProperties}>
-                <Bild media={hero[i]} size="medium" sizes="(max-width: 900px) 50vw, 360px" priority={i < 2} alt="" />
+                <Bild media={hero[i]} size="medium" sizes="(max-width: 900px) 50vw, 360px" priority={i < 2} />
               </div>
             ))}
             <span className="dot dot1" style={{ left: '54%', top: '46%', width: 34, height: 34, background: '#FFB938' }} />
@@ -314,6 +338,7 @@ export default async function Startseite() {
           {tx.schritte?.button}
         </Link>
       </section>
+      <SponsorenLaufband />
     </>
   )
 }

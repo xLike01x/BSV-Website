@@ -70,6 +70,7 @@ export interface Config {
     posts: Post;
     termine: Termine;
     media: Media;
+    alben: Alben;
     dokumente: Dokumente;
     pages: Page;
     categories: Category;
@@ -78,6 +79,8 @@ export interface Config {
     probetraining: Probetraining;
     mitgliedsantraege: Mitgliedsantraege;
     kontaktanfragen: Kontaktanfragen;
+    sponsoren: Sponsoren;
+    gesuche: Gesuche;
     users: User;
     'hilfe-feedback': HilfeFeedback;
     redirects: Redirect;
@@ -103,6 +106,7 @@ export interface Config {
     posts: PostsSelect<false> | PostsSelect<true>;
     termine: TermineSelect<false> | TermineSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
+    alben: AlbenSelect<false> | AlbenSelect<true>;
     dokumente: DokumenteSelect<false> | DokumenteSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
@@ -111,6 +115,8 @@ export interface Config {
     probetraining: ProbetrainingSelect<false> | ProbetrainingSelect<true>;
     mitgliedsantraege: MitgliedsantraegeSelect<false> | MitgliedsantraegeSelect<true>;
     kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
+    sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
+    gesuche: GesucheSelect<false> | GesucheSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
@@ -657,6 +663,35 @@ export interface Termine {
    */
   nurMitglieder?: boolean | null;
   anmeldung?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Fotoalben für die Galerie auf der Website, z. B. „Sommerfest 2026“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alben".
+ */
+export interface Alben {
+  id: number;
+  titel: string;
+  datum: string;
+  /**
+   * Dann erscheint das Album auch auf der Teamseite.
+   */
+  team?: (number | null) | Angebote;
+  beschreibung?: string | null;
+  /**
+   * Mehrere Bilder auswählen oder neu hochladen. Das erste Bild ist das Titelbild. Nur Fotos mit Einwilligung der abgebildeten Personen.
+   */
+  bilder: (number | Media)[];
+  aktiv?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1232,6 +1267,62 @@ export interface Kontaktanfragen {
   deletedAt?: string | null;
 }
 /**
+ * Alle Sponsoren und Partner. Der Hauptsponsor in der Fußzeile steht weiterhin unter „Vereinsdaten“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsoren".
+ */
+export interface Sponsoren {
+  id: number;
+  name: string;
+  /**
+   * Am besten mit transparentem oder weißem Hintergrund (PNG oder SVG), quer.
+   */
+  logo?: (number | null) | Media;
+  url?: string | null;
+  /**
+   * Z. B. „Unterstützt seit 2015 unsere Jugend“.
+   */
+  text?: string | null;
+  /**
+   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite.
+   */
+  stufe?: ('premium' | 'partner' | 'foerderer') | null;
+  /**
+   * Nur mit Logo.
+   */
+  imLaufband?: boolean | null;
+  /**
+   * Kleinere Zahl = weiter vorne.
+   */
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Wen der Verein gerade sucht – Trainer, Helfer, Schiris, Vorstand. Erscheint auf der Seite „Mitmachen“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gesuche".
+ */
+export interface Gesuche {
+  id: number;
+  titel: string;
+  /**
+   * Was ist zu tun? Was bieten wir? Kurz und einladend.
+   */
+  text: string;
+  aufwand?: string | null;
+  symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
  * Was Nutzer über die Hilfetexte gesagt haben. Viele 👎 bei einem Bereich = Text verbessern.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1450,6 +1541,10 @@ export interface PayloadLockedDocument {
         value: number | Media;
       } | null)
     | ({
+        relationTo: 'alben';
+        value: number | Alben;
+      } | null)
+    | ({
         relationTo: 'dokumente';
         value: number | Dokumente;
       } | null)
@@ -1480,6 +1575,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'kontaktanfragen';
         value: number | Kontaktanfragen;
+      } | null)
+    | ({
+        relationTo: 'sponsoren';
+        value: number | Sponsoren;
+      } | null)
+    | ({
+        relationTo: 'gesuche';
+        value: number | Gesuche;
       } | null)
     | ({
         relationTo: 'users';
@@ -1700,6 +1803,23 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alben_select".
+ */
+export interface AlbenSelect<T extends boolean = true> {
+  titel?: T;
+  datum?: T;
+  team?: T;
+  beschreibung?: T;
+  bilder?: T;
+  aktiv?: T;
+  generateSlug?: T;
+  slug?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2002,6 +2122,38 @@ export interface KontaktanfragenSelect<T extends boolean = true> {
   betreff?: T;
   nachricht?: T;
   datenschutz?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsoren_select".
+ */
+export interface SponsorenSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  url?: T;
+  text?: T;
+  stufe?: T;
+  imLaufband?: T;
+  reihenfolge?: T;
+  aktiv?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gesuche_select".
+ */
+export interface GesucheSelect<T extends boolean = true> {
+  titel?: T;
+  text?: T;
+  aufwand?: T;
+  symbol?: T;
+  reihenfolge?: T;
+  aktiv?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2525,6 +2677,13 @@ export interface Verein {
   gruendung?: number | null;
   sportpark?: string | null;
   postanschrift?: string | null;
+  sportparkLat?: number | null;
+  sportparkLon?: number | null;
+  /**
+   * Leer = keine eingebettete Karte, nur Knöpfe.
+   */
+  halleLat?: number | null;
+  halleLon?: number | null;
   beitraege?:
     | {
         key: string;
@@ -2699,6 +2858,18 @@ export interface Texte {
     titel?: string | null;
     text?: string | null;
   };
+  sponsoren?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  galerie?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  mitmachen?: {
+    titel?: string | null;
+    text?: string | null;
+  };
   probetraining?: {
     titel?: string | null;
   };
@@ -2743,6 +2914,9 @@ export interface Hilfe {
           | 'sicherung'
           | 'datenschutz'
           | 'dokumente'
+          | 'sponsoren'
+          | 'alben'
+          | 'gesuche'
           | 'hilfe-center'
           | 'hilfe'
           | 'hilfe-feedback'
@@ -2804,6 +2978,9 @@ export interface Hilfe {
               | 'sicherung'
               | 'datenschutz'
               | 'dokumente'
+              | 'sponsoren'
+              | 'alben'
+              | 'gesuche'
               | 'hilfe-center'
               | 'hilfe'
               | 'hilfe-feedback'
@@ -2968,6 +3145,10 @@ export interface VereinSelect<T extends boolean = true> {
   gruendung?: T;
   sportpark?: T;
   postanschrift?: T;
+  sportparkLat?: T;
+  sportparkLon?: T;
+  halleLat?: T;
+  halleLon?: T;
   beitraege?:
     | T
     | {
@@ -3157,6 +3338,24 @@ export interface TexteSelect<T extends boolean = true> {
         text?: T;
       };
   antrag?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  sponsoren?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  galerie?:
+    | T
+    | {
+        titel?: T;
+        text?: T;
+      };
+  mitmachen?:
     | T
     | {
         titel?: T;

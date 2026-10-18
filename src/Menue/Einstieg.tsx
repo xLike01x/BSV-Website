@@ -1,5 +1,5 @@
 'use client'
-import { useFormFields, usePreferences } from '@payloadcms/ui'
+import { useFormFields, useFormModified, usePreferences } from '@payloadcms/ui'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { Ablauf } from '@/components/Admin/Hilfe/Zusammenhang'
@@ -7,6 +7,14 @@ import '@/components/Admin/Hilfe/hilfe.scss'
 import '@/components/Admin/Einstieg/einstieg.scss'
 
 const PREF = 'bsv-einstieg-menue'
+
+/** Seiten der Website, die man gut verlinken kann – werden vorgeschlagen, solange sie nirgends im Menü stehen */
+const VORSCHLAEGE: [string, string][] = [
+  ['Trainingszeiten', '/trainingszeiten'],
+  ['Galerie', '/galerie'],
+  ['Sponsoren', '/sponsoren'],
+  ['Mitmachen', '/mitmachen'],
+]
 
 const SCHRITTE = [
   { key: 'seite', titel: 'Seite fertig machen', text: 'Eigene Seite anlegen und veröffentlichen – sonst führt der Link ins Leere.', href: '/admin/collections/pages', wo: 'Inhalte → Seiten' },
@@ -23,10 +31,14 @@ export default function MenueEinstieg() {
   const [entwuerfe, setEntwuerfe] = useState<string[]>([])
 
   // Alle Seiten, auf die das Menü gerade zeigt (auch ungespeicherte Änderungen)
-  const { seitenIds, anzahlOben } = useFormFields(([felder]) => {
+  const geaendert = useFormModified()
+  const [laeuft, setLaeuft] = useState<string | null>(null)
+  const { seitenIds, anzahlOben, adressen } = useFormFields(([felder]) => {
     const ids = new Set<number>()
+    const adr: string[] = []
     let oben = 0
     for (const [pfad, f] of Object.entries(felder)) {
+      if (pfad.endsWith('.adresse') && typeof f?.value === 'string') adr.push(f.value.replace(/\/$/, ''))
       if (/^links\.\d+\.label$/.test(pfad)) oben++
       if (pfad.endsWith('.seite') && f?.value) {
         const v = f.value as number | { id?: number; value?: number }
@@ -34,7 +46,7 @@ export default function MenueEinstieg() {
         if (id) ids.add(Number(id))
       }
     }
-    return { seitenIds: [...ids].sort().join(','), anzahlOben: oben }
+    return { seitenIds: [...ids].sort().join(','), anzahlOben: oben, adressen: adr.join('|') }
   })
 
   useEffect(() => {
@@ -66,6 +78,17 @@ export default function MenueEinstieg() {
     return p
   }, [entwuerfe, anzahlOben])
 
+  const fehlend = VORSCHLAEGE.filter(([, a]) => !adressen.split('|').includes(a))
+  const eintragen = async (label: string, adresse: string, wo: 'fusszeile' | 'vereinMehr') => {
+    if (geaendert) {
+      window.alert('Bitte zuerst oben rechts „Speichern“ – sonst gehen deine Änderungen verloren.')
+      return
+    }
+    setLaeuft(adresse + wo)
+    await fetch('/api/globals/menue/ergaenzen', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ label, adresse, wo }) }).catch(() => {})
+    window.location.reload()
+  }
+
   if (zu === null) return null
 
   return (
@@ -91,6 +114,28 @@ export default function MenueEinstieg() {
           </li>
         ))}
       </ul>
+      {fehlend.length > 0 && (
+        <div className="bsv-menue-vorschlag">
+          <p>
+            <strong>Diese Seiten sind noch nirgends verlinkt:</strong>
+          </p>
+          <ul>
+            {fehlend.map(([label, adresse]) => (
+              <li key={adresse}>
+                <a href={adresse} target="_blank" rel="noopener">
+                  {label} ↗
+                </a>
+                <button type="button" onClick={() => eintragen(label, adresse, 'fusszeile')} disabled={Boolean(laeuft)}>
+                  {laeuft === adresse + 'fusszeile' ? '…' : '+ In die Fußzeile'}
+                </button>
+                <button type="button" onClick={() => eintragen(label, adresse, 'vereinMehr')} disabled={Boolean(laeuft)}>
+                  {laeuft === adresse + 'vereinMehr' ? '…' : '+ Ins Menü „Verein“'}
+                </button>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       {!zu && (
         <div className="bsv-einstieg__inhalt is-einspaltig">
           <Ablauf schritte={SCHRITTE} titel="In fünf Schritten" />

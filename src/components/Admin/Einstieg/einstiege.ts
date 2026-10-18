@@ -290,6 +290,38 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ],
   },
 
+  sponsoren: {
+    titel: 'Wozu ist die Sponsoren-Liste da?',
+    text: 'Alle Sponsoren und Partner erscheinen auf der Seite /sponsoren – nach Art gruppiert. Mit Logo und Haken „Im Laufband“ laufen sie zusätzlich unten über die Startseite (ab drei Logos).',
+    ablauf: [
+      { key: 'anlegen', titel: 'Sponsor anlegen', text: 'Name, Website und Logo (am besten PNG mit transparentem Hintergrund).' },
+      { key: 'art', titel: 'Art wählen', text: 'Premium-Partner, Partner oder Förderer – bestimmt Gruppe und Größe.' },
+      { key: 'website', titel: 'Erscheint auf der Website', text: 'Seite „Sponsoren“ und Logo-Laufband auf der Startseite.', href: '/sponsoren', wo: 'Website → Sponsoren' },
+    ],
+  },
+
+  alben: {
+    titel: 'Wozu sind Fotoalben da?',
+    text: 'Ein Album sammelt die Fotos einer Veranstaltung – z. B. „Sommerfest 2026“. Alben erscheinen in der Galerie und, wenn ein Team gewählt ist, auch auf der Teamseite.',
+    textTeam: 'Du kannst Alben für deine eigenen Teams anlegen.',
+    ablauf: [
+      { key: 'hochladen', titel: 'Fotos hochladen', text: 'Am einfachsten direkt im Album über „Bilder“ – mehrere auf einmal.', href: '/admin/collections/media', wo: 'oder vorher in die Mediathek' },
+      { key: 'album', titel: 'Album anlegen', text: 'Titel, Datum, optional Team. Das erste Bild ist das Titelbild.' },
+      { key: 'website', titel: 'Erscheint in der Galerie', text: 'Großansicht zum Durchblättern, auch am Handy.', href: '/galerie', wo: 'Website → Galerie' },
+    ],
+  },
+
+  gesuche: {
+    titel: 'Wozu ist „Ehrenamt & Mitmachen“ da?',
+    text: 'Hier trägst du ein, wen der Verein gerade sucht – Trainer, Helfer fürs Fest, Schiris, Kassenprüfer. Die Gesuche erscheinen auf der Seite /mitmachen mit einem Knopf „Ich bin dabei“, der direkt zum Kontaktformular führt.',
+    ablauf: [
+      { key: 'anlegen', titel: 'Gesuch anlegen', text: 'Wen suchen wir? Was ist zu tun? Wie viel Zeit?' },
+      { key: 'website', titel: 'Erscheint auf „Mitmachen“', text: 'Besucher können es auch per WhatsApp teilen.', href: '/mitmachen', wo: 'Website → Mitmachen' },
+      { key: 'melden', titel: 'Meldungen kommen an', text: 'Als Kontaktanfrage mit dem Betreff des Gesuchs.', href: '/admin/collections/kontaktanfragen', wo: 'Verwaltung → Kontaktanfragen' },
+      { key: 'aus', titel: 'Gefunden?', text: 'Haken „Auf der Website zeigen“ entfernen – oder löschen.' },
+    ],
+  },
+
   users: {
     titel: 'Wozu sind Benutzer da?',
     text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle bestimmt, was die Person darf. Wer welche Rolle für welches Team hat, siehst du in der Rollen-Übersicht.',

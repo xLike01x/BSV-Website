@@ -1,7 +1,7 @@
 import type { CollectionSlug, Payload } from 'payload'
 
 /** Bereiche mit Papierkorb (dazu Formulare und Formular-Eingänge über das Plugin) */
-export const PAPIERKORB: string[] = ['posts', 'termine', 'media', 'pages', 'categories', 'angebote', 'ausfaelle', 'probetraining', 'mitgliedsantraege', 'kontaktanfragen', 'dokumente']
+export const PAPIERKORB: string[] = ['posts', 'termine', 'media', 'pages', 'categories', 'angebote', 'ausfaelle', 'probetraining', 'mitgliedsantraege', 'kontaktanfragen', 'dokumente', 'alben', 'sponsoren', 'gesuche']
 export const PAPIERKORB_TAGE = 30
 
 /** Einträge, die länger als 30 Tage im Papierkorb liegen, endgültig löschen */

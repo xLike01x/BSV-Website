@@ -88,6 +88,19 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
   ```
   Danach je Video: `ffmpeg -ss 0.8 -i hilfe-videos-roh/<name>.webm -vf scale=1152:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/<name>.mp4` (Vorschaubild `<name>.jpg` daneben).
 
+## Website-Seiten (neu)
+
+- **/trainingszeiten** – Wochenplan aller Trainings (aus Teams & Kurse), filterbar nach Bereich und Alter
+- **/termine** – mit Kalender-Abo (`/termine/kalender.ics`, webcal), Einzeltermin als .ics, Google-Kalender-Link
+- **/suche** – Suche über Teams, News, Termine, Seiten (Lupe im Menü)
+- **/sponsoren** – aus der Sammlung „Sponsoren“; Logo-Laufband auf der Startseite (ab 3 Logos)
+- **/galerie**, **/galerie/[album]** – Fotoalben mit Großansicht; Alben eines Teams auch auf der Teamseite
+- **/mitmachen** – Ehrenamts-Gesuche mit „Ich bin dabei“ → Kontaktformular
+- Kontaktseite: Anfahrt-Karte (OpenStreetMap lädt erst nach Klick; Koordinaten in den Vereinsdaten)
+- Teilen-Knopf (WhatsApp, Facebook, E-Mail, Link) bei News, Terminen, Teams, Alben, Gesuchen
+- Google: strukturierte Daten (Verein, Termine, News, Teams, Brotkrumen); Vorschaubild beim Teilen je Seite (`public/og-bsv.jpg` als Standard)
+- Neue Bild-Uploads werden in WebP-Größen umgerechnet (kleiner, schneller)
+
 ## Datensicherung
 
 Verwaltung → **💾 Datensicherung** (nur Admins): „Sicherung jetzt erstellen“ legt Datenbank (alle Tabellen als JSON) und alle Dateien (`public/media`, `dokumente`) als **eine** Datei `backups/bsv-sicherung_JJJJ-MM-TT_HH-MM.tar.gz` ab – ohne pg_dump. Herunterladen und zusätzlich extern aufbewahren. Ohne Verwaltung: `pnpm sicherung:erstellen`.

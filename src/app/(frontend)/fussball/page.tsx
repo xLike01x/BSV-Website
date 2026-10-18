@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { seite } from '@/bsv/seo'
 import Link from 'next/link'
 import React from 'react'
 
@@ -9,10 +11,7 @@ import { getAngebote, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { kurzZeit, UNTERGRUPPE_LABEL } from '@/bsv/lib'
 
 export const revalidate = 60
-export const metadata: Metadata = {
-  title: 'Fußball',
-  description: 'Alle Fußballteams des BSV: Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Probetraining.',
-}
+export const metadata: Metadata = seite('Fußball', 'Alle Fußballteams des BSV: Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Probetraining.')
 
 export default async function FussballSeite() {
   const [angebote, verein, tx, w] = await Promise.all([getAngebote(), getVerein(), getTexte(), getPlatzhalter()])
@@ -37,6 +36,11 @@ export default async function FussballSeite() {
         </h1>
         <p className="lead in3" style={{ margin: '22px auto 0', maxWidth: 620 }}>
           <T text={tx.fussball?.text} werte={w} />
+        </p>
+        <p className="in3" style={{ margin: '18px 0 0' }}>
+          <Link href="/trainingszeiten" className="btn btn-ghost">
+            🗓️ Alle Trainingszeiten im Wochenplan
+          </Link>
         </p>
         <div className="in3" style={{ maxWidth: 1180, margin: '48px auto 0', borderRadius: 32, overflow: 'hidden', aspectRatio: '21 / 9', boxShadow: '0 30px 60px rgba(21,122,67,0.15)', background: 'var(--bsv-green-tint)' }}>
           <Bild media={verein.startseite?.bildFussball} size="xlarge" priority sizes="(max-width: 1220px) 100vw, 1180px" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />

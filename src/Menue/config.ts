@@ -108,6 +108,38 @@ export const Menue: GlobalConfig = {
       'Alle Einträge oben im Menü und unten in der Fußzeile. Reihenfolge ändern: am Griff links ziehen. Entfernen: drei Punkte rechts → „Entfernen“.',
   },
   access: { read: () => true, update: isEditor },
+  endpoints: [
+    {
+      // Eine Seite mit einem Klick in die Fußzeile („Entdecken“) oder ins Aufklappmenü „Verein“ eintragen
+      path: '/ergaenzen',
+      method: 'post',
+      handler: async (req) => {
+        if (!(await isEditor({ req } as never))) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
+        const body = (await req.json?.().catch(() => ({}))) as { label?: string; adresse?: string; wo?: 'fusszeile' | 'vereinMehr' }
+        if (!body.label || !body.adresse?.startsWith('/')) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
+        const m = (await req.payload.findGlobal({ slug: 'menue', depth: 0, req })) as unknown as {
+          vereinMehr?: Record<string, unknown>[]
+          fusszeile?: { titel?: string; eintraege?: Record<string, unknown>[] }[]
+        }
+        const eintrag = { label: body.label, ziel: 'adresse', adresse: body.adresse, neuerTab: false }
+        const ohneId = (x: Record<string, unknown>) => {
+          const { id: _id, ...rest } = x
+          return rest
+        }
+        if (body.wo === 'vereinMehr') {
+          await req.payload.updateGlobal({ slug: 'menue', data: { vereinMehr: [...(m.vereinMehr ?? []).map(ohneId), eintrag] } as never, req })
+        } else {
+          const spalten = (m.fusszeile ?? []).map((sp) => ({ ...sp, eintraege: (sp.eintraege ?? []).map(ohneId) }))
+          let i = spalten.findIndex((sp) => (sp.titel ?? '').toLowerCase().includes('entdecken'))
+          if (i < 0) i = spalten.length - 1
+          if (i < 0) spalten.push({ titel: 'Entdecken', eintraege: [] }), (i = 0)
+          spalten[i]!.eintraege = [...(spalten[i]!.eintraege ?? []), eintrag]
+          await req.payload.updateGlobal({ slug: 'menue', data: { fusszeile: spalten.map((sp) => { const { id: _id, ...r } = sp as Record<string, unknown>; return r }) } as never, req })
+        }
+        return Response.json({ ok: true })
+      },
+    },
+  ],
   fields: [
     // Erklärung, Ablauf und Live-Prüfung über den Reitern (speichert nichts)
     { name: 'einstieg', type: 'ui', admin: { components: { Field: '@/Menue/Einstieg' } } },

@@ -9,7 +9,10 @@ import { ExternesWidget } from '@/bsv/components/ExternesWidget'
 import { ProbetrainingForm } from '@/bsv/components/ProbetrainingForm'
 import { Galerie } from '@/bsv/components/Galerie'
 import { T } from '@/bsv/components/Text'
-import { getAngebot, getAngebote, getAusfaelle, getPlatzhalter, getTeamGalerie, getTeamNews, getTexte } from '@/bsv/data'
+import { getAlben, getAngebot, getAngebote, getAusfaelle, getPlatzhalter, getTeamGalerie, getTeamNews, getTexte } from '@/bsv/data'
+import { Teilen } from '@/bsv/components/Teilen'
+import { JsonLd } from '@/bsv/components/JsonLd'
+import { absolut, brotkrumen, seite } from '@/bsv/seo'
 import { BEREICH_LABEL, bildUrl, datum, farbe, initialen, UNTERGRUPPE_LABEL, zeitText } from '@/bsv/lib'
 
 export const revalidate = 60
@@ -25,12 +28,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   const { slug } = await params
   const a = await getAngebot(decodeURIComponent(slug))
   if (!a) return {}
-  const img = bildUrl(a.bild, 'og')
-  return {
-    title: a.title,
-    description: a.kurzbeschreibung ?? undefined,
-    openGraph: img ? { images: [{ url: img }] } : undefined,
-  }
+  return seite(a.title, a.kurzbeschreibung ?? `${a.title} beim Büdericher SV 1919 – Zeiten, Ort und Probetraining.`, bildUrl(a.bild, 'og'))
 }
 
 const TAGE = ['Sonntag', 'Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag']
@@ -54,7 +52,7 @@ export default async function AngebotSeite({ params }: Args) {
   const a = await getAngebot(decodeURIComponent(slug))
   if (!a) notFound()
 
-  const [alle, ausfaelle, teamNews, galerie, tx, w] = await Promise.all([getAngebote(), getAusfaelle([a.id]), getTeamNews(a.id), getTeamGalerie(a.id), getTexte(), getPlatzhalter()])
+  const [alle, ausfaelle, teamNews, galerie, tx, w, alben] = await Promise.all([getAngebote(), getAusfaelle([a.id]), getTeamNews(a.id), getTeamGalerie(a.id), getTexte(), getPlatzhalter(), getAlben(a.id, 6)])
   const [tint] = farbe(a.kategorie)
   const istFussball = a.bereich === 'fussball'
   const bereichHref = istFussball ? '/fussball' : '/breitensport'
@@ -68,6 +66,25 @@ export default async function AngebotSeite({ params }: Args) {
 
   return (
     <>
+      <JsonLd
+        daten={[
+          brotkrumen([
+            [istFussball ? 'Fußball' : 'Breitensport', istFussball ? '/fussball' : '/breitensport'],
+            [a.title, `/angebote/${a.slug}`],
+          ]),
+          {
+            '@context': 'https://schema.org',
+            '@type': istFussball ? 'SportsTeam' : 'Course',
+            name: a.title,
+            description: a.kurzbeschreibung ?? undefined,
+            url: absolut(`/angebote/${a.slug}`),
+            image: absolut(bildUrl(a.bild, 'og')),
+            ...(istFussball
+              ? { sport: 'Fußball', memberOf: { '@type': 'SportsOrganization', name: 'Büdericher Spielverein 1919 e.V.' } }
+              : { provider: { '@type': 'SportsOrganization', name: 'Büdericher Spielverein 1919 e.V.', url: absolut('/') } }),
+          },
+        ]}
+      />
       <section className="wrap-narrow" style={{ paddingTop: 64, paddingBottom: 48 }}>
         <nav aria-label="Brotkrumen" className="crumbs">
           <Link href={bereichHref}>{istFussball ? 'Fußball' : 'Breitensport'}</Link> › {gruppe} › <span style={{ color: 'var(--bsv-ink)' }}>{a.title}</span>
@@ -92,6 +109,7 @@ export default async function AngebotSeite({ params }: Args) {
               <Link href={`/mitglied-werden?angebot=${a.slug}`} className="btn btn-ghost">
                 {istFussball ? 'Für dieses Team anmelden' : 'Fest anmelden'}
               </Link>
+              <Teilen titel={a.title} text={`${a.title} beim BSV 1919`} />
             </div>
           </div>
           <div className="in2" style={{ flex: '1 1 420px', minWidth: 0, aspectRatio: '4 / 3', borderRadius: 32, overflow: 'hidden', background: farbe(a.kategorie)[1], boxShadow: `0 30px 60px ${tint}26` }}>
@@ -236,6 +254,30 @@ export default async function AngebotSeite({ params }: Args) {
               alt: m.alt ?? '',
             }))}
           />
+        </section>
+      )}
+
+      {alben.length > 0 && (
+        <section className="wrap-narrow" style={{ paddingBottom: 72 }}>
+          <h2 className="t-3" style={{ marginBottom: 20 }}>
+            Fotoalben
+          </h2>
+          <div className="alben-raster">
+            {alben.map((al) => {
+              const erstes = (al.bilder ?? []).find((b) => typeof b === 'object')
+              return (
+                <Link key={al.id} href={`/galerie/${al.slug}`} className="card card-soft album-karte">
+                  <span className="album-cover">{erstes && <Bild media={erstes} size="medium" sizes="(max-width: 700px) 100vw, 380px" />}</span>
+                  <span style={{ padding: '14px 18px 18px' }}>
+                    <span className="card-cat" style={{ color: 'var(--bsv-green)' }}>
+                      {datum(al.datum, { day: 'numeric', month: 'long', year: 'numeric' })}
+                    </span>
+                    <strong style={{ display: 'block', fontSize: 18, marginTop: 4 }}>{al.titel}</strong>
+                  </span>
+                </Link>
+              )
+            })}
+          </div>
         </section>
       )}
 

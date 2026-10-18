@@ -125,27 +125,39 @@ export const Media: CollectionConfig = {
     imageSizes: [
       {
         name: 'thumbnail',
+        // Neue Uploads als WebP – deutlich kleiner bei gleicher Qualität
+        formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 300,
       },
       {
         name: 'square',
+        // Neue Uploads als WebP – deutlich kleiner bei gleicher Qualität
+        formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 500,
         height: 500,
       },
       {
         name: 'small',
+        // Neue Uploads als WebP – deutlich kleiner bei gleicher Qualität
+        formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 600,
       },
       {
         name: 'medium',
+        // Neue Uploads als WebP – deutlich kleiner bei gleicher Qualität
+        formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 900,
       },
       {
         name: 'large',
+        // Neue Uploads als WebP – deutlich kleiner bei gleicher Qualität
+        formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 1400,
       },
       {
         name: 'xlarge',
+        // Neue Uploads als WebP – deutlich kleiner bei gleicher Qualität
+        formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 1920,
       },
       {

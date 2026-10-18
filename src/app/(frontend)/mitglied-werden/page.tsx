@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { seite } from '@/bsv/seo'
 import React, { Suspense } from 'react'
 
 import { Mitgliedsantrag, type AntragAngebot } from '@/bsv/components/Mitgliedsantrag'
@@ -7,10 +9,7 @@ import { getAngebote, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { BEREICH_LABEL } from '@/bsv/lib'
 
 export const revalidate = 60
-export const metadata: Metadata = {
-  title: 'Mitglied werden',
-  description: 'Online-Mitgliedsantrag des Büdericher Spielvereins: Teams und Kurse wählen, Beitrag berechnen, SEPA-Mandat – in fünf Minuten.',
-}
+export const metadata: Metadata = seite('Mitglied werden', 'Online-Mitgliedsantrag des Büdericher Spielvereins: Teams und Kurse wählen, Beitrag berechnen, SEPA-Mandat – in fünf Minuten.')
 
 export default async function MitgliedWerden() {
   const [angebote, verein, tx, w] = await Promise.all([getAngebote(), getVerein(), getTexte(), getPlatzhalter()])

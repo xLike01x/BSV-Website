@@ -667,6 +667,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wie kommen die neuen Seiten (Trainingszeiten, Galerie, Sponsoren, Mitmachen) ins Menü?',
+    antwort: 'Unter „Menü & Fußzeile“ zeigt der Kasten oben, welche Seiten noch nirgends verlinkt sind – ein Klick auf „In die Fußzeile“ oder „Ins Menü Verein“ trägt sie ein.',
+    bereich: 'menue',
+  },
+  {
     frage: 'Wo sehe ich genau, was eine Rolle darf?',
     antwort: 'In der Rollen-Übersicht im Reiter „Rechte je Rolle“: Rolle anklicken, dann siehst du für jeden Bereich Sehen, Anlegen, Bearbeiten und Löschen. Die Tabelle wird aus den echten Regeln berechnet und stimmt deshalb immer.',
     bereich: 'users',

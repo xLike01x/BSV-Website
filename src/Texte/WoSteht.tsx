@@ -12,6 +12,9 @@ const SEITE: [RegExp, string | null][] = [
   [/^termine\./, '/termine'],
   [/^kontakt\./, '/kontakt'],
   [/^antrag\./, '/mitglied-werden'],
+  [/^sponsoren\./, '/sponsoren'],
+  [/^galerie\./, '/galerie'],
+  [/^mitmachen\./, '/mitmachen'],
   [/^probetraining\./, null],
   [/.*/, '/'],
 ]

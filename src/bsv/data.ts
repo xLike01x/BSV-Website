@@ -173,3 +173,36 @@ export const getPlatzhalter = cache(async (): Promise<Record<string, string>> =>
     gruendung: String(v.gruendung ?? 1919),
   }
 })
+
+/** Aktive Sponsoren, sortiert */
+export const getSponsoren = cache(async () => {
+  const p = await payload()
+  const res = await p.find({ collection: 'sponsoren', where: { aktiv: { not_equals: false } }, sort: 'reihenfolge', limit: 200, depth: 1 })
+  return res.docs
+})
+
+/** Sichtbare Fotoalben (optional nur eines Teams) */
+export const getAlben = cache(async (teamId?: number, limit = 60) => {
+  const p = await payload()
+  const res = await p.find({
+    collection: 'alben',
+    where: { and: [{ aktiv: { not_equals: false } }, ...(teamId ? [{ team: { equals: teamId } }] : [])] },
+    sort: '-datum',
+    limit,
+    depth: 1,
+  })
+  return res.docs
+})
+
+export const getAlbum = cache(async (slug: string) => {
+  const p = await payload()
+  const res = await p.find({ collection: 'alben', where: { and: [{ slug: { equals: slug } }, { aktiv: { not_equals: false } }] }, limit: 1, depth: 1 })
+  return res.docs[0] ?? null
+})
+
+/** Aktive Ehrenamts-Gesuche */
+export const getGesuche = cache(async () => {
+  const p = await payload()
+  const res = await p.find({ collection: 'gesuche', where: { aktiv: { not_equals: false } }, sort: 'reihenfolge', limit: 50, depth: 0 })
+  return res.docs
+})

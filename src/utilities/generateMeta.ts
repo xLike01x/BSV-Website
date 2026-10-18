@@ -24,7 +24,8 @@ export const generateMeta = async (args: {
 }): Promise<Metadata> => {
   const { doc } = args
 
-  const ogImage = getImageURL(doc?.meta?.image)
+  // Ohne eigenes Vorschaubild: Titelbild der News nehmen
+  const ogImage = getImageURL(doc?.meta?.image ?? (doc && 'heroImage' in doc ? doc.heroImage : undefined))
 
   const titel = doc?.meta?.title || (doc && 'title' in doc ? doc.title : undefined)
   const title = titel ? `${titel} | Büdericher SV 1919` : 'Büdericher Spielverein 1919 e.V.'

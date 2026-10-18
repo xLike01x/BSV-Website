@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { seite } from '@/bsv/seo'
 import Link from 'next/link'
 import React from 'react'
 
@@ -10,10 +12,7 @@ import { bildUrl, datum, fokus } from '@/bsv/lib'
 import type { Category, Post } from '@/payload-types'
 
 export const revalidate = 60
-export const metadata: Metadata = {
-  title: 'News',
-  description: 'Was im BSV los ist – auf dem Platz, in der Halle, im Verein.',
-}
+export const metadata: Metadata = seite('News', 'Was im BSV los ist – auf dem Platz, in der Halle, im Verein.')
 
 const kategorie = (p: Post) => {
   const c = p.categories?.find((x): x is Category => typeof x === 'object')

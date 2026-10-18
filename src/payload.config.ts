@@ -28,6 +28,9 @@ import { PAPIERKORB } from './utilities/papierkorb'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { Datenschutz } from './datenschutz/config'
 import { Dokumente } from './collections/Dokumente'
+import { Alben } from './collections/Alben'
+import { Sponsoren } from './collections/Sponsoren'
+import { Gesuche } from './collections/Gesuche'
 import { datenschutzEndpunkte } from './datenschutz/aufraeumen'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
@@ -111,7 +114,7 @@ export default buildConfig({
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
-  collections: [Posts, Termine, Media, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users, HilfeFeedback].map((c) =>
+  collections: [Posts, Termine, Media, Alben, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Sponsoren, Gesuche, Users, HilfeFeedback].map((c) =>
     PAPIERKORB.includes(c.slug) ? { ...c, trash: true } : c,
   ),
   cors: [getServerSideURL()].filter(Boolean),

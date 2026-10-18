@@ -37,6 +37,27 @@ export const Verein: GlobalConfig = {
     { name: 'sportpark', label: 'Sportplatz', type: 'textarea', defaultValue: 'Kutscher-Remy-Sportpark\nSchützenstraße 25a\n46487 Wesel' },
     { name: 'postanschrift', label: 'Postanschrift', type: 'textarea', defaultValue: 'Am Weißen Stein 2f\n46487 Wesel' },
     {
+      type: 'collapsible',
+      label: 'Anfahrt-Karte (Kontaktseite)',
+      admin: { initCollapsed: true, description: 'Position der Markierung auf der Karte. Herausfinden: in OpenStreetMap rechtsklicken → „Adresse anzeigen“ – die Zahlen oben links übernehmen.' },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'sportparkLat', label: 'Sportplatz: Breitengrad', type: 'number', defaultValue: 51.62638 },
+            { name: 'sportparkLon', label: 'Sportplatz: Längengrad', type: 'number', defaultValue: 6.58253 },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'halleLat', label: 'Sporthalle: Breitengrad', type: 'number', admin: { description: 'Leer = keine eingebettete Karte, nur Knöpfe.' } },
+            { name: 'halleLon', label: 'Sporthalle: Längengrad', type: 'number' },
+          ],
+        },
+      ],
+    },
+    {
       name: 'beitraege',
       label: 'Mitgliedsbeiträge',
       type: 'array',

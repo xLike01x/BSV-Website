@@ -149,6 +149,18 @@ export const Texte: GlobalConfig = {
               text('titel', 'Überschrift', 'Anmelden beim BSV.'),
               text('text', 'Text', 'Wähle deine Teams und Kurse, gib deine Daten ein, fertig. Die Übungsleitungen werden automatisch informiert.', true),
             ]),
+            gruppe('sponsoren', 'Sponsoren', [
+              text('titel', 'Überschrift', 'Danke an unsere Partner.'),
+              text('text', 'Text', 'Ohne sie gäbe es keinen Kunstrasen, keine Trikots und keine Turniere. Du möchtest den BSV auch unterstützen? Wir freuen uns auf dich.', true),
+            ]),
+            gruppe('galerie', 'Galerie', [
+              text('titel', 'Überschrift', 'Momente im BSV.'),
+              text('text', 'Text', 'Feste, Turniere und Training – Fotos aus dem Vereinsleben.'),
+            ]),
+            gruppe('mitmachen', 'Mitmachen / Ehrenamt', [
+              text('titel', 'Überschrift', 'Mach mit!'),
+              text('text', 'Text', 'Der BSV lebt vom Ehrenamt. Ob eine Stunde im Monat oder jede Woche auf dem Platz – jede Hilfe zählt. Schau, was gerade gebraucht wird.', true),
+            ]),
             gruppe('probetraining', 'Probetraining (auf jeder Team-/Kursseite)', [
               text('titel', 'Überschrift', 'Einfach mal reinschnuppern.'),
             ]),

@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { seite } from '@/bsv/seo'
 import Link from 'next/link'
 import React from 'react'
 
@@ -9,10 +11,7 @@ import { getAngebote, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, farbe, kurzZeit } from '@/bsv/lib'
 
 export const revalidate = 60
-export const metadata: Metadata = {
-  title: 'Breitensport',
-  description: 'Tanzen, Turnen, Fitness, Gesundheit und Ausdauer beim BSV – Kurse für jedes Alter, Schnuppern erwünscht.',
-}
+export const metadata: Metadata = seite('Breitensport', 'Tanzen, Turnen, Fitness, Gesundheit und Ausdauer beim BSV – Kurse für jedes Alter, Schnuppern erwünscht.')
 
 export default async function BreitensportSeite() {
   const [angebote, verein, tx, w] = await Promise.all([getAngebote(), getVerein(), getTexte(), getPlatzhalter()])
@@ -58,6 +57,11 @@ export default async function BreitensportSeite() {
         </h1>
         <p className="lead in3" style={{ margin: '22px auto 0', maxWidth: 640 }}>
           <T text={tx.breitensport?.text} werte={w} />
+        </p>
+        <p className="in3" style={{ margin: '18px 0 0' }}>
+          <Link href="/trainingszeiten" className="btn btn-ghost">
+            🗓️ Alle Trainingszeiten im Wochenplan
+          </Link>
         </p>
         <div className="in3" style={{ maxWidth: 1180, margin: '48px auto 0', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: 16 }}>
           {[s?.bildBreitensport1, s?.bildBreitensport2, s?.bildBreitensport3].map((b, i) => (

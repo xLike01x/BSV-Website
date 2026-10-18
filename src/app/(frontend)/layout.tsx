@@ -1,11 +1,9 @@
 import type { Metadata, Viewport } from 'next'
 
 import { cn } from '@/utilities/ui'
-import { GeistMono } from 'geist/font/mono'
 import { GeistSans } from 'geist/font/sans'
 import React from 'react'
 
-import '@fontsource/caveat/600.css'
 import '@fontsource/caveat/700.css'
 
 import { Footer } from '@/bsv/components/Footer'
@@ -23,7 +21,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable, GeistMono.variable)} lang="de" data-theme="light">
+    <html className={cn(GeistSans.variable)} lang="de" data-theme="light">
       <head>
         <link href="/favicon.png" rel="icon" type="image/png" />
         <link href="/bsv-logo.png" rel="apple-touch-icon" />
@@ -57,6 +55,7 @@ export const metadata: Metadata = {
   description:
     'Fußball, Tanzen, Turnen, Fitness, Yoga und Walking für alle von 1 bis 99 Jahren. Über 1.000 Mitglieder im Kutscher-Remy-Sportpark in Wesel-Büderich.',
   openGraph: mergeOpenGraph(),
+  twitter: { card: 'summary_large_image' },
 }
 
 export const viewport: Viewport = {

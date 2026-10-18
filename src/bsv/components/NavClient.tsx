@@ -106,6 +106,12 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
               )
             })}
           </nav>
+          <Link href="/suche" className="nav-suche" aria-label="Suchen" title="Suchen" onMouseEnter={() => setOpen(null)}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="7" />
+              <path d="M20 20l-3.5-3.5" />
+            </svg>
+          </Link>
           <div className="nav-actions" onMouseEnter={() => setOpen(null)}>
             <Link href={eingeloggt ? '/mitglieder' : '/login'} className="nav-login">
               {eingeloggt ? 'Mein BSV' : 'Anmelden'}
@@ -158,6 +164,9 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
 
       {mobil && (
         <div className="mnav" id="mobilmenue">
+          <form action="/suche" className="mnav-suche" role="search">
+            <input type="search" name="q" placeholder="Suchen: Team, Kurs, News …" aria-label="Suchen" />
+          </form>
           {eintraege.map((e) => {
             if (e.art === 'link') return <ItemLink key={e.item.href + e.item.label} it={e.item} className="mnav-top" />
             const m = menus.find((x) => x.id === e.id)!

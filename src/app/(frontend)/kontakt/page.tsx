@@ -1,4 +1,6 @@
 import type { Metadata } from 'next'
+
+import { seite } from '@/bsv/seo'
 import React, { Suspense } from 'react'
 
 import { Karte } from '@/bsv/components/Karte'
@@ -7,10 +9,7 @@ import { T } from '@/bsv/components/Text'
 import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
 
 export const revalidate = 60
-export const metadata: Metadata = {
-  title: 'Kontakt',
-  description: 'Schreib dem Büdericher Spielverein – Anfahrt zum Kutscher-Remy-Sportpark und zur Sporthalle Petristraße.',
-}
+export const metadata: Metadata = seite('Kontakt', 'Schreib dem Büdericher Spielverein – Anfahrt zum Kutscher-Remy-Sportpark und zur Sporthalle Petristraße.')
 
 export default async function KontaktSeite() {
   const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])
@@ -65,8 +64,8 @@ export default async function KontaktSeite() {
             So findest du uns.
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 420px), 1fr))', gap: 20 }}>
-            <Karte titel="Kutscher-Remy-Sportpark" adresse="Schützenstraße 25a, 46487 Wesel" />
-            <Karte titel="Sporthalle Petristraße" adresse="Petristraße, 46487 Wesel" />
+            <Karte titel="Kutscher-Remy-Sportpark" adresse="Schützenstraße 25a, 46487 Wesel" lat={v.sportparkLat ?? 51.62638} lon={v.sportparkLon ?? 6.58253} />
+            <Karte titel="Sporthalle Petristraße" adresse="Petristraße, 46487 Wesel" lat={v.halleLat} lon={v.halleLon} />
           </div>
         </div>
       </section>
