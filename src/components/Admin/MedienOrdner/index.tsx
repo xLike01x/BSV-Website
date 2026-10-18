@@ -47,13 +47,13 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
     label,
     ordner: (angebote.docs as unknown as { id: number; title: string; bereich?: string; aktiv?: boolean }[])
       .filter((a) => a.bereich === key)
-      .map<Ordner>((a) => ({ key: `team-${a.id}`, titel: a.title, anzahl: proTeam.get(a.id) ?? 0, query: `where[team][equals]=${a.id}`, gedimmt: a.aktiv === false })),
+      .map<Ordner>((a) => ({ key: `team-${a.id}`, titel: a.title, anzahl: proTeam.get(a.id) ?? 0, query: `where[team][equals]=${a.id}`, gedimmt: a.aktiv === false, ziel: { art: 'team', id: a.id } })),
   })).filter((g) => g.ordner.length)
 
   const eigeneSumme = gruppen.reduce((s, g) => s + g.ordner.reduce((x, o) => x + o.anzahl, 0), 0)
   const oben: Ordner[] = [
     { key: 'alle', titel: redaktion ? 'Alle Bilder' : 'Alle meine Bilder', anzahl: redaktion ? medien.docs.length : eigeneSumme + allgemein, query: '', symbol: '🗂️' },
-    { key: 'allgemein', titel: 'Verein allgemein', anzahl: allgemein, query: 'where[allgemein][equals]=true', symbol: '🏟️' },
+    { key: 'allgemein', titel: 'Verein allgemein', anzahl: allgemein, query: 'where[allgemein][equals]=true', symbol: '🏟️', ziel: redaktion ? { art: 'allgemein' } : undefined },
     ...(redaktion
       ? [
           {
@@ -63,6 +63,7 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
             query: 'where[and][0][team][exists]=false&where[and][1][or][0][allgemein][equals]=false&where[and][1][or][1][allgemein][exists]=false',
             symbol: '📥',
             warn: offen > 0,
+            ziel: { art: 'offen' } as const,
           },
         ]
       : []),

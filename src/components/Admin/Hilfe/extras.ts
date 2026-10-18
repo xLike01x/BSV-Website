@@ -88,7 +88,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Links auf „Mediathek“. Oben siehst du die Ordner – je Team einer, dazu „Verein allgemein“ und „Noch nicht zugeordnet“.',
         'Auf „Noch nicht zugeordnet“ klicken.',
-        'Bilder, die zum selben Team gehören, links anhaken → oben „Bearbeiten“ → „Ordner (Team / Kurs)“ auswählen → Speichern.',
+        'Bilder, die zum selben Team gehören, links anhaken und mit der Maus auf den Ordner des Teams ziehen (oder oben „Bearbeiten“ → „Ordner (Team / Kurs)“).',
         'Bilder für den ganzen Verein (Logo, Sportplatz, Vorstand): öffnen und rechts „Verein allgemein“ anhaken.',
         'Tipp für den Anfang: „Automatisch zuordnen“ macht den Großteil – danach nur noch Fehler korrigieren.',
       ],
@@ -620,6 +620,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* Häufige Fragen                                                      */
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
+  {
+    frage: 'Was passiert mit einem Bild auf der Website, wenn ich es in einen anderen Ordner verschiebe?',
+    antwort: 'Nichts – es bleibt überall, wo es eingebaut ist (News, Seiten, Teamseiten). Der Ordner bestimmt nur, wer es in der Verwaltung sehen und neu auswählen darf. Ausnahme: Ist „In der Bildergalerie des Teams zeigen“ angehakt, wandert es in die Galerie des neuen Teams.',
+    bereich: 'media',
+  },
   {
     frage: 'Warum sehe ich in der Mediathek nicht alle Bilder?',
     antwort: 'Trainer sehen nur die Ordner ihrer Teams und „Verein allgemein“. So landen keine Bilder versehentlich beim falschen Team. Fehlt dir ein Bild, frag die Redaktion, ob sie es deinem Team oder „Verein allgemein“ zuordnet.',
