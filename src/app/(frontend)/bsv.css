@@ -217,7 +217,27 @@
 .feature { max-width: var(--bsv-max); margin: 0 auto; background: var(--bsv-green); color: #fff; border-radius: 36px; overflow: hidden; display: flex; flex-wrap: wrap; align-items: stretch; }
 .news-rail { --rail-pad: max(22px, calc((100vw - var(--bsv-max)) / 2 + 22px)); margin-top: 36px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 0 var(--rail-pad) 20px; scroll-padding-inline: var(--rail-pad); scrollbar-width: thin; }
 .news-rail-track { display: flex; gap: 20px; width: max-content; }
-.bsv .news-card { scroll-snap-align: start; flex: 0 0 auto; width: min(80vw, 360px); background: #fff; border-radius: 28px; overflow: hidden; text-decoration: none; color: var(--bsv-ink); display: flex; flex-direction: column; }
+
+/* Karussell (News auf der Startseite): Punkte + Pfeile statt Scrollbalken */
+.karussell-leiste { scrollbar-width: none; scroll-behavior: smooth; outline: none; padding-top: 6px; padding-bottom: 28px; }
+.karussell-leiste::-webkit-scrollbar { display: none; }
+.karussell-leiste:focus-visible { box-shadow: inset 0 0 0 3px var(--bsv-green-tint); border-radius: 28px; }
+.karussell-karte { scroll-snap-align: start; flex: 0 0 auto; display: flex; transition: transform .5s var(--bsv-ease), box-shadow .5s var(--bsv-ease); }
+.karussell-karte > .news-card { scroll-snap-align: none; box-shadow: 0 1px 2px rgba(0,0,0,.04); transition: transform .45s var(--bsv-ease), box-shadow .45s var(--bsv-ease); }
+.karussell-karte > .news-card:hover { transform: translateY(-4px); box-shadow: 0 18px 40px rgba(0,0,0,.09); }
+.karussell-steuerung { max-width: var(--bsv-max); margin: 0 auto; padding: 0 22px; display: flex; align-items: center; justify-content: center; position: relative; min-height: 44px; }
+.karussell-punkte { display: flex; gap: 8px; align-items: center; padding: 10px 14px; border-radius: 999px; background: rgba(0,0,0,.05); }
+.karussell-punkte button { width: 8px; height: 8px; padding: 0; border: 0; border-radius: 999px; background: rgba(0,0,0,.25); cursor: pointer; transition: width .45s var(--bsv-ease), background-color .45s var(--bsv-ease); }
+.karussell-punkte button:hover { background: rgba(0,0,0,.45); }
+.karussell-punkte button.ist-aktiv { width: 28px; background: var(--bsv-ink); }
+.karussell-pfeile { position: absolute; right: 22px; display: flex; gap: 10px; }
+.karussell-pfeile button { width: 44px; height: 44px; border-radius: 50%; border: 0; background: rgba(0,0,0,.06); color: var(--bsv-ink); cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color .25s, opacity .25s, transform .25s var(--bsv-ease); }
+.karussell-pfeile button:hover:not(:disabled) { background: rgba(0,0,0,.12); transform: scale(1.05); }
+.karussell-pfeile button:disabled { opacity: .3; cursor: default; }
+.karussell-pfeile svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2.4; stroke-linecap: round; stroke-linejoin: round; }
+@media (max-width: 700px) { .karussell-pfeile { display: none; } }
+@media (prefers-reduced-motion: reduce) { .karussell-leiste { scroll-behavior: auto; } .karussell-punkte button, .karussell-karte, .karussell-karte > .news-card { transition: none; } }
+.bsv .news-card { scroll-snap-align: start; flex: 0 0 auto; height: 100%; width: min(80vw, 360px); background: #fff; border-radius: 28px; overflow: hidden; text-decoration: none; color: var(--bsv-ink); display: flex; flex-direction: column; }
 .steps3 { max-width: 980px; margin: 56px auto 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 20px; text-align: left; }
 .steps3 h3 { font-weight: 700; }
 .step-num { width: 48px; height: 48px; border-radius: 14px; background: var(--bsv-green); color: #fff; font-weight: 800; display: flex; align-items: center; justify-content: center; font-size: 20px; }

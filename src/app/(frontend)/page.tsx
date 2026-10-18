@@ -4,6 +4,7 @@ import { absolut } from '@/bsv/seo'
 import Link from 'next/link'
 import React from 'react'
 
+import { Karussell } from '@/bsv/components/Karussell'
 import { Bild } from '@/bsv/components/Bild'
 import { AgeFinder, type Vorschlag } from '@/bsv/components/home/AgeFinder'
 import { CountUp } from '@/bsv/components/home/CountUp'
@@ -294,8 +295,7 @@ export default async function Startseite() {
               {tx.newsLink}
             </Link>
           </div>
-          <div className="news-rail">
-            <div className="news-rail-track">
+          <Karussell label="Neues aus dem BSV">
               {news.docs.map((n) => (
                 <Link key={n.id} href={`/news/${n.slug}`} className="tile news-card">
                   <span style={{ display: 'block', aspectRatio: '4 / 3', overflow: 'hidden', background: 'var(--bsv-green-tint)' }}>
@@ -307,8 +307,7 @@ export default async function Startseite() {
                   </span>
                 </Link>
               ))}
-            </div>
-          </div>
+          </Karussell>
         </section>
       )}
 
