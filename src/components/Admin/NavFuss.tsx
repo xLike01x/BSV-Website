@@ -1,0 +1,42 @@
+'use client'
+import { useAuth } from '@payloadcms/ui'
+import React from 'react'
+
+const ROLLEN: Record<string, string> = {
+  admin: 'Admin',
+  redaktion: 'Redaktion',
+  kasse: 'Kasse',
+  uebungsleitung: 'Übungsleitung',
+  teamredaktion: 'Team-Redaktion',
+  mitglied: 'Mitglied',
+}
+
+/** Fuß der Seitenleiste: angemeldete Person + Link zur Website */
+export default function NavFuss() {
+  const { user } = useAuth<{ name?: string; email: string; roles?: string[] }>()
+  if (!user) return null
+  const name = user.name || user.email
+  const kuerzel = name
+    .split(/[\s@.]+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((t) => t[0]?.toUpperCase())
+    .join('')
+  const rolle = (user.roles ?? []).map((r) => ROLLEN[r] ?? r).join(' · ')
+  return (
+    <div className="bsv-nav-fuss">
+      <a className="bsv-nav-person" href="/admin/account">
+        <span className="bsv-nav-kuerzel" aria-hidden="true">
+          {kuerzel}
+        </span>
+        <span>
+          <strong>{name}</strong>
+          {rolle && <small>Rolle: {rolle}</small>}
+        </span>
+      </a>
+      <a className="bsv-nav-website" href="/" target="_blank" rel="noopener">
+        Zur Website ›
+      </a>
+    </div>
+  )
+}

@@ -1,3 +1,4 @@
+import { ausblendenAusser } from '@/access/roles'
 import type { Access, CollectionConfig } from 'payload'
 
 import { hasRole, isEditor } from '../access/roles'
@@ -20,6 +21,7 @@ export const Termine: CollectionConfig = {
   },
   admin: {
     group: 'Inhalte',
+    hidden: ausblendenAusser('admin', 'redaktion'),
     useAsTitle: 'title',
     defaultColumns: ['title', 'beginn', 'bereich', 'nurMitglieder'],
   },

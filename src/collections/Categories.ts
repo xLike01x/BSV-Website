@@ -15,6 +15,8 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     group: 'Inhalte',
+    // Nur Admins sehen die Kategorien in der Seitenleiste
+    hidden: ({ user }) => !((user as { roles?: string[] } | null)?.roles ?? []).includes('admin'),
     useAsTitle: 'title',
   },
   fields: [

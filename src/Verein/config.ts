@@ -1,3 +1,4 @@
+import { ausblendenAusser } from '@/access/roles'
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
@@ -9,7 +10,7 @@ export const Verein: GlobalConfig = {
   slug: 'verein',
   label: 'Vereinsdaten',
   access: { read: anyone, update: isAdmin },
-  admin: { group: 'Verwaltung' },
+  admin: { group: 'Verwaltung', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
   hooks: { afterChange: [revalidateAllesGlobal] },
   fields: [
     { name: 'name', label: 'Vereinsname', type: 'text', defaultValue: 'Büdericher Spielverein 1919 e.V.' },

@@ -1,0 +1,364 @@
+.bsv-dash {
+  --d-ink: #1d1d1f;
+  --d-muted: #6e6e73;
+  --d-line: #f0f0f2;
+  --d-card: #ffffff;
+  --d-soft: #f5f5f7;
+  --d-green: #157a43;
+  --d-green-tint: #e8f6ee;
+  max-width: 1200px;
+  padding-top: 8px;
+  padding-bottom: 60px;
+  color: var(--d-ink);
+
+  h1,
+  h2,
+  h3 {
+    color: var(--d-ink);
+    margin: 0;
+  }
+
+  a {
+    text-decoration: none;
+  }
+
+  &__kopf {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 24px;
+
+    h1 {
+      font-size: clamp(28px, 4vw, 38px);
+      font-weight: 800;
+      letter-spacing: -0.035em;
+      line-height: 1.1;
+    }
+
+    p {
+      margin: 6px 0 0;
+      color: var(--d-muted);
+      font-size: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+  }
+
+  &__rolle {
+    background: var(--d-green-tint);
+    color: var(--d-green);
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 3px 10px;
+  }
+
+  &__website {
+    color: var(--d-green);
+    font-weight: 600;
+    padding: 10px 14px;
+    border-radius: 12px;
+    background: var(--d-card);
+    &:hover {
+      background: var(--d-green-tint);
+    }
+  }
+
+  &__karten {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__karte {
+    background: var(--d-card);
+    border-radius: 20px;
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    color: var(--d-ink);
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    transition:
+      transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1),
+      box-shadow 0.25s;
+    animation: bsv-dash-rein 0.5s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+    @for $i from 1 through 4 {
+      &:nth-child(#{$i}) {
+        animation-delay: #{$i * 0.05}s;
+      }
+    }
+
+    &--link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 28px rgba(0, 0, 0, 0.07);
+    }
+  }
+
+  &__karte-label {
+    color: var(--d-muted);
+    font-size: 13px;
+  }
+
+  &__karte-hinweis {
+    color: var(--d-muted);
+    font-size: 12px;
+  }
+
+  &__zahl {
+    font-size: 36px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+
+    &--gruen {
+      color: var(--d-green);
+    }
+    &--orange {
+      color: #e8590c;
+    }
+    &--blau {
+      color: #1d4ed8;
+    }
+    &--lila {
+      color: #7c3aed;
+    }
+  }
+
+  &__raster {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr));
+    gap: 14px;
+    margin-bottom: 16px;
+  }
+
+  &__box {
+    background: var(--d-card);
+    border-radius: 20px;
+    padding: 22px 24px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+    animation: bsv-dash-rein 0.5s 0.2s cubic-bezier(0.2, 0.8, 0.2, 1) both;
+
+    h2 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+
+    h3 {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--d-muted);
+      margin: 22px 0 8px;
+    }
+  }
+
+  &__aktionen {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  &__btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-weight: 600;
+    color: var(--d-ink);
+    background: var(--d-soft);
+    transition: background 0.2s;
+
+    &:hover {
+      background: #e8e8ed;
+    }
+
+    &--primaer {
+      color: #fff;
+      background: var(--d-green);
+      &:hover {
+        background: #0f6636;
+      }
+    }
+  }
+
+  &__teams {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding: 10px 0;
+      border-top: 1px solid var(--d-line);
+    }
+
+    span {
+      display: flex;
+      gap: 14px;
+    }
+
+    a {
+      color: var(--d-green);
+      font-weight: 600;
+      font-size: 14px;
+    }
+  }
+
+  &__liste {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+
+    li + li {
+      border-top: 1px solid var(--d-line);
+    }
+
+    a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 6px;
+      margin: 0 -6px;
+      border-radius: 10px;
+      color: var(--d-ink);
+
+      &:hover {
+        background: var(--d-soft);
+      }
+    }
+
+    time {
+      margin-left: auto;
+      color: var(--d-muted);
+      font-size: 13px;
+      white-space: nowrap;
+    }
+  }
+
+  &__liste-text {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+
+    span {
+      color: var(--d-muted);
+    }
+  }
+
+  &__punkt {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    flex: 0 0 auto;
+
+    &--gruen {
+      background: var(--d-green);
+    }
+    &--orange {
+      background: #e8590c;
+    }
+    &--blau {
+      background: #1d4ed8;
+    }
+    &--lila {
+      background: #7c3aed;
+    }
+  }
+
+  &__leer {
+    color: var(--d-muted);
+    margin: 0;
+  }
+
+  &__bereiche {
+    margin-top: 28px;
+
+    > h2 {
+      font-size: 19px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+    }
+  }
+
+  &__gruppen {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+    gap: 14px;
+  }
+
+  &__gruppe {
+    background: var(--d-card);
+    border-radius: 20px;
+    padding: 18px 20px;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+    h3 {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--d-muted);
+      margin-bottom: 8px;
+    }
+
+    ul {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+    }
+
+    a {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      color: var(--d-ink);
+      font-weight: 500;
+      border-top: 1px solid var(--d-line);
+
+      span {
+        color: var(--d-muted);
+      }
+
+      &:hover {
+        color: var(--d-green);
+      }
+    }
+
+    li:first-child a {
+      border-top: 0;
+    }
+  }
+}
+
+@keyframes bsv-dash-rein {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bsv-dash__karte,
+  .bsv-dash__box {
+    animation: none;
+  }
+}

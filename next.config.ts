@@ -12,6 +12,9 @@ const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
   : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
 
 const nextConfig: NextConfig = {
+  // Entwicklungsserver auch über einen Cloudflare-Quick-Tunnel (Vorschau für Kollegen) nutzbar machen.
+  // Ohne diese Zeile blockiert Next.js die Skripte → Seite lädt, aber Login-Knopf u. Ä. reagieren nicht.
+  allowedDevOrigins: ['*.trycloudflare.com'],
   // Temporarily required on Windows until Next.js fixes Turbopack Sass resolution.
   // See: https://github.com/vercel/next.js/issues/86431
   sassOptions: {

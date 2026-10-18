@@ -1,3 +1,4 @@
+import { ausblendenAusser } from '@/access/roles'
 import type { Field, GlobalConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
@@ -26,6 +27,7 @@ export const Texte: GlobalConfig = {
   access: { read: anyone, update: isEditor },
   admin: {
     group: 'Inhalte',
+    hidden: ausblendenAusser('admin', 'redaktion'),
     description: 'Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.',
   },
   hooks: { afterChange: [revalidateAllesGlobal] },

@@ -110,3 +110,12 @@ export const editorOrPublished: Access = ({ req }) => {
   if (hasRole(userOf(req), 'admin', 'redaktion')) return true
   return { _status: { equals: 'published' } }
 }
+
+/**
+ * Seitenleiste aufräumen: Bereiche, die eine Rolle nur lesen, aber nicht bearbeiten kann,
+ * werden ausgeblendet. (Nur Anzeige – die eigentlichen Rechte stehen in `access`.)
+ */
+export const ausblendenAusser =
+  (...roles: Role[]) =>
+  ({ user }: { user: unknown }): boolean =>
+    !hasRole(user as MaybeUser, ...roles)

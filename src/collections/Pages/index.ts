@@ -1,3 +1,4 @@
+import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
 import { editorOrPublished, isEditor } from '../../access/roles'
@@ -38,6 +39,7 @@ export const Pages: CollectionConfig<'pages'> = {
   },
   admin: {
     group: 'Inhalte',
+    hidden: ausblendenAusser('admin', 'redaktion'),
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) =>

@@ -30,13 +30,20 @@ const dirname = path.dirname(filename)
 export default buildConfig({
   admin: {
     components: {
-      // The `BeforeLogin` component renders a message that you see while logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
       beforeLogin: ['@/components/BeforeLogin'],
-      // The `BeforeDashboard` component renders the 'welcome' block that you see after logging into your admin panel.
-      // Feel free to delete this at any time. Simply remove the line below.
-      beforeDashboard: ['@/components/BeforeDashboard'],
+      // Eigenes, helles Dashboard (Begrüßung, Kennzahlen, Schnellzugriff, Aktivitäten)
+      views: {
+        dashboard: { Component: '@/components/Admin/Dashboard' },
+      },
+      graphics: {
+        Logo: '@/components/Admin/Logo',
+        Icon: '@/components/Admin/Icon',
+      },
+      beforeNavLinks: ['@/components/Admin/NavKopf'],
+      afterNavLinks: ['@/components/Admin/NavFuss'],
     },
+    // Immer hell und freundlich – kein Dunkelmodus
+    theme: 'light',
     importMap: {
       baseDir: path.resolve(dirname),
     },
@@ -69,6 +76,10 @@ export default buildConfig({
       ],
     },
   },
+  // Ordner-Ansicht nicht als eigenen Menüpunkt zeigen (Ordner bleiben in der Mediathek nutzbar)
+  folders: {
+    browseByFolder: false,
+  },
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: postgresAdapter({
@@ -76,7 +87,8 @@ export default buildConfig({
       connectionString: process.env.DATABASE_URL || '',
     },
   }),
-  collections: [Pages, Posts, Termine, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Media, Categories, Users],
+  // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
+  collections: [Posts, Termine, Media, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Users],
   cors: [getServerSideURL()].filter(Boolean),
   globals: [Header, Footer, Verein, Texte],
   i18n: {

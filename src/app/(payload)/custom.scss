@@ -1,0 +1,295 @@
+/*
+ * BSV-Verwaltung: helles, freundliches Erscheinungsbild im Stil der Website.
+ * Payload legt seine Styles in @layer payload-default – alles hier (ohne Layer) gewinnt.
+ */
+
+@font-face {
+  font-family: 'Geist';
+  src: url('../../../node_modules/geist/dist/fonts/geist-sans/Geist-Variable.woff2') format('woff2');
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+:root {
+  --bsv-green: #157a43;
+  --bsv-green-dark: #0f6636;
+  --bsv-green-tint: #e8f6ee;
+  --bsv-soft: #f5f5f7;
+  --bsv-line: #e3e3e8;
+  --bsv-ink: #1d1d1f;
+  --bsv-muted: #6e6e73;
+
+  --font-body: 'Geist', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  // Texteditor ebenfalls in Geist statt Georgia – wie auf der Website
+  --font-serif: var(--font-body);
+  --style-radius-s: 8px;
+  --style-radius-m: 12px;
+  --style-radius-l: 18px;
+}
+
+html[data-theme='light'] {
+  --theme-bg: var(--bsv-soft);
+  --theme-input-bg: #ffffff;
+  --theme-text: var(--bsv-ink);
+  --theme-border-color: var(--bsv-line);
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  background: var(--theme-bg);
+}
+
+/* ---------- Seitenleiste ---------- */
+.nav {
+  background: #ffffff;
+  border-right: 1px solid var(--bsv-line);
+}
+
+.nav__scroll {
+  --nav-padding-block-start: calc(var(--app-header-height) - 6px);
+  gap: 2px;
+}
+
+.bsv-nav-kopf {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 10px 18px;
+  color: var(--bsv-ink);
+  font-weight: 700;
+  font-size: 16px;
+  text-decoration: none;
+  letter-spacing: -0.01em;
+
+  img {
+    width: 30px;
+    height: 32px;
+    object-fit: contain;
+  }
+}
+
+.nav-group {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.nav-group__toggle {
+  padding: 6px 10px;
+  margin-bottom: 2px;
+  color: var(--bsv-muted);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.nav__link {
+  width: 100%;
+  padding: 7px 12px;
+  border-radius: 12px;
+  font-size: 15px;
+  line-height: 1.4;
+  color: var(--bsv-ink);
+  transition: background 0.15s;
+
+  &:hover {
+    background: var(--bsv-soft);
+  }
+
+  &:has(.nav__link-indicator) {
+    background: var(--bsv-green-tint);
+    color: var(--bsv-green);
+    font-weight: 600;
+  }
+}
+
+.nav__link-indicator {
+  display: none;
+}
+
+.bsv-nav-fuss {
+  width: 100%;
+  margin-top: auto;
+  padding-top: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.bsv-nav-person {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--bsv-soft);
+  color: var(--bsv-ink);
+  text-decoration: none;
+  font-size: 13px;
+  line-height: 1.3;
+
+  strong,
+  small {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 170px;
+  }
+
+  small {
+    color: var(--bsv-muted);
+    font-size: 12px;
+  }
+}
+
+.bsv-nav-kuerzel {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  flex: 0 0 auto;
+  background: var(--bsv-green-tint);
+  color: var(--bsv-green);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bsv-nav-website {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--bsv-green);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+/* ---------- Kopfzeile ---------- */
+.app-header {
+  background: rgba(245, 245, 247, 0.85);
+  backdrop-filter: saturate(180%) blur(16px);
+}
+
+.bsv-icon {
+  width: 26px;
+  height: 28px;
+  object-fit: contain;
+}
+
+/* ---------- Buttons ---------- */
+.btn--style-primary {
+  --bg-color: var(--bsv-green);
+  --hover-bg: var(--bsv-green-dark);
+  --color: #ffffff;
+}
+
+.btn {
+  border-radius: 12px;
+  font-weight: 600;
+}
+
+/* ---------- Listen & Dokumente ---------- */
+.collection-list .table,
+.table table {
+  background: #ffffff;
+  border-radius: 18px;
+}
+
+.table {
+  thead th {
+    color: var(--bsv-muted);
+    font-weight: 600;
+  }
+}
+
+.doc-header__title,
+.list-header h1,
+.collection-list__header h1 {
+  font-weight: 800;
+  letter-spacing: -0.03em;
+}
+
+/* Felder: weiß auf hellgrau, weich gerundet */
+.field-type input,
+.field-type textarea,
+.react-select .rs__control {
+  border-radius: 12px;
+}
+
+/* ---------- Anmeldeseite ---------- */
+.bsv-logo {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  color: var(--bsv-ink);
+
+  img {
+    width: 56px;
+    height: 60px;
+    object-fit: contain;
+  }
+
+  strong {
+    display: block;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -0.03em;
+  }
+
+  small {
+    display: block;
+    color: var(--bsv-muted);
+    font-size: 14px;
+  }
+}
+
+/* ---------- Feinschliff Listen ---------- */
+.table {
+  td a {
+    text-decoration: none;
+    font-weight: 600;
+    color: var(--bsv-ink);
+
+    &:hover {
+      color: var(--bsv-green);
+    }
+  }
+
+  tbody tr:nth-child(odd) {
+    background: transparent;
+  }
+
+  tbody tr + tr td {
+    border-top: 1px solid #f0f0f2;
+  }
+}
+
+.list-header__create-new-button .pill,
+.list-create-new-doc__create-new-button .pill {
+  background: var(--bsv-green);
+  color: #ffffff;
+  font-weight: 600;
+  border-radius: 999px;
+  padding-inline: 12px;
+}
+
+.list-header__create-new-button:hover .pill,
+.list-create-new-doc__create-new-button:hover .pill {
+  background: var(--bsv-green-dark);
+}
+
+/* Suchfeld und Spalten/Filter-Leiste */
+.list-controls__wrap,
+.search-bar {
+  background: #ffffff;
+  border-radius: 14px;
+}
+
+.pill {
+  border-radius: 999px;
+}
+
+.doc-header:after {
+  display: none;
+}

@@ -1,3 +1,4 @@
+import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, ROLE_OPTIONS } from '../../access/roles'
@@ -15,6 +16,7 @@ export const Users: CollectionConfig = {
   },
   admin: {
     group: 'Verwaltung',
+    hidden: ausblendenAusser('admin'),
     defaultColumns: ['name', 'email', 'roles'],
     useAsTitle: 'name',
   },

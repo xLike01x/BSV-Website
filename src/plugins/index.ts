@@ -5,7 +5,10 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { anyone } from '@/access/anyone'
-import { isAdmin, isEditor } from '@/access/roles'
+import { ausblendenAusser, isAdmin, isEditor } from '@/access/roles'
+
+/** Selten gebrauchte Technik-Bereiche nur für Admins einblenden */
+const nurAdminSichtbar = ({ user }: { user: unknown }) => !((user as { roles?: string[] } | null)?.roles ?? []).includes('admin')
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
 import { GenerateTitle, GenerateURL } from '@payloadcms/plugin-seo/types'
 import { FixedToolbarFeature, HeadingFeature, lexicalEditor } from '@payloadcms/richtext-lexical'
@@ -29,7 +32,8 @@ export const plugins: Plugin[] = [
   redirectsPlugin({
     collections: ['pages', 'posts'],
     overrides: {
-      admin: { group: 'Einstellungen' },
+      labels: { singular: 'Weiterleitung', plural: 'Weiterleitungen' },
+      admin: { group: 'Einstellungen', hidden: nurAdminSichtbar },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
@@ -65,12 +69,12 @@ export const plugins: Plugin[] = [
     formSubmissionOverrides: {
       // Formulare aus dem Baukasten (Seiten). Eigene BSV-Formulare liegen unter „Verwaltung“.
       labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
-      admin: { group: 'Baukasten' },
+      admin: { group: 'Baukasten', hidden: ausblendenAusser('admin', 'redaktion') },
       access: { create: anyone, read: isEditor, update: isAdmin, delete: isAdmin },
     },
     formOverrides: {
       labels: { singular: 'Formular', plural: 'Formulare' },
-      admin: { group: 'Baukasten' },
+      admin: { group: 'Baukasten', hidden: ausblendenAusser('admin', 'redaktion') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -97,7 +101,8 @@ export const plugins: Plugin[] = [
     collections: ['posts'],
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
-      admin: { group: 'Einstellungen' },
+      labels: { singular: 'Suchindex-Eintrag', plural: 'Suchindex' },
+      admin: { group: 'Einstellungen', hidden: nurAdminSichtbar },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]

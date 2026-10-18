@@ -104,6 +104,7 @@ export const Posts: CollectionConfig<'posts'> = {
   fields: [
     {
       name: 'title',
+      label: 'Titel',
       type: 'text',
       required: true,
     },
@@ -114,6 +115,7 @@ export const Posts: CollectionConfig<'posts'> = {
           fields: [
             {
               name: 'heroImage',
+              label: 'Titelbild',
               type: 'upload',
               relationTo: 'media',
             },
@@ -136,12 +138,13 @@ export const Posts: CollectionConfig<'posts'> = {
               required: true,
             },
           ],
-          label: 'Content',
+          label: 'Inhalt',
         },
         {
           fields: [
             {
               name: 'relatedPosts',
+              label: 'Passende News',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -158,6 +161,7 @@ export const Posts: CollectionConfig<'posts'> = {
             },
             {
               name: 'categories',
+              label: 'Kategorien',
               type: 'relationship',
               admin: {
                 position: 'sidebar',
@@ -166,7 +170,7 @@ export const Posts: CollectionConfig<'posts'> = {
               relationTo: 'categories',
             },
           ],
-          label: 'Meta',
+          label: 'Zuordnung',
         },
         {
           name: 'meta',
@@ -211,17 +215,18 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     {
       name: 'aufStartseite',
-      label: 'Auch auf Startseite und unter „News“ zeigen',
+      label: 'Auf Startseite',
       type: 'checkbox',
       defaultValue: true,
       access: { create: isEditorField, update: isEditorField },
       admin: {
         position: 'sidebar',
-        description: 'Entscheidet die Redaktion. Team-News erscheinen zunächst nur auf der Teamseite.',
+        description: 'Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.',
       },
     },
     {
       name: 'publishedAt',
+      label: 'Veröffentlicht am',
       type: 'date',
       admin: {
         date: {
@@ -242,6 +247,7 @@ export const Posts: CollectionConfig<'posts'> = {
     },
     {
       name: 'authors',
+      label: 'Autor:in',
       type: 'relationship',
       admin: {
         position: 'sidebar',
@@ -284,9 +290,8 @@ export const Posts: CollectionConfig<'posts'> = {
   },
   versions: {
     drafts: {
-      autosave: {
-        interval: 100, // We set this interval for optimal live preview
-      },
+      // Kein Autosave: sonst entsteht beim Öffnen von „News schreiben“ sofort ein leerer Entwurf.
+      // Gespeichert wird mit „Entwurf speichern“ oder „Veröffentlichen“.
       schedulePublish: true,
     },
     maxPerDoc: 50,
