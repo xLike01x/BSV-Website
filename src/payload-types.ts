@@ -563,12 +563,18 @@ export interface FolderInterface {
  */
 export interface Category {
   id: number;
+  /**
+   * So heißt der Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“.
+   */
   title: string;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
   generateSlug?: boolean | null;
   slug: string;
+  /**
+   * Nur nötig, wenn diese Kategorie unter einer anderen stehen soll. Meist leer lassen.
+   */
   parent?: (number | null) | Category;
   breadcrumbs?:
     | {

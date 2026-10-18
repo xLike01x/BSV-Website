@@ -47,7 +47,10 @@ body {
 }
 
 .nav__scroll {
-  --nav-padding-block-start: calc(var(--app-header-height) - 6px);
+  /* Scrollbereich beginnt unter dem Auf-/Zuklapp-Knopf, damit nichts darunter durchrutscht */
+  --nav-padding-block-start: 8px;
+  margin-top: calc(var(--app-header-height) - 14px);
+  height: calc(100% - var(--app-header-height) + 14px);
   gap: 2px;
 }
 
