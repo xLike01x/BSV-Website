@@ -1,3 +1,4 @@
+import { medienAuswahl } from '@/access/roles'
 import type { Block } from 'payload'
 
 export const MediaBlock: Block = {
@@ -12,6 +13,7 @@ export const MediaBlock: Block = {
       label: 'Bild oder Video aus der Mediathek',
       type: 'upload',
       relationTo: 'media',
+      filterOptions: medienAuswahl,
       required: true,
     },
   ],

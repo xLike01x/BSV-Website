@@ -13,7 +13,8 @@ import { anyone } from '../access/anyone'
 import type { CollectionBeforeChangeHook } from 'payload'
 import { APIError } from 'payload'
 
-import { canUpload, eigeneAngebotIds, hasRole, redaktionOderEigeneTeams } from '../access/roles'
+import { canUpload, eigeneAngebotIds, hasRole, medienSichtbar, redaktionOderEigeneTeams } from '../access/roles'
+import { autoZuordnenEndpunkt } from './Media/autoZuordnen'
 
 /** Team-Rollen laden Bilder immer für eines ihrer Teams hoch */
 const teamBildPruefen: CollectionBeforeChangeHook = async ({ req, data, operation }) => {
@@ -39,7 +40,15 @@ export const Media: CollectionConfig = {
     update: redaktionOderEigeneTeams('team'),
   },
   labels: { singular: 'Bild / Datei', plural: 'Mediathek' },
-  admin: { description: 'Alle Bilder und Dateien. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.', group: 'Inhalte', defaultColumns: ['filename', 'alt', 'team', 'inGalerie'] },
+  admin: {
+    description: 'Alle Bilder und Dateien, sortiert in Ordner je Team. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.',
+    group: 'Inhalte',
+    defaultColumns: ['filename', 'alt', 'team', 'allgemein', 'inGalerie'],
+    // Team-Rollen sehen nur Bilder ihrer Teams und „Verein allgemein“
+    baseFilter: ({ req }) => medienSichtbar(req),
+    components: { beforeList: ['@/components/Admin/MedienOrdner'] },
+  },
+  endpoints: [autoZuordnenEndpunkt],
   hooks: { beforeChange: [teamBildPruefen] },
   fields: [
     {
@@ -51,11 +60,26 @@ export const Media: CollectionConfig = {
     hinweisFeld('MedienHinweise'),
     {
       name: 'team',
-      label: 'Team / Kurs',
+      label: 'Ordner (Team / Kurs)',
       type: 'relationship',
       relationTo: 'angebote',
       filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
-      admin: { position: 'sidebar', description: 'Bilder eines Teams kann dessen Team-Redaktion verwalten.' },
+      admin: { position: 'sidebar', description: 'Der Ordner, in dem das Bild liegt. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.' },
+    },
+    {
+      name: 'allgemein',
+      label: 'Verein allgemein',
+      type: 'checkbox',
+      // Nur Redaktion/Admin legen fest, was alle Trainer benutzen dürfen
+      access: {
+        create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+        update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+      },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => !data?.team,
+        description: 'Für Bilder ohne Team, z. B. Logo, Sportplatz, Vereinsfotos. Alle Trainer dürfen sie benutzen, aber nicht ändern.',
+      },
     },
     {
       name: 'inGalerie',

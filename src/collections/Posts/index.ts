@@ -1,3 +1,5 @@
+import { medienPruefen } from '@/hooks/medienPruefen'
+import { medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
@@ -118,6 +120,7 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Titelbild',
       type: 'upload',
       relationTo: 'media',
+      filterOptions: medienAuswahl,
       admin: { description: 'Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.' },
     },
     {
@@ -286,7 +289,7 @@ export const Posts: CollectionConfig<'posts'> = {
   ],
   hooks: {
     beforeValidate: [slugFromTitle],
-    beforeChange: [teamNewsPruefen, seoAutomatisch({ text: (d) => d.content, bild: (d) => d.heroImage })],
+    beforeChange: [teamNewsPruefen, medienPruefen, seoAutomatisch({ text: (d) => d.content, bild: (d) => d.heroImage })],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

@@ -110,6 +110,10 @@ export default buildConfig({
         general: {
           selectValue: 'Bitte auswählen …',
           creating: 'Neu:',
+          // Leere Häkchen-Felder in Listen (sonst erscheint „general:null“)
+          null: 'nein',
+          true: 'ja',
+          false: 'nein',
         },
         version: {
           publishChanges: 'Veröffentlichen',

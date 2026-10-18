@@ -80,17 +80,23 @@ export const HILFE: Record<string, HilfeText> = {
     titel: 'Mediathek',
     kurz: 'Alle Bilder und Dateien der Website an einem Ort.',
     wozu: {
-      text: 'Hier liegen alle Bilder und Dateien. Was hier liegt, kannst du überall auswählen: in News, auf Seiten, bei Teams.',
+      text: 'Hier liegen alle Bilder und Dateien – sortiert in Ordner je Team. Was hier liegt, kannst du in News, auf Seiten und bei Teams auswählen. Trainer sehen nur die Ordner ihrer Teams und „Verein allgemein“.',
       beispiele: ['Mannschaftsfoto für die Teamseite', 'Plakat zum Sommerfest', 'Satzung als PDF'],
     },
     tun: [
       'Bilder oder PDFs hochladen – einfach per Drag & Drop oder über „Neu erstellen“.',
       'Eine kurze Bildbeschreibung eingeben: Was ist auf dem Bild zu sehen?',
       'Ein Team zuordnen und „In Galerie zeigen“ anhaken, damit das Bild in der Galerie des Teams erscheint.',
+      'Oben im Kasten „Ordner“ ein Team anklicken, um nur dessen Bilder zu sehen.',
+      'Ordner ändern: Bild öffnen → rechts „Ordner (Team / Kurs)“. Bilder ohne Team für alle Trainer freigeben: Haken „Verein allgemein“.',
+      'Viele Bilder auf einmal: links anhaken → oben „Bearbeiten“ → Feld „Ordner (Team / Kurs)“ wählen.',
+      'Redaktion: „Automatisch zuordnen“ schlägt für Bilder ohne Ordner das passende Team vor – erst Vorschau, dann „Übernehmen“.',
     ],
     wirkung: [
       'Hochgeladene Bilder kannst du überall auswählen – in News, Seiten, bei Teams und Kursen.',
       'Bilder mit „In Galerie zeigen“ erscheinen auf der Seite des Teams.',
+      'Trainer können nur Bilder ihrer Teams und aus „Verein allgemein“ auswählen. „Verein allgemein“ dürfen sie benutzen, aber nicht ändern.',
+      'Die Ordner gelten nur in der Verwaltung – auf der Website sind die Bilder für alle sichtbar, wo sie eingebaut sind.',
       'Wer den Link zu einer Datei kennt, kann sie öffnen. Keine vertraulichen Unterlagen hochladen.',
     ],
     tipps: [

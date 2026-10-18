@@ -312,3 +312,13 @@ body {
     background: var(--bsv-soft);
   }
 }
+
+/* Mediathek: Ordner kommen aus „Team / Kurs“ (siehe Ordner-Kasten) – Payloads eigene Ordner-Ansicht ausblenden */
+.collection-list--media .default-list-view-tabs {
+  display: none;
+}
+.move-doc-to-folder,
+.folder-edit-field,
+.browse-by-folder-button {
+  display: none !important;
+}

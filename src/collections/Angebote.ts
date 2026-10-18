@@ -1,3 +1,5 @@
+import { medienPruefen } from '@/hooks/medienPruefen'
+import { medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
@@ -29,7 +31,8 @@ export const Angebote: CollectionConfig<'angebote'> = {
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],
   },
-  hooks: { beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
+  hooks: {
+    beforeChange: [medienPruefen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
     { name: 'title', label: 'Name', type: 'text', required: true, admin: { description: 'So heißt das Team oder der Kurs überall auf der Website.' } },
     {
@@ -79,7 +82,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     },
     { name: 'kurzbeschreibung', label: 'Kurzbeschreibung', type: 'textarea', maxLength: 240, admin: { description: 'Ein Satz für Übersichtskarten (höchstens 240 Zeichen).' } },
     { name: 'beschreibung', label: 'Beschreibung', type: 'richText', admin: { description: 'Ausführlicher Text auf der Seite des Teams.' } },
-    { name: 'bild', label: 'Titelbild', type: 'upload', relationTo: 'media', admin: { description: 'Großes Bild oben auf der Teamseite und auf Karten.' } },
+    { name: 'bild', label: 'Titelbild', type: 'upload', relationTo: 'media', filterOptions: medienAuswahl, admin: { description: 'Großes Bild oben auf der Teamseite und auf Karten.' } },
     {
       name: 'zeiten',
       label: 'Trainingszeiten',
@@ -129,7 +132,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
             { name: 'rolle', label: 'Rolle', type: 'text', admin: { placeholder: 'Trainer, Übungsleitung …' } },
           ],
         },
-        { name: 'foto', label: 'Foto', type: 'upload', relationTo: 'media' },
+        { name: 'foto', label: 'Foto', type: 'upload', relationTo: 'media', filterOptions: medienAuswahl },
       ],
     },
     {

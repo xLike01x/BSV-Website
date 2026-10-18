@@ -22,6 +22,7 @@ import { TerminHinweise as TerminHinweise_37fae30b24d1a12bf2667fda13922509 } fro
 import { MedienHinweise as MedienHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
+import { default as default_32ec0822ebee3f70a808b72e6323c81c } from '@/components/Admin/MedienOrdner'
 import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
@@ -72,6 +73,7 @@ export const importMap = {
   "@/components/Admin/Hinweise#MedienHinweise": MedienHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
+  "@/components/Admin/MedienOrdner#default": default_32ec0822ebee3f70a808b72e6323c81c,
   "@/components/Admin/Hinweise#SeitenHinweise": SeitenHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,

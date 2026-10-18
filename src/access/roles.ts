@@ -125,3 +125,18 @@ export const ausblendenAusser =
   (...roles: Role[]) =>
   ({ user }: { user: unknown }): boolean =>
     !hasRole(user as MaybeUser, ...roles)
+
+/**
+ * Welche Bilder darf jemand in der Verwaltung sehen und auswählen?
+ * Redaktion/Admin: alle. Team-Rollen: Bilder ihrer Teams + „Verein allgemein“ (nur benutzen).
+ * Auf der Website bleiben alle Bilder öffentlich – das betrifft nur die Verwaltung.
+ */
+export const medienSichtbar = async (req: PayloadRequest): Promise<Where | null> => {
+  const user = userOf(req)
+  if (!user || hasRole(user, 'admin', 'redaktion')) return null
+  const ids = await eigeneAngebotIds(req)
+  return { or: [...(ids.length ? [{ team: { in: ids } }] : []), { allgemein: { equals: true } }] }
+}
+
+/** Für Bild-Felder (`filterOptions`): nur erlaubte Bilder zur Auswahl anbieten */
+export const medienAuswahl = async ({ req }: { req: PayloadRequest }): Promise<Where | true> => (await medienSichtbar(req)) ?? true

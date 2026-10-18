@@ -83,6 +83,27 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   ],
   media: [
     {
+      id: 'ordner',
+      titel: 'Bilder in Ordner sortieren',
+      schritte: [
+        'Links auf „Mediathek“. Oben siehst du die Ordner – je Team einer, dazu „Verein allgemein“ und „Noch nicht zugeordnet“.',
+        'Auf „Noch nicht zugeordnet“ klicken.',
+        'Bilder, die zum selben Team gehören, links anhaken → oben „Bearbeiten“ → „Ordner (Team / Kurs)“ auswählen → Speichern.',
+        'Bilder für den ganzen Verein (Logo, Sportplatz, Vorstand): öffnen und rechts „Verein allgemein“ anhaken.',
+        'Tipp für den Anfang: „Automatisch zuordnen“ macht den Großteil – danach nur noch Fehler korrigieren.',
+      ],
+    },
+    {
+      id: 'auto-zuordnen',
+      titel: 'Vorhandene Bilder automatisch zuordnen (Redaktion)',
+      schritte: [
+        'In der Mediathek oben auf „✨ Automatisch zuordnen“ klicken.',
+        'Die Vorschau zeigt für jedes Bild ohne Ordner, wohin es kommt – und warum (z. B. „In einer News dieses Teams benutzt“).',
+        'Passt es? Auf „Übernehmen“ klicken. Bereits zugeordnete Bilder werden nie verändert.',
+        'Danach stichprobenartig prüfen und Falsches im Bild rechts bei „Ordner (Team / Kurs)“ ändern.',
+      ],
+    },
+    {
       id: 'bild-hochladen',
       titel: 'Fotos hochladen',
       video: '/hilfe/bilder-hochladen.mp4',
@@ -476,7 +497,9 @@ export const FELDER: Record<string, Feld[]> = {
   ],
   media: [
     { name: 'Bildbeschreibung', text: 'Beschreibt, was zu sehen ist. Wichtig für Menschen, die sich Seiten vorlesen lassen.' },
-    { name: 'Team / Kurs', text: 'Ordnet das Bild einem Team zu.' },
+    { name: 'Ordner (Team / Kurs)', text: 'Der Ordner des Bildes. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.' },
+    { name: 'Verein allgemein', text: 'Für Bilder ohne Team, z. B. Logo oder Sportplatz. Alle Trainer dürfen sie benutzen, aber nicht ändern. Setzen kann das nur die Redaktion.' },
+    { name: 'Noch nicht zugeordnet', text: 'Bilder ohne Team und ohne „Verein allgemein“. Nur die Redaktion sieht sie – Trainer können sie nicht benutzen.' },
     { name: 'In Galerie zeigen', text: 'Das Bild erscheint in der Fotogalerie auf der Seite des Teams.' },
     { name: 'Bildunterschrift (optional)', text: 'Text, der unter dem Bild erscheinen kann, z. B. Fotograf oder Anlass.' },
     { name: 'Bild bearbeiten', text: 'Nach dem Hochladen: zuschneiden und den „wichtigsten Bildbereich“ setzen – dann bleibt z. B. ein Gesicht auch in kleinen Vorschaubildern sichtbar.' },
@@ -572,8 +595,8 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
     admin: 'Du kannst alle News bearbeiten und entscheidest mit „Auf Startseite“, was groß erscheint.',
   },
   media: {
-    uebungsleitung: 'Du kannst Bilder hochladen und deinen Teams zuordnen. Bilder anderer Teams kannst du nicht ändern.',
-    teamredaktion: 'Du kannst Bilder hochladen und deinen Teams zuordnen. Bilder anderer Teams kannst du nicht ändern.',
+    uebungsleitung: 'Du siehst die Ordner deiner Teams und „Verein allgemein“. Neue Bilder landen im Ordner deines Teams. Bilder anderer Teams siehst und benutzt du nicht.',
+    teamredaktion: 'Du siehst die Ordner deiner Teams und „Verein allgemein“. Neue Bilder landen im Ordner deines Teams. Bilder anderer Teams siehst und benutzt du nicht.',
   },
   angebote: {
     uebungsleitung: 'Du siehst alle Angebote, kannst aber nur deine eigenen bearbeiten – z. B. Trainingszeiten und Beschreibung.',
@@ -597,6 +620,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* Häufige Fragen                                                      */
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
+  {
+    frage: 'Warum sehe ich in der Mediathek nicht alle Bilder?',
+    antwort: 'Trainer sehen nur die Ordner ihrer Teams und „Verein allgemein“. So landen keine Bilder versehentlich beim falschen Team. Fehlt dir ein Bild, frag die Redaktion, ob sie es deinem Team oder „Verein allgemein“ zuordnet.',
+    bereich: 'media',
+  },
   {
     frage: 'Was mache ich mit einem eigenen Formular überhaupt?',
     antwort: 'Damit sammelt ihr Angaben von Besuchern, z. B. Anmeldungen zum Sommerfest, eine Helferliste fürs Turnier oder eine Sammelbestellung. Ablauf: 1. Formular bauen (am besten mit Vorlage) 2. auf eine Seite setzen 3. Seite im Menü verlinken 4. Besucher füllen aus 5. Antworten unter „Formular-Eingänge“ lesen. Mitgliedsantrag, Probetraining und Kontakt gibt es schon fertig.',

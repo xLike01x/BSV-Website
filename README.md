@@ -60,6 +60,10 @@ Alle Überschriften und festen Texte der Website stehen in der Verwaltung unter 
 
 Alle Einträge im Hauptmenü (inkl. Reihenfolge), das Aufklappmenü „Verein“ und die Fußzeile (inkl. Kontakt-Spalte mit beliebigen Social-Media-Links) pflegt die Redaktion unter **Inhalte → Menü & Fußzeile**. Leere Liste = Standardmenü.
 
+## Mediathek-Ordner
+
+Jedes Bild hat einen Ordner = „Team / Kurs“ oder „Verein allgemein“. Trainer sehen und benutzen nur ihre Team-Ordner und „Verein allgemein“ (nur benutzen). Die Prüfung gilt auch serverseitig für News und Teams (`src/hooks/medienPruefen.ts`). Redaktion: „Automatisch zuordnen“ in der Mediathek (`src/collections/Media/autoZuordnen.ts`) – erst Vorschau, dann übernehmen; bereits zugeordnete Bilder bleiben unverändert. Auf der Website bleiben Bilder öffentlich.
+
 ## Eigene Formulare
 
 Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferliste, Sammelbestellung). Im Formular erstellt „Neue Seite mit diesem Formular erstellen“ direkt eine Seite mit dem Formular-Baustein. Antworten landen unter **Formular-Eingänge**. Vorlagen: `src/components/Admin/Formulare/vorlagen.ts`.

@@ -261,7 +261,7 @@ export interface Post {
   _status?: ('draft' | 'published') | null;
 }
 /**
- * Alle Bilder und Dateien. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.
+ * Alle Bilder und Dateien, sortiert in Ordner je Team. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "media".
@@ -273,9 +273,13 @@ export interface Media {
    */
   alt?: string | null;
   /**
-   * Bilder eines Teams kann dessen Team-Redaktion verwalten.
+   * Der Ordner, in dem das Bild liegt. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.
    */
   team?: (number | null) | Angebote;
+  /**
+   * Für Bilder ohne Team, z. B. Logo, Sportplatz, Vereinsfotos. Alle Trainer dürfen sie benutzen, aber nicht ändern.
+   */
+  allgemein?: boolean | null;
   /**
    * Nur Fotos mit Einwilligung der abgebildeten Personen – bei Kindern der Eltern.
    */
@@ -1546,6 +1550,7 @@ export interface TermineSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   team?: T;
+  allgemein?: T;
   inGalerie?: T;
   caption?: T;
   folder?: T;
