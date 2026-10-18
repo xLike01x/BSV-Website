@@ -9,6 +9,8 @@ import {
 
 export const Archive: Block = {
   slug: 'archive',
+  imageURL: '/bausteine/archive.svg',
+  imageAltText: 'Mehrere News als Karten nebeneinander',
   interfaceName: 'ArchiveBlock',
   fields: [
     {

@@ -67,6 +67,8 @@ const columnFields: Field[] = [
 
 export const Content: Block = {
   slug: 'content',
+  imageURL: '/bausteine/content.svg',
+  imageAltText: 'Text in zwei Spalten',
   interfaceName: 'ContentBlock',
   labels: { singular: 'Text (in Spalten)', plural: 'Texte' },
   fields: [

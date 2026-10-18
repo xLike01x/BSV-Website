@@ -93,6 +93,7 @@ export const HILFE: Record<string, HilfeText> = {
       '„Neu erstellen“ anklicken und einen Titel vergeben.',
       'Reiter „Kopfbereich“: der große Bereich ganz oben (Art, Überschrift, Buttons, Bild).',
       'Reiter „Inhalt (Bausteine)“: die Seite aus Bausteinen zusammenstellen – Text, Bild, Hinweis-Kasten mit Button, News-Liste, Formular.',
+      'Bei „Baustein hinzufügen“ zeigt jedes Vorschaubild, wie der Baustein später auf der Website ungefähr aussieht.',
       'Reiter „Google-Vorschau“: optional, wird sonst automatisch erzeugt.',
       'Mit der Vorschau (Bildschirm-Symbol oben) siehst du die Seite, bevor sie online geht.',
       '„Veröffentlichen“ stellt die Seite online.',

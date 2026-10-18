@@ -11,6 +11,8 @@ import { linkGroup } from '../../fields/linkGroup'
 
 export const CallToAction: Block = {
   slug: 'cta',
+  imageURL: '/bausteine/cta.svg',
+  imageAltText: 'Grüner Kasten mit Überschrift und Button',
   interfaceName: 'CallToActionBlock',
   fields: [
     {

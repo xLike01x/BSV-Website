@@ -9,6 +9,8 @@ import {
 
 export const FormBlock: Block = {
   slug: 'formBlock',
+  imageURL: '/bausteine/formBlock.svg',
+  imageAltText: 'Formular mit Feldern und Absende-Button',
   interfaceName: 'FormBlock',
   fields: [
     {

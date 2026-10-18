@@ -8,6 +8,8 @@ import {
 
 export const Banner: Block = {
   slug: 'banner',
+  imageURL: '/bausteine/banner.svg',
+  imageAltText: 'Farbiger Hinweis mit Symbol',
   fields: [
     {
       name: 'style',
