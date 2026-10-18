@@ -48,6 +48,26 @@ const nextConfig: NextConfig = {
     return webpackConfig
   },
   reactStrictMode: true,
+  // Verrät nicht, welche Software läuft
+  poweredByHeader: false,
+  // Sicherheits-Header für alle Seiten
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          // Nicht in fremde Seiten einbetten (Klickfallen); eigene Vorschau im Admin bleibt möglich
+          { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
+          { key: 'Content-Security-Policy', value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'; form-action 'self'" },
+          { key: 'X-Content-Type-Options', value: 'nosniff' },
+          { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
+          { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },
+          // Nur über HTTPS wirksam (Browser ignorieren den Header bei http://localhost)
+          { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
+        ],
+      },
+    ]
+  },
   redirects,
   turbopack: {
     root: path.resolve(dirname),
