@@ -61,7 +61,7 @@ export default function NavFuss() {
       <a className="bsv-nav-website" href="/" target="_blank" rel="noopener">
         Zur Website ›
       </a>
-      <small className="bsv-nav-copyright">© {new Date().getFullYear()} Thomas Wilms · Konzept, Design und Umsetzung</small>
+      <small className="bsv-nav-copyright">© {new Date().getFullYear()} <a href="mailto:kontakt.thomas.wilms@gmail.com" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 2 }}>Thomas Wilms</a> · Konzept, Design und Umsetzung · kontakt.thomas.wilms@gmail.com</small>
     </div>
   )
 }

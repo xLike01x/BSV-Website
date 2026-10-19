@@ -76,7 +76,7 @@ export async function Footer() {
         <p className="foot-bottom">
           © {v.name} · Postanschrift: {(v.postanschrift ?? '').replace(/\n/g, ', ')} · <Link href="/kontakt">Kontakt</Link> ·{' '}
           <Link href="/impressum">Impressum</Link> · <Link href="/datenschutz">Datenschutz</Link>
-          <span style={{ display: 'block', marginTop: 4 }}>Konzept, Design und Umsetzung der Website © {new Date().getFullYear()} Thomas Wilms</span>
+          <span style={{ display: 'block', marginTop: 4 }}>Konzept, Design und Umsetzung der Website © {new Date().getFullYear()} <a href="mailto:kontakt.thomas.wilms@gmail.com" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 2 }}>Thomas Wilms</a></span>
         </p>
       </div>
     </footer>
