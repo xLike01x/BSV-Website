@@ -155,6 +155,10 @@ export const Mitgliedsantraege: CollectionConfig = {
   hooks: {
     beforeValidate: [
       spamSchutz('antrag'),
+      ({ data }) => {
+        if (data && typeof data.email === 'string') data.email = data.email.trim().toLowerCase()
+        return data
+      },
       ({ data, operation }) => {
         if (operation === 'create' && data && (!data.sepaMandat || !data.satzungAkzeptiert)) {
           throw new APIError('SEPA-Mandat und Satzung müssen bestätigt werden.', 400)

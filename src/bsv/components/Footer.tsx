@@ -18,17 +18,17 @@ export async function Footer() {
       <div className="foot-inner">
         <div className="foot-top">
           <img src="/bsv-logo.png" alt="BSV 1919 e.V." width={38} height={41} style={{ objectFit: 'contain' }} />
-          <span>{tx.fusszeile?.sponsor}</span>
-          {sponsor?.name && (
-            <a
-              href={sponsor.url || '#'}
-              target="_blank"
-              rel="noopener noreferrer"
-              style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--bsv-ink)' }}
-            >
-              {logo ? <img src={logo} alt={sponsor.name} style={{ height: 32, width: 'auto' }} /> : sponsor.name}
-            </a>
-          )}
+          {sponsor?.name && <span>{tx.fusszeile?.sponsor}</span>}
+          {sponsor?.name &&
+            (sponsor.url ? (
+              <a href={sponsor.url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--bsv-ink)' }}>
+                {logo ? <img src={logo} alt={sponsor.name} style={{ height: 32, width: 'auto' }} /> : sponsor.name}
+              </a>
+            ) : (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--bsv-ink)' }}>
+                {logo ? <img src={logo} alt={sponsor.name} style={{ height: 32, width: 'auto' }} /> : sponsor.name}
+              </span>
+            ))}
           <Link href="/kontakt?thema=Sponsoring" style={{ color: 'var(--bsv-green)', marginLeft: 'auto' }}>
             {tx.fusszeile?.sponsorLink}
           </Link>

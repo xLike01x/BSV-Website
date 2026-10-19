@@ -95,8 +95,8 @@ export const Verein: GlobalConfig = {
       // Veraltet: wird beim Start nach „Sponsoren“ übernommen (Art „Hauptsponsor“)
       admin: { hidden: true },
       fields: [
-        { name: 'name', label: 'Name', type: 'text', defaultValue: 'Dachdeckerbetrieb Kutscher-Remy' },
-        { name: 'url', label: 'Website', type: 'text', defaultValue: 'https://remy-dach.de' },
+        { name: 'name', label: 'Name', type: 'text' },
+        { name: 'url', label: 'Website', type: 'text' },
         { name: 'logo', label: 'Logo', type: 'upload', relationTo: 'media' },
       ],
     },

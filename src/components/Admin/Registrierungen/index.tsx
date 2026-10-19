@@ -18,7 +18,7 @@ export default async function Registrierungen({ initPageResult, params, searchPa
   const r = await req.payload.find({ collection: 'users', where: { freigegeben: { equals: false } }, sort: '-createdAt', limit: 200, depth: 1, overrideAccess: true })
   const emails = r.docs.map((u) => u.email)
   const antraege = emails.length
-    ? (await req.payload.find({ collection: 'mitgliedsantraege', where: { email: { in: emails } }, limit: 500, depth: 0, overrideAccess: true, select: { email: true, status: true } as never })).docs
+    ? (await req.payload.find({ collection: 'mitgliedsantraege', where: { or: emails.map((e) => ({ email: { like: e } })) }, limit: 500, depth: 0, overrideAccess: true, select: { email: true, status: true } as never })).docs
     : []
   const mitglieder = emails.length
     ? (await req.payload.find({ collection: 'mitgliedschaften', where: { and: [{ email: { in: emails } }, { konto: { exists: false } }] }, limit: 500, depth: 0, overrideAccess: true })).docs

@@ -1,18 +1,19 @@
-import { dirname } from 'path'
-import { fileURLToPath } from 'url'
-import { FlatCompat } from '@eslint/eslintrc'
-
-const __filename = fileURLToPath(import.meta.url)
-const __dirname = dirname(__filename)
-
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-})
+import vitals from 'eslint-config-next/core-web-vitals'
+import ts from 'eslint-config-next/typescript'
 
 const eslintConfig = [
-  ...compat.extends('next/core-web-vitals', 'next/typescript'),
+  ...vitals,
+  ...ts,
   {
     rules: {
+      // Neue React-Compiler-Regeln: Hinweise, keine Fehler (bestehender Code funktioniert)
+      'react-hooks/set-state-in-effect': 'warn',
+      'react-hooks/refs': 'warn',
+      'react-hooks/purity': 'warn',
+      'react-hooks/immutability': 'warn',
+      'react-hooks/static-components': 'warn',
+      // Links in die Verwaltung (/admin) sind bewusst normale Links (eigene App)
+      '@next/next/no-html-link-for-pages': 'off',
       '@typescript-eslint/ban-ts-comment': 'warn',
       '@typescript-eslint/no-empty-object-type': 'warn',
       '@typescript-eslint/no-explicit-any': 'warn',

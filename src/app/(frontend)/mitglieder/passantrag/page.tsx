@@ -65,7 +65,7 @@ export default async function PassantragSeite({ searchParams }: { searchParams: 
           Fußball
         </p>
         <h1 className="t-page in2" style={{ fontSize: 'clamp(40px, 6vw, 64px)' }}>
-          {vorher ? 'Unterlagen nachreichen' : 'Spielerpass beantragen'}
+          {!vorher ? 'Spielerpass beantragen' : vorher.hinweis ? 'Unterlagen nachreichen' : 'Antrag ansehen & ändern'}
         </h1>
         <p className="lead in2" style={{ margin: '10px 0 28px', fontSize: 19 }}>
           Für Meisterschaft, Pokal und Turniere mit Passpflicht braucht jede Spielerin und jeder Spieler eine Spielerlaubnis. Wir reichen den Antrag beim Verband ein.

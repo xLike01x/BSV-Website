@@ -87,7 +87,8 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
                     className="nav-link"
                     aria-expanded={open === m.id}
                     aria-current={bereichAktiv(m) ? 'page' : undefined}
-                    onClick={() => setOpen(open === m.id ? null : m.id)}
+                    // Maus: Klick öffnet nur (Hover hat schon geöffnet). Tastatur/Touch (detail 0 bzw. kein Hover): umschalten
+                    onClick={(ev) => setOpen(ev.detail === 0 || open !== m.id ? (open === m.id ? null : m.id) : m.id)}
                     onMouseEnter={() => setOpen(m.id)}
                   >
                     {e.label}

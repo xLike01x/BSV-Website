@@ -15,7 +15,10 @@ export function Profilfoto({ name, foto, fotoId }: { name: string; foto: string 
     setFehler(null)
     if (!/^image\/(jpeg|png|webp)$/.test(datei.type)) return setFehler('Bitte ein Foto als JPG, PNG oder WebP wählen.')
     if (datei.size > 15 * 1024 * 1024) return setFehler('Das Foto ist zu groß (höchstens 15 MB).')
-    setVorschau(URL.createObjectURL(datei))
+    setVorschau((alt) => {
+      if (alt) URL.revokeObjectURL(alt)
+      return URL.createObjectURL(datei)
+    })
     setLaedt(true)
     const fd = new FormData()
     fd.append('file', datei)
@@ -32,8 +35,9 @@ export function Profilfoto({ name, foto, fotoId }: { name: string; foto: string 
   async function entfernen() {
     if (!fotoId) return
     setLaedt(true)
-    await fetch(`/api/profilbilder/${fotoId}`, { method: 'DELETE', credentials: 'same-origin' }).catch(() => null)
+    const res = await fetch(`/api/profilbilder/${fotoId}`, { method: 'DELETE', credentials: 'same-origin' }).catch(() => null)
     setLaedt(false)
+    if (!res?.ok) return setFehler('Das Entfernen hat nicht geklappt. Bitte erneut versuchen.')
     setVorschau(null)
     router.refresh()
   }

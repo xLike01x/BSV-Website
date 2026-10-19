@@ -141,7 +141,7 @@
 .nav-panel-intro { flex: 1.3 1 0; min-width: 180px; }
 .nav-panel-group { flex: 1 1 0; min-width: 0; }
 /* Breite Bildschirme: jede Spalte so breit wie ihr längster Eintrag – alles in einer Zeile */
-@media (min-width: 1100px) {
+@media (min-width: 1280px) {
   .nav-panel-inner { justify-content: space-between; }
   .nav-panel-intro { flex: 0 1 300px; }
   .nav-panel-group { flex: 0 0 auto; }
@@ -527,3 +527,6 @@
 .ausweis-overlay > div { display: flex; flex-direction: column; align-items: center; }
 @media (prefers-reduced-motion: reduce) { .ausweis-schimmer { animation: none; } }
 @media (max-width: 420px) { .ausweis-mitte { flex-direction: column-reverse; align-items: flex-start; } }
+/* Unsichtbar, aber per Tastatur erreichbar (z. B. Datei-Auswahl im Passantrag) */
+.sr-nur { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+.pa-datei label:focus-within { outline: 3px solid var(--bsv-green-tint); outline-offset: 2px; }

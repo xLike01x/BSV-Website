@@ -24,7 +24,9 @@ export const teilnehmendeEndpunkt: Endpoint = {
     return Response.json({
       personen: r.docs.map((u) => {
         const foto = u.profilbild && typeof u.profilbild === 'object' ? u.profilbild : null
-        return { id: u.id, name: u.name, foto: foto ? (foto.sizes?.klein?.url ?? foto.url ?? null) : null }
+        // Fotos nur für die, die sie auch öffnen dürfen (Admin, Kasse, Übungsleitung des Kurses)
+        const darfFoto = trainer || hasRole(user as never, 'admin', 'kasse')
+        return { id: u.id, name: u.name, foto: foto && darfFoto ? (foto.sizes?.klein?.url ?? foto.url ?? null) : null }
       }),
     })
   },

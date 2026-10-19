@@ -228,7 +228,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
                 {laedtHoch === u.feld ? 'Lädt …' : d ? 'Ersetzen' : 'Hochladen'}
                 <input
                   type="file"
-                  hidden
+                  className="sr-nur"
                   accept="image/jpeg,image/png,image/webp,application/pdf"
                   disabled={laedtHoch !== null}
                   onChange={(e) => {

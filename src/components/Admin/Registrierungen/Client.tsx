@@ -41,7 +41,7 @@ export default function RegistrierungenClient({ eintraege }: { eintraege: Eintra
                 <strong>{e.name}</strong>
                 <span>{e.email}</span>
                 <small>
-                  {new Date(e.am).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })} · {e.ueber === 'google' ? 'mit Google' : 'mit E-Mail'}
+                  {new Date(e.am).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Europe/Berlin' })} · {e.ueber === 'google' ? 'mit Google' : 'mit E-Mail'}
                   {e.antrag && <em> · Mitgliedsantrag mit dieser E-Mail vorhanden</em>}
                 </small>
                 <small className={e.bestaetigt ? 'bsv-reg__ok' : 'bsv-reg__warn'}>{e.bestaetigt ? '✓ E-Mail durch Google bestätigt' : '⚠ E-Mail nicht bestätigt'}</small>

@@ -100,7 +100,7 @@ export function Karussell({ children, label = 'Beiträge', automatisch = 0 }: { 
       const p = pause.current
       if (!(p.maus || p.fokus || p.finger || p.unsichtbar || document.hidden)) {
         verstrichen.current += jetzt - zuletzt
-        el?.style.setProperty('--fortschritt', String(Math.min(1, verstrichen.current / automatisch)))
+        el?.style.setProperty('--fortschritt', String(Math.max(0, Math.min(1, verstrichen.current / automatisch))))
         if (verstrichen.current >= automatisch) {
           verstrichen.current = 0
           setAktiv((a) => {
@@ -129,7 +129,7 @@ export function Karussell({ children, label = 'Beiträge', automatisch = 0 }: { 
       ref={huelle}
       onMouseEnter={() => (pause.current.maus = true)}
       onMouseLeave={() => (pause.current.maus = false)}
-      onFocus={() => (pause.current.fokus = true)}
+      onFocus={(e) => (pause.current.fokus = (e.target as HTMLElement).matches(':focus-visible'))}
       onBlur={() => (pause.current.fokus = false)}
       onTouchStart={() => (pause.current.finger = true)}
       onTouchEnd={() => setTimeout(() => (pause.current.finger = false), 4000)}

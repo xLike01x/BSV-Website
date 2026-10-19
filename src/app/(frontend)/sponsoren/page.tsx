@@ -37,9 +37,16 @@ export default async function SponsorenSeite() {
               <p className="kicker" style={{ fontSize: 16 }}>
                 Hauptsponsor
               </p>
-              <a href={haupt.url || '#'} target="_blank" rel="noopener noreferrer">
-                {haupt.logo && typeof haupt.logo === 'object' ? <Bild media={haupt.logo} size="medium" sizes="320px" alt={haupt.name} /> : <strong>{haupt.name}</strong>}
-              </a>
+              {(() => {
+                const inhalt = haupt.logo && typeof haupt.logo === 'object' ? <Bild media={haupt.logo} size="medium" sizes="320px" alt={haupt.name} /> : <strong>{haupt.name}</strong>
+                return haupt.url ? (
+                  <a href={haupt.url} target="_blank" rel="noopener noreferrer">
+                    {inhalt}
+                  </a>
+                ) : (
+                  inhalt
+                )
+              })()}
               {haupt.text && <p className="muted" style={{ margin: '12px 0 0' }}>{haupt.text}</p>}
             </div>
           )}
