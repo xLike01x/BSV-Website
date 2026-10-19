@@ -539,7 +539,7 @@ export interface User {
     totalDocs?: number;
   };
   /**
-   * Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.
+   * Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Ändern kann nur ein Web-Admin – Admins sehen die Häkchen nur. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.
    */
   zusatzrechte?: {
     /**

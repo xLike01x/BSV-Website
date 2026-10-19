@@ -6,7 +6,7 @@ import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
 import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
-import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, ROLE_OPTIONS } from '../../access/roles'
+import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
 import { zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
@@ -103,10 +103,11 @@ export const Users: CollectionConfig = {
       name: 'zusatzrechte',
       label: 'Zusatzrechte nur für diese Person',
       type: 'group',
-      access: { create: isAdminField, update: isAdminField },
+      // Nur Web-Admins vergeben Zusatzrechte – Admins sehen sie, ändern aber nicht
+      access: { create: istWebAdminField, update: istWebAdminField },
       admin: {
         description:
-          'Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.',
+          'Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Ändern kann nur ein Web-Admin – Admins sehen die Häkchen nur. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.',
       },
       fields: EINZELRECHTE.map((r) => ({ name: r.key, label: r.label, type: 'checkbox' as const, defaultValue: false, admin: { description: `${r.gruppe} · ${r.text}` } })),
     },

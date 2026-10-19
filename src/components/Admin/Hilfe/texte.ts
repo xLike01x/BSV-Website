@@ -299,7 +299,7 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       'Neue Konten anlegen und Rollen vergeben.',
       'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Einstellungen“ → „Rollen & Rechte“.',
-      'Einzelne Rechte nur für diese Person: beim Benutzer unten „Zusatzrechte nur für diese Person“ – Häkchen setzen, speichern. Für Ausnahmen, wenn eine ganze Rolle zu viel wäre.',
+      'Einzelne Rechte nur für diese Person: beim Benutzer unten „Zusatzrechte nur für diese Person“ – Häkchen setzen, speichern (nur Web-Admin). Für Ausnahmen, wenn eine ganze Rolle zu viel wäre.',
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',

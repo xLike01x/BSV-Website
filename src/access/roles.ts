@@ -50,6 +50,9 @@ export const isAdminField: FieldAccess = ({ req }) => hasRole(userOf(req), 'admi
 /** Web-Admin: oberste Rolle (Technik, Admin-Konten verwalten) */
 export const istWebAdmin = (user: unknown): boolean => hasRole(user as MaybeUser, 'webadmin')
 
+/** Feld nur für Web-Admins änderbar (z. B. Zusatzrechte einzelner Personen) */
+export const istWebAdminField: FieldAccess = ({ req }) => hasRole(userOf(req), 'webadmin')
+
 /** Inhalte pflegen: Admin + Redaktion. */
 export const isEditor: Access = ({ req }) => hasRole(userOf(req), 'admin', 'redaktion')
 export const isEditorField: FieldAccess = ({ req }) => hasRole(userOf(req), 'admin', 'redaktion')

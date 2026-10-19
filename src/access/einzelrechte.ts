@@ -1,6 +1,6 @@
 /**
  * Einzelrechte: einzelne Berechtigungen für eine bestimmte Person – zusätzlich zu ihren Rollen.
- * Vergibt nur ein Admin beim Benutzer („Zusatzrechte für diese Person“).
+ * Vergibt nur ein Web-Admin beim Benutzer („Zusatzrechte nur für diese Person“). Admins sehen sie nur.
  * Bewusst ausgenommen: Benutzerverwaltung, Admin-Rechte, Bankdaten (Mitgliedsanträge) und Datensicherung.
  *
  * Wer mindestens ein Einzelrecht hat, kommt in die Verwaltung – und braucht wie alle Verwaltungs-Zugänge
