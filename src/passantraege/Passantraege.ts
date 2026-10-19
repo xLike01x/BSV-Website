@@ -4,6 +4,7 @@ import { APIError } from 'payload'
 import { ausblendenAusser, istMitgliedOderMehr } from '@/access/roles'
 
 import { istBearbeiter, istPassVerwaltung, passLesen, passTeams } from './zugriff'
+import { teamBenachrichtigen } from '@/sport/teamMail'
 
 /** Unterlagen-Felder im Antrag: Feldname = Art der Unterlage */
 export const UNTERLAGEN = [
@@ -165,6 +166,23 @@ export const Passantraege: CollectionConfig = {
       },
     ],
     afterChange: [
+      // Neuer Antrag → Mail an die Trainer des Teams und an „Passwesen“ (ohne Unterlagen, nur Hinweis)
+      async ({ doc, operation, req }) => {
+        if (operation !== 'create') return doc
+        const team = id(doc.team)
+        if (!team) return doc
+        const t = (await req.payload.findByID({ collection: 'angebote', id: team, depth: 0, overrideAccess: true, req }).catch(() => null)) as { title?: string } | null
+        await teamBenachrichtigen(req, {
+          angebotId: team,
+          schalterKey: 'passantraege',
+          zusatzRollen: ['passwesen'],
+          betreff: `Neuer Passantrag: ${t?.title ?? 'Team'}`,
+          titel: 'Neuer Passantrag',
+          absaetze: [`für „${t?.title ?? 'ein Team'}“ wurde ein neuer Passantrag eingereicht.`, 'Die Unterlagen findest du in der Verwaltung unter „Passanträge“. Bitte prüfen und den Status setzen.'],
+          pfad: `/admin/collections/passantraege/${doc.id}`,
+        }).catch((e) => req.payload.logger.error({ err: e }, 'Passantrag-Benachrichtigung fehlgeschlagen'))
+        return doc
+      },
       // Unterlagen diesem Antrag und Team zuordnen; ersetzte Dateien löschen
       async ({ doc, previousDoc, req }) => {
         const team = id(doc.team)

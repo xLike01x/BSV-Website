@@ -96,6 +96,34 @@ export const Angebote: CollectionConfig<'angebote'> = {
     { name: 'beschreibung', label: 'Beschreibung', type: 'richText', admin: { description: 'Ausführlicher Text auf der Seite des Teams.' } },
     { name: 'bild', label: 'Titelbild', type: 'upload', relationTo: 'media', filterOptions: medienAuswahl, admin: { description: 'Großes Bild oben auf der Teamseite und auf Karten.' } },
     {
+      type: 'collapsible',
+      label: 'Hinweis-Banner auf der Teamseite',
+      admin: {
+        initCollapsed: true,
+        description: 'Kurzer Hinweis ganz oben auf der Teamseite, z. B. „Heute in Halle 2“ oder „Ferienpause bis 5. Januar“. Verschwindet nach dem Datum von selbst. Trainer können ihn auch im Mitgliederbereich setzen.',
+      },
+      fields: [
+        { name: 'bannerText', label: 'Hinweis', type: 'text', maxLength: 160, admin: { placeholder: 'z. B. Training heute in Halle 2' } },
+        {
+          type: 'row',
+          fields: [
+            { name: 'bannerBis', label: 'Anzeigen bis einschließlich', type: 'date', admin: { width: '50%', date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' }, description: 'Leer = bis du ihn löschst.' } },
+            {
+              name: 'bannerArt',
+              label: 'Art',
+              type: 'radio',
+              defaultValue: 'info',
+              options: [
+                { label: 'ℹ️ Info', value: 'info' },
+                { label: '⚠️ Wichtig', value: 'wichtig' },
+              ],
+              admin: { width: '50%', layout: 'horizontal' },
+            },
+          ],
+        },
+      ],
+    },
+    {
       name: 'zeiten',
       label: 'Trainingszeiten',
       type: 'array',

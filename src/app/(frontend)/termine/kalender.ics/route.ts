@@ -2,6 +2,7 @@ import configPromise from '@payload-config'
 import { getPayload } from 'payload'
 
 import { ical } from '@/bsv/ical'
+import { abFilter, aufloesen } from '@/bsv/wiederholung'
 import { getServerSideURL } from '@/utilities/getURL'
 
 /**
@@ -17,7 +18,7 @@ export async function GET(request: Request) {
   ab.setMonth(ab.getMonth() - 1)
   const res = await payload.find({
     collection: 'termine',
-    where: { and: [{ nurMitglieder: { not_equals: true } }, id ? { id: { equals: Number(id) } } : { beginn: { greater_than_equal: ab.toISOString() } }] },
+    where: { and: [{ nurMitglieder: { not_equals: true } }, id ? { id: { equals: Number(id) } } : abFilter(ab)] },
     sort: 'beginn',
     limit: 500,
     depth: 0,
@@ -25,7 +26,11 @@ export async function GET(request: Request) {
   })
   if (id && !res.docs.length) return new Response('Termin nicht gefunden', { status: 404 })
   const datei = id ? `bsv-termin-${id}.ics` : 'bsv-termine.ics'
-  return new Response(ical(res.docs, getServerSideURL()), {
+  const bis = new Date()
+  bis.setFullYear(bis.getFullYear() + 1)
+  // Wiederkehrende Termine als Einzeltermine (bleiben auch bei der Zeitumstellung auf der richtigen Uhrzeit)
+  const termine = aufloesen(res.docs, id ? new Date(0) : ab, bis)
+  return new Response(ical(termine, getServerSideURL()), {
     headers: {
       'Content-Type': 'text/calendar; charset=utf-8',
       'Content-Disposition': `${id ? 'attachment' : 'inline'}; filename="${datei}"`,

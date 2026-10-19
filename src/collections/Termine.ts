@@ -42,6 +42,47 @@ export const Termine: CollectionConfig = {
         { name: 'ende', label: 'Ende', type: 'date', admin: { description: 'Optional.', date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' } } },
       ],
     },
+    {
+      type: 'row',
+      fields: [
+        {
+          name: 'wiederholung',
+          label: 'Wiederholen',
+          type: 'select',
+          defaultValue: 'keine',
+          options: [
+            { label: 'Nicht wiederholen', value: 'keine' },
+            { label: 'Jede Woche', value: 'woechentlich' },
+            { label: 'Alle 2 Wochen', value: 'zweiwoechentlich' },
+            { label: 'Jeden Monat (gleicher Tag)', value: 'monatlich' },
+          ],
+          admin: { width: '50%', description: 'Einmal anlegen statt mehrfach. Auf der Website erscheint jeder Termin einzeln.' },
+        },
+        {
+          name: 'wiederholungBis',
+          label: 'Wiederholen bis einschließlich',
+          type: 'date',
+          admin: { width: '50%', condition: (d) => Boolean(d?.wiederholung) && d?.wiederholung !== 'keine', date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' }, description: 'Höchstens 2 Jahre. Monatlich am 29.–31.: in kürzeren Monaten entfällt der Termin.' },
+          validate: (wert: unknown, { siblingData }: { siblingData?: { wiederholung?: string; beginn?: string } }) => {
+            if (!siblingData?.wiederholung || siblingData.wiederholung === 'keine') return true
+            if (!wert) return 'Bitte angeben, bis wann der Termin wiederholt wird.'
+            const bis = new Date(String(wert)).getTime()
+            const start = siblingData.beginn ? new Date(siblingData.beginn).getTime() : Date.now()
+            if (bis < start) return 'Das Ende der Wiederholung liegt vor dem ersten Termin.'
+            if (bis - start > 731 * 86400000) return 'Bitte höchstens 2 Jahre im Voraus.'
+            return true
+          },
+        },
+      ],
+    },
+    {
+      name: 'auslassen',
+      label: 'Einzelne Termine auslassen',
+      labels: { singular: 'Datum', plural: 'Daten' },
+      type: 'array',
+      admin: { condition: (d) => Boolean(d?.wiederholung) && d?.wiederholung !== 'keine', initCollapsed: false, description: 'Z. B. Ferien oder Feiertage – an diesen Tagen findet der Termin nicht statt.' },
+      fields: [{ name: 'datum', label: 'Datum', type: 'date', required: true, admin: { date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' } } }],
+    },
     { name: 'ort', label: 'Ort', type: 'text', defaultValue: 'Kutscher-Remy-Sportpark, Schützenstraße 25a, 46487 Wesel' },
     {
       name: 'bereich',

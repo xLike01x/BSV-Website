@@ -11,6 +11,7 @@ import { T } from '@/bsv/components/Text'
 import { googleKalender } from '@/bsv/ical'
 import { getServerSideURL } from '@/utilities/getURL'
 import { aktuellerBenutzer, getPlatzhalter, getTermine, getTexte } from '@/bsv/data'
+import { terminSchluessel } from '@/bsv/wiederholung'
 import { datum, uhrzeit } from '@/bsv/lib'
 
 export const dynamic = 'force-dynamic'
@@ -46,7 +47,7 @@ export default async function TerminSeite() {
       location: { '@type': 'Place', name: t.ort || 'Kutscher-Remy-Sportpark', address: t.ort || 'Schützenstraße 25a, 46487 Wesel' },
       description: t.beschreibung ?? undefined,
       organizer: { '@type': 'SportsOrganization', name: 'Büdericher Spielverein 1919 e.V.', url: absolut('/') },
-      url: absolut(`/termine#termin-${t.id}`),
+      url: absolut(`/termine#termin-${terminSchluessel(t)}`),
     }))
 
   return (
@@ -97,7 +98,7 @@ export default async function TerminSeite() {
               {liste.map((t) => {
                 const [label, tint, bg] = BEREICH[t.bereich ?? 'verein'] ?? BEREICH.verein!
                 return (
-                  <div key={t.id} id={`termin-${t.id}`} className="info rv" style={{ scrollMarginTop: 90, display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', background: '#fff', border: '1px solid var(--bsv-line-2)' }}>
+                  <div key={terminSchluessel(t)} id={`termin-${terminSchluessel(t)}`} className="info rv" style={{ scrollMarginTop: 90, display: 'flex', gap: 20, alignItems: 'center', flexWrap: 'wrap', background: '#fff', border: '1px solid var(--bsv-line-2)' }}>
                     <div style={{ width: 76, textAlign: 'center', background: bg, borderRadius: 18, padding: '10px 0', flex: '0 0 auto' }}>
                       <div style={{ fontSize: 13, fontWeight: 600, color: tint }}>{datum(t.beginn, { weekday: 'short' })}</div>
                       <div style={{ fontSize: 30, fontWeight: 800, letterSpacing: '-0.03em', lineHeight: 1.1 }}>{datum(t.beginn, { day: 'numeric' })}</div>
@@ -121,7 +122,7 @@ export default async function TerminSeite() {
                           <a className="termin-link" href={googleKalender(t)} target="_blank" rel="noopener noreferrer">
                             Google Kalender
                           </a>
-                          <Teilen klein titel={t.title} pfad={`/termine#termin-${t.id}`} text={`${t.title} – ${datum(t.beginn, { weekday: 'long', day: 'numeric', month: 'long' })}, ${uhrzeit(t.beginn)} Uhr`} />
+                          <Teilen klein titel={t.title} pfad={`/termine#termin-${terminSchluessel(t)}`} text={`${t.title} – ${datum(t.beginn, { weekday: 'long', day: 'numeric', month: 'long' })}, ${uhrzeit(t.beginn)} Uhr`} />
                         </div>
                       )}
                     </div>

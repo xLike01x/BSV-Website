@@ -156,6 +156,17 @@ export const Users: CollectionConfig = {
     { name: 'bestaetigungBis', type: 'date', access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
     // Alt: Verknüpfung mit dem Google-Konto (Google-Anmeldung entfernt; Feld bleibt, damit die Datenbank unverändert bleibt)
     { name: 'googleId', type: 'text', index: true, access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
+    {
+      name: 'mailBenachrichtigung',
+      label: 'E-Mail-Benachrichtigungen zu meinen Teams',
+      type: 'checkbox',
+      defaultValue: true,
+      admin: {
+        position: 'sidebar',
+        condition: (d) => (d?.roles ?? []).some((r: string) => r !== 'mitglied'),
+        description: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams. Haken entfernen = keine Mails.',
+      },
+    },
     ...zweiFaktorFelder,
     testkontoFeld,
     {

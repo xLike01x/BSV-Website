@@ -538,3 +538,8 @@
 /* Unsichtbar, aber per Tastatur erreichbar (z. B. Datei-Auswahl im Passantrag) */
 .sr-nur { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
 .pa-datei label:focus-within { outline: 3px solid var(--bsv-green-tint); outline-offset: 2px; }
+
+/* Hinweis-Banner auf der Teamseite */
+.team-banner { margin: 0 0 24px; padding: 14px 18px; border-radius: 16px; font-size: 17px; font-weight: 600; display: flex; gap: 10px; align-items: flex-start; }
+.team-banner--info { background: #e8f1fd; color: #1e3a8a; }
+.team-banner--wichtig { background: #fff4e5; color: #8a4b00; }

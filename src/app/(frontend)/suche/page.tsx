@@ -1,4 +1,5 @@
 import type { Metadata } from 'next'
+import { abFilter, terminSchluessel, vorkommen } from '@/bsv/wiederholung'
 import Link from 'next/link'
 import type { Where } from 'payload'
 import React from 'react'
@@ -38,12 +39,12 @@ export default async function Suche({ searchParams }: { searchParams: Promise<{ 
       }),
       p.find({ collection: 'posts', where: { and: [{ _status: { equals: 'published' } }, enthaelt('title', 'meta.description')] }, sort: '-publishedAt', limit: 10, depth: 0 }),
       p.find({ collection: 'pages', where: { and: [{ _status: { equals: 'published' } }, enthaelt('title', 'meta.description')] }, limit: 10, depth: 0 }),
-      p.find({ collection: 'termine', where: { and: [{ beginn: { greater_than_equal: heute.toISOString() } }, enthaelt('title', 'beschreibung', 'ort')] }, sort: 'beginn', limit: 10, depth: 0, overrideAccess: false, user }),
+      p.find({ collection: 'termine', where: { and: [abFilter(heute), enthaelt('title', 'beschreibung', 'ort')] }, sort: 'beginn', limit: 10, depth: 0, overrideAccess: false, user }),
     ])
     gruppen.push(
       { titel: 'Teams & Kurse', treffer: angebote.docs.map((a) => ({ href: `/angebote/${a.slug}`, art: a.kategorie ?? 'Team', titel: a.title, text: a.kurzbeschreibung ?? a.alterText ?? undefined })) },
       { titel: 'News', treffer: news.docs.map((n) => ({ href: `/news/${n.slug}`, art: datum(n.publishedAt), titel: n.title, text: n.meta?.description ?? undefined })) },
-      { titel: 'Termine', treffer: termine.docs.map((t) => ({ href: `/termine#termin-${t.id}`, art: datum(t.beginn, { weekday: 'short', day: 'numeric', month: 'long' }), titel: t.title, text: t.ort ?? undefined })) },
+      { titel: 'Termine', treffer: termine.docs.map((roh) => vorkommen(roh, heute, new Date(heute.getTime() + 366 * 86400000), 1)[0]).filter((t) => t !== undefined).map((t) => ({ href: `/termine#termin-${terminSchluessel(t)}`, art: datum(t.beginn, { weekday: 'short', day: 'numeric', month: 'long' }), titel: t.title, text: t.ort ?? undefined })) },
       { titel: 'Seiten', treffer: seiten.docs.map((s) => ({ href: s.slug === 'home' ? '/' : `/${s.slug}`, art: 'Seite', titel: s.title, text: s.meta?.description ?? undefined })) },
     )
   }

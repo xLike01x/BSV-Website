@@ -1,4 +1,7 @@
 import { hasRole } from '@/access/roles'
+import { darf, rechteLaden } from '@/access/rollenRechte'
+import { TeamPflege } from '@/bsv/components/TeamPflege'
+import { terminSchluessel } from '@/bsv/wiederholung'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -97,6 +100,9 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
   const geleitet = rollen.includes('uebungsleitung') || rollen.includes('teamredaktion')
     ? (await p.find({ collection: 'angebote', where: { leitung: { contains: user.id } }, depth: 0, limit: 50, overrideAccess: true })).docs
     : []
+  // Team-Redaktion darf Ausfälle nur melden, wenn der Web-Admin es unter „Rollen-Rechte“ eingeschaltet lässt
+  await rechteLaden(p)
+  const darfAusfall = rollen.some((r) => ['admin', 'redaktion', 'uebungsleitung'].includes(r)) || darf(user, 'teamredaktion', 'ausfaelle')
   const alleIds = Array.from(new Set([...meine, ...geleitet].map((a) => a.id)))
   // Eigene Passanträge (auch für Kinder gestellte)
   const passantraege = (
@@ -189,22 +195,23 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
             </div>
             <div className="grid-cards" style={{ marginTop: 20 }}>
               {geleitet.map((a) => (
-                <div key={a.id} className="info" style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-                  <strong style={{ fontSize: 20 }}>{a.title}</strong>
-                  <span className="muted">{kurzZeit(a)}</span>
-                  <div style={{ display: 'flex', gap: 14, flexWrap: 'wrap', marginTop: 8, fontSize: 15 }}>
-                    <a href={`/admin/collections/ausfaelle/create`} className="link-more">
-                      Ausfall melden ›
-                    </a>
-                    <a href={`/admin/collections/posts/create`} className="link-more">
-                      News schreiben ›
-                    </a>
-                    <a href={`/admin/collections/angebote/${a.id}`} className="link-more">
-                      Bearbeiten ›
-                    </a>
-                    <Link href={`/angebote/${a.slug}`}>Ansehen</Link>
-                  </div>
-                </div>
+                <TeamPflege
+                  key={a.id}
+                  darfAusfall={darfAusfall}
+                  team={{
+                    id: a.id,
+                    title: a.title,
+                    slug: a.slug ?? '',
+                    zeit: kurzZeit(a),
+                    tage: (a.zeiten ?? []).map((z) => z.tag).filter((t): t is NonNullable<typeof t> => Boolean(t)),
+                    bannerText: a.bannerText ?? null,
+                    bannerBis: a.bannerBis ?? null,
+                    bannerArt: a.bannerArt ?? null,
+                    ausfaelle: ausfaelle
+                      .filter((x) => (typeof x.angebot === 'object' ? x.angebot?.id : x.angebot) === a.id)
+                      .map((x) => ({ id: x.id, datum: x.datum, grund: x.grund ?? null })),
+                  }}
+                />
               ))}
             </div>
           </div>
@@ -243,7 +250,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
           )}
           <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
             {termine.map((t) => (
-              <div key={t.id} style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
+              <div key={terminSchluessel(t)} style={{ display: 'flex', gap: 14, alignItems: 'center' }}>
                 <div style={{ width: 56, textAlign: 'center', background: 'var(--bsv-green-tint)', borderRadius: 14, padding: '6px 0', flex: '0 0 auto' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, color: 'var(--bsv-green)' }}>{datum(t.beginn, { month: 'short' })}</div>
                   <div style={{ fontSize: 22, fontWeight: 800 }}>{datum(t.beginn, { day: 'numeric' })}</div>

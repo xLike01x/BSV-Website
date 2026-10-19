@@ -58,5 +58,80 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
         link: 'Aufräumen',
       })
   }
+  // Entwürfe & Erinnerungen
+  const user = req.user as { id: number } | null
+  const redaktion = admin || rollen.includes('redaktion')
+  const teamRolle = rollen.includes('uebungsleitung') || rollen.includes('teamredaktion')
+  if (user && (redaktion || teamRolle)) {
+    const eigeneTeams = teamRolle && !redaktion
+      ? (await req.payload.find({ collection: 'angebote', where: { leitung: { contains: user.id } }, limit: 100, depth: 0, overrideAccess: true, select: { title: true, zeiten: true, updatedAt: true, aktiv: true } as never })).docs
+      : []
+    // Unveröffentlichte News: Redaktion alle, Team-Rollen die eigenen bzw. die ihrer Teams
+    const entwuerfe = await req.payload
+      .count({
+        collection: 'posts',
+        where: {
+          and: [
+            { _status: { equals: 'draft' } },
+            ...(redaktion ? [] : [{ or: [{ authors: { contains: user.id } }, ...(eigeneTeams.length ? [{ team: { in: (eigeneTeams as unknown as { id: number }[]).map((t) => t.id) } }] : [])] }]),
+          ],
+        },
+        overrideAccess: true,
+      })
+      .catch(() => ({ totalDocs: 0 }))
+    if (entwuerfe.totalDocs)
+      a.push({
+        key: 'entwuerfe',
+        art: 'info',
+        symbol: '📝',
+        text: `${entwuerfe.totalDocs} ${entwuerfe.totalDocs === 1 ? 'News ist noch ein Entwurf' : 'News sind noch Entwürfe'} – noch nicht auf der Website.`,
+        href: '/admin/collections/posts?where[_status][equals]=draft',
+        link: 'Ansehen',
+      })
+
+    // Teams ohne Trainingszeiten bzw. seit einem Jahr nicht mehr angefasst
+    const teams = redaktion
+      ? (await req.payload.find({ collection: 'angebote', where: { aktiv: { not_equals: false } }, limit: 300, depth: 0, overrideAccess: true, select: { title: true, zeiten: true, updatedAt: true, aktiv: true } as never })).docs
+      : eigeneTeams.filter((t) => (t as { aktiv?: boolean }).aktiv !== false)
+    const liste = teams as unknown as { id: number; title: string; zeiten?: unknown[] | null; updatedAt: string }[]
+    const ohneZeiten = liste.filter((t) => !t.zeiten?.length)
+    const alt = liste.filter((t) => t.zeiten?.length && Date.now() - new Date(t.updatedAt).getTime() > 365 * 86400000)
+    const namen = (l: { title: string }[]) => l.slice(0, 3).map((t) => t.title).join(', ') + (l.length > 3 ? ` und ${l.length - 3} weitere` : '')
+    if (ohneZeiten.length)
+      a.push({
+        key: 'ohne-zeiten',
+        art: 'info',
+        symbol: '🕒',
+        text: `Keine Trainingszeiten eingetragen: ${namen(ohneZeiten)}. Auf der Website steht dann „auf Anfrage“.`,
+        href: ohneZeiten.length === 1 ? `/admin/collections/angebote/${ohneZeiten[0]!.id}` : '/admin/collections/angebote',
+        link: 'Eintragen',
+      })
+    if (alt.length)
+      a.push({
+        key: 'alte-zeiten',
+        art: 'info',
+        symbol: '🔄',
+        text: `Seit über einem Jahr nicht aktualisiert: ${namen(alt)}. Stimmen Trainingszeiten und Ansprechpersonen noch?`,
+        href: alt.length === 1 ? `/admin/collections/angebote/${alt[0]!.id}` : '/admin/collections/angebote?sort=updatedAt',
+        link: 'Prüfen',
+      })
+  }
+  if (redaktion) {
+    // Termine der nächsten 14 Tage ohne Beschreibung
+    const jetzt = new Date()
+    const bald = new Date(Date.now() + 14 * 86400000)
+    const termine = await req.payload
+      .count({ collection: 'termine', where: { and: [{ beginn: { greater_than_equal: jetzt.toISOString() } }, { beginn: { less_than: bald.toISOString() } }, { or: [{ beschreibung: { exists: false } }, { beschreibung: { equals: '' } }] }] }, overrideAccess: true })
+      .catch(() => ({ totalDocs: 0 }))
+    if (termine.totalDocs)
+      a.push({
+        key: 'termine-text',
+        art: 'info',
+        symbol: '📅',
+        text: `${termine.totalDocs} ${termine.totalDocs === 1 ? 'Termin' : 'Termine'} in den nächsten 2 Wochen ohne Beschreibung – ein Satz zu Ablauf oder Treffpunkt hilft Besuchern.`,
+        href: '/admin/collections/termine',
+        link: 'Ergänzen',
+      })
+  }
   return a
 }

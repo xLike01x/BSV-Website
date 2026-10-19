@@ -8,6 +8,7 @@ import { cache } from 'react'
 import { Texte as TexteConfig } from '@/Texte/config'
 import { standardTexte, zusammenfuehren } from '@/Texte/standard'
 import { hauptsponsorUmziehen } from '@/utilities/hauptsponsorUmziehen'
+import { abFilter, aufloesen, type Vorkommen } from '@/bsv/wiederholung'
 
 import type { Angebote, Post, Termine, Texte, User, Verein } from '@/payload-types'
 
@@ -112,21 +113,24 @@ export const getNewsArtikel = cache(async (slug: string, draft = false): Promise
   return res.docs[0] ?? null
 })
 
-export const getTermine = cache(async (limit = 50): Promise<Termine[]> => {
+export const getTermine = cache(async (limit = 50): Promise<Vorkommen[]> => {
   const p = await payload()
   const user = await aktuellerBenutzer()
   const jetzt = new Date()
   jetzt.setHours(0, 0, 0, 0)
+  const bis = new Date(jetzt)
+  bis.setFullYear(bis.getFullYear() + 1)
   const res = await p.find({
     collection: 'termine',
-    where: { beginn: { greater_than_equal: jetzt.toISOString() } },
+    where: abFilter(jetzt),
     sort: 'beginn',
-    limit,
+    limit: 300,
     depth: 0,
     overrideAccess: false,
     user,
   })
-  return res.docs
+  // Wiederkehrende Termine in Einzeltermine auflösen
+  return aufloesen(res.docs, jetzt, bis, limit)
 })
 
 /** Alle veröffentlichten News eines Teams (auch die, die nicht auf der Startseite stehen) */

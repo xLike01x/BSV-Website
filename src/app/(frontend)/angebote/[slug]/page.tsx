@@ -47,6 +47,15 @@ function naechsteTermine(tag?: string | null, von?: string | null): string[] {
   })
 }
 
+/** Hinweis-Banner: nur mit Text und bis einschließlich zum eingestellten Tag (deutsche Zeit) */
+const bannerAktiv = (a: { bannerText?: string | null; bannerBis?: string | null }) => {
+  if (!a.bannerText?.trim()) return false
+  if (!a.bannerBis) return true
+  const heute = new Date().toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' })
+  const bis = new Date(a.bannerBis).toLocaleDateString('sv-SE', { timeZone: 'Europe/Berlin' })
+  return heute <= bis
+}
+
 export default async function AngebotSeite({ params }: Args) {
   const { slug } = await params
   const a = await getAngebot(decodeURIComponent(slug))
@@ -89,6 +98,11 @@ export default async function AngebotSeite({ params }: Args) {
         <nav aria-label="Brotkrumen" className="crumbs">
           <Link href={bereichHref}>{istFussball ? 'Fußball' : 'Breitensport'}</Link> › {gruppe} › <span style={{ color: 'var(--bsv-ink)' }}>{a.title}</span>
         </nav>
+        {bannerAktiv(a) && (
+          <p role="status" className={`team-banner team-banner--${a.bannerArt ?? 'info'}`}>
+            <span aria-hidden="true">{a.bannerArt === 'wichtig' ? '⚠️' : 'ℹ️'}</span> {a.bannerText}
+          </p>
+        )}
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 48, alignItems: 'center' }}>
           <div style={{ flex: '1 1 460px', minWidth: 0 }}>
             <p className="in1" style={{ margin: '0 0 10px', fontSize: 19, fontWeight: 600, color: tint }}>

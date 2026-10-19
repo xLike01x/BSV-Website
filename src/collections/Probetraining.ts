@@ -4,6 +4,7 @@ import { anyone } from '../access/anyone'
 import { hasRole, isEditorField } from '../access/roles'
 import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
+import { teamBenachrichtigen } from '@/sport/teamMail'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
 const readAnfragen: Access = async ({ req }) => {
@@ -41,7 +42,27 @@ export const Probetraining: CollectionConfig = {
     defaultColumns: ['name', 'angebot', 'status', 'createdAt'],
   },
   defaultSort: '-createdAt',
-  hooks: { beforeValidate: [spamSchutz('probetraining')] },
+  hooks: {
+    beforeValidate: [spamSchutz('probetraining')],
+    // Neue Anfrage → kurze Mail an die Trainer des Teams (ohne Kontaktdaten im Text – die stehen in der Verwaltung)
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        if (operation !== 'create') return doc
+        const id = typeof doc.angebot === 'object' ? doc.angebot?.id : doc.angebot
+        if (!id) return doc
+        const team = (await req.payload.findByID({ collection: 'angebote', id, depth: 0, overrideAccess: true, req }).catch(() => null)) as { title?: string } | null
+        await teamBenachrichtigen(req, {
+          angebotId: id,
+          schalterKey: 'probetraining',
+          betreff: `Neue Probetraining-Anfrage: ${team?.title ?? 'dein Team'}`,
+          titel: 'Neue Probetraining-Anfrage',
+          absaetze: [`für „${team?.title ?? 'dein Team'}“ ist eine neue Anfrage eingegangen${doc.wunschtermin ? ` (Wunschtermin: ${String(doc.wunschtermin).slice(0, 80)})` : ''}.`, 'Name und Kontaktdaten findest du in der Verwaltung. Bitte melde dich zeitnah und setze danach den Status.'],
+          pfad: `/admin/collections/probetraining/${doc.id}`,
+        }).catch((e) => req.payload.logger.error({ err: e }, 'Probetraining-Benachrichtigung fehlgeschlagen'))
+        return doc
+      },
+    ],
+  },
   fields: [
     // Nachträglich umhängen nur Admin/Redaktion (sonst könnten Trainer Anfragen samt Daten anderen Teams zuschieben)
     { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true, access: { update: isEditorField } },

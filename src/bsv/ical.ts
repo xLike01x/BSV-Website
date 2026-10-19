@@ -39,7 +39,7 @@ export function ical(termine: Termine[], basis: string, name = 'BSV 1919 – Ter
     const ende = t.ende ?? new Date(new Date(t.beginn).getTime() + 2 * 3600000).toISOString()
     z.push(
       'BEGIN:VEVENT',
-      `UID:termin-${t.id}@bsv1919`,
+      `UID:termin-${t.id}${(t as { _vorkommen?: number })._vorkommen ? `-${(t as { _vorkommen?: number })._vorkommen}` : ''}@bsv1919`,
       `DTSTAMP:${zeit(t.updatedAt)}`,
       `DTSTART:${zeit(t.beginn)}`,
       `DTEND:${zeit(ende)}`,

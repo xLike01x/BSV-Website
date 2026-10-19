@@ -680,6 +680,25 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wie melde ich als Trainer schnell einen Ausfall – auch vom Handy?',
+    antwort: 'Auf der Website anmelden → Mitgliederbereich → Kasten „Meine Teams & Kurse zum Pflegen“ → „Ausfall melden“. Tag antippen (die nächsten Trainingstage stehen schon da), Grund antippen, „Ausfall jetzt melden“. Er steht sofort auf der Teamseite. Versehentlich gemeldet? Daneben auf „zurücknehmen“ tippen.',
+    bereich: 'ausfaelle',
+  },
+  {
+    frage: 'Wie setze ich einen kurzen Hinweis auf die Teamseite (z. B. „Heute in Halle 2“)?',
+    antwort: 'Im Mitgliederbereich beim Team auf „Hinweis setzen“ – oder in der Verwaltung beim Team unter „Hinweis-Banner auf der Teamseite“. Text eingeben, Info oder Wichtig wählen, optional „anzeigen bis“. Nach dem Datum verschwindet der Hinweis von selbst.',
+    bereich: 'angebote',
+  },
+  {
+    frage: 'Wie lege ich einen Termin an, der jede Woche stattfindet?',
+    antwort: 'Termin wie gewohnt anlegen, bei „Wiederholen“ z. B. „Jede Woche“ wählen und „Wiederholen bis einschließlich“ eintragen (höchstens 2 Jahre). Ferien oder Feiertage unter „Einzelne Termine auslassen“ eintragen. Auf der Website und im Kalender-Abo erscheint jeder Termin einzeln – auch nach der Zeitumstellung zur richtigen Uhrzeit.',
+    bereich: 'termine',
+  },
+  {
+    frage: 'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
+    antwort: 'Ja, als Trainer für deine Teams (Passanträge zusätzlich an die Rolle „Passwesen“) – sobald der E-Mail-Versand eingerichtet ist. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen zu meinen Teams“ entfernen und speichern.',
+  },
+  {
     frage: 'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
     antwort: 'Oben rechts auf dein Symbol (Foto oder Anfangsbuchstaben) klicken. Im Menü: „Mein Konto“ (Name, Passwort, Foto), „Zum Mitgliederbereich“ (Ausfälle, Ausweis, Downloads – so, wie Mitglieder die Website sehen), „Website ansehen“, „Hilfe-Center“ und „Abmelden“.',
   },

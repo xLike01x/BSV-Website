@@ -468,6 +468,12 @@ export interface Angebote {
    * Großes Bild oben auf der Teamseite und auf Karten.
    */
   bild?: (number | null) | Media;
+  bannerText?: string | null;
+  /**
+   * Leer = bis du ihn löschst.
+   */
+  bannerBis?: string | null;
+  bannerArt?: ('info' | 'wichtig') | null;
   /**
    * Wann und wo trainiert wird – erscheint auf der Teamseite.
    */
@@ -571,6 +577,10 @@ export interface User {
   bestaetigungHash?: string | null;
   bestaetigungBis?: string | null;
   googleId?: string | null;
+  /**
+   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams. Haken entfernen = keine Mails.
+   */
+  mailBenachrichtigung?: boolean | null;
   /**
    * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
    */
@@ -730,6 +740,23 @@ export interface Termine {
    * Optional.
    */
   ende?: string | null;
+  /**
+   * Einmal anlegen statt mehrfach. Auf der Website erscheint jeder Termin einzeln.
+   */
+  wiederholung?: ('keine' | 'woechentlich' | 'zweiwoechentlich' | 'monatlich') | null;
+  /**
+   * Höchstens 2 Jahre. Monatlich am 29.–31.: in kürzeren Monaten entfällt der Termin.
+   */
+  wiederholungBis?: string | null;
+  /**
+   * Z. B. Ferien oder Feiertage – an diesen Tagen findet der Termin nicht statt.
+   */
+  auslassen?:
+    | {
+        datum: string;
+        id?: string | null;
+      }[]
+    | null;
   ort?: string | null;
   /**
    * Bestimmt die Farbe im Kalender.
@@ -1925,6 +1952,14 @@ export interface TermineSelect<T extends boolean = true> {
   title?: T;
   beginn?: T;
   ende?: T;
+  wiederholung?: T;
+  wiederholungBis?: T;
+  auslassen?:
+    | T
+    | {
+        datum?: T;
+        id?: T;
+      };
   ort?: T;
   bereich?: T;
   beschreibung?: T;
@@ -2252,6 +2287,9 @@ export interface AngeboteSelect<T extends boolean = true> {
   kurzbeschreibung?: T;
   beschreibung?: T;
   bild?: T;
+  bannerText?: T;
+  bannerBis?: T;
+  bannerArt?: T;
   zeiten?:
     | T
     | {
@@ -2492,6 +2530,7 @@ export interface UsersSelect<T extends boolean = true> {
   bestaetigungHash?: T;
   bestaetigungBis?: T;
   googleId?: T;
+  mailBenachrichtigung?: T;
   zweiFaktorAktiv?: T;
   zweiFaktorGeheimnis?: T;
   zweiFaktorCodes?: T;
