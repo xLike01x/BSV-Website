@@ -146,24 +146,20 @@ async function main() {
     },
   })
 
-  log('Startseite & Bilder …')
+  log('Texte & Bilder …')
   await payload.updateGlobal({
-    slug: 'startseite',
+    slug: 'texte',
     context: { disableRevalidate: true },
     data: {
-      uebernommen: true,
-      startseite: {
-        heroBilder: [B['tanzmaeuse-1'], B['step-burn'], B['seniorenturnen'], B['hero-maedchen']].filter(Boolean) as number[],
-        heroTag1: 'Tanzmäuse · 3–6 J.',
-        heroTag2: 'Mädchenfußball',
-        bildFussball: B['f-jugend'],
-        bildKids: B['kids-gruppe'],
-        bildFitness: B['step-burn'],
-        bildBreitensport1: B['zumba-gruppe'],
-        bildBreitensport2: B['kids-gruppe'],
-        bildBreitensport3: B['seniorenturnen'],
-        bildVerein: B['zumba-gruppe'],
-      },
+      bilderUebernommen: true,
+      heroBilder: [B['tanzmaeuse-1'], B['step-burn'], B['seniorenturnen'], B['hero-maedchen']].filter(Boolean) as number[],
+      heroTag1: 'Tanzmäuse · 3–6 J.',
+      heroTag2: 'Mädchenfußball',
+      bildFussball: B['f-jugend'],
+      bildKids: B['kids-gruppe'],
+      bildFitness: B['step-burn'],
+      breitensport: { bild1: B['zumba-gruppe'], bild2: B['kids-gruppe'], bild3: B['seniorenturnen'] },
+      verein: { titelbild: B['zumba-gruppe'] },
       aktion: {
         aktiv: true,
         kicker: 'Kunstrasen 2026',
@@ -173,7 +169,7 @@ async function main() {
         linkUrl: '/kunstrasen',
         bild: B['flyer-eroeffnung'],
       },
-    },
+    } as never,
   })
 
   log('Seiten …')

@@ -458,13 +458,13 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
   ],
-  startseite: [
+  texte: [
     {
       id: 'startseite-bilder',
       titel: 'Die Bilder der Startseite austauschen',
       video: '/hilfe/startseite-bilder.mp4',
       schritte: [
-        'Website-Aufbau → „Startseite & Bilder“ öffnen, Reiter „Bilder“.',
+        'Website-Aufbau → „Texte & Bilder“ öffnen, Reiter „Startseite“ – ganz oben „Bilder oben und Kachel-Bilder“.',
         'Bei „Bilder oben“ ein Bild über das × entfernen und mit „Aus vorhandenen auswählen“ ein neues wählen.',
         'Die Kachel-Bilder darunter genauso austauschen.',
         'Oben rechts „Speichern“ – nach etwa einer Minute ist die Startseite aktualisiert.',
@@ -474,14 +474,12 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'aktion',
       titel: 'Die grüne Aktions-Box auf der Startseite ändern',
       schritte: [
-        'Website-Aufbau → „Startseite & Bilder“ öffnen, Reiter „Aktion (grüne Box)“.',
+        'Website-Aufbau → „Texte & Bilder“ öffnen, Reiter „Startseite“ – ganz unten „Grüne Aktions-Box“.',
         'Überzeile, Titel, Text, Button-Text und Button-Link anpassen, optional ein Bild wählen.',
         'Zum Ausblenden den Haken bei „Anzeigen“ entfernen.',
         'Speichern.',
       ],
     },
-  ],
-  texte: [
     {
       id: 'text-aendern',
       titel: 'Eine Überschrift der Website ändern',
@@ -625,15 +623,8 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'SEPA-Gläubiger-ID', text: 'Steht im Lastschriftmandat des Antrags.' },
     { name: 'Vorstand', text: 'Name, Funktion, optional Foto. Erscheint auf der Vereinsseite.' },
     { name: 'Satzung & Downloads', text: 'Dateien zum Herunterladen auf der Vereinsseite.' },
-    { name: 'Bilder und Aktions-Box', text: 'Stehen unter Website-Aufbau → „Startseite & Bilder“.' },
+    { name: 'Bilder und Aktions-Box', text: 'Stehen unter Website-Aufbau → „Texte & Bilder“.' },
     { name: 'Social Media', text: 'Links zu Instagram und Facebook – erscheinen unten auf der Website.' },
-  ],
-  startseite: [
-    { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
-    { name: 'Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
-    { name: 'Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness. Das Fußball-Bild ist auch das Titelbild der Fußball-Seite.' },
-    { name: 'Breitensport-Seite und Vereinsseite', text: 'Drei Bilder der Breitensport-Seite und das Titelbild der Vereinsseite.' },
-    { name: 'Texte', text: 'Alle Überschriften und Texte stehen unter „Website-Texte“.' },
   ],
   forms: [
     { name: 'Name des Formulars', text: 'Nur intern, damit ihr es wiederfindet.' },
@@ -643,6 +634,10 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'E-Mail-Benachrichtigungen', text: 'Kommt mit dem E-Mail-Versand – bis dahin stehen die Eingänge unter „Formular-Eingänge“.' },
   ],
   texte: [
+    { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
+    { name: 'Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
+    { name: 'Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness. Das Fußball-Bild ist auch das Titelbild der Fußball-Seite.' },
+    { name: 'Breitensport-Seite und Vereinsseite', text: 'Drei Bilder der Breitensport-Seite und das Titelbild der Vereinsseite.' },
     { name: 'Reiter', text: 'Oben nach Seiten sortiert: Startseite, Fußball, Breitensport, Verein, Weitere Seiten.' },
     { name: 'Platzhalter', text: '{mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung} werden automatisch durch aktuelle Zahlen ersetzt. Genau so stehen lassen.' },
     { name: 'Zeilenumbruch', text: 'Ein Umbruch im Feld wird auch auf der Website ein Umbruch – praktisch für zweizeilige Überschriften.' },
@@ -751,7 +746,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie stelle ich ein, dass die News auf der Startseite von selbst weiterlaufen?',
-    antwort: 'Unter „Website-Texte“ → Startseite den Haken „News-Leiste läuft von selbst weiter“ setzen oder entfernen. Mit Haken wechselt die Leiste alle 6 Sekunden und pausiert, sobald jemand mit der Maus darauf zeigt. Welche News dort erscheinen, bestimmt bei jeder News der Haken „Auf Startseite“.',
+    antwort: 'Unter „Texte & Bilder“ → Startseite den Haken „News-Leiste läuft von selbst weiter“ setzen oder entfernen. Mit Haken wechselt die Leiste alle 6 Sekunden und pausiert, sobald jemand mit der Maus darauf zeigt. Welche News dort erscheinen, bestimmt bei jeder News der Haken „Auf Startseite“.',
     bereich: 'texte',
   },
   {
@@ -837,7 +832,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wo ändere ich die Mitgliedsbeiträge?',
-    antwort: 'Einstellungen → Vereinsdaten → „Mitgliedsbeiträge“: je Mitgliedsart den Betrag „€ pro Quartal“ eintragen und speichern. Alles andere rechnet sich automatisch: die Beitrags-Kacheln auf der Vereinsseite (inkl. „entspricht … € im Monat“), die Überschrift „Ab … € im Monat“ (günstigster Beitrag für aktive Mitglieder, passiv zählt nicht), der Online-Antrag und der Platzhalter {abMonat} in den Website-Texten. Bei jedem neuen Antrag wird der Betrag, der beim Absenden galt, unter „Beitrag laut Antrag“ festgehalten. Eine Aufnahmegebühr gibt es auf der Website nicht.',
+    antwort: 'Einstellungen → Vereinsdaten → „Mitgliedsbeiträge“: je Mitgliedsart den Betrag „€ pro Quartal“ eintragen und speichern. Alles andere rechnet sich automatisch: die Beitrags-Kacheln auf der Vereinsseite (inkl. „entspricht … € im Monat“), die Überschrift „Ab … € im Monat“ (günstigster Beitrag für aktive Mitglieder, passiv zählt nicht), der Online-Antrag und der Platzhalter {abMonat} in „Texte & Bilder“. Bei jedem neuen Antrag wird der Betrag, der beim Absenden galt, unter „Beitrag laut Antrag“ festgehalten. Eine Aufnahmegebühr gibt es auf der Website nicht.',
     bereich: 'verein',
   },
   {
@@ -977,7 +972,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   redaktion: {
     label: 'Redaktion',
     kurz: 'Du kümmerst dich um News, Termine, Seiten und Texte der Website.',
-    darf: ['Alle News schreiben und auf die Startseite holen', 'Termine, Seiten, Menü und Website-Texte pflegen', 'Bilder verwalten', 'Kontakt- und Probetraining-Anfragen bearbeiten'],
+    darf: ['Alle News schreiben und auf die Startseite holen', 'Termine, Seiten, Menü und Texte & Bilder pflegen', 'Bilder verwalten', 'Kontakt- und Probetraining-Anfragen bearbeiten'],
     darfNicht: ['Mitgliedsanträge mit Bankdaten sehen', 'Benutzer und Rollen verwalten'],
     anleitungen: [
       ['posts', 'news-schreiben'],

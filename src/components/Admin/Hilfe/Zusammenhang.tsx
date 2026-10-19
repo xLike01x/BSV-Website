@@ -55,10 +55,10 @@ const WEGE: { ich: string; wo: string; href: string; symbol: string }[] = [
   { ich: 'Trainingszeiten oder Ansprechpartner ändern', wo: 'Teams & Kurse', href: '/admin/collections/angebote', symbol: '⚽' },
   { ich: 'eine eigene Infoseite machen (z. B. Sommerfest)', wo: 'Seiten', href: '/admin/collections/pages/create', symbol: '📄' },
   { ich: 'von Besuchern etwas abfragen (Anmeldung, Bestellung)', wo: 'Formulare', href: '/admin/collections/forms', symbol: '📝' },
-  { ich: 'Texte auf der Startseite ändern', wo: 'Website-Texte', href: '/admin/globals/texte', symbol: '✏️' },
+  { ich: 'Texte auf der Startseite ändern', wo: 'Texte & Bilder', href: '/admin/globals/texte', symbol: '✏️' },
   { ich: 'das Menü oder die Fußzeile ändern', wo: 'Menü & Fußzeile', href: '/admin/globals/menue', symbol: '🧭' },
   { ich: 'Vorstand, Beiträge oder Mitgliederzahl ändern', wo: 'Vereinsdaten', href: '/admin/globals/verein', symbol: '🏟️' },
-  { ich: 'Bilder der Startseite oder die grüne Aktions-Box ändern', wo: 'Startseite & Bilder', href: '/admin/globals/startseite', symbol: '🖼️' },
+  { ich: 'Bilder der Startseite oder die grüne Aktions-Box ändern', wo: 'Texte & Bilder', href: '/admin/globals/texte', symbol: '🖼️' },
   { ich: 'Bilder hochladen', wo: 'Mediathek', href: '/admin/collections/media/create', symbol: '🖼️' },
 ]
 

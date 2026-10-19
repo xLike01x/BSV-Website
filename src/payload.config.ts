@@ -23,6 +23,7 @@ import { Verein } from './Verein/config'
 import { Startseite } from './Startseite/config'
 import { Sicherheit } from './Sicherheit/config'
 import { startseiteUmziehen } from './Startseite/umziehen'
+import { texteBilderUmziehen } from './Texte/bilderUmziehen'
 import { Texte } from './Texte/config'
 import { Menue } from './Menue/config'
 import { HilfeFeedback, HilfeInhalte } from './Hilfe/config'
@@ -90,6 +91,7 @@ export default buildConfig({
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
     await trainerUmbenennen(payload).catch((e) => payload.logger.warn({ err: e }, 'Trainer-Umbenennung fehlgeschlagen'))
     await startseiteUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme „Startseite & Bilder“ fehlgeschlagen'))
+    await texteBilderUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme nach „Texte & Bilder“ fehlgeschlagen'))
     taeglicheAufgaben(payload)
   },
   admin: {

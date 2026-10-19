@@ -9,7 +9,7 @@ const ROLLEN: { value: string; titel: string; text: string; symbol: string; nurW
   { value: 'mitglied', titel: 'Mitglied', symbol: '🙂', text: 'Nur Mitgliederbereich auf der Website: Ausweis, Termine, eigene Teams.' },
   { value: 'uebungsleitung', titel: 'Trainer', symbol: '⚽', text: 'Eigene Teams: News, Bilder, Zeiten, Ausfälle, Probetraining, Passanträge.', team: true },
   { value: 'teamredaktion', titel: 'Team-Redaktion', symbol: '📰', text: 'Eigene Teams: News, Bilder, Zeiten – z. B. Pressewart einer Mannschaft.', team: true },
-  { value: 'redaktion', titel: 'Redaktion', symbol: '✏️', text: 'Alle News, Termine, Seiten, Menü, Website-Texte, Sponsoren, Kontaktanfragen.' },
+  { value: 'redaktion', titel: 'Redaktion', symbol: '✏️', text: 'Alle News, Termine, Seiten, Menü, Texte & Bilder, Sponsoren, Kontaktanfragen.' },
   { value: 'kasse', titel: 'Kasse', symbol: '💶', text: 'Mitgliedsanträge mit Bankdaten, Mitgliedschaften, Registrierungen.' },
   { value: 'passwesen', titel: 'Passwesen', symbol: '🪪', text: 'Fußball-Passanträge aller Teams.' },
   { value: 'admin', titel: 'Admin', symbol: '🛡️', text: 'Alles im Verein, auch Benutzer und Rollen – außer Admin-Rechte vergeben.', nurWebAdmin: true },

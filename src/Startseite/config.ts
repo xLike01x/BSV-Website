@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { ausblendenAusser, hasRole } from '@/access/roles'
+import { hasRole } from '@/access/roles'
 
 import { anyone } from '../access/anyone'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
@@ -11,11 +11,12 @@ import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
  */
 export const Startseite: GlobalConfig = {
   slug: 'startseite',
-  label: 'Startseite & Bilder',
+  label: 'Startseite & Bilder (alt)',
   access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion') },
   admin: {
     group: 'Website-Aufbau',
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    // Veraltet: Inhalte stehen jetzt unter „Texte & Bilder“ – bleibt nur als Sicherung gespeichert
+    hidden: true,
     description: 'Die grüne Aktions-Box auf der Startseite und die Bilder der Startseite, der Bereichsseiten und der Vereinsseite. Die Texte dazu stehen unter „Website-Texte“.',
   },
   hooks: { afterChange: [revalidateAllesGlobal] },

@@ -358,7 +358,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Vorstand und Ansprechpersonen eintragen, mit Funktion und optional Foto.',
       'Satzung und andere Dokumente zum Herunterladen hinterlegen.',
       'Unter „Kontaktformular: Worum geht es?“ die Auswahl im Kontaktformular pflegen (ohne Namen). Admins legen pro Anliegen fest, wer die Nachricht per E-Mail bekommt.',
-      'Bilder der Website und die grüne Aktions-Box stehen jetzt unter Website-Aufbau → „Startseite & Bilder“.',
+      'Bilder der Website und die grüne Aktions-Box stehen unter Website-Aufbau → „Texte & Bilder“ beim jeweiligen Reiter.',
       'Der Hauptsponsor wird unter „Sponsoren“ gepflegt (Art „Hauptsponsor“), die Links der Fußzeile unter „Menü & Fußzeile“.',
     ],
     wirkung: [
@@ -367,23 +367,6 @@ export const HILFE: Record<string, HilfeText> = {
       'Geänderte Beiträge gelten sofort für neue Online-Anträge.',
     ],
     tipps: ['Fotos vom Vorstand nur mit Einverständnis.', 'Keine privaten Telefonnummern eintragen – Kontakt läuft über das Formular.'],
-  },
-
-  startseite: {
-    titel: 'Startseite & Bilder',
-    kurz: 'Die grüne Aktions-Box auf der Startseite und die Fotos der Startseite, der Bereichsseiten und der Vereinsseite.',
-    wozu: {
-      text: 'Alles, was die Website optisch ausmacht, an einer Stelle. Die Texte dazu stehen unter „Website-Texte“.',
-      beispiele: ['Neues Foto oben auf der Startseite', 'Aktions-Box für das Sommerfest', 'Titelbild der Fußball-Seite tauschen'],
-    },
-    tun: [
-      'Reiter „Aktion (grüne Box)“: Überzeile, Titel, Text, Button und optional ein Bild. Mit „Anzeigen“ ein- oder ausblenden.',
-      'Reiter „Bilder“: bis zu 4 Fotos oben auf der Startseite, zwei kleine Schilder darauf, die Kachel-Bilder (Fußball, BSV Kids, Fitness), drei Bilder der Breitensport-Seite und das Titelbild der Vereinsseite.',
-      'Bild tauschen: über das × entfernen, mit „Aus vorhandenen auswählen“ ein neues aus der Mediathek wählen.',
-      'Oben rechts „Speichern“.',
-    ],
-    wirkung: ['Nach etwa einer Minute ist die Website aktualisiert.', 'Ausgeblendete Aktions-Box: Der Inhalt bleibt für später gespeichert.'],
-    tipps: ['Querformat-Fotos für die Bilder oben, Hochformat für das Aktions-Bild (z. B. ein Plakat).', 'Kinderfotos nur mit Einverständnis der Eltern.'],
   },
 
   sicherheit: {
@@ -399,22 +382,22 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   texte: {
-    titel: 'Website-Texte',
-    kurz: 'Alle Überschriften, Texte und Link-Beschriftungen der Website – ohne Programmieren änderbar.',
+    titel: 'Texte & Bilder',
+    kurz: 'Alle Überschriften, Texte, Bilder und die grüne Aktions-Box der Website – ein Reiter pro Seite, ohne Programmieren änderbar.',
     wozu: {
-      text: 'Alle festen Überschriften und Texte der Website, z. B. auf der Startseite – ohne Programmieren änderbar.',
-      beispiele: ['Begrüßung auf der Startseite', 'Text im Bereich „Mitglied werden“'],
+      text: 'Alles, was auf den festen Seiten der Website steht – Texte, Bilder und die grüne Aktions-Box – an einer Stelle, sortiert nach Seite.',
+      beispiele: ['Begrüßung auf der Startseite', 'Neues Foto oben auf der Startseite', 'Aktions-Box für das Sommerfest'],
     },
     tun: [
       'Unter jedem Text: „📍 Auf der Website zeigen“ öffnet die Seite und lässt genau diesen Text kurz grün aufleuchten.',
       'Oben einen Reiter wählen: Startseite, Fußball, Breitensport, Verein oder Weitere Seiten (News, Termine, Kontakt, Antrag, Probetraining, Fußzeile).',
-      'Im Reiter „Startseite“ stehen die Felder in derselben Reihenfolge wie auf der Seite: Kopfbereich, Zahlen-Leiste, Kacheln, Angebotsfinder, News, „Mitglied werden“ mit den drei Schritten.',
+      'Im Reiter „Startseite“ stehen die Felder in derselben Reihenfolge wie auf der Seite: ganz oben die Bilder (Bilder oben, zwei Schilder, Kachel-Bilder), dann Kopfbereich, Zahlen-Leiste, Kacheln, Angebotsfinder, News, „Mitglied werden“ und ganz unten die grüne Aktions-Box.',
+      'Bild tauschen: über das × entfernen, mit „Aus vorhandenen auswählen“ ein neues aus der Mediathek wählen. Die Reiter „Breitensport“ und „Verein“ haben oben ihre Seitenbilder.',
       'Text im Feld ändern und oben rechts speichern.',
       'Platzhalter wie {mitglieder} oder {teams} werden automatisch durch die aktuelle Zahl ersetzt.',
     ],
     wirkung: ['Nach dem Speichern steht der neue Text nach etwa einer Minute auf der Website.'],
     tipps: [
-      'Bilder, die Schilder im Kopfbereich und die grüne Aktions-Box der Startseite stehen unter „Vereinsdaten“.',
       'Die Zahlen selbst (Mitglieder, Kinder, Gründungsjahr) ebenfalls unter „Vereinsdaten“. Die Anzahl der Teams & Kurse zählt die Website automatisch.',
       'Menü und Fußzeilen-Links: unter „Menü & Fußzeile“.',
       'Platzhalter in geschweiften Klammern bitte genau so stehen lassen.',

@@ -16,6 +16,9 @@ const zeigen = { components: { afterInput: ['@/Texte/WoSteht'] } }
 const text = (name: string, label: string, defaultValue: string, lang = false): Field =>
   lang ? { name, label, type: 'textarea', defaultValue, admin: zeigen } : { name, label, type: 'text', defaultValue, admin: zeigen }
 
+/** Bild aus der Mediathek (wird beim Speichern auf der Website sichtbar) */
+const bild = (name: string, label: string, description?: string): Field => ({ name, label, type: 'upload', relationTo: 'media', ...(description ? { admin: { description } } : {}) })
+
 const gruppe = (name: string, label: string, fields: Field[]): Field => ({
   type: 'group',
   name,
@@ -26,12 +29,12 @@ const gruppe = (name: string, label: string, fields: Field[]): Field => ({
 
 export const Texte: GlobalConfig = {
   slug: 'texte',
-  label: 'Website-Texte',
+  label: 'Texte & Bilder',
   access: { read: anyone, update: isEditor },
   admin: {
     group: 'Website-Aufbau',
     hidden: ausblendenAusser('admin', 'redaktion'),
-    description: 'Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.',
+    description: 'Texte und Bilder der Website – ein Reiter pro Seite, von oben nach unten. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.',
   },
   hooks: {
     // Leere Felder zeigen in der Verwaltung den Text, der auch auf der Website steht
@@ -39,14 +42,35 @@ export const Texte: GlobalConfig = {
     afterChange: [revalidateAllesGlobal],
   },
   fields: [
+    // Einmalige Übernahme der Bilder und der Aktions-Box (früher „Vereinsdaten“ bzw. „Startseite & Bilder“) erledigt?
+    { name: 'bilderUebernommen', type: 'checkbox', defaultValue: false, admin: { hidden: true } },
     {
       type: 'tabs',
       tabs: [
         {
           label: 'Startseite',
           description:
-            'Alle Texte der Startseite – von oben nach unten. Bilder, die zwei Schilder im Kopfbereich und die grüne Aktions-Box stehen unter „Vereinsdaten“ → Startseite. Die Zahlen (Mitglieder, Kinder, Gründungsjahr) ebenfalls unter „Vereinsdaten“; die Anzahl der Teams & Kurse wird automatisch gezählt. Menü und Fußzeile: „Menü & Fußzeile“.',
+            'Alles auf der Startseite – von oben nach unten: Bilder, Texte und die grüne Aktions-Box. Die Zahlen (Mitglieder, Kinder, Gründungsjahr) stehen unter „Vereinsdaten“; die Anzahl der Teams & Kurse wird automatisch gezählt. Menü und Fußzeile: „Menü & Fußzeile“.',
           fields: [
+            {
+              type: 'collapsible',
+              label: 'Bilder oben und Kachel-Bilder',
+              admin: { initCollapsed: false },
+              fields: [
+                { name: 'heroBilder', label: 'Bilder oben (bis zu 4)', type: 'upload', relationTo: 'media', hasMany: true, maxRows: 4, admin: { description: 'Querformat sieht am besten aus. Bild entfernen: ×, neues wählen: „Aus vorhandenen auswählen“.' } },
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'heroTag1', label: 'Schild 1 (auf den Bildern)', type: 'text', defaultValue: 'Tanzmäuse · 3–6 J.' },
+                    { name: 'heroTag2', label: 'Schild 2', type: 'text', defaultValue: 'Mädchenfußball' },
+                  ],
+                },
+                {
+                  type: 'row',
+                  fields: [bild('bildFussball', 'Kachel Fußball', 'Auch das Titelbild der Fußball-Seite.'), bild('bildKids', 'Kachel BSV Kids'), bild('bildFitness', 'Kachel Fitness')],
+                },
+              ],
+            },
             text('heroTitel', 'Große Überschrift', 'Bewegung\nfür alle.', true),
             text('heroHand', 'Handschrift darunter', 'von 1 bis 99 Jahren'),
             text('heroText', 'Einleitung', 'Tanzen, Turnen, Fußball, Fitness, Yoga und Walking am Rhein – in Büderich, mit über {mitglieder} Mitgliedern und ganz viel Herz. Schnuppern ist überall erwünscht!', true),
@@ -102,11 +126,32 @@ export const Texte: GlobalConfig = {
               { type: 'row', fields: [text('t3', 'Schritt 3: Titel', 'Loslegen'), text('d3', 'Schritt 3: Text', 'Zugang zum Mitgliederbereich inklusive.')] },
               text('button', 'Text auf dem Button', 'Jetzt Mitglied werden'),
             ]),
+            {
+              type: 'group',
+              name: 'aktion',
+              label: 'Grüne Aktions-Box',
+              admin: { description: 'Ein großer grüner Hinweis auf der Startseite – z. B. für ein Projekt, ein Fest oder eine Spendenaktion.' },
+              fields: [
+                { name: 'aktiv', label: 'Anzeigen', type: 'checkbox', defaultValue: true, admin: { description: 'Haken entfernen = Box ausblenden. Der Inhalt bleibt für später gespeichert.' } },
+                { name: 'kicker', label: 'Überzeile', type: 'text', defaultValue: 'Kunstrasen 2026' },
+                { name: 'titel', label: 'Titel', type: 'text', defaultValue: 'Eröffnet – mit Schalke 04.' },
+                { name: 'text', label: 'Text', type: 'textarea' },
+                {
+                  type: 'row',
+                  fields: [
+                    { name: 'linkText', label: 'Button-Text', type: 'text', defaultValue: 'Mehr zum Projekt' },
+                    { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen', admin: { description: 'z. B. /kunstrasen oder https://…' } },
+                  ],
+                },
+                bild('bild', 'Bild (z. B. Plakat)', 'Hochformat sieht am besten aus.'),
+              ],
+            },
           ],
         },
         {
           label: 'Fußball',
           name: 'fussball',
+          description: 'Das Titelbild der Fußball-Seite ist die „Kachel Fußball“ im Reiter „Startseite“.',
           fields: [
             text('titel', 'Überschrift', '{teams} Teams.\nEine Leidenschaft.', true),
             text('text', 'Einleitung', '{kinder} Kinder in der Jugend, Damen- und Mädchenfußball, und die Erste stand erstmals im Kreispokal-Finale. Trainiert wird im Kutscher-Remy-Sportpark – seit 2026 auf Kunstrasen.', true),
@@ -117,6 +162,7 @@ export const Texte: GlobalConfig = {
           label: 'Breitensport',
           name: 'breitensport',
           fields: [
+            { type: 'row', fields: [bild('bild1', 'Bild 1 (oben)'), bild('bild2', 'Bild 2'), bild('bild3', 'Bild 3')] },
             text('titel', 'Überschrift', '{kurse} Kurse.\nFür jedes Alter.', true),
             text('text', 'Einleitung', 'Von den Nappy Dancers ab 1,5 Jahren bis zum Seniorenturnen. Unsere Trainerinnen und Trainer sind zum Teil lizenziert – und Schnuppern ist ausdrücklich erwünscht.', true),
             text('schnupperTitel', 'Abschluss: Titel', 'Erst schnuppern.\nDann entscheiden.', true),
@@ -127,6 +173,7 @@ export const Texte: GlobalConfig = {
           label: 'Verein',
           name: 'verein',
           fields: [
+            bild('titelbild', 'Titelbild der Vereinsseite'),
             text('titel', 'Überschrift', 'Seit {gruendung}\nin Büderich.', true),
             text('text', 'Einleitung', '{mitglieder} Mitglieder, ein Verein für Fußball und Breitensport – getragen von Ehrenamtlichen, Trainerinnen und Trainern und vielen helfenden Händen.', true),
             text('vorstandText', 'Vorstand: Text', 'Ansprechpersonen für alles rund um den Verein. Kontakt läuft über das Formular – E-Mail-Adressen und Telefonnummern bleiben geschützt.', true),

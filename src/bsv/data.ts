@@ -11,7 +11,7 @@ import { standardTexte, zusammenfuehren } from '@/Texte/standard'
 import { hauptsponsorUmziehen } from '@/utilities/hauptsponsorUmziehen'
 import { abFilter, aufloesen, type Vorkommen } from '@/bsv/wiederholung'
 
-import type { Angebote, Post, Startseite, Termine, Texte, User, Verein } from '@/payload-types'
+import type { Angebote, Post, Termine, Texte, User, Verein } from '@/payload-types'
 
 export const payload = cache(async () => getPayload({ config: configPromise }))
 
@@ -27,10 +27,24 @@ export const getVerein = cache(async (): Promise<Verein> => {
   return p.findGlobal({ slug: 'verein', depth: 1 })
 })
 
-/** Startseite & Bilder: Aktions-Box und Bilder der Bereichsseiten (Global „startseite“) */
-export const getStartseite = cache(async (): Promise<Startseite> => {
-  const p = await payload()
-  return p.findGlobal({ slug: 'startseite', depth: 1 })
+/** Bilder und Aktions-Box – stehen unter „Texte & Bilder“ beim jeweiligen Reiter (gleiche Form wie früher) */
+export const getStartseite = cache(async () => {
+  const t = (await getTexte()) as unknown as Record<string, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+  return {
+    aktion: t.aktion as Texte['aktion'],
+    startseite: {
+      heroBilder: (t.heroBilder ?? []) as Texte['heroBilder'],
+      heroTag1: t.heroTag1 as string | null | undefined,
+      heroTag2: t.heroTag2 as string | null | undefined,
+      bildFussball: t.bildFussball as Texte['bildFussball'],
+      bildKids: t.bildKids as Texte['bildKids'],
+      bildFitness: t.bildFitness as Texte['bildFitness'],
+      bildBreitensport1: t.breitensport?.bild1 as Texte['bildFussball'],
+      bildBreitensport2: t.breitensport?.bild2 as Texte['bildFussball'],
+      bildBreitensport3: t.breitensport?.bild3 as Texte['bildFussball'],
+      bildVerein: t.verein?.titelbild as Texte['bildFussball'],
+    },
+  }
 })
 
 /** Pflegbare Menü-Links (Global „Menü“) */
@@ -170,7 +184,8 @@ export const getTeamGalerie = cache(async (angebotId: number, limit = 48) => {
 
 export const getTexte = cache(async (): Promise<Texte> => {
   const p = await payload()
-  const gespeichert = await p.findGlobal({ slug: 'texte', depth: 0 })
+  // depth 1: Bilder kommen als vollständige Medien mit (Größen, Alt-Text)
+  const gespeichert = await p.findGlobal({ slug: 'texte', depth: 1 })
   return zusammenfuehren(standardTexte(TexteConfig.fields), gespeichert as unknown as Record<string, unknown>) as unknown as Texte
 })
 

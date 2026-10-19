@@ -3129,13 +3129,26 @@ export interface Menue {
   createdAt?: string | null;
 }
 /**
- * Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.
+ * Texte und Bilder der Website – ein Reiter pro Seite, von oben nach unten. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "texte".
  */
 export interface Texte {
   id: number;
+  bilderUebernommen?: boolean | null;
+  /**
+   * Querformat sieht am besten aus. Bild entfernen: ×, neues wählen: „Aus vorhandenen auswählen“.
+   */
+  heroBilder?: (number | Media)[] | null;
+  heroTag1?: string | null;
+  heroTag2?: string | null;
+  /**
+   * Auch das Titelbild der Fußball-Seite.
+   */
+  bildFussball?: (number | null) | Media;
+  bildKids?: (number | null) | Media;
+  bildFitness?: (number | null) | Media;
   heroTitel?: string | null;
   heroHand?: string | null;
   heroText?: string | null;
@@ -3188,18 +3201,43 @@ export interface Texte {
     d3?: string | null;
     button?: string | null;
   };
+  /**
+   * Ein großer grüner Hinweis auf der Startseite – z. B. für ein Projekt, ein Fest oder eine Spendenaktion.
+   */
+  aktion?: {
+    /**
+     * Haken entfernen = Box ausblenden. Der Inhalt bleibt für später gespeichert.
+     */
+    aktiv?: boolean | null;
+    kicker?: string | null;
+    titel?: string | null;
+    text?: string | null;
+    linkText?: string | null;
+    /**
+     * z. B. /kunstrasen oder https://…
+     */
+    linkUrl?: string | null;
+    /**
+     * Hochformat sieht am besten aus.
+     */
+    bild?: (number | null) | Media;
+  };
   fussball?: {
     titel?: string | null;
     text?: string | null;
     mitspielenTitel?: string | null;
   };
   breitensport?: {
+    bild1?: (number | null) | Media;
+    bild2?: (number | null) | Media;
+    bild3?: (number | null) | Media;
     titel?: string | null;
     text?: string | null;
     schnupperTitel?: string | null;
     schnupperText?: string | null;
   };
   verein?: {
+    titelbild?: (number | null) | Media;
     titel?: string | null;
     text?: string | null;
     vorstandText?: string | null;
@@ -3290,7 +3328,7 @@ export interface Startseite {
   createdAt?: string | null;
 }
 /**
- * Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Startseite & Bilder“.
+ * Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Texte & Bilder“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "verein".
@@ -3486,7 +3524,6 @@ export interface Hilfe {
           | 'users'
           | 'menue'
           | 'verein'
-          | 'startseite'
           | 'sicherheit'
           | 'texte'
           | 'forms'
@@ -3555,7 +3592,6 @@ export interface Hilfe {
               | 'users'
               | 'menue'
               | 'verein'
-              | 'startseite'
               | 'sicherheit'
               | 'texte'
               | 'forms'
@@ -3762,6 +3798,13 @@ export interface MenueSelect<T extends boolean = true> {
  * via the `definition` "texte_select".
  */
 export interface TexteSelect<T extends boolean = true> {
+  bilderUebernommen?: T;
+  heroBilder?: T;
+  heroTag1?: T;
+  heroTag2?: T;
+  bildFussball?: T;
+  bildKids?: T;
+  bildFitness?: T;
   heroTitel?: T;
   heroHand?: T;
   heroText?: T;
@@ -3821,6 +3864,17 @@ export interface TexteSelect<T extends boolean = true> {
         d3?: T;
         button?: T;
       };
+  aktion?:
+    | T
+    | {
+        aktiv?: T;
+        kicker?: T;
+        titel?: T;
+        text?: T;
+        linkText?: T;
+        linkUrl?: T;
+        bild?: T;
+      };
   fussball?:
     | T
     | {
@@ -3831,6 +3885,9 @@ export interface TexteSelect<T extends boolean = true> {
   breitensport?:
     | T
     | {
+        bild1?: T;
+        bild2?: T;
+        bild3?: T;
         titel?: T;
         text?: T;
         schnupperTitel?: T;
@@ -3839,6 +3896,7 @@ export interface TexteSelect<T extends boolean = true> {
   verein?:
     | T
     | {
+        titelbild?: T;
         titel?: T;
         text?: T;
         vorstandText?: T;

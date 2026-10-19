@@ -13,7 +13,7 @@ export const Verein: GlobalConfig = {
   label: 'Vereinsdaten',
   // Redaktion (Vorstand, Downloads) und Kasse (Beiträge) pflegen die Vereinsdaten mit
   access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
-  admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Startseite & Bilder“.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
+  admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Texte & Bilder“.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
   hooks: {
     afterChange: [revalidateAllesGlobal],
     // Über die öffentliche Schnittstelle niemals Dateien „Nur für Mitglieder“ verraten

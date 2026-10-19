@@ -14,7 +14,7 @@ export const eintragSichtbar = (e: Eintrag, user: unknown) =>
   ((user as { roles?: string[] | null } | null)?.roles ?? []).some((r) => e.rollen.includes(r)) || (e.recht ? hatRecht(user, e.recht) : false)
 
 /** Feste Reihenfolge innerhalb der Gruppen (wie nav-zusatz.scss); alles andere folgt danach */
-export const REIHENFOLGE = ['verein', 'rollen', 'datenschutz', 'sicherung', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'startseite', 'forms']
+export const REIHENFOLGE = ['verein', 'rollen', 'datenschutz', 'sicherung', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
 
 /** Nicht als eigener Eintrag zeigen – erreichbar über „Rollen & Rechte“ */
 export const VERSTECKT = ['rollenRechte']

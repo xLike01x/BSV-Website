@@ -82,7 +82,7 @@ export async function vorschlaegeErmitteln(req: PayloadRequest): Promise<{ vorsc
     alle<Record<string, unknown>>('pages'),
   ])
   const verein = await p.findGlobal({ slug: 'verein', depth: 0, overrideAccess: true, req }).catch(() => null)
-  const startseite = await p.findGlobal({ slug: 'startseite' as never, depth: 0, overrideAccess: true, req }).catch(() => null)
+  const texte = await p.findGlobal({ slug: 'texte', depth: 0, overrideAccess: true, req }).catch(() => null)
 
   // Hinweise sammeln: Medien-ID → Team-Stimmen bzw. „allgemein“
   const teamStimmen = new Map<Id, Map<Id, number>>()
@@ -105,7 +105,7 @@ export async function vorschlaegeErmitteln(req: PayloadRequest): Promise<{ vorsc
     }
   }
   for (const m of medienInDaten(verein)) allgemein.set(m, 'In den Vereinsdaten benutzt (z. B. Vorstand)')
-  for (const m of medienInDaten(startseite)) allgemein.set(m, 'Unter „Startseite & Bilder“ benutzt')
+  for (const m of medienInDaten(texte)) allgemein.set(m, 'Unter „Texte & Bilder“ benutzt')
   for (const s of pages) for (const m of [...medienInDaten(s), ...medienImText(s)]) if (!allgemein.has(m)) allgemein.set(m, 'Auf einer eigenen Seite benutzt')
 
   // Dateiname ↔ Team-Name (längster Treffer gewinnt, z. B. „d1-jugend“ vor „jugend“)
