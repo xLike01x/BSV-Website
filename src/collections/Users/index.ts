@@ -1,4 +1,6 @@
-import { registrierungEndpunkte } from '@/auth/registrierung'
+import { mailHtml } from '@/auth/mail'
+import { registrierungEndpunkte, unbestaetigt } from '@/auth/registrierung'
+import { getServerSideURL } from '@/utilities/getURL'
 import { webadminLoeschSchutz, webadminSchutz } from './webadminSchutz'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
@@ -37,6 +39,22 @@ export const Users: CollectionConfig = {
     lockTime: 10 * 60 * 1000, // 10 Minuten Sperre nach 5 Fehlversuchen
     // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten keine Rollen
     strategies: [zweiFaktorStrategie],
+    // „Passwort vergessen“: deutsche E-Mail mit Link auf die eigene Seite (nicht in die Verwaltung)
+    forgotPassword: {
+      expiration: 60 * 60 * 1000, // Link gilt 1 Stunde
+      generateEmailSubject: () => 'Neues Passwort festlegen – BSV 1919',
+      generateEmailHTML: (args) => {
+        const link = `${getServerSideURL()}/login/passwort-neu?t=${encodeURIComponent(String(args?.token ?? ''))}`
+        const name = (args?.user as { name?: string } | undefined)?.name
+        return mailHtml({
+          titel: 'Neues Passwort festlegen',
+          absaetze: [name ? `Hallo ${name},` : 'Hallo,', 'für dein Konto auf der Website des BSV 1919 wurde ein neues Passwort angefordert. Über diesen Knopf legst du es fest:'],
+          knopf: 'Neues Passwort festlegen',
+          link,
+          fuss: 'Der Link gilt 1 Stunde. Du hast nichts angefordert? Dann ignoriere diese E-Mail – dein bisheriges Passwort bleibt gültig.',
+        })
+      },
+    },
   },
   endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte, ...registrierungEndpunkte],
   fields: [
@@ -106,6 +124,7 @@ export const Users: CollectionConfig = {
       options: [
         { label: 'Von der Verwaltung angelegt', value: 'verwaltung' },
         { label: 'Selbst registriert (E-Mail)', value: 'email' },
+        // Alt (Google-Anmeldung wurde entfernt) – bleibt nur, damit bestehende Daten gültig sind
         { label: 'Selbst registriert (Google)', value: 'google' },
       ],
       access: { create: () => false, update: () => false },
@@ -117,9 +136,25 @@ export const Users: CollectionConfig = {
       type: 'checkbox',
       defaultValue: false,
       access: { create: () => false, update: () => false },
-      admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.registriertUeber), description: 'Bestätigt durch die Anmeldung mit Google. Bei Registrierung per E-Mail nicht geprüft.' },
+      admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.registriertUeber), description: 'Die Person hat auf den Link in der Bestätigungs-E-Mail geklickt. Erst dann kann sie sich anmelden und erscheint unter „Registrierungen“.' },
     },
-    // Verknüpfung mit dem Google-Konto (nie über die Schnittstelle sichtbar)
+    {
+      name: 'wunschAngebote',
+      label: 'Wunsch bei der Registrierung',
+      type: 'relationship',
+      relationTo: 'angebote',
+      hasMany: true,
+      access: { create: isAdminField, update: isAdminField },
+      admin: {
+        position: 'sidebar',
+        condition: (d) => d?.freigegeben === false,
+        description: 'Diese Teams & Kurse hat die Person bei der Registrierung angekreuzt (dazu gehört sie oder da möchte sie hin). Unter „Registrierungen“ sind sie bei der Freigabe schon vorausgewählt.',
+      },
+    },
+    // Bestätigungslink (nur der Fingerabdruck, nie über die Schnittstelle sichtbar)
+    { name: 'bestaetigungHash', type: 'text', index: true, access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
+    { name: 'bestaetigungBis', type: 'date', access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
+    // Alt: Verknüpfung mit dem Google-Konto (Google-Anmeldung entfernt; Feld bleibt, damit die Datenbank unverändert bleibt)
     { name: 'googleId', type: 'text', index: true, access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
     ...zweiFaktorFelder,
     testkontoFeld,
@@ -132,10 +167,25 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
+    // „Passwort vergessen“ beweist ebenfalls, dass die E-Mail-Adresse der Person gehört → gilt als bestätigt.
+    // (Payload ruft diesen Hook beim Zurücksetzen mit dem kompletten Konto samt neuem Passwort-Hash auf.)
+    beforeValidate: [
+      ({ data }) => {
+        const d = data as Record<string, unknown> | undefined
+        if (d && d.hash && d.salt && d.resetPasswordExpiration && d.registriertUeber === 'email' && !d.emailBestaetigt) {
+          d.emailBestaetigt = true
+          d.bestaetigungHash = null
+          d.bestaetigungBis = null
+        }
+        return data
+      },
+    ],
     // Testkonten (ohne Zwei-Faktor) nur auf dem lokalen Server
     beforeLogin: [
       ({ user, req }) => {
         if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt(req?.headers)) throw new APIError('Testkonten gehen nur lokal auf dem eigenen PC (nicht über einen Tunnel oder die Live-Website).', 403)
+        // Selbst registriert: erst nach Klick auf den Link in der Bestätigungs-E-Mail (Passwort wurde da schon geprüft)
+        if (unbestaetigt(user as never)) throw new APIError('E-Mail noch nicht bestätigt: Bitte klicke zuerst auf den Link in der E-Mail, die wir dir geschickt haben.', 403)
         return user
       },
     ],
@@ -157,12 +207,6 @@ export const Users: CollectionConfig = {
           throw new APIError('Die E-Mail-Adresse kann nur die Verwaltung ändern. Bitte kurz Bescheid geben.', 403)
         if (originalDoc.freigegeben === false && typeof data.name === 'string' && data.name !== originalDoc.name)
           throw new APIError('Der Name kann bis zur Freigabe nicht geändert werden.', 403)
-        return data
-      },
-      // E-Mail oder Passwort geändert → Verknüpfung mit Google aufheben (z. B. bei Übergabe eines Funktionspostfachs)
-      ({ data, originalDoc, operation }) => {
-        if (operation === 'update' && originalDoc && ((typeof data.email === 'string' && data.email.toLowerCase() !== String(originalDoc.email).toLowerCase()) || data.password))
-          data.googleId = null
         return data
       },
       // Die allererste Person, die sich anlegt, wird automatisch Web-Admin.

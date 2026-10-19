@@ -16,6 +16,15 @@ export function taeglicheAufgaben(payload: Payload) {
       .delete({ collection: 'users', where: { and: [{ freigegeben: { equals: false } }, { createdAt: { less_than: new Date(Date.now() - 60 * 86400000).toISOString() } }] }, overrideAccess: true })
       .then((r) => r.docs.length && payload.logger.info(`${r.docs.length} alte, nicht freigegebene Registrierungen entfernt`))
       .catch((e) => payload.logger.warn({ err: e }, 'Alte Registrierungen aufräumen fehlgeschlagen'))
+    // Registrierungen ohne bestätigte E-Mail nach 7 Tagen entfernen (Tippfehler, Bots, fremde Adressen)
+    await payload
+      .delete({
+        collection: 'users',
+        where: { and: [{ freigegeben: { equals: false } }, { registriertUeber: { equals: 'email' } }, { emailBestaetigt: { not_equals: true } }, { createdAt: { less_than: new Date(Date.now() - 7 * 86400000).toISOString() } }] },
+        overrideAccess: true,
+      })
+      .then((r) => r.docs.length && payload.logger.info(`${r.docs.length} nie bestätigte Registrierungen entfernt`))
+      .catch((e) => payload.logger.warn({ err: e }, 'Unbestätigte Registrierungen aufräumen fehlgeschlagen'))
     await passUnterlagenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Pass-Unterlagen aufräumen fehlgeschlagen'))
     await datenschutzAutomatisch(payload).catch((e) => payload.logger.warn({ err: e }, 'Datenschutz-Aufräumen fehlgeschlagen'))
   }

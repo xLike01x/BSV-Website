@@ -1,27 +1,17 @@
 'use client'
 
-import { GoogleKnopf } from '@/bsv/components/GoogleKnopf'
+import { ErneutSenden } from '@/bsv/components/ErneutSenden'
 import { sicheresZiel } from '@/bsv/sicheresZiel'
 import Link from 'next/link'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useState } from 'react'
 
-const GOOGLE_FEHLER: Record<string, string> = {
-  'google-aus': 'Die Anmeldung mit Google ist noch nicht eingerichtet.',
-  'google-abgelaufen': 'Die Anmeldung mit Google hat zu lange gedauert. Bitte noch einmal versuchen.',
-  'google-abgebrochen': 'Die Anmeldung mit Google wurde abgebrochen.',
-  'google-fehler': 'Die Anmeldung mit Google hat nicht geklappt. Bitte noch einmal versuchen.',
-  'zu-viele': 'Zu viele Versuche. Bitte in ein paar Minuten erneut probieren.',
-  gesperrt: 'Dieses Konto ist gerade gesperrt. Bitte später erneut versuchen.',
-  'google-personal': 'Konten der Verwaltung melden sich bitte mit E-Mail, Passwort und Code an – nicht mit Google.',
-  'nicht-eingerichtet': 'Die Website ist noch nicht eingerichtet.',
-}
-
-export function LoginForm({ google = false }: { google?: boolean }) {
+export function LoginForm() {
   const router = useRouter()
   const sp = useSearchParams()
   const [modus, setModus] = useState<'login' | 'vergessen' | 'gesendet'>('login')
-  const [fehler, setFehler] = useState<string | null>(GOOGLE_FEHLER[sp.get('fehler') ?? ''] ?? null)
+  const [fehler, setFehler] = useState<string | null>(null)
+  const [unbestaetigt, setUnbestaetigt] = useState<string | null>(null)
   const [laedt, setLaedt] = useState(false)
 
   // Nur interne Ziele erlauben (kein Open Redirect)
@@ -30,6 +20,7 @@ export function LoginForm({ google = false }: { google?: boolean }) {
   async function login(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     setFehler(null)
+    setUnbestaetigt(null)
     setLaedt(true)
     const f = new FormData(e.currentTarget)
     try {
@@ -48,7 +39,11 @@ export function LoginForm({ google = false }: { google?: boolean }) {
       }
       const body = (await res.json().catch(() => null)) as { errors?: { message?: string }[] } | null
       const msg = body?.errors?.[0]?.message ?? ''
-      setFehler(/locked|gesperrt/i.test(msg) ? 'Zu viele Fehlversuche. Das Konto ist für 10 Minuten gesperrt.' : 'E-Mail oder Passwort stimmen nicht.')
+      if (/nicht bestätigt/i.test(msg)) {
+        setUnbestaetigt(String(f.get('email') ?? ''))
+        setFehler('Deine E-Mail-Adresse ist noch nicht bestätigt. Bitte klicke auf den Link in der E-Mail, die wir dir nach der Registrierung geschickt haben (auch im Spam-Ordner nachsehen).')
+      } else if (/Testkonten/.test(msg)) setFehler(msg)
+      else setFehler(/locked|gesperrt/i.test(msg) ? 'Zu viele Fehlversuche. Das Konto ist für 10 Minuten gesperrt.' : 'E-Mail oder Passwort stimmen nicht.')
     } catch {
       setFehler('Keine Verbindung. Bitte versuche es erneut.')
     }
@@ -87,7 +82,6 @@ export function LoginForm({ google = false }: { google?: boolean }) {
 
   return (
     <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={modus === 'login' ? login : vergessen}>
-      {google && modus === 'login' && <GoogleKnopf weiter={weiter} text="Mit Google anmelden" />}
       <label className="field">
         E-Mail
         <input name="email" type="email" required autoComplete="username" autoFocus />
@@ -103,6 +97,7 @@ export function LoginForm({ google = false }: { google?: boolean }) {
           {fehler}
         </p>
       )}
+      {unbestaetigt && modus === 'login' && <ErneutSenden email={unbestaetigt} />}
       <button type="submit" className="btn btn-primary" disabled={laedt} style={{ minHeight: 52 }}>
         {laedt ? 'Bitte warten …' : modus === 'login' ? 'Anmelden' : 'Link zum Zurücksetzen senden'}
       </button>

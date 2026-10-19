@@ -302,7 +302,7 @@ export const HILFE: Record<string, HilfeText> = {
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
       '• Übungsleitung / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
       'Bei Teams & Kursen unter „Verantwortliche“ legst du fest, welche Teams jemand pflegt.',
-      'Mitglieder können sich auch selbst registrieren (mit E-Mail oder Google). Solche Konten warten unter „Registrierungen“ (links unten) auf deine Freigabe.',
+      'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Registrierungen“ (links unten) auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
     ],
     wirkung: [
       'Alle außer „Mitglied“ müssen beim Anmelden zusätzlich einen Code aus einer Handy-App eingeben (Zwei-Faktor). Vorher öffnet sich weder die Verwaltung noch der Mitgliederbereich.',

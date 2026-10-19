@@ -5,6 +5,7 @@ import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
 import { hasRole } from '@/access/roles'
+import { unbestaetigt, WARTEND } from '@/auth/registrierung'
 
 import RegistrierungenClient, { type Eintrag } from './Client'
 import './registrierungen.scss'
@@ -15,7 +16,17 @@ export default async function Registrierungen({ initPageResult, params, searchPa
   if (!req.user) redirect('/login?weiter=/admin/registrierungen')
   // Echte Rollen zählen erst nach bestätigtem zweiten Faktor (die Sitzung ist sonst auf Mitglied herabgestuft)
   if (!hasRole(req.user as never, 'admin', 'kasse')) redirect('/admin')
-  const r = await req.payload.find({ collection: 'users', where: { freigegeben: { equals: false } }, sort: '-createdAt', limit: 200, depth: 1, overrideAccess: true })
+  const r = await req.payload.find({ collection: 'users', where: WARTEND, sort: '-createdAt', limit: 200, depth: 1, overrideAccess: true })
+  // Noch nicht bestätigt: erscheinen erst nach Klick auf den Link in der E-Mail
+  const offen = (await req.payload.find({ collection: 'users', where: { and: [{ freigegeben: { equals: false } }, { registriertUeber: { equals: 'email' } }, { emailBestaetigt: { not_equals: true } }] }, limit: 0, depth: 0, overrideAccess: true })).totalDocs
+  const alleAngebote = (await req.payload.find({ collection: 'angebote', sort: ['reihenfolge', 'title'], limit: 300, depth: 0, pagination: false, overrideAccess: true, select: { title: true, bereich: true, aktiv: true } as never })).docs.map((d) => {
+    const a = d as unknown as { id: number; title: string; bereich?: string; aktiv?: boolean | null }
+    return {
+    id: a.id,
+    title: (a as { title: string }).title,
+    bereich: (a as { bereich?: string }).bereich ?? '',
+    aktiv: (a as { aktiv?: boolean | null }).aktiv !== false,
+  }})
   const emails = r.docs.map((u) => u.email)
   const antraege = emails.length
     ? (await req.payload.find({ collection: 'mitgliedsantraege', where: { or: emails.map((e) => ({ email: { like: e } })) }, limit: 500, depth: 0, overrideAccess: true, select: { email: true, status: true } as never })).docs
@@ -29,11 +40,12 @@ export default async function Registrierungen({ initPageResult, params, searchPa
       id: u.id,
       name: u.name,
       email: u.email,
-      ueber: (u as { registriertUeber?: string | null }).registriertUeber ?? 'email',
+      ueber: (u as { registriertUeber?: string | null }).registriertUeber ?? 'verwaltung',
       am: u.createdAt,
       foto,
       antrag: antraege.some((a) => (a as { email?: string }).email?.toLowerCase() === u.email.toLowerCase()),
-      bestaetigt: Boolean((u as { emailBestaetigt?: boolean | null }).emailBestaetigt),
+      bestaetigt: !unbestaetigt(u as never),
+      wuensche: (((u as { wunschAngebote?: unknown[] | null }).wunschAngebote ?? []) as (number | { id: number })[]).map((w) => (typeof w === 'object' ? w.id : w)),
       ausweise: mitglieder.filter((m) => m.email === u.email.toLowerCase()).map((m) => `${m.vorname} ${m.nachname}`),
     }
   })
@@ -50,7 +62,7 @@ export default async function Registrierungen({ initPageResult, params, searchPa
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RegistrierungenClient eintraege={eintraege} />
+        <RegistrierungenClient eintraege={eintraege} angebote={alleAngebote} offen={offen} />
       </Gutter>
     </DefaultTemplate>
   )

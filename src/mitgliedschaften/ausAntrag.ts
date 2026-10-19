@@ -15,8 +15,8 @@ export const mitgliedschaftAusAntrag: CollectionAfterChangeHook = async ({ doc, 
     { vorname: doc.vorname, nachname: doc.nachname, geburtsdatum: doc.geburtsdatum, angebote },
     ...(doc.mitgliedsart === 'familie' ? (doc.familienmitglieder ?? []).map((f: { vorname?: string; nachname?: string; geburtsdatum?: string }) => ({ vorname: f.vorname, nachname: f.nachname || doc.nachname, geburtsdatum: f.geburtsdatum, angebote: [] })) : []),
   ]
-  // Gibt es schon ein vertrauenswürdiges Konto mit dieser E-Mail (von der Verwaltung angelegt oder per Google bestätigt)?
-  // Dann gleich verknüpfen. Selbst registrierte, unbestätigte Konten verknüpft die Kasse von Hand.
+  // Gibt es schon ein vertrauenswürdiges Konto mit dieser E-Mail (von der Verwaltung angelegt oder mit bestätigter E-Mail)?
+  // Dann gleich verknüpfen.
   const kandidat = (await req.payload.find({ collection: 'users', where: { and: [{ email: { equals: email } }, { freigegeben: { not_equals: false } }] }, limit: 1, depth: 0, overrideAccess: true, req })).docs[0] as
     | { id: number; registriertUeber?: string | null; emailBestaetigt?: boolean | null }
     | undefined

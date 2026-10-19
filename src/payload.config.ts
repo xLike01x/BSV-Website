@@ -1,4 +1,6 @@
 import { postgresAdapter } from '@payloadcms/db-postgres'
+import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
+import { anzeigeMail } from './auth/mail'
 import sharp from 'sharp'
 import path from 'path'
 import { buildConfig, type CollectionConfig, PayloadRequest } from 'payload'
@@ -46,7 +48,28 @@ const dirname = path.dirname(filename)
 
 import { canUpload, hasRole, isEditor } from './access/roles'
 
+// E-Mail-Versand (Bestätigung bei Registrierung, „Passwort vergessen“, Benachrichtigungen).
+// Nur aktiv mit SMTP_HOST in der .env – sonst stehen die Mails beim Entwickeln im Server-Fenster.
+const smtpPort = Number(process.env.SMTP_PORT || 465)
+const email = process.env.SMTP_HOST
+  ? nodemailerAdapter({
+      defaultFromAddress: process.env.SMTP_FROM || process.env.SMTP_USER || '',
+      defaultFromName: process.env.SMTP_FROM_NAME || 'BSV 1919',
+      skipVerify: true,
+      transportOptions: {
+        host: process.env.SMTP_HOST,
+        port: smtpPort,
+        secure: smtpPort === 465,
+        requireTLS: smtpPort !== 465,
+        auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+      },
+    })
+  : process.env.NODE_ENV !== 'production'
+    ? anzeigeMail
+    : undefined
+
 export default buildConfig({
+  email,
   endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {

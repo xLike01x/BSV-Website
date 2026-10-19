@@ -690,14 +690,25 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Jemand hat sich auf der Website registriert – was muss ich tun?',
-    antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Ist die Person Mitglied, auf „Freigeben“ klicken. Steht dort „E-Mail nicht bestätigt“ und es würden Ausweise verknüpft, im Zweifel kurz bei der Person nachfragen – die Adresse wurde nicht geprüft. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen von selbst. Sonst „Ablehnen“, dann wird das Konto gelöscht. Danach unter „Benutzer“ die Teams & Kurse des Mitglieds eintragen, damit es seine Ausfälle sieht.',
+    antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Dort erscheinen nur Personen, die ihre E-Mail-Adresse schon bestätigt haben. 1. Teams & Kurse prüfen: Was die Person bei der Registrierung angekreuzt hat, ist schon angehakt (grün, „Wunsch“). Haken setzen oder entfernen; „Alle Teams & Kurse zeigen“ klappt den Rest auf. 2. Ist die Person Mitglied, auf „Freigeben“ klicken – sie bekommt automatisch eine E-Mail. Sonst „Ablehnen“, dann wird das Konto gelöscht. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen, nie bestätigte nach 7 Tagen von selbst.',
     bereich: 'users',
   },
   {
-    frage: 'Wie richte ich „Mit Google anmelden“ ein?',
-    antwort: 'Einmalig in der Google Cloud Console (console.cloud.google.com): 1. Neues Projekt „BSV-Website“ anlegen. 2. „APIs & Dienste“ → „OAuth-Zustimmungsbildschirm“: Typ „Extern“, App-Name „BSV 1919“, eure E-Mail eintragen, speichern. Solange die App im „Testmodus“ ist, können sich nur eingetragene Testnutzer anmelden – trag dort zum Ausprobieren deine eigene Google-Adresse ein; zum Live-Gang auf „App veröffentlichen“ klicken. 3. „Anmeldedaten“ → „Anmeldedaten erstellen“ → „OAuth-Client-ID“ → Typ „Webanwendung“. 4. Bei „Autorisierte Weiterleitungs-URIs“ eintragen: http://localhost:3000/api/users/google/callback (und später die echte Adresse, z. B. https://www.bsv1919.de/api/users/google/callback). 5. Client-ID und Clientschlüssel in die .env schreiben: GOOGLE_CLIENT_ID=… und GOOGLE_CLIENT_SECRET=… 6. Website neu starten (BSV-Website-Update.bat). Danach erscheint der Google-Knopf beim Anmelden und Registrieren.',
+    frage: 'Warum erscheint eine Registrierung nicht unter „Registrierungen“?',
+    antwort: 'Die Person hat den Link in der Bestätigungs-E-Mail noch nicht angeklickt. Oben auf der Seite steht, wie viele noch darauf warten. Tipp für die Person: im Spam-Ordner nachsehen oder auf der Anmeldeseite „Bestätigungs-E-Mail noch einmal senden“ nutzen. Auch „Passwort vergessen?“ zählt als Bestätigung.',
     bereich: 'users',
   },
+  {
+    frage: 'Wie schützt sich die Registrierung vor Bots?',
+    antwort: 'Ohne „Ich bin kein Roboter“-Kästchen und ohne fremde Dienste (also auch ohne Daten an Google): 1. Der Browser löst im Hintergrund eine kleine Rechenaufgabe (meist unter 2 Sekunden, unter dem Knopf steht „Sicherheitsprüfung erledigt“). Für Menschen unsichtbar, für Massen-Bots teuer. 2. Wer schneller als 3 Sekunden absendet, wird abgewiesen. 3. Ein unsichtbares Fangfeld, das nur Bots ausfüllen. 4. Höchstens 5 Versuche pro Internetanschluss in kurzer Zeit. 5. Ohne bestätigte E-Mail erscheint niemand bei euch – und wird nach 7 Tagen gelöscht.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Wie richte ich den E-Mail-Versand ein?',
+    antwort: 'Nötig für Registrierung, „Passwort vergessen“ und Benachrichtigungen. In die .env eintragen (Daten vom E-Mail-Anbieter, z. B. SiteGround → Site Tools → E-Mail → Konten → „Mail-Konfiguration“): SMTP_HOST=… (Postausgangsserver), SMTP_PORT=465, SMTP_USER=website@eure-domain.de, SMTP_PASS=… (Passwort des Postfachs), SMTP_FROM=website@eure-domain.de. Danach die Website neu starten (BSV-Website-Update.bat). Ohne diese Einträge stehen die Mails beim Ausprobieren auf dem eigenen PC nur im schwarzen Server-Fenster (mit Link zum Anklicken); auf der Live-Website ist die Registrierung dann gesperrt.',
+    bereich: 'users',
+  },
+
   {
     frage: 'Wer sieht die Profilfotos der Mitglieder?',
     antwort: 'Nur das Mitglied selbst, Admin und Kasse sowie die Übungsleitung / Team-Redaktion der Kurse, in denen das Mitglied eingetragen ist (im Team unter „Mitglieder in diesem Team / Kurs“). Nie öffentlich. Das Mitglied kann sein Foto jederzeit selbst entfernen.',

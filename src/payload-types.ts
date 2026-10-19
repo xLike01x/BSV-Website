@@ -544,9 +544,15 @@ export interface User {
   freigegeben?: boolean | null;
   registriertUeber?: ('verwaltung' | 'email' | 'google') | null;
   /**
-   * Bestätigt durch die Anmeldung mit Google. Bei Registrierung per E-Mail nicht geprüft.
+   * Die Person hat auf den Link in der Bestätigungs-E-Mail geklickt. Erst dann kann sie sich anmelden und erscheint unter „Registrierungen“.
    */
   emailBestaetigt?: boolean | null;
+  /**
+   * Diese Teams & Kurse hat die Person bei der Registrierung angekreuzt (dazu gehört sie oder da möchte sie hin). Unter „Registrierungen“ sind sie bei der Freigabe schon vorausgewählt.
+   */
+  wunschAngebote?: (number | Angebote)[] | null;
+  bestaetigungHash?: string | null;
+  bestaetigungBis?: string | null;
   googleId?: string | null;
   /**
    * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
@@ -2449,6 +2455,9 @@ export interface UsersSelect<T extends boolean = true> {
   freigegeben?: T;
   registriertUeber?: T;
   emailBestaetigt?: T;
+  wunschAngebote?: T;
+  bestaetigungHash?: T;
+  bestaetigungBis?: T;
   googleId?: T;
   zweiFaktorAktiv?: T;
   zweiFaktorGeheimnis?: T;
