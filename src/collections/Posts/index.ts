@@ -1,3 +1,4 @@
+import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { medienPruefen } from '@/hooks/medienPruefen'
 import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
@@ -308,12 +309,15 @@ export const Posts: CollectionConfig<'posts'> = {
         },
       ],
     },
-    slugField({
-      overrides: (feld) => ({
-        ...feld,
-        admin: { ...feld.admin, condition: (_data: unknown, _sibling: unknown, { user }: { user: unknown }) => istRedaktion(user) },
+    mitEindeutigemSlug(
+      slugField({
+        overrides: (feld) => ({
+          ...feld,
+          admin: { ...feld.admin, condition: (_data: unknown, _sibling: unknown, { user }: { user: unknown }) => istRedaktion(user) },
+        }),
       }),
-    }),
+      'posts',
+    ),
   ],
   hooks: {
     beforeValidate: [slugFromTitle],

@@ -1,3 +1,4 @@
+import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { seoAutomatisch } from '@/hooks/seoAutomatisch'
 import { hinweisFeld } from '@/fields/hinweise'
 import { ausblendenAusser } from '@/access/roles'
@@ -134,7 +135,8 @@ export const Pages: CollectionConfig<'pages'> = {
         position: 'sidebar',
       },
     },
-    slugField(),
+    // Adresse eindeutig halten (auch Entwürfe und Papierkorb) – sonst scheitern Speichern und Löschen
+    mitEindeutigemSlug(slugField(), 'pages'),
   ],
   hooks: {
     afterChange: [revalidatePage],

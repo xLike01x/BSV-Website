@@ -851,6 +851,11 @@ export const FAQ: Faq[] = [
     bereich: 'dashboard',
   },
   {
+    frage: 'Warum hat meine Seite die Adresse „…-2“ bekommen?',
+    antwort: 'Jede Adresse gibt es nur einmal. Heißt eine neue Seite, News oder ein Team wie ein vorhandener Eintrag (z. B. „Kunstrasen“ → /kunstrasen), bekommt der neue automatisch /kunstrasen-2 – die Hinweise rechts zeigen die Adresse. Auch Einträge im Papierkorb zählen mit. Wunsch-Adresse? Den alten Eintrag umbenennen oder endgültig löschen und danach rechts bei „Slug“ die Adresse ändern.',
+    bereich: 'pages',
+  },
+  {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
     bereich: 'users',

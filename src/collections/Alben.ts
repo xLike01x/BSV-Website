@@ -1,3 +1,4 @@
+import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import { APIError, slugField } from 'payload'
 
@@ -76,6 +77,6 @@ export const Alben: CollectionConfig = {
       admin: { description: 'Mehrere Bilder auswählen oder neu hochladen. Das erste Bild ist das Titelbild. Nur Fotos mit Einwilligung der abgebildeten Personen.' },
     },
     { name: 'aktiv', label: 'Auf der Website zeigen', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
-    slugField({ position: 'sidebar', useAsSlug: 'titel' }),
+    mitEindeutigemSlug(slugField({ position: 'sidebar', useAsSlug: 'titel' }), 'alben', 'titel'),
   ],
 }
