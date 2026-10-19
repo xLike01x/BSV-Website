@@ -317,7 +317,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Die Angaben zur Spielerin / zum Spieler prüfen und unter „Unterlagen“ jede Datei anklicken.',
         'Fehlt etwas oder ist unleserlich: Status „Unterlagen fehlen“, beim Hinweis kurz schreiben, was fehlt, und speichern.',
         'Alles da: Antrag im DFBnet einreichen, Status „Beim Verband“ und die Vorgangsnummer in die interne Notiz.',
-        'Spielerlaubnis erteilt: Status „Spielerlaubnis erteilt“ und speichern. Die Unterlagen werden danach automatisch gelöscht.',
+        'Spielerlaubnis erteilt: Status „Spielerlaubnis erteilt“ und speichern. Ausweis, Foto & Co. werden nach 30 Tagen automatisch gelöscht, der unterschriebene Antrag nach 2 Jahren.',
       ],
     },
   ],

@@ -245,7 +245,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Die antragstellende Person sieht den Status und deinen Hinweis im Mitgliederbereich.',
-      'Nach „Spielerlaubnis erteilt“ oder „Abgelehnt“ werden die Unterlagen automatisch gelöscht (Frist unter „Datenschutz-Fristen“, Standard 30 Tage). Der Antrag selbst bleibt als Nachweis.',
+      'Nach „Spielerlaubnis erteilt“ oder „Abgelehnt“ werden Ausweis, Passfoto und Erklärungen automatisch gelöscht (Standard 30 Tage). Der unterschriebene Passantrag wird 2 Jahre aufbewahrt und dann samt Antrag gelöscht. Beide Fristen stehen unter „Datenschutz-Fristen“.',
     ],
     tipps: [
       'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ (alle Teams) und die Übungsleitung des jeweiligen Teams. Team-Redaktion und andere Trainer sehen sie nicht.',

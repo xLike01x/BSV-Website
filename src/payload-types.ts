@@ -1469,7 +1469,7 @@ export interface Passantraege {
   nachgereichtAm?: string | null;
   abgeschlossenAm?: string | null;
   /**
-   * Nach Abschluss werden Ausweis, Foto usw. automatisch gelöscht (Frist unter „Datenschutz-Fristen“).
+   * Ausweis, Foto usw. werden nach Abschluss automatisch gelöscht; der unterschriebene Passantrag bleibt 2 Jahre (Fristen unter „Datenschutz-Fristen“).
    */
   unterlagenGeloeschtAm?: string | null;
   updatedAt: string;
@@ -3333,9 +3333,13 @@ export interface Datenschutz {
   antraegeMonate?: number | null;
   eingaengeMonate?: number | null;
   /**
-   * Läuft immer automatisch. Der Antrag selbst (Name, Team, Status) bleibt als Nachweis erhalten.
+   * Läuft immer automatisch. Der unterschriebene Passantrag bleibt (siehe rechts).
    */
   passUnterlagenTage?: number | null;
+  /**
+   * Der unterschriebene Antrag muss 2 Jahre aufbewahrt werden. Danach werden Antrag und Formular automatisch gelöscht.
+   */
+  passAntragMonate?: number | null;
   /**
    * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
    */
@@ -3745,6 +3749,7 @@ export interface DatenschutzSelect<T extends boolean = true> {
   antraegeMonate?: T;
   eingaengeMonate?: T;
   passUnterlagenTage?: T;
+  passAntragMonate?: T;
   automatisch?: T;
   updatedAt?: T;
   createdAt?: T;

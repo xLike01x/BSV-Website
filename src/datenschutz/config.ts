@@ -39,12 +39,25 @@ export const Datenschutz: GlobalConfig = {
       ],
     },
     {
-      name: 'passUnterlagenTage',
-      label: 'Passanträge: Unterlagen (Ausweis, Foto …) löschen – Tage nach Abschluss',
-      type: 'number',
-      min: 1,
-      defaultValue: 30,
-      admin: { description: 'Läuft immer automatisch. Der Antrag selbst (Name, Team, Status) bleibt als Nachweis erhalten.' },
+      type: 'row',
+      fields: [
+        {
+          name: 'passUnterlagenTage',
+          label: 'Passanträge: Ausweis, Foto, Erklärungen löschen – Tage nach Abschluss',
+          type: 'number',
+          min: 1,
+          defaultValue: 30,
+          admin: { width: '50%', description: 'Läuft immer automatisch. Der unterschriebene Passantrag bleibt (siehe rechts).' },
+        },
+        {
+          name: 'passAntragMonate',
+          label: 'Passanträge: Antrag aufbewahren – Monate nach Abschluss',
+          type: 'number',
+          min: 24,
+          defaultValue: 24,
+          admin: { width: '50%', description: 'Der unterschriebene Antrag muss 2 Jahre aufbewahrt werden. Danach werden Antrag und Formular automatisch gelöscht.' },
+        },
+      ],
     },
     {
       name: 'automatisch',

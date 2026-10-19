@@ -262,7 +262,7 @@ export const Passantraege: CollectionConfig = {
           name: 'unterlagenGeloeschtAm',
           label: 'Unterlagen gelöscht am',
           type: 'date',
-          admin: { readOnly: true, date: { displayFormat: 'dd.MM.yyyy' }, description: 'Nach Abschluss werden Ausweis, Foto usw. automatisch gelöscht (Frist unter „Datenschutz-Fristen“).' },
+          admin: { readOnly: true, date: { displayFormat: 'dd.MM.yyyy' }, description: 'Ausweis, Foto usw. werden nach Abschluss automatisch gelöscht; der unterschriebene Passantrag bleibt 2 Jahre (Fristen unter „Datenschutz-Fristen“).' },
         },
       ],
     },

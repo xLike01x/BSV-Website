@@ -298,7 +298,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'antrag', titel: 'Antrag kommt rein', text: 'Status „Eingereicht“, Unterlagen hängen dran.', wo: 'Mitgliederbereich → Spielerpass' },
       { key: 'pruefen', titel: 'Prüfen', text: 'Fehlt etwas? „Unterlagen fehlen“ + Hinweis – die Person reicht nach.' },
       { key: 'verband', titel: 'DFBnet', text: 'Einreichen, Status „Beim Verband“.' },
-      { key: 'fertig', titel: 'Fertig', text: '„Spielerlaubnis erteilt“ – Unterlagen werden nach 30 Tagen gelöscht.' },
+      { key: 'fertig', titel: 'Fertig', text: '„Spielerlaubnis erteilt“ – Ausweis & Foto nach 30 Tagen gelöscht, der unterschriebene Antrag nach 2 Jahren.' },
     ],
   },
 
