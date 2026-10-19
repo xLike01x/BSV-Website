@@ -21,12 +21,12 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { isEnabled } = await draftMode()
 
   return (
-    <html className={cn(GeistSans.variable)} lang="de" data-theme="light">
+    <html className={cn(GeistSans.variable)} lang="de" data-theme="light" suppressHydrationWarning>
       <head>
         <link href="/favicon.png" rel="icon" type="image/png" />
         <link href="/bsv-logo.png" rel="apple-touch-icon" />
       </head>
-      <body className="bsv">
+      <body className="bsv" suppressHydrationWarning>
         <Providers>
           <a href="#inhalt" className="sr-only">
             Zum Inhalt springen
