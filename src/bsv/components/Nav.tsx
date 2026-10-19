@@ -25,7 +25,7 @@ export async function Nav() {
       label: 'Fußball',
       title: `${fussball.length} Teams`,
       href: '/fussball',
-      desc: 'Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Spielpläne.',
+      desc: (menue as { fussballText?: string | null } | null)?.fussballText || 'Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Spielpläne.',
       groups: (['junioren', 'juniorinnen', 'senioren', 'seniorinnen'] as const)
         .map((g) => ({ title: UNTERGRUPPE_LABEL[g]!, items: fussball.filter((a) => a.untergruppe === g).map(link) }))
         .filter((g) => g.items.length > 0),
@@ -35,7 +35,7 @@ export async function Nav() {
       label: 'Breitensport',
       title: `${kids.length + erw.length} Kurse`,
       href: '/breitensport',
-      desc: 'Tanzen, Turnen, Fitness und Gesundheit – vom Kleinkind bis ins hohe Alter.',
+      desc: (menue as { breitensportText?: string | null } | null)?.breitensportText || 'Tanzen, Turnen, Fitness und Gesundheit – vom Kleinkind bis ins hohe Alter.',
       groups: [
         { title: 'BSV Kids', items: kids.map(link) },
         { title: 'Erwachsene & Senioren', items: erw.slice(0, half).map(link) },
@@ -47,7 +47,7 @@ export async function Nav() {
       label: 'Verein',
       title: 'Über uns',
       href: '/verein',
-      desc: 'Seit 1919 in Büderich. Vorstand, Satzung, Beiträge und alles rund um die Mitgliedschaft.',
+      desc: (menue as { vereinText?: string | null } | null)?.vereinText || 'Seit 1919 in Büderich. Vorstand, Satzung, Beiträge und alles rund um die Mitgliedschaft.',
       groups: [
         {
           title: 'Über uns',

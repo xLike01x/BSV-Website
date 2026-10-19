@@ -42,6 +42,7 @@ import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { default as default_1f04e621a7b43e47a2ae8cbbbc2da9b5 } from '@/Menue/Einstieg'
 import { default as default_d9ad9595ea4f39c57478e527de33797c } from '@/Menue/RowLabel'
+import { default as default_20ffb6b77276f2ec9f4824df398059b8 } from '@/Menue/AufklappUebersicht'
 import { default as default_46234c6f88ae2e73ec168e941d39add2 } from '@/Menue/SpaltenLabel'
 import { default as default_d0d2d8ba323ca751d647155bafea5b5d } from '@/Texte/WoSteht'
 import { default as default_dcec8d0f4a86291f22ff050ef8209c59 } from '@/Verein/DownloadsSchutz'
@@ -110,6 +111,7 @@ export const importMap = {
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/Menue/Einstieg#default": default_1f04e621a7b43e47a2ae8cbbbc2da9b5,
   "@/Menue/RowLabel#default": default_d9ad9595ea4f39c57478e527de33797c,
+  "@/Menue/AufklappUebersicht#default": default_20ffb6b77276f2ec9f4824df398059b8,
   "@/Menue/SpaltenLabel#default": default_46234c6f88ae2e73ec168e941d39add2,
   "@/Texte/WoSteht#default": default_d0d2d8ba323ca751d647155bafea5b5d,
   "@/Verein/DownloadsSchutz#default": default_dcec8d0f4a86291f22ff050ef8209c59,

@@ -98,8 +98,9 @@ export default function MenueEinstieg() {
           <h2>So änderst du Menü und Fußzeile</h2>
           {!zu && (
             <p>
-              Oben im Reiter „Hauptmenü“ stehen die Einträge der Menüleiste, im Reiter „Fußzeile“ die Spalten unten auf jeder Seite. „Fußball“ und „Breitensport“ füllen sich
-              automatisch aus „Teams & Kurse“ – dort musst du nichts eintragen.
+              Unten im Reiter „Hauptmenü oben“ stehen die Einträge der Menüleiste – dort änderst du auch die Reihenfolge von Fußball, Breitensport und Verein. „Fußball“ und
+              „Breitensport“ füllen sich automatisch aus „Teams & Kurse“; die Reihenfolge darin sortierst du im Reiter „Aufklappmenüs Fußball & Breitensport“ mit Pfeilen. Im Reiter
+              „Fußzeile unten“ stehen die Spalten ganz unten auf jeder Seite.
             </p>
           )}
         </div>

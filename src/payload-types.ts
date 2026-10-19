@@ -343,7 +343,7 @@ export interface Angebote {
   fupaWidgetId?: string | null;
   fussballDeTeamId?: string | null;
   /**
-   * Kleinere Zahl = weiter vorne.
+   * Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenüs Fußball & Breitensport“ → Pfeile.
    */
   reihenfolge?: number | null;
   /**
@@ -3020,6 +3020,15 @@ export interface Menue {
       }[]
     | null;
   /**
+   * Steht unter „… Teams“. Die Anzahl zählt automatisch.
+   */
+  fussballText?: string | null;
+  /**
+   * Steht unter „… Kurse“. Die Anzahl zählt automatisch.
+   */
+  breitensportText?: string | null;
+  vereinText?: string | null;
+  /**
    * Eine leere Liste zeigt die Standard-Links.
    */
   vereinUeberUns?:
@@ -3612,6 +3621,9 @@ export interface MenueSelect<T extends boolean = true> {
         aufklapp?: T;
         id?: T;
       };
+  fussballText?: T;
+  breitensportText?: T;
+  vereinText?: T;
   vereinUeberUns?:
     | T
     | {

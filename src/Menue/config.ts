@@ -149,7 +149,7 @@ export const Menue: GlobalConfig = {
       tabs: [
         {
           label: 'Hauptmenü oben',
-          description: 'Die Einträge in der Menüleiste – in genau dieser Reihenfolge.',
+          description: 'Die Einträge in der Menüleiste – in genau dieser Reihenfolge. „Fußball“, „Breitensport“ und „Verein“ sind Einträge mit der Art „Aufklappmenü“: am Griff links ziehen, um sie zu verschieben. Was im Aufklappmenü steht, legst du in den nächsten Reitern fest.',
           fields: [
             liste(
               'links',
@@ -162,9 +162,41 @@ export const Menue: GlobalConfig = {
           ],
         },
         {
+          label: 'Aufklappmenüs „Fußball“ & „Breitensport“',
+          description: 'Was erscheint, wenn man über „Fußball“ oder „Breitensport“ fährt. Die Position in der Menüleiste änderst du im Reiter „Hauptmenü oben“.',
+          fields: [
+            { name: 'aufklappUebersicht', type: 'ui', admin: { components: { Field: '@/Menue/AufklappUebersicht' } } },
+            {
+              type: 'row',
+              fields: [
+                {
+                  name: 'fussballText',
+                  label: 'Text links im Fußball-Menü',
+                  type: 'textarea',
+                  defaultValue: 'Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Spielpläne.',
+                  admin: { width: '50%', description: 'Steht unter „… Teams“. Die Anzahl zählt automatisch.' },
+                },
+                {
+                  name: 'breitensportText',
+                  label: 'Text links im Breitensport-Menü',
+                  type: 'textarea',
+                  defaultValue: 'Tanzen, Turnen, Fitness und Gesundheit – vom Kleinkind bis ins hohe Alter.',
+                  admin: { width: '50%', description: 'Steht unter „… Kurse“. Die Anzahl zählt automatisch.' },
+                },
+              ],
+            },
+          ],
+        },
+        {
           label: 'Aufklappmenü „Verein“',
           description: 'Was erscheint, wenn man über „Verein“ fährt.',
           fields: [
+            {
+              name: 'vereinText',
+              label: 'Text links im Verein-Menü',
+              type: 'textarea',
+              defaultValue: 'Seit 1919 in Büderich. Vorstand, Satzung, Beiträge und alles rund um die Mitgliedschaft.',
+            },
             liste('vereinUeberUns', 'Linke Spalte („Über uns“)', 'Eine leere Liste zeigt die Standard-Links.', 10, STANDARD_VEREIN_UEBER_UNS),
             liste('vereinMehr', 'Rechte Spalte („Mehr“)', 'Eine leere Liste zeigt die Standard-Links.', 10, STANDARD_VEREIN_MEHR),
           ],
