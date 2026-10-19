@@ -59,6 +59,8 @@ export const Users: CollectionConfig = {
   },
   endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte, ...registrierungEndpunkte],
   fields: [
+    // „Was darf diese Person?“ – Klartext-Zusammenfassung, live aus Rollen + Zusatzrechten berechnet (nur Admins)
+    { name: 'wasDarf', type: 'ui', admin: { components: { Field: '@/components/Admin/WasDarf' }, condition: (_d, _s, { user }) => hasRole(user as never, 'admin') } },
     { name: 'name', label: 'Name', type: 'text', required: true, admin: { description: 'Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.' } },
     {
       name: 'roles',
@@ -73,7 +75,8 @@ export const Users: CollectionConfig = {
         create: isAdminField,
         update: isAdminField,
       },
-      admin: { description: 'Wer welche Rolle für welches Team hat: siehe Einstellungen → „Rollen & Rechte“. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
+      // Kacheln mit Häkchen und einer Zeile Erklärung je Rolle (statt Auswahlliste)
+      admin: { components: { Field: '@/components/Admin/RollenKacheln' } },
     },
     {
       name: 'angebote',
@@ -99,17 +102,30 @@ export const Users: CollectionConfig = {
       },
     },
     {
-      // Einzelne Berechtigungen nur für diese Person – zusätzlich zu den Rollen (siehe src/access/einzelrechte.ts)
-      name: 'zusatzrechte',
-      label: 'Zusatzrechte nur für diese Person',
-      type: 'group',
-      // Nur Web-Admins vergeben Zusatzrechte – Admins sehen sie, ändern aber nicht
-      access: { create: istWebAdminField, update: istWebAdminField },
+      // Ausnahmen für einzelne Personen – zugeklappt, damit der Alltag (Rolle + Team) übersichtlich bleibt.
+      // Admins sehen den Abschnitt nur, wenn die Person wirklich Zusatzrechte hat; ändern kann nur ein Web-Admin.
+      type: 'collapsible',
+      label: 'Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)',
       admin: {
-        description:
-          'Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Ändern kann nur ein Web-Admin – Admins sehen die Häkchen nur. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.',
+        initCollapsed: true,
+        condition: (data, _sibling, { user }) =>
+          hasRole(user as never, 'webadmin') || Object.values((data as { zusatzrechte?: Record<string, unknown> })?.zusatzrechte ?? {}).some((v) => v === true),
       },
-      fields: EINZELRECHTE.map((r) => ({ name: r.key, label: r.label, type: 'checkbox' as const, defaultValue: false, admin: { description: `${r.gruppe} · ${r.text}` } })),
+      fields: [
+        {
+          // Einzelne Berechtigungen nur für diese Person – zusätzlich zu den Rollen (siehe src/access/einzelrechte.ts)
+          name: 'zusatzrechte',
+          label: false,
+          type: 'group',
+          // Nur Web-Admins vergeben Zusatzrechte – Admins sehen sie, ändern aber nicht
+          access: { create: istWebAdminField, update: istWebAdminField },
+          admin: {
+            description:
+              'Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.',
+          },
+          fields: EINZELRECHTE.map((r) => ({ name: r.key, label: r.label, type: 'checkbox' as const, defaultValue: false, admin: { description: `${r.gruppe} · ${r.text}` } })),
+        },
+      ],
     },
     {
       name: 'profilbild',

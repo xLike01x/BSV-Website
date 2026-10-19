@@ -755,7 +755,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wo sehe ich genau, was eine Rolle darf?',
-    antwort: 'In der „Rollen & Rechte“ im Reiter „Rechte je Rolle“: Rolle anklicken, dann siehst du für jeden Bereich Sehen, Anlegen, Bearbeiten und Löschen. Die Tabelle wird aus den echten Regeln berechnet und stimmt deshalb immer.',
+    antwort: 'Für eine bestimmte Person: Benutzer öffnen – oben steht „Was darf diese Person?“. Für eine ganze Rolle (Web-Admin): „Rollen & Rechte“ → Reiter „Rechte je Rolle“: Rolle anklicken, dann siehst du für jeden Bereich Sehen, Anlegen, Bearbeiten und Löschen. Die Tabelle wird aus den echten Regeln berechnet und stimmt deshalb immer.',
     bereich: 'users',
   },
   {
@@ -817,6 +817,11 @@ export const FAQ: Faq[] = [
   {
     frage: 'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
     antwort: 'Ja. Benutzer öffnen → unten „Zusatzrechte nur für diese Person“ → Häkchen setzen → Speichern. Zur Wahl stehen: Kontaktanfragen, Probetraining-Anfragen aller Teams, Passanträge aller Teams, Registrierungen freigeben, Formular-Eingänge, Termine, Ehrenamt & Mitmachen, Trainingsausfälle für alle Teams und Mitgliedschaften (nur lesen). Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Alle Personen mit Zusatzrechten auf einen Blick: Einstellungen → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Warum sieht jemand einen Bereich (nicht)?',
+    antwort: 'Benutzer öffnen. Ganz oben steht „🔎 Was darf diese Person?“ – darf bearbeiten, darf nur ansehen, kein Zugriff, und für welche eigenen Teams. Die Liste rechnet mit Rollen und Zusatzrechten zusammen und ändert sich sofort, wenn du Rollen anklickst (auch vor dem Speichern).',
     bereich: 'users',
   },
   {

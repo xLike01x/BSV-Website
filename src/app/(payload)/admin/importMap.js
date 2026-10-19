@@ -32,6 +32,8 @@ import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } fro
 import { default as default_55f1f0469e11c520ea3427c3563b2e35 } from '@/components/Admin/Teilnehmende'
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { default as default_c34437ee2106d3efe090c1a94dd3f622 } from '@/components/Admin/WasDarf'
+import { default as default_64fa1c7a66262bbb2bad95580b41f4c2 } from '@/components/Admin/RollenKacheln'
 import { FormularHinweise as FormularHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
@@ -98,6 +100,8 @@ export const importMap = {
   "@/components/Admin/Teilnehmende#default": default_55f1f0469e11c520ea3427c3563b2e35,
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/WasDarf#default": default_c34437ee2106d3efe090c1a94dd3f622,
+  "@/components/Admin/RollenKacheln#default": default_64fa1c7a66262bbb2bad95580b41f4c2,
   "@/components/Admin/Hinweise#FormularHinweise": FormularHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,

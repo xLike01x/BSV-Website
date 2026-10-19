@@ -131,11 +131,14 @@ export default function RollenClient({
   teams,
   test,
   rechte,
+  webadmin,
 }: {
   personen: Person[]
   teams: Team[]
   test: { erlaubt: boolean; passwort: string }
   rechte: RechteMatrix
+  /** Web-Admins sehen alles (Matrix, Testkonten, Zusatzrechte); Admins eine schlanke Ansicht */
+  webadmin: boolean
 }) {
   const [tab, setTab] = useState<Tab>('personen')
   const [suche, setSuche] = useState('')
@@ -182,7 +185,7 @@ export default function RollenClient({
 
   return (
     <div className="bsv-rollen">
-      <RollenReiter aktiv="uebersicht" />
+      {webadmin && <RollenReiter aktiv="uebersicht" />}
       <header className="bsv-rollen__kopf">
         <div>
           <h1>Rollen & Rechte</h1>
@@ -196,35 +199,49 @@ export default function RollenClient({
         </a>
       </header>
 
-      <div className="bsv-rollen__zahlen">
-        <button type="button" onClick={() => zeige('mit')} title="Liste anzeigen">
-          <strong>{personen.filter((p) => hatZugang(p)).length}</strong>
-          <span>Konten mit Verwaltungs-Zugang</span>
-          <em>Anzeigen ›</em>
-        </button>
-        <button type="button" onClick={() => zeige('ohne')} title="Liste anzeigen">
-          <strong>{personen.filter((p) => !hatZugang(p)).length}</strong>
-          <span>Konten ohne Verwaltungs-Zugang (nur Mitgliederbereich)</span>
-          <em>Anzeigen ›</em>
-        </button>
-        <div className={ohneVerantwortliche ? 'is-warn' : ''}>
-          <strong>{ohneVerantwortliche}</strong>
-          <span>aktive Teams ohne Verantwortliche</span>
+      {(webadmin || ohneVerantwortliche > 0 || ohne2fa > 0 || alteZugaenge > 0) && (
+        <div className="bsv-rollen__zahlen">
+          {webadmin && (
+            <>
+              <button type="button" onClick={() => zeige('mit')} title="Liste anzeigen">
+                <strong>{personen.filter((p) => hatZugang(p)).length}</strong>
+                <span>Konten mit Verwaltungs-Zugang</span>
+                <em>Anzeigen ›</em>
+              </button>
+              <button type="button" onClick={() => zeige('ohne')} title="Liste anzeigen">
+                <strong>{personen.filter((p) => !hatZugang(p)).length}</strong>
+                <span>Konten ohne Verwaltungs-Zugang (nur Mitgliederbereich)</span>
+                <em>Anzeigen ›</em>
+              </button>
+              <button type="button" onClick={() => zeige('zusatz')} title="Liste anzeigen">
+                <strong>{personen.filter((p) => p.zusatzrechte.length > 0).length}</strong>
+                <span>Personen mit Zusatzrechten (einzeln vergeben)</span>
+                <em>Anzeigen ›</em>
+              </button>
+            </>
+          )}
+          {/* Hinweise nur, wenn es etwas zu tun gibt */}
+          {ohneVerantwortliche > 0 && (
+            <button type="button" className="is-warn" onClick={() => setTab('teams')} title="Teams anzeigen">
+              <strong>{ohneVerantwortliche}</strong>
+              <span>aktive Teams ohne Verantwortliche</span>
+              <em>Anzeigen ›</em>
+            </button>
+          )}
+          {ohne2fa > 0 && (
+            <div className="is-warn">
+              <strong>{ohne2fa}</strong>
+              <span>Zugänge noch ohne Zwei-Faktor</span>
+            </div>
+          )}
+          {alteZugaenge > 0 && (
+            <div className="is-warn">
+              <strong>{alteZugaenge}</strong>
+              <span>Zugänge seit 6 Monaten ungenutzt (⚠️ in der Liste)</span>
+            </div>
+          )}
         </div>
-        <div className={ohne2fa ? 'is-warn' : ''}>
-          <strong>{ohne2fa}</strong>
-          <span>Zugänge noch ohne Zwei-Faktor</span>
-        </div>
-        <div className={alteZugaenge ? 'is-warn' : ''}>
-          <strong>{alteZugaenge}</strong>
-          <span>Zugänge seit 6 Monaten ungenutzt</span>
-        </div>
-        <button type="button" onClick={() => zeige('zusatz')} title="Liste anzeigen">
-          <strong>{personen.filter((p) => p.zusatzrechte.length > 0).length}</strong>
-          <span>Personen mit Zusatzrechten (einzeln vergeben)</span>
-          <em>Anzeigen ›</em>
-        </button>
-      </div>
+      )}
 
       <div className="bsv-rollen__leiste">
         <div role="tablist" aria-label="Ansicht" className="bsv-rollen__tabs">
@@ -232,12 +249,14 @@ export default function RollenClient({
             [
               ['personen', 'Nach Person'],
               ['teams', 'Nach Team'],
-              ['rollen', 'Nach Rolle'],
-              ['rechte', 'Rechte je Rolle'],
-              [
-                'test',
-                `Testkonten${personen.some((p) => p.testkonto) ? ` (${personen.filter((p) => p.testkonto).length})` : ''}`,
-              ],
+              // Für Web-Admins: Auswertung nach Rolle, Rechte-Matrix und Testkonten
+              ...(webadmin
+                ? ([
+                    ['rollen', 'Nach Rolle'],
+                    ['rechte', 'Rechte je Rolle'],
+                    ['test', `Testkonten${personen.some((p) => p.testkonto) ? ` (${personen.filter((p) => p.testkonto).length})` : ''}`],
+                  ] as [Tab, string][])
+                : []),
             ] as [Tab, string][]
           ).map(([k, l]) => (
             <button
@@ -272,7 +291,7 @@ export default function RollenClient({
                   'ohne',
                   `Ohne Verwaltungs-Zugang – nur Mitgliederbereich (${personen.filter((p) => !hatZugang(p)).length})`,
                 ],
-                ['zusatz', `Mit Zusatzrechten (${personen.filter((p) => p.zusatzrechte.length > 0).length})`],
+                ...(webadmin ? ([['zusatz', `Mit Zusatzrechten (${personen.filter((p) => p.zusatzrechte.length > 0).length})`]] as [Zugang, string][]) : []),
                 ['alle', `Alle (${personen.length})`],
               ] as [Zugang, string][]
             ).map(([k, l]) => (
@@ -318,7 +337,7 @@ export default function RollenClient({
                           <Chip key={r} rolle={r} />
                         ))}
                       </span>
-                      {p.zusatzrechte.length > 0 && (
+                      {webadmin && p.zusatzrechte.length > 0 && (
                         <span className="bsv-rollen__zusatz" title="Zusatzrechte nur für diese Person – ändern beim Benutzer">
                           {p.zusatzrechte.map((z) => (
                             <span key={z}>+ {z}</span>
@@ -436,11 +455,11 @@ export default function RollenClient({
         </section>
       )}
 
-      {tab === 'rechte' && <RechteJeRolle rechte={rechte} q={q} />}
+      {webadmin && tab === 'rechte' && <RechteJeRolle rechte={rechte} q={q} />}
 
-      {tab === 'test' && <Testkonten personen={personen.filter((p) => p.testkonto)} test={test} />}
+      {webadmin && tab === 'test' && <Testkonten personen={personen.filter((p) => p.testkonto)} test={test} />}
 
-      {tab === 'rollen' && (
+      {webadmin && tab === 'rollen' && (
         <section className="bsv-rollen__raster">
           {ROLLEN.map((r) => {
             const wer = personen

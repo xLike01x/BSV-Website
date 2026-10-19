@@ -1,3 +1,4 @@
+import { rechteVorschauEndpunkt } from '@/components/Admin/WasDarf/endpunkt'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
@@ -75,7 +76,7 @@ const email = process.env.SMTP_HOST
 
 export default buildConfig({
   email,
-  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt],
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return

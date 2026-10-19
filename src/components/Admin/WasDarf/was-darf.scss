@@ -1,0 +1,82 @@
+.bsv-was-darf {
+  margin: 0 0 28px;
+  padding: 18px 20px;
+  border: 1px solid #cfe3d6;
+  border-radius: 18px;
+  background: #f4faf6;
+  transition: opacity 0.2s;
+
+  &.is-laedt {
+    opacity: 0.6;
+  }
+
+  h3 {
+    margin: 0 0 12px;
+    font-size: 18px;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 4px 12px;
+
+    small {
+      font-size: 12px;
+      font-weight: 400;
+      color: #6e6e73;
+    }
+  }
+
+  h4 {
+    margin: 0 0 6px;
+    font-size: 14px;
+  }
+
+  ul {
+    margin: 0;
+    padding-left: 18px;
+    font-size: 14px;
+    line-height: 1.6;
+  }
+
+  summary {
+    cursor: pointer;
+    font-size: 14px;
+    color: #6e6e73;
+  }
+
+  &__spalten {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+  }
+
+  &__eigene {
+    margin-left: 6px;
+    padding: 0 7px;
+    border-radius: 999px;
+    background: #fff4e5;
+    color: #8a4b00;
+    font-size: 11px;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+
+  &__teams {
+    margin: 0 0 12px;
+    font-size: 14px;
+
+    &.is-warn {
+      color: #b54708;
+    }
+  }
+
+  &__nur {
+    margin: 0;
+    font-size: 15px;
+  }
+
+  &__leer {
+    margin: 0;
+    color: #6e6e73;
+    font-size: 14px;
+  }
+}

@@ -520,9 +520,6 @@ export interface User {
    * Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.
    */
   name: string;
-  /**
-   * Wer welche Rolle für welches Team hat: siehe Einstellungen → „Rollen & Rechte“. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
-   */
   roles: (
     'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
   )[];
@@ -539,7 +536,7 @@ export interface User {
     totalDocs?: number;
   };
   /**
-   * Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Ändern kann nur ein Web-Admin – Admins sehen die Häkchen nur. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.
+   * Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.
    */
   zusatzrechte?: {
     /**

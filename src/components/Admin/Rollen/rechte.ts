@@ -33,9 +33,18 @@ const UEBER_MITGLIEDERBEREICH = new Set(['passantraege'])
  */
 export async function rechteBerechnen(req: PayloadRequest): Promise<RechteMatrix> {
   const matrix: RechteMatrix = {}
-  for (const rolle of ROLES) {
-    const roles = rolle === 'webadmin' ? ['webadmin', 'admin'] : [rolle]
-    const user = { id: -1, email: 'beispiel@bsv.test', roles, collection: 'users' }
+  for (const rolle of ROLES) matrix[rolle] = await rechteFuer(req, rolle === 'webadmin' ? ['webadmin', 'admin'] : [rolle])
+  return matrix
+}
+
+/**
+ * Rechte einer bestimmten Kombination aus Rollen und Zusatzrechten (für „Was darf diese Person?“).
+ * Simuliert eine Beispiel-Person; Team-Rollen bekommen ein Beispiel-Team, damit „nur eigene Teams“ erkannt wird.
+ */
+export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrechte: Record<string, boolean> = {}): Promise<RechteZeile[]> {
+  {
+    const rolleTeam = roles.some((r) => TEAM_ROLLEN.includes(r))
+    const user = { id: -1, email: 'beispiel@bsv.test', roles, zusatzrechte, collection: 'users' }
     const fakeReq = { ...req, user, context: { _eigeneAngebote: [-1] } } as unknown as PayloadRequest
     const stufe = async (fn: unknown, data?: unknown): Promise<Stufe> => {
       if (typeof fn !== 'function') return 'ja'
@@ -69,7 +78,8 @@ export async function rechteBerechnen(req: PayloadRequest): Promise<RechteMatrix
           return false
         }
       })())
-      const zusatz = TEAM_ROLLEN.includes(rolle) ? (ZUSATZ_TEAM[c.slug] ?? {}) : {}
+      // Team-Rollen: Einschränkungen aus Hooks – außer eine stärkere Rolle oder ein Zusatzrecht gibt „alle“
+      const zusatz = rolleTeam && !roles.some((r) => ['admin', 'redaktion'].includes(r)) && !(c.slug === 'ausfaelle' && zusatzrechte.ausfaelle) ? (ZUSATZ_TEAM[c.slug] ?? {}) : {}
       zeilen.push({
         slug: c.slug,
         art: 'bereich',
@@ -102,10 +112,9 @@ export async function rechteBerechnen(req: PayloadRequest): Promise<RechteMatrix
       })
     }
     for (const s of SEITEN) {
-      const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)))
+      const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)) || (s.slug === 'registrierungen' && zusatzrechte.registrierungen === true))
       zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten', ansehen: darf ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
     }
-    matrix[rolle] = zeilen
+    return zeilen
   }
-  return matrix
 }

@@ -19,6 +19,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
   const user = req.user
   if (!user) redirect('/login?weiter=/admin/rollen')
   if (!hasRole(user as never, 'admin')) redirect('/admin')
+  const webadmin = hasRole(user as never, 'webadmin')
 
   const [nutzer, angebote] = await Promise.all([
     req.payload.find({ collection: 'users', limit: 1000, depth: 0, sort: 'name', overrideAccess: false, user, req }),
@@ -64,7 +65,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(req.headers), passwort: TESTPASSWORT }} rechte={await rechteBerechnen(req)} />
+        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(req.headers), passwort: TESTPASSWORT }} rechte={webadmin ? await rechteBerechnen(req) : {}} webadmin={webadmin} />
       </Gutter>
     </DefaultTemplate>
   )
