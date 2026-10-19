@@ -34,7 +34,7 @@ export const Mitgliedschaften: CollectionConfig = {
     delete: isFinance,
   },
   admin: {
-    group: 'Verwaltung',
+    group: 'Mitglieder',
     hidden: ({ user }) => !(hasRole(user as never, 'admin', 'kasse') || darf(user, 'passwesen', 'mitgliedschaften')),
     useAsTitle: 'anzeigeName',
     defaultColumns: ['anzeigeName', 'mitgliedsnummer', 'art', 'eintritt', 'konto', 'aktiv'],

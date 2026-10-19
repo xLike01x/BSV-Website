@@ -103,7 +103,7 @@ export const Menue: GlobalConfig = {
   slug: 'menue',
   label: 'Menü & Fußzeile',
   admin: {
-    group: 'Inhalte',
+    group: 'Website-Aufbau',
     hidden: ausblendenAusser('admin', 'redaktion'),
     description:
       'Alle Einträge oben im Menü und unten in der Fußzeile. Reihenfolge ändern: am Griff links ziehen. Entfernen: drei Punkte rechts → „Entfernen“.',
@@ -212,7 +212,7 @@ export const Menue: GlobalConfig = {
                   label: 'Adresse des Sportplatzes anzeigen',
                   type: 'checkbox',
                   defaultValue: true,
-                  admin: { condition: (_, s) => s?.anzeigen !== false, description: 'Die Adresse selbst änderst du unter Verwaltung → Vereinsdaten → „Sportplatz“.' },
+                  admin: { condition: (_, s) => s?.anzeigen !== false, description: 'Die Adresse selbst änderst du unter Einstellungen → Vereinsdaten → „Sportplatz“.' },
                 },
                 {
                   name: 'links',

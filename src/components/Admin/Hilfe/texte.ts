@@ -25,7 +25,8 @@ export const HILFE: Record<string, HilfeText> = {
       'Oben siehst du Zahlen, z. B. neue Mitgliedsanträge. Ein Klick darauf öffnet direkt die passende Liste.',
       'Unter „Schnellzugriff“ startest du die häufigsten Aufgaben, z. B. eine News schreiben.',
       '„Letzte Aktivitäten“ zeigt, was zuletzt geändert wurde.',
-      'Links in der Seitenleiste findest du alle Bereiche, die du bearbeiten darfst.',
+      'Links in der Seitenleiste findest du alle Bereiche, die du bearbeiten darfst – sortiert nach Posteingang, Inhalte, Website-Aufbau, Sport, Mitglieder und Einstellungen.',
+      'Eine orange Zahl im „Posteingang“ zeigt, wie viele neue Anträge und Anfragen auf dich warten.',
     ],
     wirkung: ['Auf dieser Seite änderst du nichts – sie ist nur zum Nachschauen und Loslegen.'],
     tipps: ['Du siehst nur die Bereiche, die zu deiner Rolle passen. Fehlt dir etwas, frag einen Admin.'],
@@ -297,13 +298,13 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Neue Konten anlegen und Rollen vergeben.',
-      'Schnell sehen, wer welche Rolle für welches Team hat: links unten „Rollen-Übersicht“.',
+      'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Einstellungen“ → „Rollen & Rechte“.',
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
       '• Trainer / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
       'Bei Teams & Kursen unter „Verantwortliche“ legst du fest, welche Teams jemand pflegt.',
-      'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Registrierungen“ (links unten) auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
+      'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Posteingang → Registrierungen“ auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
     ],
     wirkung: [
       'Alle außer „Mitglied“ müssen beim Anmelden zusätzlich einen Code aus einer Handy-App eingeben (Zwei-Faktor). Vorher öffnet sich weder die Verwaltung noch der Mitgliederbereich.',
@@ -444,13 +445,14 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   rollen: {
-    titel: 'Rollen-Übersicht',
-    kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich?',
+    titel: 'Rollen & Rechte',
+    kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich? Zu finden links unter „Einstellungen“.',
     wozu: {
       text: 'Damit ihr schnell seht, wer welche Rechte hat – und wo noch jemand fehlt.',
       beispiele: ['Wer pflegt die D-Jugend?', 'Hat der neue Trainer schon Zwei-Faktor?'],
     },
     tun: [
+      'Oben zwei große Reiter: „Übersicht“ (diese Seite) und „Rechte anpassen“ (Zusatzrechte je Rolle, ändern nur Web-Admin).',
       'Reiter „Nach Person“: jede Person mit ihren Rollen, ihren Teams und ob die Zwei-Faktor-Anmeldung eingerichtet ist.',
       'Reiter „Nach Team“: jedes Team und jeder Kurs mit den Verantwortlichen.',
       'Reiter „Nach Rolle“: alle Personen, gruppiert nach Rolle, mit Anzahl.',
@@ -491,12 +493,12 @@ export const HILFE: Record<string, HilfeText> = {
 
   rollenRechte: {
     titel: 'Rollen-Rechte',
-    kurz: 'Zusatzrechte pro Rolle ein- oder ausschalten – nur für Web-Admins.',
+    kurz: 'Zusatzrechte pro Rolle ein- oder ausschalten – nur für Web-Admins. Zu finden unter Einstellungen → „Rollen & Rechte“ → Reiter „Rechte anpassen“.',
     wozu: {
       text: 'Jede Rolle hat feste Grundrechte. Hier lassen sich einzelne Zusatzrechte passend zu eurem Verein ein- oder ausschalten.',
       beispiele: ['Die Kasse soll Kontaktanfragen zu Beiträgen bearbeiten', 'Trainer sollen keine Mitgliederfotos sehen', 'Die Redaktion darf erledigte Anfragen löschen'],
     },
-    tun: ['Häkchen bei der gewünschten Rolle setzen oder entfernen.', 'Oben rechts „Speichern“.', 'Zur Kontrolle: Rollen-Übersicht → „Rechte je Rolle“.'],
+    tun: ['Häkchen bei der gewünschten Rolle setzen oder entfernen.', 'Oben rechts „Speichern“.', 'Zur Kontrolle: oben auf den Reiter „Übersicht“ → „Rechte je Rolle“.'],
     wirkung: ['Gilt sofort für alle mit dieser Rolle (spätestens nach 30 Sekunden).', 'Admins sehen die Seite, ändern kann sie nur ein Web-Admin.'],
     tipps: ['Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar – das schützt vor versehentlichen Freigaben.', 'Weitere Schalter baut der Web-Admin bei Bedarf dazu.'],
   },

@@ -40,7 +40,7 @@ export const Mitgliedsantraege: CollectionConfig = {
       ],
     },
     description: 'Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln. Oben: „Neu“ leuchtet orange, sobald ein neuer Antrag da ist. Erledigt = aufgenommen oder abgelehnt.',
-    group: 'Verwaltung',
+    group: 'Posteingang',
     useAsTitle: 'nachname',
     defaultColumns: ['nachname', 'vorname', 'mitgliedsart', 'status', 'createdAt'],
   },

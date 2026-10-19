@@ -84,7 +84,7 @@ export const Passantraege: CollectionConfig = {
     },
   },
   admin: {
-    group: 'Sport',
+    group: 'Posteingang',
     hidden: ausblendenAusser('admin', 'passwesen', 'uebungsleitung'),
     useAsTitle: 'spielerName',
     defaultColumns: ['spielerName', 'team', 'art', 'status', 'createdAt'],

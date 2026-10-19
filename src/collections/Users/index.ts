@@ -26,7 +26,7 @@ export const Users: CollectionConfig = {
   admin: {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.',
-    group: 'Verwaltung',
+    group: 'Mitglieder',
     hidden: ausblendenAusser('admin'),
     defaultColumns: ['name', 'email', 'roles'],
     useAsTitle: 'name',
@@ -72,7 +72,7 @@ export const Users: CollectionConfig = {
         create: isAdminField,
         update: isAdminField,
       },
-      admin: { description: 'Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
+      admin: { description: 'Wer welche Rolle für welches Team hat: siehe Einstellungen → „Rollen & Rechte“. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
     },
     {
       name: 'angebote',

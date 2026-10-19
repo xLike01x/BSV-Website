@@ -20,7 +20,7 @@ const ZUSATZ_TEAM: Record<string, Partial<Record<'ansehen' | 'anlegen', Stufe>>>
 const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeiten: boolean }[] = [
   { slug: 'hilfe', titel: 'Hilfe-Center', rollen: 'alle', bearbeiten: false },
   { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true },
-  { slug: 'rollen', titel: 'Rollen-Übersicht', rollen: ['admin'], bearbeiten: false },
+  { slug: 'rollen', titel: 'Rollen & Rechte', rollen: ['admin'], bearbeiten: false },
   { slug: 'sicherung', titel: 'Datensicherung', rollen: ['webadmin'], bearbeiten: true },
 ]
 /** Diese Einträge legen Mitglieder selbst im Mitgliederbereich an (nicht in der Verwaltung) */
@@ -103,7 +103,7 @@ export async function rechteBerechnen(req: PayloadRequest): Promise<RechteMatrix
     }
     for (const s of SEITEN) {
       const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)))
-      zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten (links unten)', ansehen: darf ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
+      zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten', ansehen: darf ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
     }
     matrix[rolle] = zeilen
   }

@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import React, { useMemo, useState } from 'react'
 
 import type { RechteMatrix, Stufe } from './rechte'
+import RollenReiter from './Reiter'
 
 export type Person = {
   id: number
@@ -170,9 +171,10 @@ export default function RollenClient({
 
   return (
     <div className="bsv-rollen">
+      <RollenReiter aktiv="uebersicht" />
       <header className="bsv-rollen__kopf">
         <div>
-          <h1>Rollen-Übersicht</h1>
+          <h1>Rollen & Rechte</h1>
           <p>
             Wer darf was – und für welche Teams? Ändern kannst du Rollen beim Benutzer,
             Team-Zuordnungen beim Team unter „Verantwortliche“.
@@ -662,7 +664,7 @@ function RechteJeRolle({ rechte, q }: { rechte: RechteMatrix; q: string }) {
       <h2 className="bsv-rollen__h2">Was darf welche Rolle?</h2>
       <p className="bsv-rollen__klein" style={{ marginBottom: 12 }}>
         Rolle wählen. Die Übersicht wird direkt aus den echten Zugriffsregeln berechnet – sie stimmt
-        also immer. Wer welche Rolle hat, legst du beim Benutzer fest. Einzelne Zusatzrechte pro Rolle schaltet ein Web-Admin unter <a href="/admin/globals/rollenRechte">Einstellungen → Rollen-Rechte</a> ein oder aus.
+        also immer. Wer welche Rolle hat, legst du beim Benutzer fest. Einzelne Zusatzrechte pro Rolle schaltet ein Web-Admin oben im Reiter <a href="/admin/globals/rollenRechte">„Rechte anpassen“</a> ein oder aus.
       </p>
       <div className="bsv-rechte__rollen" role="tablist" aria-label="Rolle">
         {ROLLEN.map((r) => (

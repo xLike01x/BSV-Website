@@ -313,7 +313,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'passantrag-bearbeiten',
       titel: 'Einen Passantrag bearbeiten',
       schritte: [
-        'Links unter „Sport“ auf „Passanträge“ klicken und einen Antrag mit Status „Eingereicht“ öffnen.',
+        'Links unter „Posteingang“ auf „Passanträge“ klicken und einen Antrag mit Status „Eingereicht“ öffnen.',
         'Die Angaben zur Spielerin / zum Spieler prüfen und unter „Unterlagen“ jede Datei anklicken.',
         'Fehlt etwas oder ist unleserlich: Status „Unterlagen fehlen“, beim Hinweis kurz schreiben, was fehlt, und speichern.',
         'Alles da: Antrag im DFBnet einreichen, Status „Beim Verband“ und die Vorgangsnummer in die interne Notiz.',
@@ -350,7 +350,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'sicherung-erstellen',
       titel: 'Eine Sicherung erstellen und aufbewahren',
       schritte: [
-        'Links unten auf „💾 Datensicherung“ klicken.',
+        'Links unter „Einstellungen“ auf „Datensicherung“ klicken.',
         '„Sicherung jetzt erstellen“ – etwa eine Minute warten.',
         'Bei der neuen Sicherung „Herunterladen“ klicken.',
         'Die Datei zusätzlich auf einen USB-Stick oder in eine Cloud kopieren.',
@@ -373,7 +373,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'testkonten',
       titel: 'Rechte mit Testkonten ausprobieren (nur lokal)',
       schritte: [
-        'Rollen-Übersicht öffnen → Reiter „Testkonten“ → „Testkonten anlegen“.',
+        '„Rollen & Rechte“ öffnen → Reiter „Testkonten“ → „Testkonten anlegen“.',
         'Es entsteht je ein Konto pro Rolle (Admin, Redaktion, Kasse, Mitglied), pro Abteilung (Abteilungsleitung, Pressewart) und pro Team (Trainer). Alle mit demselben Passwort, das dort angezeigt wird.',
         'Abmelden oder ein privates Browserfenster öffnen und mit einem Testkonto anmelden – ohne Zwei-Faktor.',
         'Prüfen: Was sieht die Person? Was darf sie ändern? Welche Bilder kann sie auswählen?',
@@ -385,7 +385,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'rollen-pruefen',
       titel: 'Prüfen, wer für ein Team zuständig ist',
       schritte: [
-        'Links unten auf „Rollen-Übersicht“ klicken.',
+        'Links unter „Einstellungen“ auf „Rollen & Rechte“ klicken.',
         'Reiter „Nach Team“ wählen oder den Teamnamen oben ins Suchfeld tippen.',
         'Neben dem Team stehen die Verantwortlichen mit ihren Rollen.',
         'Niemand eingetragen? Auf „Zuordnen“ klicken und die Person unter „Verantwortliche“ auswählen. Speichern.',
@@ -395,7 +395,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'rollen-aufraeumen',
       titel: 'Rechte aufräumen, wenn jemand aufhört',
       schritte: [
-        'In der Rollen-Übersicht die Person suchen.',
+        'In der „Rollen & Rechte“ die Person suchen.',
         'Auf „Bearbeiten“ klicken.',
         'Bei „Rollen“ alles außer „Mitglied“ entfernen (oder das Konto löschen) und speichern.',
         'Beim Team unter „Verantwortliche“ die Person entfernen.',
@@ -714,7 +714,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Jemand hat sich auf der Website registriert – was muss ich tun?',
-    antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Dort erscheinen nur Personen, die ihre E-Mail-Adresse schon bestätigt haben. 1. Teams & Kurse prüfen: Was die Person bei der Registrierung angekreuzt hat, ist schon angehakt (grün, „Wunsch“). Haken setzen oder entfernen; „Alle Teams & Kurse zeigen“ klappt den Rest auf. 2. Ist die Person Mitglied, auf „Freigeben“ klicken – sie bekommt automatisch eine E-Mail. Sonst „Ablehnen“, dann wird das Konto gelöscht. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen, nie bestätigte nach 7 Tagen von selbst.',
+    antwort: 'Links unter „Posteingang“ auf „Registrierungen“ (das Dashboard erinnert auch daran). Dort erscheinen nur Personen, die ihre E-Mail-Adresse schon bestätigt haben. 1. Teams & Kurse prüfen: Was die Person bei der Registrierung angekreuzt hat, ist schon angehakt (grün, „Wunsch“). Haken setzen oder entfernen; „Alle Teams & Kurse zeigen“ klappt den Rest auf. 2. Ist die Person Mitglied, auf „Freigeben“ klicken – sie bekommt automatisch eine E-Mail. Sonst „Ablehnen“, dann wird das Konto gelöscht. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen, nie bestätigte nach 7 Tagen von selbst.',
     bereich: 'users',
   },
   {
@@ -755,7 +755,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wo sehe ich genau, was eine Rolle darf?',
-    antwort: 'In der Rollen-Übersicht im Reiter „Rechte je Rolle“: Rolle anklicken, dann siehst du für jeden Bereich Sehen, Anlegen, Bearbeiten und Löschen. Die Tabelle wird aus den echten Regeln berechnet und stimmt deshalb immer.',
+    antwort: 'In der „Rollen & Rechte“ im Reiter „Rechte je Rolle“: Rolle anklicken, dann siehst du für jeden Bereich Sehen, Anlegen, Bearbeiten und Löschen. Die Tabelle wird aus den echten Regeln berechnet und stimmt deshalb immer.',
     bereich: 'users',
   },
   {
@@ -768,7 +768,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie sichere ich alle Daten?',
-    antwort: 'Links unten auf „Datensicherung“ (nur Web-Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
+    antwort: 'Links unter „Einstellungen“ auf „Datensicherung“ (nur Web-Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
   },
   {
     frage: 'Warum muss ich beim Hochladen angeben, ob Personen zu erkennen sind?',
@@ -805,8 +805,18 @@ export const FAQ: Faq[] = [
     bereich: 'menue',
   },
   {
+    frage: 'Wie ist die Seitenleiste aufgebaut?',
+    antwort: 'Posteingang: alles, was Leute über die Website schicken – Mitgliedsanträge, Kontaktanfragen, Probetraining, Passanträge, Formular-Eingänge und Registrierungen. Inhalte: was Besucher lesen und sehen – News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt. Website-Aufbau: Seiten, Menü & Fußzeile, Website-Texte, Formulare. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen. Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz, Datensicherung, Hilfe-Texte. Jede Rolle sieht nur die Bereiche, die sie braucht.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Was bedeutet die orange Zahl in der Seitenleiste?',
+    antwort: 'So viele neue Einträge warten im Posteingang, z. B. 2 neue Kontaktanfragen. Die Zahl steht am Bereich und an der Überschrift „Posteingang“ (auch wenn die Gruppe zugeklappt ist). Sie verschwindet, sobald du den Status änderst, z. B. auf „In Bearbeitung“ oder „Erledigt“. Du siehst nur Zahlen für Einträge, die du auch öffnen darfst – Trainer z. B. nur für ihre Teams.',
+    bereich: 'dashboard',
+  },
+  {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
-    antwort: 'In der Rollen-Übersicht (links unten in der Seitenleiste, nur für Admins). Dort gibt es drei Reiter: nach Person, nach Team und nach Rolle.',
+    antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
     bereich: 'users',
   },
   {

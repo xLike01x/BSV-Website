@@ -4,11 +4,11 @@ import React from 'react'
 export type Schritt = { key: string; titel: string; text: string; href?: string; wo?: string }
 
 const FORMULAR_SCHRITTE: Schritt[] = [
-  { key: 'forms', titel: 'Formular bauen', text: 'Felder festlegen: Name, E-Mail, Anzahl …', href: '/admin/collections/forms', wo: 'Eigene Formulare → Formulare' },
-  { key: 'pages', titel: 'Auf eine Seite setzen', text: 'Seite anlegen, Baustein „Formular“ einfügen, veröffentlichen.', href: '/admin/collections/pages', wo: 'Inhalte → Seiten' },
-  { key: 'menue', titel: 'Im Menü verlinken', text: 'Damit Besucher die Seite finden.', href: '/admin/globals/menue', wo: 'Inhalte → Menü & Fußzeile' },
+  { key: 'forms', titel: 'Formular bauen', text: 'Felder festlegen: Name, E-Mail, Anzahl …', href: '/admin/collections/forms', wo: 'Website-Aufbau → Formulare' },
+  { key: 'pages', titel: 'Auf eine Seite setzen', text: 'Seite anlegen, Baustein „Formular“ einfügen, veröffentlichen.', href: '/admin/collections/pages', wo: 'Website-Aufbau → Seiten' },
+  { key: 'menue', titel: 'Im Menü verlinken', text: 'Damit Besucher die Seite finden.', href: '/admin/globals/menue', wo: 'Website-Aufbau → Menü & Fußzeile' },
   { key: 'website', titel: 'Besucher füllen aus', text: 'Auf der Website, ohne Anmeldung.', wo: 'Website' },
-  { key: 'form-submissions', titel: 'Antworten lesen', text: 'Alle Eingänge gesammelt an einem Ort.', href: '/admin/collections/form-submissions', wo: 'Eigene Formulare → Formular-Eingänge' },
+  { key: 'form-submissions', titel: 'Antworten lesen', text: 'Alle Eingänge gesammelt an einem Ort.', href: '/admin/collections/form-submissions', wo: 'Posteingang → Formular-Eingänge' },
 ]
 
 /** Ablauf als nummerierte Grafik – für jeden Bereich wiederverwendbar */

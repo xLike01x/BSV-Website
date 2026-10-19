@@ -16,7 +16,7 @@ export const Categories: CollectionConfig = {
   },
   admin: {
     description: 'Schlagworte, nach denen Besucher die News filtern können.',
-    group: 'Inhalte',
+    group: 'Website-Aufbau',
     // Nur Admins sehen die Kategorien in der Seitenleiste
     hidden: ({ user }) => !((user as { roles?: string[] } | null)?.roles ?? []).includes('admin'),
     useAsTitle: 'title',

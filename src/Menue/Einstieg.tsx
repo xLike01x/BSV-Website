@@ -17,7 +17,7 @@ const VORSCHLAEGE: [string, string][] = [
 ]
 
 const SCHRITTE = [
-  { key: 'seite', titel: 'Seite fertig machen', text: 'Eigene Seite anlegen und veröffentlichen – sonst führt der Link ins Leere.', href: '/admin/collections/pages', wo: 'Inhalte → Seiten' },
+  { key: 'seite', titel: 'Seite fertig machen', text: 'Eigene Seite anlegen und veröffentlichen – sonst führt der Link ins Leere.', href: '/admin/collections/pages', wo: 'Website-Aufbau → Seiten' },
   { key: 'eintrag', titel: 'Eintrag hinzufügen', text: 'Unten „Eintrag hinzufügen“: Text eingeben, „Seite öffnen“ oder „Adresse öffnen“ wählen.' },
   { key: 'reihenfolge', titel: 'Reihenfolge ziehen', text: 'Am Griff links (sechs Punkte) ziehen. Oben = weiter links auf der Website.' },
   { key: 'speichern', titel: 'Speichern', text: 'Oben rechts – nach kurzer Zeit überall sichtbar.' },

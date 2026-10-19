@@ -29,7 +29,7 @@ export const Texte: GlobalConfig = {
   label: 'Website-Texte',
   access: { read: anyone, update: isEditor },
   admin: {
-    group: 'Inhalte',
+    group: 'Website-Aufbau',
     hidden: ausblendenAusser('admin', 'redaktion'),
     description: 'Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.',
   },

@@ -177,7 +177,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'anlegen', titel: 'Seite anlegen', text: 'Titel vergeben – daraus entsteht die Adresse.' },
       { key: 'bausteine', titel: 'Bausteine einfügen', text: 'Text, Bild, Hinweis-Kasten, News-Liste, Formular.', wo: 'Reiter „Inhalt (Bausteine)“' },
       { key: 'veroeffentlichen', titel: 'Veröffentlichen', text: 'Vorher mit „Vorschau“ ansehen.', wo: 'oben rechts' },
-      { key: 'menue', titel: 'Im Menü verlinken', text: 'Sonst findet die Seite kaum jemand.', href: '/admin/globals/menue', wo: 'Inhalte → Menü & Fußzeile' },
+      { key: 'menue', titel: 'Im Menü verlinken', text: 'Sonst findet die Seite kaum jemand.', href: '/admin/globals/menue', wo: 'Website-Aufbau → Menü & Fußzeile' },
     ],
     vorlagenTitel: 'Mit einer Vorlage starten (als Entwurf)',
     vorlagen: [
@@ -252,7 +252,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ablauf: [
       { key: 'anlegen', titel: 'Team anlegen', text: 'Name, Bereich, Altersgruppe.' },
       { key: 'zeiten', titel: 'Zeiten und Ort', text: 'Wann und wo trainiert wird.' },
-      { key: 'leute', titel: 'Verantwortliche', text: 'Wer das Team in der Verwaltung pflegen darf.', href: '/admin/rollen', wo: 'Rollen-Übersicht' },
+      { key: 'leute', titel: 'Verantwortliche', text: 'Wer das Team in der Verwaltung pflegen darf.', href: '/admin/rollen', wo: 'Einstellungen → Rollen & Rechte' },
       { key: 'bild', titel: 'Titelbild', text: 'Großes Bild oben auf der Teamseite.' },
       { key: 'website', titel: 'Teamseite ist da', text: 'Erscheint automatisch im Menü „Fußball“ bzw. „Breitensport“.', wo: 'Website' },
     ],
@@ -284,7 +284,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     titel: 'Wozu sind Mitgliedschaften da?',
     text: 'Daraus entsteht der digitale Mitgliedsausweis, den jedes Mitglied nach dem Login sieht – mit Nummer, Eintrittsdatum, Art und Kursen. Er aktualisiert sich automatisch.',
     ablauf: [
-      { key: 'antrag', titel: 'Antrag aufgenommen', text: 'Eintrag entsteht automatisch – auch für Familienmitglieder.', href: '/admin/collections/mitgliedsantraege', wo: 'Verwaltung → Mitgliedsanträge' },
+      { key: 'antrag', titel: 'Antrag aufgenommen', text: 'Eintrag entsteht automatisch – auch für Familienmitglieder.', href: '/admin/collections/mitgliedsantraege', wo: 'Posteingang → Mitgliedsanträge' },
       { key: 'nummer', titel: 'Nummer ergänzen', text: 'Mitgliedsnummer eintragen, ggf. Kurse.' },
       { key: 'ausweis', titel: 'Ausweis ist da', text: 'Im verknüpften Konto – verknüpft wird bei der Freigabe einer Registrierung mit gleicher E-Mail.' },
     ],
@@ -339,18 +339,18 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ablauf: [
       { key: 'anlegen', titel: 'Gesuch anlegen', text: 'Wen suchen wir? Was ist zu tun? Wie viel Zeit?' },
       { key: 'website', titel: 'Erscheint auf „Mitmachen“', text: 'Besucher können es auch per WhatsApp teilen.', href: '/mitmachen', wo: 'Website → Mitmachen' },
-      { key: 'melden', titel: 'Meldungen kommen an', text: 'Als Kontaktanfrage mit dem Betreff des Gesuchs.', href: '/admin/collections/kontaktanfragen', wo: 'Verwaltung → Kontaktanfragen' },
+      { key: 'melden', titel: 'Meldungen kommen an', text: 'Als Kontaktanfrage mit dem Betreff des Gesuchs.', href: '/admin/collections/kontaktanfragen', wo: 'Posteingang → Kontaktanfragen' },
       { key: 'aus', titel: 'Gefunden?', text: 'Haken „Auf der Website zeigen“ entfernen – oder löschen.' },
     ],
   },
 
   users: {
     titel: 'Wozu sind Benutzer da?',
-    text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle bestimmt, was die Person darf. Wer welche Rolle für welches Team hat, siehst du in der Rollen-Übersicht. Mitglieder können sich auch selbst registrieren – die warten dann unter „Registrierungen“ (links unten) auf Freigabe.',
+    text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle bestimmt, was die Person darf. Wer welche Rolle für welches Team hat, siehst du unter Einstellungen → „Rollen & Rechte“. Mitglieder können sich auch selbst registrieren – die warten dann unter „Posteingang → Registrierungen“ auf Freigabe.',
     ablauf: [
       { key: 'anlegen', titel: 'Konto anlegen', text: 'Name, E-Mail, vorläufiges Passwort.' },
       { key: 'rolle', titel: 'Rolle wählen', text: 'Z. B. Trainer oder Redaktion.' },
-      { key: 'team', titel: 'Team zuordnen', text: 'Beim Team unter „Verantwortliche“.', href: '/admin/rollen', wo: 'Rollen-Übersicht → Nach Team' },
+      { key: 'team', titel: 'Team zuordnen', text: 'Beim Team unter „Verantwortliche“.', href: '/admin/rollen', wo: 'Einstellungen → Rollen & Rechte → Nach Team' },
       { key: 'mitteilen', titel: 'Zugang mitteilen', text: 'Persönlich – nicht per Gruppenchat.' },
       { key: 'zfa', titel: 'Erster Login', text: 'Die Person richtet die Zwei-Faktor-App ein.' },
     ],

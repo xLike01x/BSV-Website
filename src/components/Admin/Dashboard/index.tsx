@@ -4,6 +4,7 @@ import type { AdminViewServerProps, CollectionSlug, Where } from 'payload'
 import React from 'react'
 
 import { hauptRolle, ROLLEN_PROFIL } from '../Hilfe/extras'
+import { EINTRAEGE, REIHENFOLGE, VERSTECKT } from '../NavZusatz/eintraege'
 import Tour from '../Tour'
 import ErsteSchritte from './ErsteSchritte'
 import { aufgabenFuer } from './aufgaben'
@@ -118,7 +119,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   if (darfGlobal('texte')) aktionen.push({ label: 'Website-Texte', href: `${ADMIN}/globals/texte` })
   if (darfGlobal('menue')) aktionen.push({ label: 'Menü & Fußzeile', href: `${ADMIN}/globals/menue` })
   if (darf('pages', 'create')) aktionen.push({ label: 'Seite bearbeiten', href: `${ADMIN}/collections/pages` })
-  if (rollen.includes('admin')) aktionen.push({ label: 'Rollen-Übersicht', href: `${ADMIN}/rollen` })
+  if (rollen.includes('admin')) aktionen.push({ label: 'Rollen & Rechte', href: `${ADMIN}/rollen` })
   if (darfGlobal('verein')) aktionen.push({ label: 'Vereinsdaten & Vorstand', href: `${ADMIN}/globals/verein` })
 
   // Letzte Aktivitäten aus mehreren Bereichen zusammenführen
@@ -157,7 +158,17 @@ export default async function Dashboard(props: AdminViewServerProps) {
     .sort((a, b) => b.wann.localeCompare(a.wann))
     .slice(0, 7)
 
-  const gruppen = getNavGroups(permissions, visibleEntities, payload.config, i18n)
+  // Gleiche Gruppen und Reihenfolge wie die Seitenleiste – inkl. Sonderseiten (Registrierungen, Rollen & Rechte, Datensicherung)
+  const rang = (k: string) => (REIHENFOLGE.includes(k) ? REIHENFOLGE.indexOf(k) - 100 : 0)
+  const gruppen = getNavGroups(permissions, visibleEntities, payload.config, i18n).map((g) => ({
+    label: g.label,
+    eintraege: [
+      ...g.entities.filter((e) => !VERSTECKT.includes(e.slug)).map((e) => ({ key: e.slug, href: `${ADMIN}/${e.type}/${e.slug}`, label: getTranslation(e.label, i18n) })),
+      ...EINTRAEGE.filter((z) => z.gruppe === g.label && z.rollen.some((r) => rollen.includes(r))).map((z) => ({ key: z.key, href: z.href, label: z.label })),
+    ]
+      .map((e, i) => ({ ...e, i }))
+      .sort((a, b) => rang(a.key) - rang(b.key) || a.i - b.i),
+  }))
 
   // Willkommen: Was darf ich mit meiner Rolle?
   const rolle = hauptRolle(rollen)
@@ -348,10 +359,10 @@ export default async function Dashboard(props: AdminViewServerProps) {
             <div key={g.label} className="bsv-dash__gruppe">
               <h3>{g.label}</h3>
               <ul>
-                {g.entities.map((e) => (
-                  <li key={e.slug}>
-                    <a href={`${ADMIN}/${e.type}/${e.slug}`}>
-                      {getTranslation(e.label, i18n)}
+                {g.eintraege.map((e) => (
+                  <li key={e.key}>
+                    <a href={e.href}>
+                      {e.label}
                       <span aria-hidden="true">›</span>
                     </a>
                   </li>

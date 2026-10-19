@@ -33,7 +33,7 @@ export const plugins: Plugin[] = [
     collections: ['pages', 'posts'],
     overrides: {
       labels: { singular: 'Weiterleitung', plural: 'Weiterleitungen' },
-      admin: { group: 'Einstellungen', hidden: ausblendenAusser('webadmin') },
+      admin: { group: 'Website-Aufbau', hidden: ausblendenAusser('webadmin') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
@@ -67,10 +67,10 @@ export const plugins: Plugin[] = [
       payment: false,
     },
     formSubmissionOverrides: {
-      // Formulare aus dem Baukasten (Seiten). Eigene BSV-Formulare liegen unter „Verwaltung“.
+      // Formulare aus dem Baukasten (Seiten). Eingänge liegen im „Posteingang“, die Formulare selbst unter „Website-Aufbau“.
       labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
       trash: true,
-      admin: { group: 'Eigene Formulare', hidden: ausblendenAusser('admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
+      admin: { group: 'Posteingang', hidden: ausblendenAusser('admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
       access: { create: anyone, read: isEditor, update: isAdmin, delete: isAdmin },
       // Gleicher Schutz wie bei Kontakt & Co.: Anfragen pro Adresse begrenzen, übergroße Eingaben abweisen
       hooks: { beforeValidate: [spamSchutz('formular')] },
@@ -79,7 +79,7 @@ export const plugins: Plugin[] = [
       labels: { singular: 'Formular', plural: 'Formulare' },
       trash: true,
       admin: {
-        group: 'Eigene Formulare',
+        group: 'Website-Aufbau',
         hidden: ausblendenAusser('admin', 'redaktion'),
         components: { beforeList: ['@/components/Admin/Einstieg'] },
       },

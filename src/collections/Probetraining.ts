@@ -48,7 +48,7 @@ export const Probetraining: CollectionConfig = {
       ],
     },
     description: 'Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.',
-    group: 'Sport',
+    group: 'Posteingang',
     useAsTitle: 'name',
     defaultColumns: ['name', 'angebot', 'status', 'createdAt'],
   },

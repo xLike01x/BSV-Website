@@ -35,7 +35,7 @@ export const Kontaktanfragen: CollectionConfig = {
       ],
     },
     description: 'Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.',
-    group: 'Verwaltung',
+    group: 'Posteingang',
     useAsTitle: 'betreff',
     defaultColumns: ['betreff', 'name', 'an', 'status', 'createdAt'],
   },

@@ -28,7 +28,7 @@ export const Dokumente: CollectionConfig = {
     delete: pflegen,
   },
   admin: {
-    group: 'Verwaltung',
+    group: 'Mitglieder',
     hidden: ausblendenAusser('admin', 'redaktion', 'kasse'),
     useAsTitle: 'titel',
     defaultColumns: ['titel', 'filename', 'updatedAt'],

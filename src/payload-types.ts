@@ -67,25 +67,25 @@ export interface Config {
   };
   blocks: {};
   collections: {
+    mitgliedsantraege: Mitgliedsantraege;
+    kontaktanfragen: Kontaktanfragen;
+    probetraining: Probetraining;
+    passantraege: Passantraege;
     posts: Post;
     termine: Termine;
-    media: Media;
     alben: Alben;
-    dokumente: Dokumente;
+    media: Media;
+    sponsoren: Sponsoren;
+    gesuche: Gesuche;
     pages: Page;
     categories: Category;
     angebote: Angebote;
     ausfaelle: Ausfaelle;
-    probetraining: Probetraining;
-    mitgliedsantraege: Mitgliedsantraege;
-    kontaktanfragen: Kontaktanfragen;
-    sponsoren: Sponsoren;
-    gesuche: Gesuche;
-    mitgliedschaften: Mitgliedschaften;
-    passantraege: Passantraege;
     passdokumente: Passdokumente;
     users: User;
+    mitgliedschaften: Mitgliedschaften;
     profilbilder: Profilbilder;
+    dokumente: Dokumente;
     'hilfe-feedback': HilfeFeedback;
     redirects: Redirect;
     forms: Form;
@@ -107,25 +107,25 @@ export interface Config {
     };
   };
   collectionsSelect: {
+    mitgliedsantraege: MitgliedsantraegeSelect<false> | MitgliedsantraegeSelect<true>;
+    kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
+    probetraining: ProbetrainingSelect<false> | ProbetrainingSelect<true>;
+    passantraege: PassantraegeSelect<false> | PassantraegeSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     termine: TermineSelect<false> | TermineSelect<true>;
-    media: MediaSelect<false> | MediaSelect<true>;
     alben: AlbenSelect<false> | AlbenSelect<true>;
-    dokumente: DokumenteSelect<false> | DokumenteSelect<true>;
+    media: MediaSelect<false> | MediaSelect<true>;
+    sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
+    gesuche: GesucheSelect<false> | GesucheSelect<true>;
     pages: PagesSelect<false> | PagesSelect<true>;
     categories: CategoriesSelect<false> | CategoriesSelect<true>;
     angebote: AngeboteSelect<false> | AngeboteSelect<true>;
     ausfaelle: AusfaelleSelect<false> | AusfaelleSelect<true>;
-    probetraining: ProbetrainingSelect<false> | ProbetrainingSelect<true>;
-    mitgliedsantraege: MitgliedsantraegeSelect<false> | MitgliedsantraegeSelect<true>;
-    kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
-    sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
-    gesuche: GesucheSelect<false> | GesucheSelect<true>;
-    mitgliedschaften: MitgliedschaftenSelect<false> | MitgliedschaftenSelect<true>;
-    passantraege: PassantraegeSelect<false> | PassantraegeSelect<true>;
     passdokumente: PassdokumenteSelect<false> | PassdokumenteSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
+    mitgliedschaften: MitgliedschaftenSelect<false> | MitgliedschaftenSelect<true>;
     profilbilder: ProfilbilderSelect<false> | ProfilbilderSelect<true>;
+    dokumente: DokumenteSelect<false> | DokumenteSelect<true>;
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
@@ -146,20 +146,20 @@ export interface Config {
     header: Header;
     footer: Footer;
     menue: Menue;
-    verein: Verein;
     texte: Texte;
-    hilfe: Hilfe;
+    verein: Verein;
     datenschutz: Datenschutz;
+    hilfe: Hilfe;
     rollenRechte: RollenRechte;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     menue: MenueSelect<false> | MenueSelect<true>;
-    verein: VereinSelect<false> | VereinSelect<true>;
     texte: TexteSelect<false> | TexteSelect<true>;
-    hilfe: HilfeSelect<false> | HilfeSelect<true>;
+    verein: VereinSelect<false> | VereinSelect<true>;
     datenschutz: DatenschutzSelect<false> | DatenschutzSelect<true>;
+    hilfe: HilfeSelect<false> | HilfeSelect<true>;
     rollenRechte: RollenRechteSelect<false> | RollenRechteSelect<true>;
   };
   locale: null;
@@ -197,25 +197,87 @@ export interface UserAuthOperations {
   };
 }
 /**
- * Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.
+ * Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln. Oben: „Neu“ leuchtet orange, sobald ein neuer Antrag da ist. Erledigt = aufgenommen oder abgelehnt.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "posts".
+ * via the `definition` "mitgliedsantraege".
  */
-export interface Post {
+export interface Mitgliedsantraege {
+  id: number;
+  status?: ('neu' | 'rueckfrage' | 'aufgenommen' | 'abgelehnt') | null;
+  vorname: string;
+  nachname: string;
+  geburtsdatum: string;
+  email: string;
+  telefon?: string | null;
+  strasse: string;
+  plz: string;
+  ort: string;
+  mitgliedsart: 'jugend' | 'aktiv' | 'familie' | 'passiv';
+  familienmitglieder?:
+    | {
+        vorname: string;
+        nachname?: string | null;
+        geburtsdatum?: string | null;
+        id?: string | null;
+      }[]
+    | null;
+  angebote?: (number | Angebote)[] | null;
+  kontoinhaber: string;
+  /**
+   * Wird verschlüsselt gespeichert.
+   */
+  iban: string;
+  sepaMandat: boolean;
+  satzungAkzeptiert: boolean;
+  fotoEinwilligung?: boolean | null;
+  notizen?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "angebote".
+ */
+export interface Angebote {
   id: number;
   /**
-   * Kurz und konkret, z. B. „F1 gewinnt Hallenturnier“.
+   * So heißt das Team oder der Kurs überall auf der Website.
    */
   title: string;
   /**
-   * Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.
+   * Bestimmt, in welchem Menü das Angebot erscheint.
    */
-  heroImage?: (number | null) | Media;
+  bereich: 'fussball' | 'kids' | 'erwachsene';
   /**
-   * Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren.
+   * Spalte im Fußball-Menü.
    */
-  content: {
+  untergruppe?: ('junioren' | 'juniorinnen' | 'senioren' | 'seniorinnen') | null;
+  kategorie?:
+    ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
+  /**
+   * Steht im Menü und auf den Karten.
+   */
+  alterText?: string | null;
+  /**
+   * Für den Angebotsfinder.
+   */
+  alterVon?: number | null;
+  /**
+   * Für den Angebotsfinder.
+   */
+  alterBis?: number | null;
+  /**
+   * Ein Satz für Übersichtskarten (höchstens 240 Zeichen).
+   */
+  kurzbeschreibung?: string | null;
+  /**
+   * Ausführlicher Text auf der Seite des Teams.
+   */
+  beschreibung?: {
     root: {
       type: string;
       children: {
@@ -229,48 +291,61 @@ export interface Post {
       version: number;
     };
     [k: string]: unknown;
-  };
+  } | null;
   /**
-   * Leer lassen = keine Empfehlungen unter dem Artikel.
+   * Großes Bild oben auf der Teamseite und auf Karten.
    */
-  relatedPosts?: (number | Post)[] | null;
+  bild?: (number | null) | Media;
+  bannerText?: string | null;
   /**
-   * So erscheint die News bei Google und beim Teilen in WhatsApp & Co. Leer = automatisch.
+   * Leer = bis du ihn löschst.
    */
-  meta?: {
-    title?: string | null;
-    /**
-     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
-     */
-    image?: (number | null) | Media;
-    description?: string | null;
-  };
+  bannerBis?: string | null;
+  bannerArt?: ('info' | 'wichtig') | null;
   /**
-   * Erscheint auf der Seite dieses Teams. Leer lassen für Vereins-News.
+   * Wann und wo trainiert wird – erscheint auf der Teamseite.
    */
-  team?: (number | null) | Angebote;
-  /**
-   * Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“.
-   */
-  categories?: (number | Category)[] | null;
-  /**
-   * Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.
-   */
-  aufStartseite?: boolean | null;
-  /**
-   * Leer = Zeitpunkt der Veröffentlichung.
-   */
-  publishedAt?: string | null;
-  /**
-   * Wird automatisch mit deinem Namen vorbelegt.
-   */
-  authors?: (number | User)[] | null;
-  populatedAuthors?:
+  zeiten?:
     | {
+        tag?: ('Montag' | 'Dienstag' | 'Mittwoch' | 'Donnerstag' | 'Freitag' | 'Samstag' | 'Sonntag') | null;
+        von?: string | null;
+        bis?: string | null;
+        ort?: string | null;
+        hinweis?: string | null;
         id?: string | null;
-        name?: string | null;
       }[]
     | null;
+  /**
+   * Personen mit Rolle Trainer oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.
+   */
+  leitung?: (number | User)[] | null;
+  /**
+   * Nur zur Anzeige auf der Teamseite. Wer bearbeiten darf, steht oben bei „Verantwortliche“.
+   */
+  team?:
+    | {
+        name: string;
+        rolle?: string | null;
+        foto?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  plaetzeBegrenzt?: boolean | null;
+  maxPlaetze?: number | null;
+  spielklasse?: string | null;
+  /**
+   * Bei FuPa im Widget-Builder auf „Speichern“ klicken und den kompletten Code hier einfügen – die Website liest die ID automatisch heraus. Wichtig: Bei FuPa als „URL der Webseite“ die echte Vereinsadresse eintragen; auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an.
+   */
+  fupaWidgetId?: string | null;
+  fussballDeTeamId?: string | null;
+  /**
+   * Kleinere Zahl = weiter vorne.
+   */
+  reihenfolge?: number | null;
+  /**
+   * Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.
+   */
+  aktiv?: boolean | null;
   /**
    * When enabled, the slug will auto-generate from the title field on save and autosave.
    */
@@ -279,7 +354,6 @@ export interface Post {
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
-  _status?: ('draft' | 'published') | null;
 }
 /**
  * Alle Bilder und Dateien, sortiert in Ordner je Team. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.
@@ -409,123 +483,30 @@ export interface Media {
   };
 }
 /**
- * Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.
- *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "angebote".
+ * via the `definition` "payload-folders".
  */
-export interface Angebote {
+export interface FolderInterface {
   id: number;
-  /**
-   * So heißt das Team oder der Kurs überall auf der Website.
-   */
-  title: string;
-  /**
-   * Bestimmt, in welchem Menü das Angebot erscheint.
-   */
-  bereich: 'fussball' | 'kids' | 'erwachsene';
-  /**
-   * Spalte im Fußball-Menü.
-   */
-  untergruppe?: ('junioren' | 'juniorinnen' | 'senioren' | 'seniorinnen') | null;
-  kategorie?:
-    ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
-  /**
-   * Steht im Menü und auf den Karten.
-   */
-  alterText?: string | null;
-  /**
-   * Für den Angebotsfinder.
-   */
-  alterVon?: number | null;
-  /**
-   * Für den Angebotsfinder.
-   */
-  alterBis?: number | null;
-  /**
-   * Ein Satz für Übersichtskarten (höchstens 240 Zeichen).
-   */
-  kurzbeschreibung?: string | null;
-  /**
-   * Ausführlicher Text auf der Seite des Teams.
-   */
-  beschreibung?: {
-    root: {
-      type: string;
-      children: {
-        type: any;
-        version: number;
-        [k: string]: unknown;
-      }[];
-      direction: ('ltr' | 'rtl') | null;
-      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
-      indent: number;
-      version: number;
-    };
-    [k: string]: unknown;
-  } | null;
-  /**
-   * Großes Bild oben auf der Teamseite und auf Karten.
-   */
-  bild?: (number | null) | Media;
-  bannerText?: string | null;
-  /**
-   * Leer = bis du ihn löschst.
-   */
-  bannerBis?: string | null;
-  bannerArt?: ('info' | 'wichtig') | null;
-  /**
-   * Wann und wo trainiert wird – erscheint auf der Teamseite.
-   */
-  zeiten?:
-    | {
-        tag?: ('Montag' | 'Dienstag' | 'Mittwoch' | 'Donnerstag' | 'Freitag' | 'Samstag' | 'Sonntag') | null;
-        von?: string | null;
-        bis?: string | null;
-        ort?: string | null;
-        hinweis?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  /**
-   * Personen mit Rolle Trainer oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.
-   */
-  leitung?: (number | User)[] | null;
-  /**
-   * Nur zur Anzeige auf der Teamseite. Wer bearbeiten darf, steht oben bei „Verantwortliche“.
-   */
-  team?:
-    | {
-        name: string;
-        rolle?: string | null;
-        foto?: (number | null) | Media;
-        id?: string | null;
-      }[]
-    | null;
-  plaetzeBegrenzt?: boolean | null;
-  maxPlaetze?: number | null;
-  spielklasse?: string | null;
-  /**
-   * Bei FuPa im Widget-Builder auf „Speichern“ klicken und den kompletten Code hier einfügen – die Website liest die ID automatisch heraus. Wichtig: Bei FuPa als „URL der Webseite“ die echte Vereinsadresse eintragen; auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an.
-   */
-  fupaWidgetId?: string | null;
-  fussballDeTeamId?: string | null;
-  /**
-   * Kleinere Zahl = weiter vorne.
-   */
-  reihenfolge?: number | null;
-  /**
-   * Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.
-   */
-  aktiv?: boolean | null;
-  /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
-   */
-  generateSlug?: boolean | null;
-  slug: string;
+  name: string;
+  folder?: (number | null) | FolderInterface;
+  documentsAndFolders?: {
+    docs?: (
+      | {
+          relationTo?: 'payload-folders';
+          value: number | FolderInterface;
+        }
+      | {
+          relationTo?: 'media';
+          value: number | Media;
+        }
+    )[];
+    hasNextPage?: boolean;
+    totalDocs?: number;
+  };
+  folderType?: 'media'[] | null;
   updatedAt: string;
   createdAt: string;
-  deletedAt?: string | null;
 }
 /**
  * Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.
@@ -540,7 +521,7 @@ export interface User {
    */
   name: string;
   /**
-   * Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
+   * Wer welche Rolle für welches Team hat: siehe Einstellungen → „Rollen & Rechte“. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
    */
   roles: (
     'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
@@ -606,7 +587,7 @@ export interface User {
     | null;
   zweiFaktorLetzterSchritt?: number | null;
   /**
-   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Rollen-Übersicht → „Alle Testkonten löschen“.
+   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Einstellungen → Rollen & Rechte → „Alle Testkonten löschen“.
    */
   testkonto?: boolean | null;
   /**
@@ -665,30 +646,220 @@ export interface Profilbilder {
   };
 }
 /**
+ * Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "payload-folders".
+ * via the `definition` "kontaktanfragen".
  */
-export interface FolderInterface {
+export interface Kontaktanfragen {
   id: number;
+  status?: ('neu' | 'bearbeitung' | 'erledigt') | null;
+  /**
+   * Was im Formular bei „Worum geht es?“ gewählt wurde. Die Auswahl pflegst du unter Vereinsdaten → „Kontaktformular: Worum geht es?“.
+   */
+  an?: string | null;
   name: string;
-  folder?: (number | null) | FolderInterface;
-  documentsAndFolders?: {
-    docs?: (
-      | {
-          relationTo?: 'payload-folders';
-          value: number | FolderInterface;
-        }
-      | {
-          relationTo?: 'media';
-          value: number | Media;
-        }
-    )[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
-  folderType?: 'media'[] | null;
+  email: string;
+  betreff: string;
+  nachricht: string;
+  datenschutz: boolean;
   updatedAt: string;
   createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "probetraining".
+ */
+export interface Probetraining {
+  id: number;
+  angebot: number | Angebote;
+  name: string;
+  email: string;
+  teilnehmer?: string | null;
+  alter?: number | null;
+  wunschtermin?: string | null;
+  nachricht?: string | null;
+  datenschutz: boolean;
+  status?: ('neu' | 'zugesagt' | 'alternativ' | 'erledigt') | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Anträge auf Spielerlaubnis (Spielerpass) aus dem Mitgliederbereich. Unterlagen prüfen, fehlende nachfordern, im DFBnet einreichen und den Status setzen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passantraege".
+ */
+export interface Passantraege {
+  id: number;
+  spielerName?: string | null;
+  status: 'eingereicht' | 'pruefung' | 'unterlagen_fehlen' | 'verband' | 'erteilt' | 'abgelehnt';
+  team: number | Angebote;
+  /**
+   * Sieht die Person im Mitgliederbereich – z. B. „Bitte die Geburtsurkunde nachreichen“. Bei fehlenden Unterlagen den Status auf „Unterlagen fehlen“ setzen.
+   */
+  hinweis?: string | null;
+  /**
+   * Nur für die Verwaltung sichtbar, z. B. DFBnet-Vorgangsnummer.
+   */
+  notiz?: string | null;
+  fuer?: ('selbst' | 'kind') | null;
+  spielerVorname: string;
+  spielerNachname: string;
+  geburtsdatum: string;
+  staatsangehoerigkeit?: string | null;
+  erziehungsberechtigte?: string | null;
+  art: 'neu' | 'wechsel' | 'international';
+  bisherigerVerein?: string | null;
+  abmeldedatum?: string | null;
+  /**
+   * Ausgefüllt und unterschrieben – bei Minderjährigen zusätzlich von den Erziehungsberechtigten. Foto oder Scan genügt.
+   */
+  passantrag?: (number | null) | Passdokumente;
+  /**
+   * Kopie zum Nachweis von Identität und Geburtsdatum.
+   */
+  ausweis?: (number | null) | Passdokumente;
+  /**
+   * Aktuelles Foto für das Spielerprofil im DFBnet (Gesicht gut erkennbar, heller Hintergrund).
+   */
+  passfoto?: (number | null) | Passdokumente;
+  /**
+   * Unterschriebene Datenschutz- und Foto-Erklärung (z. B. für FUSSBALL.DE).
+   */
+  einwilligung?: (number | null) | Passdokumente;
+  /**
+   * Nachweis der fristgerechten Abmeldung – nur bei Vereinswechsel.
+   */
+  abmeldung?: (number | null) | Passdokumente;
+  /**
+   * Nur bei internationalem Wechsel von Jugendlichen.
+   */
+  meldebescheinigung?: (number | null) | Passdokumente;
+  bestaetigt?: boolean | null;
+  antragsteller?: (number | null) | User;
+  nachgereichtAm?: string | null;
+  abgeschlossenAm?: string | null;
+  /**
+   * Ausweis, Foto usw. werden nach Abschluss automatisch gelöscht; der unterschriebene Passantrag bleibt 2 Jahre (Fristen unter „Datenschutz-Fristen“).
+   */
+  unterlagenGeloeschtAm?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Die einzelnen Dateien zu den Passanträgen. Normalerweise öffnest du sie direkt im Passantrag.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passdokumente".
+ */
+export interface Passdokumente {
+  id: number;
+  art?:
+    ('passantrag' | 'ausweis' | 'passfoto' | 'einwilligung' | 'abmeldung' | 'meldebescheinigung' | 'sonstiges') | null;
+  hochgeladenVon?: (number | null) | User;
+  antrag?: (number | null) | Passantraege;
+  team?: (number | null) | Angebote;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "posts".
+ */
+export interface Post {
+  id: number;
+  /**
+   * Kurz und konkret, z. B. „F1 gewinnt Hallenturnier“.
+   */
+  title: string;
+  /**
+   * Das große Bild über der News. Fotos von Kindern nur mit Einverständnis der Eltern.
+   */
+  heroImage?: (number | null) | Media;
+  /**
+   * Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren.
+   */
+  content: {
+    root: {
+      type: string;
+      children: {
+        type: any;
+        version: number;
+        [k: string]: unknown;
+      }[];
+      direction: ('ltr' | 'rtl') | null;
+      format: 'left' | 'start' | 'center' | 'right' | 'end' | 'justify' | '';
+      indent: number;
+      version: number;
+    };
+    [k: string]: unknown;
+  };
+  /**
+   * Leer lassen = keine Empfehlungen unter dem Artikel.
+   */
+  relatedPosts?: (number | Post)[] | null;
+  /**
+   * So erscheint die News bei Google und beim Teilen in WhatsApp & Co. Leer = automatisch.
+   */
+  meta?: {
+    title?: string | null;
+    /**
+     * Maximum upload file size: 12MB. Recommended file size for images is <500KB.
+     */
+    image?: (number | null) | Media;
+    description?: string | null;
+  };
+  /**
+   * Erscheint auf der Seite dieses Teams. Leer lassen für Vereins-News.
+   */
+  team?: (number | null) | Angebote;
+  /**
+   * Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“.
+   */
+  categories?: (number | Category)[] | null;
+  /**
+   * Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.
+   */
+  aufStartseite?: boolean | null;
+  /**
+   * Leer = Zeitpunkt der Veröffentlichung.
+   */
+  publishedAt?: string | null;
+  /**
+   * Wird automatisch mit deinem Namen vorbelegt.
+   */
+  authors?: (number | User)[] | null;
+  populatedAuthors?:
+    | {
+        id?: string | null;
+        name?: string | null;
+      }[]
+    | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+  _status?: ('draft' | 'published') | null;
 }
 /**
  * Schlagworte, nach denen Besucher die News filtern können.
@@ -802,29 +973,64 @@ export interface Alben {
   deletedAt?: string | null;
 }
 /**
- * Dateien nur für angemeldete Mitglieder, z. B. Protokolle. Sie sind nicht öffentlich erreichbar – auch nicht mit dem Link. Eingebunden werden sie unter „Vereinsdaten“ → „Satzung & Downloads“.
+ * Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "dokumente".
+ * via the `definition` "sponsoren".
  */
-export interface Dokumente {
+export interface Sponsoren {
   id: number;
+  name: string;
   /**
-   * Nur intern, z. B. „Protokoll JHV 2026“.
+   * Ideal: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000), nur das Logo ohne weitere Elemente drumherum. Größe und Seitenverhältnis sind egal – die Website entfernt den leeren Rand automatisch und gleicht alle Logos so an, dass sie gleich groß wirken. Beim Hochladen kein Team wählen; das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
    */
-  titel?: string | null;
+  logo?: (number | null) | Media;
+  /**
+   * Nur für Hauptsponsoren: In der Fußzeile ist wenig Platz (ca. 40 Pixel hoch). Hat der Sponsor eine kompakte Variante (z. B. nur Schriftzug, quer), hier hochladen. Leer = das normale Logo wird genommen. Ideal: PNG mit durchsichtigem Hintergrund, quer, mindestens 400 Pixel breit.
+   */
+  logoFusszeile?: (number | null) | Media;
+  url?: string | null;
+  /**
+   * Z. B. „Unterstützt seit 2015 unsere Jugend“.
+   */
+  text?: string | null;
+  /**
+   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite. „Hauptsponsor“ steht ganz oben und in der Fußzeile – auch mehrere Hauptsponsoren sind möglich (Reihenfolge-Zahl bestimmt die Reihenfolge).
+   */
+  stufe?: ('haupt' | 'premium' | 'partner' | 'foerderer') | null;
+  /**
+   * Nur mit Logo.
+   */
+  imLaufband?: boolean | null;
+  /**
+   * Kleinere Zahl = weiter vorne.
+   */
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
-  url?: string | null;
-  thumbnailURL?: string | null;
-  filename?: string | null;
-  mimeType?: string | null;
-  filesize?: number | null;
-  width?: number | null;
-  height?: number | null;
-  focalX?: number | null;
-  focalY?: number | null;
+}
+/**
+ * Wen der Verein gerade sucht – Trainer, Helfer, Schiris, Vorstand. Erscheint auf der Seite „Mitmachen“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gesuche".
+ */
+export interface Gesuche {
+  id: number;
+  titel: string;
+  /**
+   * Was ist zu tun? Was bieten wir? Kurz und einladend.
+   */
+  text: string;
+  aufwand?: string | null;
+  symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
 }
 /**
  * Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü & Fußzeile“.
@@ -1289,149 +1495,6 @@ export interface Ausfaelle {
   deletedAt?: string | null;
 }
 /**
- * Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "probetraining".
- */
-export interface Probetraining {
-  id: number;
-  angebot: number | Angebote;
-  name: string;
-  email: string;
-  teilnehmer?: string | null;
-  alter?: number | null;
-  wunschtermin?: string | null;
-  nachricht?: string | null;
-  datenschutz: boolean;
-  status?: ('neu' | 'zugesagt' | 'alternativ' | 'erledigt') | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln. Oben: „Neu“ leuchtet orange, sobald ein neuer Antrag da ist. Erledigt = aufgenommen oder abgelehnt.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mitgliedsantraege".
- */
-export interface Mitgliedsantraege {
-  id: number;
-  status?: ('neu' | 'rueckfrage' | 'aufgenommen' | 'abgelehnt') | null;
-  vorname: string;
-  nachname: string;
-  geburtsdatum: string;
-  email: string;
-  telefon?: string | null;
-  strasse: string;
-  plz: string;
-  ort: string;
-  mitgliedsart: 'jugend' | 'aktiv' | 'familie' | 'passiv';
-  familienmitglieder?:
-    | {
-        vorname: string;
-        nachname?: string | null;
-        geburtsdatum?: string | null;
-        id?: string | null;
-      }[]
-    | null;
-  angebote?: (number | Angebote)[] | null;
-  kontoinhaber: string;
-  /**
-   * Wird verschlüsselt gespeichert.
-   */
-  iban: string;
-  sepaMandat: boolean;
-  satzungAkzeptiert: boolean;
-  fotoEinwilligung?: boolean | null;
-  notizen?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "kontaktanfragen".
- */
-export interface Kontaktanfragen {
-  id: number;
-  status?: ('neu' | 'bearbeitung' | 'erledigt') | null;
-  /**
-   * Was im Formular bei „Worum geht es?“ gewählt wurde. Die Auswahl pflegst du unter Vereinsdaten → „Kontaktformular: Worum geht es?“.
-   */
-  an?: string | null;
-  name: string;
-  email: string;
-  betreff: string;
-  nachricht: string;
-  datenschutz: boolean;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sponsoren".
- */
-export interface Sponsoren {
-  id: number;
-  name: string;
-  /**
-   * Ideal: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000), nur das Logo ohne weitere Elemente drumherum. Größe und Seitenverhältnis sind egal – die Website entfernt den leeren Rand automatisch und gleicht alle Logos so an, dass sie gleich groß wirken. Beim Hochladen kein Team wählen; das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
-   */
-  logo?: (number | null) | Media;
-  /**
-   * Nur für Hauptsponsoren: In der Fußzeile ist wenig Platz (ca. 40 Pixel hoch). Hat der Sponsor eine kompakte Variante (z. B. nur Schriftzug, quer), hier hochladen. Leer = das normale Logo wird genommen. Ideal: PNG mit durchsichtigem Hintergrund, quer, mindestens 400 Pixel breit.
-   */
-  logoFusszeile?: (number | null) | Media;
-  url?: string | null;
-  /**
-   * Z. B. „Unterstützt seit 2015 unsere Jugend“.
-   */
-  text?: string | null;
-  /**
-   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite. „Hauptsponsor“ steht ganz oben und in der Fußzeile – auch mehrere Hauptsponsoren sind möglich (Reihenfolge-Zahl bestimmt die Reihenfolge).
-   */
-  stufe?: ('haupt' | 'premium' | 'partner' | 'foerderer') | null;
-  /**
-   * Nur mit Logo.
-   */
-  imLaufband?: boolean | null;
-  /**
-   * Kleinere Zahl = weiter vorne.
-   */
-  reihenfolge?: number | null;
-  aktiv?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Wen der Verein gerade sucht – Trainer, Helfer, Schiris, Vorstand. Erscheint auf der Seite „Mitmachen“.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gesuche".
- */
-export interface Gesuche {
-  id: number;
-  titel: string;
-  /**
-   * Was ist zu tun? Was bieten wir? Kurz und einladend.
-   */
-  text: string;
-  aufwand?: string | null;
-  symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
-  reihenfolge?: number | null;
-  aktiv?: boolean | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
  * Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen. Sichtbar wird der Ausweis im verknüpften Benutzerkonto.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1475,83 +1538,20 @@ export interface Mitgliedschaften {
   deletedAt?: string | null;
 }
 /**
- * Anträge auf Spielerlaubnis (Spielerpass) aus dem Mitgliederbereich. Unterlagen prüfen, fehlende nachfordern, im DFBnet einreichen und den Status setzen.
+ * Dateien nur für angemeldete Mitglieder, z. B. Protokolle. Sie sind nicht öffentlich erreichbar – auch nicht mit dem Link. Eingebunden werden sie unter „Vereinsdaten“ → „Satzung & Downloads“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "passantraege".
+ * via the `definition` "dokumente".
  */
-export interface Passantraege {
+export interface Dokumente {
   id: number;
-  spielerName?: string | null;
-  status: 'eingereicht' | 'pruefung' | 'unterlagen_fehlen' | 'verband' | 'erteilt' | 'abgelehnt';
-  team: number | Angebote;
   /**
-   * Sieht die Person im Mitgliederbereich – z. B. „Bitte die Geburtsurkunde nachreichen“. Bei fehlenden Unterlagen den Status auf „Unterlagen fehlen“ setzen.
+   * Nur intern, z. B. „Protokoll JHV 2026“.
    */
-  hinweis?: string | null;
-  /**
-   * Nur für die Verwaltung sichtbar, z. B. DFBnet-Vorgangsnummer.
-   */
-  notiz?: string | null;
-  fuer?: ('selbst' | 'kind') | null;
-  spielerVorname: string;
-  spielerNachname: string;
-  geburtsdatum: string;
-  staatsangehoerigkeit?: string | null;
-  erziehungsberechtigte?: string | null;
-  art: 'neu' | 'wechsel' | 'international';
-  bisherigerVerein?: string | null;
-  abmeldedatum?: string | null;
-  /**
-   * Ausgefüllt und unterschrieben – bei Minderjährigen zusätzlich von den Erziehungsberechtigten. Foto oder Scan genügt.
-   */
-  passantrag?: (number | null) | Passdokumente;
-  /**
-   * Kopie zum Nachweis von Identität und Geburtsdatum.
-   */
-  ausweis?: (number | null) | Passdokumente;
-  /**
-   * Aktuelles Foto für das Spielerprofil im DFBnet (Gesicht gut erkennbar, heller Hintergrund).
-   */
-  passfoto?: (number | null) | Passdokumente;
-  /**
-   * Unterschriebene Datenschutz- und Foto-Erklärung (z. B. für FUSSBALL.DE).
-   */
-  einwilligung?: (number | null) | Passdokumente;
-  /**
-   * Nachweis der fristgerechten Abmeldung – nur bei Vereinswechsel.
-   */
-  abmeldung?: (number | null) | Passdokumente;
-  /**
-   * Nur bei internationalem Wechsel von Jugendlichen.
-   */
-  meldebescheinigung?: (number | null) | Passdokumente;
-  bestaetigt?: boolean | null;
-  antragsteller?: (number | null) | User;
-  nachgereichtAm?: string | null;
-  abgeschlossenAm?: string | null;
-  /**
-   * Ausweis, Foto usw. werden nach Abschluss automatisch gelöscht; der unterschriebene Passantrag bleibt 2 Jahre (Fristen unter „Datenschutz-Fristen“).
-   */
-  unterlagenGeloeschtAm?: string | null;
+  titel?: string | null;
   updatedAt: string;
   createdAt: string;
-}
-/**
- * Die einzelnen Dateien zu den Passanträgen. Normalerweise öffnest du sie direkt im Passantrag.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "passdokumente".
- */
-export interface Passdokumente {
-  id: number;
-  art?:
-    ('passantrag' | 'ausweis' | 'passfoto' | 'einwilligung' | 'abmeldung' | 'meldebescheinigung' | 'sonstiges') | null;
-  hochgeladenVon?: (number | null) | User;
-  antrag?: (number | null) | Passantraege;
-  team?: (number | null) | Angebote;
-  updatedAt: string;
-  createdAt: string;
+  deletedAt?: string | null;
   url?: string | null;
   thumbnailURL?: string | null;
   filename?: string | null;
@@ -1769,6 +1769,22 @@ export interface PayloadLockedDocument {
   id: number;
   document?:
     | ({
+        relationTo: 'mitgliedsantraege';
+        value: number | Mitgliedsantraege;
+      } | null)
+    | ({
+        relationTo: 'kontaktanfragen';
+        value: number | Kontaktanfragen;
+      } | null)
+    | ({
+        relationTo: 'probetraining';
+        value: number | Probetraining;
+      } | null)
+    | ({
+        relationTo: 'passantraege';
+        value: number | Passantraege;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: number | Post;
       } | null)
@@ -1777,16 +1793,20 @@ export interface PayloadLockedDocument {
         value: number | Termine;
       } | null)
     | ({
-        relationTo: 'media';
-        value: number | Media;
-      } | null)
-    | ({
         relationTo: 'alben';
         value: number | Alben;
       } | null)
     | ({
-        relationTo: 'dokumente';
-        value: number | Dokumente;
+        relationTo: 'media';
+        value: number | Media;
+      } | null)
+    | ({
+        relationTo: 'sponsoren';
+        value: number | Sponsoren;
+      } | null)
+    | ({
+        relationTo: 'gesuche';
+        value: number | Gesuche;
       } | null)
     | ({
         relationTo: 'pages';
@@ -1805,34 +1825,6 @@ export interface PayloadLockedDocument {
         value: number | Ausfaelle;
       } | null)
     | ({
-        relationTo: 'probetraining';
-        value: number | Probetraining;
-      } | null)
-    | ({
-        relationTo: 'mitgliedsantraege';
-        value: number | Mitgliedsantraege;
-      } | null)
-    | ({
-        relationTo: 'kontaktanfragen';
-        value: number | Kontaktanfragen;
-      } | null)
-    | ({
-        relationTo: 'sponsoren';
-        value: number | Sponsoren;
-      } | null)
-    | ({
-        relationTo: 'gesuche';
-        value: number | Gesuche;
-      } | null)
-    | ({
-        relationTo: 'mitgliedschaften';
-        value: number | Mitgliedschaften;
-      } | null)
-    | ({
-        relationTo: 'passantraege';
-        value: number | Passantraege;
-      } | null)
-    | ({
         relationTo: 'passdokumente';
         value: number | Passdokumente;
       } | null)
@@ -1841,8 +1833,16 @@ export interface PayloadLockedDocument {
         value: number | User;
       } | null)
     | ({
+        relationTo: 'mitgliedschaften';
+        value: number | Mitgliedschaften;
+      } | null)
+    | ({
         relationTo: 'profilbilder';
         value: number | Profilbilder;
+      } | null)
+    | ({
+        relationTo: 'dokumente';
+        value: number | Dokumente;
       } | null)
     | ({
         relationTo: 'hilfe-feedback';
@@ -1912,6 +1912,107 @@ export interface PayloadMigration {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedsantraege_select".
+ */
+export interface MitgliedsantraegeSelect<T extends boolean = true> {
+  status?: T;
+  vorname?: T;
+  nachname?: T;
+  geburtsdatum?: T;
+  email?: T;
+  telefon?: T;
+  strasse?: T;
+  plz?: T;
+  ort?: T;
+  mitgliedsart?: T;
+  familienmitglieder?:
+    | T
+    | {
+        vorname?: T;
+        nachname?: T;
+        geburtsdatum?: T;
+        id?: T;
+      };
+  angebote?: T;
+  kontoinhaber?: T;
+  iban?: T;
+  sepaMandat?: T;
+  satzungAkzeptiert?: T;
+  fotoEinwilligung?: T;
+  notizen?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kontaktanfragen_select".
+ */
+export interface KontaktanfragenSelect<T extends boolean = true> {
+  status?: T;
+  an?: T;
+  name?: T;
+  email?: T;
+  betreff?: T;
+  nachricht?: T;
+  datenschutz?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "probetraining_select".
+ */
+export interface ProbetrainingSelect<T extends boolean = true> {
+  angebot?: T;
+  name?: T;
+  email?: T;
+  teilnehmer?: T;
+  alter?: T;
+  wunschtermin?: T;
+  nachricht?: T;
+  datenschutz?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passantraege_select".
+ */
+export interface PassantraegeSelect<T extends boolean = true> {
+  spielerName?: T;
+  status?: T;
+  team?: T;
+  hinweis?: T;
+  notiz?: T;
+  fuer?: T;
+  spielerVorname?: T;
+  spielerNachname?: T;
+  geburtsdatum?: T;
+  staatsangehoerigkeit?: T;
+  erziehungsberechtigte?: T;
+  art?: T;
+  bisherigerVerein?: T;
+  abmeldedatum?: T;
+  passantrag?: T;
+  ausweis?: T;
+  passfoto?: T;
+  einwilligung?: T;
+  abmeldung?: T;
+  meldebescheinigung?: T;
+  bestaetigt?: T;
+  antragsteller?: T;
+  nachgereichtAm?: T;
+  abgeschlossenAm?: T;
+  unterlagenGeloeschtAm?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "posts_select".
  */
 export interface PostsSelect<T extends boolean = true> {
@@ -1965,6 +2066,23 @@ export interface TermineSelect<T extends boolean = true> {
   beschreibung?: T;
   nurMitglieder?: T;
   anmeldung?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alben_select".
+ */
+export interface AlbenSelect<T extends boolean = true> {
+  titel?: T;
+  datum?: T;
+  team?: T;
+  beschreibung?: T;
+  bilder?: T;
+  aktiv?: T;
+  generateSlug?: T;
+  slug?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2081,39 +2199,36 @@ export interface MediaSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "alben_select".
+ * via the `definition` "sponsoren_select".
  */
-export interface AlbenSelect<T extends boolean = true> {
-  titel?: T;
-  datum?: T;
-  team?: T;
-  beschreibung?: T;
-  bilder?: T;
+export interface SponsorenSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  logoFusszeile?: T;
+  url?: T;
+  text?: T;
+  stufe?: T;
+  imLaufband?: T;
+  reihenfolge?: T;
   aktiv?: T;
-  generateSlug?: T;
-  slug?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "dokumente_select".
+ * via the `definition` "gesuche_select".
  */
-export interface DokumenteSelect<T extends boolean = true> {
+export interface GesucheSelect<T extends boolean = true> {
   titel?: T;
+  text?: T;
+  aufwand?: T;
+  symbol?: T;
+  reihenfolge?: T;
+  aktiv?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
-  url?: T;
-  thumbnailURL?: T;
-  filename?: T;
-  mimeType?: T;
-  filesize?: T;
-  width?: T;
-  height?: T;
-  focalX?: T;
-  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2338,162 +2453,6 @@ export interface AusfaelleSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "probetraining_select".
- */
-export interface ProbetrainingSelect<T extends boolean = true> {
-  angebot?: T;
-  name?: T;
-  email?: T;
-  teilnehmer?: T;
-  alter?: T;
-  wunschtermin?: T;
-  nachricht?: T;
-  datenschutz?: T;
-  status?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mitgliedsantraege_select".
- */
-export interface MitgliedsantraegeSelect<T extends boolean = true> {
-  status?: T;
-  vorname?: T;
-  nachname?: T;
-  geburtsdatum?: T;
-  email?: T;
-  telefon?: T;
-  strasse?: T;
-  plz?: T;
-  ort?: T;
-  mitgliedsart?: T;
-  familienmitglieder?:
-    | T
-    | {
-        vorname?: T;
-        nachname?: T;
-        geburtsdatum?: T;
-        id?: T;
-      };
-  angebote?: T;
-  kontoinhaber?: T;
-  iban?: T;
-  sepaMandat?: T;
-  satzungAkzeptiert?: T;
-  fotoEinwilligung?: T;
-  notizen?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "kontaktanfragen_select".
- */
-export interface KontaktanfragenSelect<T extends boolean = true> {
-  status?: T;
-  an?: T;
-  name?: T;
-  email?: T;
-  betreff?: T;
-  nachricht?: T;
-  datenschutz?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sponsoren_select".
- */
-export interface SponsorenSelect<T extends boolean = true> {
-  name?: T;
-  logo?: T;
-  logoFusszeile?: T;
-  url?: T;
-  text?: T;
-  stufe?: T;
-  imLaufband?: T;
-  reihenfolge?: T;
-  aktiv?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gesuche_select".
- */
-export interface GesucheSelect<T extends boolean = true> {
-  titel?: T;
-  text?: T;
-  aufwand?: T;
-  symbol?: T;
-  reihenfolge?: T;
-  aktiv?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mitgliedschaften_select".
- */
-export interface MitgliedschaftenSelect<T extends boolean = true> {
-  anzeigeName?: T;
-  vorname?: T;
-  nachname?: T;
-  mitgliedsnummer?: T;
-  eintritt?: T;
-  art?: T;
-  geburtsdatum?: T;
-  konto?: T;
-  email?: T;
-  angebote?: T;
-  aktiv?: T;
-  austritt?: T;
-  antrag?: T;
-  updatedAt?: T;
-  createdAt?: T;
-  deletedAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "passantraege_select".
- */
-export interface PassantraegeSelect<T extends boolean = true> {
-  spielerName?: T;
-  status?: T;
-  team?: T;
-  hinweis?: T;
-  notiz?: T;
-  fuer?: T;
-  spielerVorname?: T;
-  spielerNachname?: T;
-  geburtsdatum?: T;
-  staatsangehoerigkeit?: T;
-  erziehungsberechtigte?: T;
-  art?: T;
-  bisherigerVerein?: T;
-  abmeldedatum?: T;
-  passantrag?: T;
-  ausweis?: T;
-  passfoto?: T;
-  einwilligung?: T;
-  abmeldung?: T;
-  meldebescheinigung?: T;
-  bestaetigt?: T;
-  antragsteller?: T;
-  nachgereichtAm?: T;
-  abgeschlossenAm?: T;
-  unterlagenGeloeschtAm?: T;
-  updatedAt?: T;
-  createdAt?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "passdokumente_select".
  */
 export interface PassdokumenteSelect<T extends boolean = true> {
@@ -2558,6 +2517,28 @@ export interface UsersSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedschaften_select".
+ */
+export interface MitgliedschaftenSelect<T extends boolean = true> {
+  anzeigeName?: T;
+  vorname?: T;
+  nachname?: T;
+  mitgliedsnummer?: T;
+  eintritt?: T;
+  art?: T;
+  geburtsdatum?: T;
+  konto?: T;
+  email?: T;
+  angebote?: T;
+  aktiv?: T;
+  austritt?: T;
+  antrag?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "profilbilder_select".
  */
 export interface ProfilbilderSelect<T extends boolean = true> {
@@ -2587,6 +2568,25 @@ export interface ProfilbilderSelect<T extends boolean = true> {
               filename?: T;
             };
       };
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "dokumente_select".
+ */
+export interface DokumenteSelect<T extends boolean = true> {
+  titel?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3033,7 +3033,7 @@ export interface Menue {
     anzeigen?: boolean | null;
     titel?: string | null;
     /**
-     * Die Adresse selbst änderst du unter Verwaltung → Vereinsdaten → „Sportplatz“.
+     * Die Adresse selbst änderst du unter Einstellungen → Vereinsdaten → „Sportplatz“.
      */
     adresseZeigen?: boolean | null;
     /**
@@ -3055,6 +3055,122 @@ export interface Menue {
           id?: string | null;
         }[]
       | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "texte".
+ */
+export interface Texte {
+  id: number;
+  heroTitel?: string | null;
+  heroHand?: string | null;
+  heroText?: string | null;
+  alterFrage?: string | null;
+  alterKeinTreffer?: string | null;
+  zahlMitglieder?: string | null;
+  zahlAngebote?: string | null;
+  zahlKinder?: string | null;
+  zahlGruendung?: string | null;
+  weltenTitel?: string | null;
+  kachelFussball?: {
+    label?: string | null;
+    titel?: string | null;
+    text?: string | null;
+    link?: string | null;
+  };
+  kachelKids?: {
+    label?: string | null;
+    titel?: string | null;
+  };
+  kachelFitness?: {
+    label?: string | null;
+    titel?: string | null;
+    text?: string | null;
+  };
+  kachelMitglieder?: {
+    label?: string | null;
+    titel?: string | null;
+    text?: string | null;
+    link?: string | null;
+    handyTitel?: string | null;
+    handyText?: string | null;
+  };
+  finderTitel?: string | null;
+  finderLink?: string | null;
+  newsUeberschrift?: string | null;
+  newsLink?: string | null;
+  /**
+   * Alle 6 Sekunden zur nächsten News – Pause, sobald jemand mit der Maus darauf zeigt oder wischt. Ohne Haken blättert man nur selbst (Punkte, Pfeile, Wischen).
+   */
+  newsAutomatisch?: boolean | null;
+  mitgliedTitel?: string | null;
+  mitgliedText?: string | null;
+  schritte?: {
+    t1?: string | null;
+    d1?: string | null;
+    t2?: string | null;
+    d2?: string | null;
+    t3?: string | null;
+    d3?: string | null;
+    button?: string | null;
+  };
+  fussball?: {
+    titel?: string | null;
+    text?: string | null;
+    mitspielenTitel?: string | null;
+  };
+  breitensport?: {
+    titel?: string | null;
+    text?: string | null;
+    schnupperTitel?: string | null;
+    schnupperText?: string | null;
+  };
+  verein?: {
+    titel?: string | null;
+    text?: string | null;
+    vorstandText?: string | null;
+    beitraegeText?: string | null;
+    shopTitel?: string | null;
+  };
+  fusszeile?: {
+    sponsor?: string | null;
+    sponsorLink?: string | null;
+  };
+  news?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  termine?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  kontakt?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  antrag?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  sponsoren?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  galerie?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  mitmachen?: {
+    titel?: string | null;
+    text?: string | null;
+  };
+  probetraining?: {
+    titel?: string | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -3196,118 +3312,32 @@ export interface Verein {
   createdAt?: string | null;
 }
 /**
- * Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.
+ * Persönliche Daten nur so lange speichern, wie sie gebraucht werden (DSGVO). Hier legst du fest, wann erledigte Einträge aufgeräumt werden.
  *
  * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "texte".
+ * via the `definition` "datenschutz".
  */
-export interface Texte {
+export interface Datenschutz {
   id: number;
-  heroTitel?: string | null;
-  heroHand?: string | null;
-  heroText?: string | null;
-  alterFrage?: string | null;
-  alterKeinTreffer?: string | null;
-  zahlMitglieder?: string | null;
-  zahlAngebote?: string | null;
-  zahlKinder?: string | null;
-  zahlGruendung?: string | null;
-  weltenTitel?: string | null;
-  kachelFussball?: {
-    label?: string | null;
-    titel?: string | null;
-    text?: string | null;
-    link?: string | null;
-  };
-  kachelKids?: {
-    label?: string | null;
-    titel?: string | null;
-  };
-  kachelFitness?: {
-    label?: string | null;
-    titel?: string | null;
-    text?: string | null;
-  };
-  kachelMitglieder?: {
-    label?: string | null;
-    titel?: string | null;
-    text?: string | null;
-    link?: string | null;
-    handyTitel?: string | null;
-    handyText?: string | null;
-  };
-  finderTitel?: string | null;
-  finderLink?: string | null;
-  newsUeberschrift?: string | null;
-  newsLink?: string | null;
+  probetrainingMonate?: number | null;
+  kontaktMonate?: number | null;
   /**
-   * Alle 6 Sekunden zur nächsten News – Pause, sobald jemand mit der Maus darauf zeigt oder wischt. Ohne Haken blättert man nur selbst (Punkte, Pfeile, Wischen).
+   * Erst löschen, wenn die Daten in die Mitgliederverwaltung übernommen sind.
    */
-  newsAutomatisch?: boolean | null;
-  mitgliedTitel?: string | null;
-  mitgliedText?: string | null;
-  schritte?: {
-    t1?: string | null;
-    d1?: string | null;
-    t2?: string | null;
-    d2?: string | null;
-    t3?: string | null;
-    d3?: string | null;
-    button?: string | null;
-  };
-  fussball?: {
-    titel?: string | null;
-    text?: string | null;
-    mitspielenTitel?: string | null;
-  };
-  breitensport?: {
-    titel?: string | null;
-    text?: string | null;
-    schnupperTitel?: string | null;
-    schnupperText?: string | null;
-  };
-  verein?: {
-    titel?: string | null;
-    text?: string | null;
-    vorstandText?: string | null;
-    beitraegeText?: string | null;
-    shopTitel?: string | null;
-  };
-  fusszeile?: {
-    sponsor?: string | null;
-    sponsorLink?: string | null;
-  };
-  news?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  termine?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  kontakt?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  antrag?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  sponsoren?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  galerie?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  mitmachen?: {
-    titel?: string | null;
-    text?: string | null;
-  };
-  probetraining?: {
-    titel?: string | null;
-  };
+  antraegeMonate?: number | null;
+  eingaengeMonate?: number | null;
+  /**
+   * Läuft immer automatisch. Der unterschriebene Passantrag bleibt (siehe rechts).
+   */
+  passUnterlagenTage?: number | null;
+  /**
+   * Der unterschriebene Antrag muss 2 Jahre aufbewahrt werden. Danach werden Antrag und Formular automatisch gelöscht.
+   */
+  passAntragMonate?: number | null;
+  /**
+   * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
+   */
+  automatisch?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3435,37 +3465,7 @@ export interface Hilfe {
   createdAt?: string | null;
 }
 /**
- * Persönliche Daten nur so lange speichern, wie sie gebraucht werden (DSGVO). Hier legst du fest, wann erledigte Einträge aufgeräumt werden.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "datenschutz".
- */
-export interface Datenschutz {
-  id: number;
-  probetrainingMonate?: number | null;
-  kontaktMonate?: number | null;
-  /**
-   * Erst löschen, wenn die Daten in die Mitgliederverwaltung übernommen sind.
-   */
-  antraegeMonate?: number | null;
-  eingaengeMonate?: number | null;
-  /**
-   * Läuft immer automatisch. Der unterschriebene Passantrag bleibt (siehe rechts).
-   */
-  passUnterlagenTage?: number | null;
-  /**
-   * Der unterschriebene Antrag muss 2 Jahre aufbewahrt werden. Danach werden Antrag und Formular automatisch gelöscht.
-   */
-  passAntragMonate?: number | null;
-  /**
-   * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
-   */
-  automatisch?: boolean | null;
-  updatedAt?: string | null;
-  createdAt?: string | null;
-}
-/**
- * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar. Wie sich das auswirkt, zeigt die Rollen-Übersicht unter „Rechte je Rolle“.
+ * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar. Wie sich das auswirkt, zeigt der Reiter „Übersicht“ unter „Was darf welche Rolle?“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rollenRechte".
@@ -3608,109 +3608,6 @@ export interface MenueSelect<T extends boolean = true> {
               neuerTab?: T;
               id?: T;
             };
-      };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "verein_select".
- */
-export interface VereinSelect<T extends boolean = true> {
-  name?: T;
-  mitglieder?: T;
-  kinderFussball?: T;
-  gruendung?: T;
-  sportpark?: T;
-  postanschrift?: T;
-  sportparkLat?: T;
-  sportparkLon?: T;
-  halleLat?: T;
-  halleLon?: T;
-  beitraege?:
-    | T
-    | {
-        key?: T;
-        label?: T;
-        zielgruppe?: T;
-        quartal?: T;
-        id?: T;
-      };
-  hauptsponsor?:
-    | T
-    | {
-        name?: T;
-        url?: T;
-        logo?: T;
-      };
-  passantragVorlageUrl?: T;
-  passantragVorlage?: T;
-  glaeubigerId?: T;
-  vorstand?:
-    | T
-    | {
-        name?: T;
-        rolle?: T;
-        konto?: T;
-        fotoAusKonto?: T;
-        foto?: T;
-        id?: T;
-      };
-  kontaktAnliegen?:
-    | T
-    | {
-        titel?: T;
-        empfaenger?: T;
-        id?: T;
-      };
-  downloads?:
-    | T
-    | {
-        titel?: T;
-        hinweis?: T;
-        nurMitglieder?: T;
-        datei?: T;
-        dokument?: T;
-        id?: T;
-      };
-  dsgvo?:
-    | T
-    | {
-        frage?: T;
-        antwort?: T;
-        id?: T;
-      };
-  startseite?:
-    | T
-    | {
-        heroBilder?: T;
-        heroTag1?: T;
-        heroTag2?: T;
-        bildFussball?: T;
-        bildKids?: T;
-        bildFitness?: T;
-        bildBreitensport1?: T;
-        bildBreitensport2?: T;
-        bildBreitensport3?: T;
-        bildVerein?: T;
-      };
-  aktion?:
-    | T
-    | {
-        aktiv?: T;
-        kicker?: T;
-        titel?: T;
-        text?: T;
-        linkText?: T;
-        linkUrl?: T;
-        bild?: T;
-      };
-  social?:
-    | T
-    | {
-        instagram?: T;
-        facebook?: T;
       };
   updatedAt?: T;
   createdAt?: T;
@@ -3863,6 +3760,125 @@ export interface TexteSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "verein_select".
+ */
+export interface VereinSelect<T extends boolean = true> {
+  name?: T;
+  mitglieder?: T;
+  kinderFussball?: T;
+  gruendung?: T;
+  sportpark?: T;
+  postanschrift?: T;
+  sportparkLat?: T;
+  sportparkLon?: T;
+  halleLat?: T;
+  halleLon?: T;
+  beitraege?:
+    | T
+    | {
+        key?: T;
+        label?: T;
+        zielgruppe?: T;
+        quartal?: T;
+        id?: T;
+      };
+  hauptsponsor?:
+    | T
+    | {
+        name?: T;
+        url?: T;
+        logo?: T;
+      };
+  passantragVorlageUrl?: T;
+  passantragVorlage?: T;
+  glaeubigerId?: T;
+  vorstand?:
+    | T
+    | {
+        name?: T;
+        rolle?: T;
+        konto?: T;
+        fotoAusKonto?: T;
+        foto?: T;
+        id?: T;
+      };
+  kontaktAnliegen?:
+    | T
+    | {
+        titel?: T;
+        empfaenger?: T;
+        id?: T;
+      };
+  downloads?:
+    | T
+    | {
+        titel?: T;
+        hinweis?: T;
+        nurMitglieder?: T;
+        datei?: T;
+        dokument?: T;
+        id?: T;
+      };
+  dsgvo?:
+    | T
+    | {
+        frage?: T;
+        antwort?: T;
+        id?: T;
+      };
+  startseite?:
+    | T
+    | {
+        heroBilder?: T;
+        heroTag1?: T;
+        heroTag2?: T;
+        bildFussball?: T;
+        bildKids?: T;
+        bildFitness?: T;
+        bildBreitensport1?: T;
+        bildBreitensport2?: T;
+        bildBreitensport3?: T;
+        bildVerein?: T;
+      };
+  aktion?:
+    | T
+    | {
+        aktiv?: T;
+        kicker?: T;
+        titel?: T;
+        text?: T;
+        linkText?: T;
+        linkUrl?: T;
+        bild?: T;
+      };
+  social?:
+    | T
+    | {
+        instagram?: T;
+        facebook?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "datenschutz_select".
+ */
+export interface DatenschutzSelect<T extends boolean = true> {
+  probetrainingMonate?: T;
+  kontaktMonate?: T;
+  antraegeMonate?: T;
+  eingaengeMonate?: T;
+  passUnterlagenTage?: T;
+  passAntragMonate?: T;
+  automatisch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "hilfe_select".
  */
 export interface HilfeSelect<T extends boolean = true> {
@@ -3891,22 +3907,6 @@ export interface HilfeSelect<T extends boolean = true> {
         bereich?: T;
         id?: T;
       };
-  updatedAt?: T;
-  createdAt?: T;
-  globalType?: T;
-}
-/**
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "datenschutz_select".
- */
-export interface DatenschutzSelect<T extends boolean = true> {
-  probetrainingMonate?: T;
-  kontaktMonate?: T;
-  antraegeMonate?: T;
-  eingaengeMonate?: T;
-  passUnterlagenTage?: T;
-  passAntragMonate?: T;
-  automatisch?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

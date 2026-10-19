@@ -36,7 +36,7 @@ export const testkontoFeld: Field = {
     position: 'sidebar',
     readOnly: true,
     condition: (data) => Boolean(data?.testkonto),
-    description: 'Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Rollen-Übersicht → „Alle Testkonten löschen“.',
+    description: 'Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Einstellungen → Rollen & Rechte → „Alle Testkonten löschen“.',
   },
 }
 

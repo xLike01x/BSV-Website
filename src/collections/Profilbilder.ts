@@ -51,7 +51,7 @@ export const Profilbilder: CollectionConfig = {
     delete: eigenesOderAdmin,
   },
   admin: {
-    group: 'Verwaltung',
+    group: 'Mitglieder',
     hidden: ausblendenAusser('admin'),
     useAsTitle: 'filename',
     description: 'Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.',

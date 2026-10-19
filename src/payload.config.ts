@@ -1,3 +1,4 @@
+import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { anzeigeMail } from './auth/mail'
@@ -74,7 +75,7 @@ const email = process.env.SMTP_HOST
 
 export default buildConfig({
   email,
-  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt],
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
@@ -107,7 +108,7 @@ export default buildConfig({
         Icon: '@/components/Admin/Icon',
       },
       beforeNavLinks: ['@/components/Admin/NavKopf'],
-      afterNavLinks: ['@/components/Admin/NavFuss', '@/components/Admin/AppSymbol'],
+      afterNavLinks: ['@/components/Admin/NavZusatz', '@/components/Admin/NavFuss', '@/components/Admin/AppSymbol'],
       // „? Hilfe“-Knopf oben rechts – erklärt jeden Bereich in einfachen Worten
       actions: ['@/components/Admin/KontoMenue', '@/components/Admin/Hilfe'],
     },
@@ -160,7 +161,20 @@ export default buildConfig({
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
-  collections: [Posts, Termine, Media, Alben, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Sponsoren, Gesuche, Mitgliedschaften, Passantraege, Passdokumente, Users, Profilbilder, HilfeFeedback].map((c) =>
+  collections: [
+    // Posteingang
+    Mitgliedsantraege, Kontaktanfragen, Probetraining, Passantraege,
+    // Inhalte
+    Posts, Termine, Alben, Media, Sponsoren, Gesuche,
+    // Website-Aufbau
+    Pages, Categories,
+    // Sport
+    Angebote, Ausfaelle, Passdokumente,
+    // Mitglieder
+    Users, Mitgliedschaften, Profilbilder, Dokumente,
+    // Einstellungen
+    HilfeFeedback,
+  ].map((c) =>
     PAPIERKORB.includes(c.slug)
       ? (() => {
           const schutz = papierkorbSchutz(c.slug)
@@ -184,7 +198,7 @@ export default buildConfig({
   graphQL: { disable: true },
   // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
   upload: { limits: { fileSize: 25 * 1024 * 1024 } },
-  globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte, Datenschutz, RollenRechte],
+  globals: [Header, Footer, Menue, Texte, Verein, Datenschutz, HilfeInhalte, RollenRechte],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',
