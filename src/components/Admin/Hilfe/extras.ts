@@ -449,11 +449,22 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
     {
+      id: 'satzung',
+      titel: 'Die Satzung hochladen',
+      schritte: [
+        'Bei „Satzung & Downloads“ auf „Download hinzufügen“ klicken.',
+        'Titel eingeben, z. B. „Satzung (Stand 2026)“.',
+        'Bei „Datei“ das PDF hochladen und speichern.',
+      ],
+    },
+  ],
+  startseite: [
+    {
       id: 'startseite-bilder',
       titel: 'Die Bilder der Startseite austauschen',
       video: '/hilfe/startseite-bilder.mp4',
       schritte: [
-        'Nach unten zu „Startseite“ scrollen.',
+        'Website-Aufbau → „Startseite & Bilder“ öffnen, Reiter „Bilder“.',
         'Bei „Bilder oben“ ein Bild über das × entfernen und mit „Aus vorhandenen auswählen“ ein neues wählen.',
         'Die Kachel-Bilder darunter genauso austauschen.',
         'Oben rechts „Speichern“ – nach etwa einer Minute ist die Startseite aktualisiert.',
@@ -463,19 +474,10 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'aktion',
       titel: 'Die grüne Aktions-Box auf der Startseite ändern',
       schritte: [
-        'Zu „Aktion auf der Startseite (grüne Box)“ scrollen.',
+        'Website-Aufbau → „Startseite & Bilder“ öffnen, Reiter „Aktion (grüne Box)“.',
         'Überzeile, Titel, Text, Button-Text und Button-Link anpassen, optional ein Bild wählen.',
         'Zum Ausblenden den Haken bei „Anzeigen“ entfernen.',
         'Speichern.',
-      ],
-    },
-    {
-      id: 'satzung',
-      titel: 'Die Satzung hochladen',
-      schritte: [
-        'Bei „Satzung & Downloads“ auf „Download hinzufügen“ klicken.',
-        'Titel eingeben, z. B. „Satzung (Stand 2026)“.',
-        'Bei „Datei“ das PDF hochladen und speichern.',
       ],
     },
   ],
@@ -623,11 +625,15 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'SEPA-Gläubiger-ID', text: 'Steht im Lastschriftmandat des Antrags.' },
     { name: 'Vorstand', text: 'Name, Funktion, optional Foto. Erscheint auf der Vereinsseite.' },
     { name: 'Satzung & Downloads', text: 'Dateien zum Herunterladen auf der Vereinsseite.' },
-    { name: 'Startseite: Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
-    { name: 'Texte der Startseite', text: 'Alle Überschriften und Texte der Startseite – auch die Zahlen-Leiste und die drei Schritte – stehen unter „Website-Texte“.' },
-    { name: 'Startseite: Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness – und die Titelbilder der Bereichs- und Vereinsseite.' },
-    { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
+    { name: 'Bilder und Aktions-Box', text: 'Stehen unter Website-Aufbau → „Startseite & Bilder“.' },
     { name: 'Social Media', text: 'Links zu Instagram und Facebook – erscheinen unten auf der Website.' },
+  ],
+  startseite: [
+    { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
+    { name: 'Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
+    { name: 'Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness. Das Fußball-Bild ist auch das Titelbild der Fußball-Seite.' },
+    { name: 'Breitensport-Seite und Vereinsseite', text: 'Drei Bilder der Breitensport-Seite und das Titelbild der Vereinsseite.' },
+    { name: 'Texte', text: 'Alle Überschriften und Texte stehen unter „Website-Texte“.' },
   ],
   forms: [
     { name: 'Name des Formulars', text: 'Nur intern, damit ihr es wiederfindet.' },
@@ -838,6 +844,11 @@ export const FAQ: Faq[] = [
     frage: 'Wie ändere ich die Reihenfolge im Menü und in den Aufklappmenüs Fußball und Breitensport?',
     antwort: 'Reihenfolge in der Menüleiste (Fußball, Breitensport, Verein, News …): Menü & Fußzeile → Reiter „Hauptmenü oben“ → Einträge am Griff links ziehen → Speichern. Inhalt der Aufklappmenüs: Reiter „Aufklappmenü Fußball“ bzw. „Aufklappmenü Breitensport“. Die Teams und Kurse kommen automatisch aus „Teams & Kurse“; am Griff ⠿ ziehen (am Handy: Pfeile ▲▼) sortiert sie innerhalb einer Spalte – gilt sofort, ohne Speichern. Die Spalte bestimmt beim Angebot der „Bereich“ und bei Fußball die „Gruppe (Fußball)“. Darunter änderst du den Text links im Aufklappmenü.',
     bereich: 'menue',
+  },
+  {
+    frage: 'Warum wurde ich automatisch abgemeldet?',
+    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Einstellungen → „Automatisch abmelden“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
+    bereich: 'dashboard',
   },
   {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',

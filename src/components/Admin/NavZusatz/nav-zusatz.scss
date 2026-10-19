@@ -66,22 +66,28 @@
 #nav-hilfe-feedback {
   order: -5;
 }
+#nav-global-sicherheit {
+  order: -7;
+}
 
 // Rollen-Rechte öffnet man über „Rollen & Rechte“ (Reiter „Rechte anpassen“)
 #nav-global-rollenRechte {
   display: none !important;
 }
 
-// Website-Aufbau: Seiten, Menü & Fußzeile, Website-Texte, Formulare, dann der Rest
+// Website-Aufbau: Seiten, Menü & Fußzeile, Website-Texte, Startseite & Bilder, Formulare, dann der Rest
 #nav-pages {
-  order: -10;
+  order: -12;
 }
 #nav-global-menue {
-  order: -9;
+  order: -11;
 }
 #nav-global-texte {
-  order: -8;
+  order: -10;
+}
+#nav-global-startseite {
+  order: -9;
 }
 #nav-forms {
-  order: -7;
+  order: -8;
 }

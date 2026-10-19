@@ -7,17 +7,17 @@ import React from 'react'
 import { Bild } from '@/bsv/components/Bild'
 import { GruppenFilter, type Gruppe } from '@/bsv/components/GruppenFilter'
 import { T } from '@/bsv/components/Text'
-import { getAngebote, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
+import { getAngebote, getPlatzhalter, getStartseite, getTexte } from '@/bsv/data'
 import { bildUrl, farbe, kurzZeit } from '@/bsv/lib'
 
 export const revalidate = 60
 export const metadata: Metadata = seite('Breitensport', 'Tanzen, Turnen, Fitness, Gesundheit und Ausdauer beim BSV – Kurse für jedes Alter, Schnuppern erwünscht.')
 
 export default async function BreitensportSeite() {
-  const [angebote, verein, tx, w] = await Promise.all([getAngebote(), getVerein(), getTexte(), getPlatzhalter()])
+  const [angebote, start, tx, w] = await Promise.all([getAngebote(), getStartseite(), getTexte(), getPlatzhalter()])
   const kids = angebote.filter((a) => a.bereich === 'kids')
   const erw = angebote.filter((a) => a.bereich === 'erwachsene')
-  const s = verein.startseite
+  const s = start.startseite
 
   const karte = (a: (typeof angebote)[number]) => ({
     id: a.id,

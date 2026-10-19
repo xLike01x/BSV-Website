@@ -11,7 +11,7 @@ import { standardTexte, zusammenfuehren } from '@/Texte/standard'
 import { hauptsponsorUmziehen } from '@/utilities/hauptsponsorUmziehen'
 import { abFilter, aufloesen, type Vorkommen } from '@/bsv/wiederholung'
 
-import type { Angebote, Post, Termine, Texte, User, Verein } from '@/payload-types'
+import type { Angebote, Post, Startseite, Termine, Texte, User, Verein } from '@/payload-types'
 
 export const payload = cache(async () => getPayload({ config: configPromise }))
 
@@ -25,6 +25,12 @@ export const aktuellerBenutzer = cache(async (): Promise<User | null> => {
 export const getVerein = cache(async (): Promise<Verein> => {
   const p = await payload()
   return p.findGlobal({ slug: 'verein', depth: 1 })
+})
+
+/** Startseite & Bilder: Aktions-Box und Bilder der Bereichsseiten (Global „startseite“) */
+export const getStartseite = cache(async (): Promise<Startseite> => {
+  const p = await payload()
+  return p.findGlobal({ slug: 'startseite', depth: 1 })
 })
 
 /** Pflegbare Menü-Links (Global „Menü“) */

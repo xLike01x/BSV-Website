@@ -11,9 +11,9 @@ import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
 export const Verein: GlobalConfig = {
   slug: 'verein',
   label: 'Vereinsdaten',
-  // Redaktion (Vorstand, Bilder, Aktion) und Kasse (Beiträge) pflegen die Vereinsdaten mit
+  // Redaktion (Vorstand, Downloads) und Kasse (Beiträge) pflegen die Vereinsdaten mit
   access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
-  admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Bilder der Startseite.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
+  admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Startseite & Bilder“.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
   hooks: {
     afterChange: [revalidateAllesGlobal],
     // Über die öffentliche Schnittstelle niemals Dateien „Nur für Mitglieder“ verraten
@@ -252,6 +252,8 @@ export const Verein: GlobalConfig = {
       type: 'group',
       name: 'startseite',
       label: 'Startseite',
+      // Veraltet: wird beim Start nach „Startseite & Bilder“ (Website-Aufbau) übernommen – nur noch als Sicherung gespeichert
+      admin: { condition: () => false },
       fields: [
         { name: 'heroBilder', label: 'Bilder oben (4 Stück)', type: 'upload', relationTo: 'media', hasMany: true, maxRows: 4 },
         {
@@ -284,6 +286,8 @@ export const Verein: GlobalConfig = {
       type: 'group',
       name: 'aktion',
       label: 'Aktion auf der Startseite (grüne Box)',
+      // Veraltet: wird beim Start nach „Startseite & Bilder“ (Website-Aufbau) übernommen – nur noch als Sicherung gespeichert
+      admin: { condition: () => false },
       fields: [
         { name: 'aktiv', label: 'Anzeigen', type: 'checkbox', defaultValue: true },
         { name: 'kicker', label: 'Überzeile', type: 'text', defaultValue: 'Kunstrasen 2026' },

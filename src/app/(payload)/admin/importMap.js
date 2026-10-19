@@ -57,6 +57,7 @@ import { default as default_8199d17e4dde2fb5d0783261ffe692e2 } from '@/component
 import { default as default_6f2fa0a1b4cdd4874a42ed1b4a8e64a1 } from '@/components/Admin/AppSymbol'
 import { default as default_8a7ab0eb7ab5c511aba12e68480bfe5e } from '@/components/BeforeLogin'
 import { default as default_2a05e20fc48656657d58aa03a61ed1db } from '@/components/Admin/NavKopf'
+import { default as default_f86bad914ad1a212ca4fd350ff251bde } from '@/components/Admin/AutoAbmelden'
 import { default as default_40ee7fa0a665ebc012dabaae94ee72db } from '@/components/Admin/Dashboard'
 import { default as default_1fa6a1ae6ba337a6478dc96369447471 } from '@/components/Admin/HilfeCenter'
 import { default as default_2471f1cac5bfd6793014555a88ab468a } from '@/components/Admin/Rollen'
@@ -126,6 +127,7 @@ export const importMap = {
   "@/components/Admin/AppSymbol#default": default_6f2fa0a1b4cdd4874a42ed1b4a8e64a1,
   "@/components/BeforeLogin#default": default_8a7ab0eb7ab5c511aba12e68480bfe5e,
   "@/components/Admin/NavKopf#default": default_2a05e20fc48656657d58aa03a61ed1db,
+  "@/components/Admin/AutoAbmelden#default": default_f86bad914ad1a212ca4fd350ff251bde,
   "@/components/Admin/Dashboard#default": default_40ee7fa0a665ebc012dabaae94ee72db,
   "@/components/Admin/HilfeCenter#default": default_1fa6a1ae6ba337a6478dc96369447471,
   "@/components/Admin/Rollen#default": default_2471f1cac5bfd6793014555a88ab468a,

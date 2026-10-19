@@ -143,6 +143,15 @@ async function main() {
     data: {
       vorstand: VORSTAND.map(([name, rolle]) => ({ name, rolle })),
       dsgvo: DSGVO.map(([frage, antwort]) => ({ frage, antwort })),
+    },
+  })
+
+  log('Startseite & Bilder …')
+  await payload.updateGlobal({
+    slug: 'startseite',
+    context: { disableRevalidate: true },
+    data: {
+      uebernommen: true,
       startseite: {
         heroBilder: [B['tanzmaeuse-1'], B['step-burn'], B['seniorenturnen'], B['hero-maedchen']].filter(Boolean) as number[],
         heroTag1: 'Tanzmäuse · 3–6 J.',

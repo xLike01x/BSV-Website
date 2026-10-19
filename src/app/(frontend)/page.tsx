@@ -10,13 +10,13 @@ import { AgeFinder, type Vorschlag } from '@/bsv/components/home/AgeFinder'
 import { CountUp } from '@/bsv/components/home/CountUp'
 import { OfferFinder, type FinderItem } from '@/bsv/components/OfferFinder'
 import { T } from '@/bsv/components/Text'
-import { getAngebote, getNews, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
+import { getAngebote, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, datum, farbe } from '@/bsv/lib'
 
 export const revalidate = 60
 
 export default async function Startseite() {
-  const [verein, angebote, news, tx, w] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter()])
+  const [verein, angebote, news, tx, w, start] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter(), getStartseite()])
   /** Erste Zeile normal, weitere Zeilen grün hervorgehoben */
   const zweifarbig = (text?: string | null) => {
     const [erste, ...rest] = (text ?? '').split('\n')
@@ -34,7 +34,7 @@ export default async function Startseite() {
       </>
     )
   }
-  const s = verein.startseite
+  const s = start.startseite
   const hero = (s?.heroBilder ?? []).filter((b) => typeof b === 'object')
 
   const finder: FinderItem[] = angebote.map((a) => {
@@ -253,16 +253,16 @@ export default async function Startseite() {
         </div>
       </section>
 
-      {verein.aktion?.aktiv && (
+      {start.aktion?.aktiv && (
         <section className="sec">
           <div className="feature rv">
             <div style={{ flex: '1 1 460px', padding: 'clamp(32px, 5vw, 60px)', display: 'flex', flexDirection: 'column', justifyContent: 'center', gap: 14 }}>
-              {verein.aktion.kicker && <p style={{ margin: 0, fontWeight: 600, color: '#BFE6CF' }}>{verein.aktion.kicker}</p>}
-              <h2 style={{ margin: 0, fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1.02, fontWeight: 800, letterSpacing: '-0.045em' }}>{verein.aktion.titel}</h2>
-              {verein.aktion.text && <p style={{ margin: 0, fontSize: 19, color: '#D7F0E1', maxWidth: 480 }}>{verein.aktion.text}</p>}
-              {verein.aktion.linkUrl && (
-                <Link href={verein.aktion.linkUrl} className="btn btn-white" style={{ alignSelf: 'flex-start', marginTop: 8 }}>
-                  {verein.aktion.linkText || 'Mehr erfahren'}
+              {start.aktion.kicker && <p style={{ margin: 0, fontWeight: 600, color: '#BFE6CF' }}>{start.aktion.kicker}</p>}
+              <h2 style={{ margin: 0, fontSize: 'clamp(40px, 5vw, 64px)', lineHeight: 1.02, fontWeight: 800, letterSpacing: '-0.045em' }}>{start.aktion.titel}</h2>
+              {start.aktion.text && <p style={{ margin: 0, fontSize: 19, color: '#D7F0E1', maxWidth: 480 }}>{start.aktion.text}</p>}
+              {start.aktion.linkUrl && (
+                <Link href={start.aktion.linkUrl} className="btn btn-white" style={{ alignSelf: 'flex-start', marginTop: 8 }}>
+                  {start.aktion.linkText || 'Mehr erfahren'}
                 </Link>
               )}
             </div>
@@ -277,8 +277,8 @@ export default async function Startseite() {
                   <animateMotion dur="7s" repeatCount="indefinite" path="M180 520 C 360 160, 560 560, 760 260 S 900 120, 640 420 S 260 600, 180 520" />
                 </circle>
               </svg>
-              {verein.aktion.bild && typeof verein.aktion.bild === 'object' && (
-                <Bild media={verein.aktion.bild} size="small" sizes="170px" style={{ width: 170, height: 'auto', borderRadius: 14, boxShadow: '0 16px 36px rgba(0,0,0,0.25)', transform: 'rotate(4deg)' }} />
+              {start.aktion.bild && typeof start.aktion.bild === 'object' && (
+                <Bild media={start.aktion.bild} size="small" sizes="170px" style={{ width: 170, height: 'auto', borderRadius: 14, boxShadow: '0 16px 36px rgba(0,0,0,0.25)', transform: 'rotate(4deg)' }} />
               )}
             </div>
           </div>

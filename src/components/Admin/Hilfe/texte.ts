@@ -347,7 +347,7 @@ export const HILFE: Record<string, HilfeText> = {
 
   verein: {
     titel: 'Vereinsdaten',
-    kurz: 'Die Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Startseiten-Bilder.',
+    kurz: 'Die Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads.',
     wozu: {
       text: 'Grunddaten, die an mehreren Stellen der Website auftauchen – einmal ändern, überall aktuell.',
       beispiele: ['Neue Mitgliederzahl', 'Vorstand nach der Wahl aktualisieren', 'Beiträge anpassen'],
@@ -358,7 +358,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Vorstand und Ansprechpersonen eintragen, mit Funktion und optional Foto.',
       'Satzung und andere Dokumente zum Herunterladen hinterlegen.',
       'Unter „Kontaktformular: Worum geht es?“ die Auswahl im Kontaktformular pflegen (ohne Namen). Admins legen pro Anliegen fest, wer die Nachricht per E-Mail bekommt.',
-      'Unter „Startseite“: die Bilder oben, die zwei Schilder, die Kachel-Bilder und die grüne Aktions-Box.',
+      'Bilder der Website und die grüne Aktions-Box stehen jetzt unter Website-Aufbau → „Startseite & Bilder“.',
       'Der Hauptsponsor wird unter „Sponsoren“ gepflegt (Art „Hauptsponsor“), die Links der Fußzeile unter „Menü & Fußzeile“.',
     ],
     wirkung: [
@@ -367,6 +367,35 @@ export const HILFE: Record<string, HilfeText> = {
       'Geänderte Beiträge gelten sofort für neue Online-Anträge.',
     ],
     tipps: ['Fotos vom Vorstand nur mit Einverständnis.', 'Keine privaten Telefonnummern eintragen – Kontakt läuft über das Formular.'],
+  },
+
+  startseite: {
+    titel: 'Startseite & Bilder',
+    kurz: 'Die grüne Aktions-Box auf der Startseite und die Fotos der Startseite, der Bereichsseiten und der Vereinsseite.',
+    wozu: {
+      text: 'Alles, was die Website optisch ausmacht, an einer Stelle. Die Texte dazu stehen unter „Website-Texte“.',
+      beispiele: ['Neues Foto oben auf der Startseite', 'Aktions-Box für das Sommerfest', 'Titelbild der Fußball-Seite tauschen'],
+    },
+    tun: [
+      'Reiter „Aktion (grüne Box)“: Überzeile, Titel, Text, Button und optional ein Bild. Mit „Anzeigen“ ein- oder ausblenden.',
+      'Reiter „Bilder“: bis zu 4 Fotos oben auf der Startseite, zwei kleine Schilder darauf, die Kachel-Bilder (Fußball, BSV Kids, Fitness), drei Bilder der Breitensport-Seite und das Titelbild der Vereinsseite.',
+      'Bild tauschen: über das × entfernen, mit „Aus vorhandenen auswählen“ ein neues aus der Mediathek wählen.',
+      'Oben rechts „Speichern“.',
+    ],
+    wirkung: ['Nach etwa einer Minute ist die Website aktualisiert.', 'Ausgeblendete Aktions-Box: Der Inhalt bleibt für später gespeichert.'],
+    tipps: ['Querformat-Fotos für die Bilder oben, Hochformat für das Aktions-Bild (z. B. ein Plakat).', 'Kinderfotos nur mit Einverständnis der Eltern.'],
+  },
+
+  sicherheit: {
+    titel: 'Automatisch abmelden',
+    kurz: 'Nach wie vielen Minuten ohne Aktivität die Verwaltung automatisch abmeldet – nur für Web-Admins.',
+    wozu: {
+      text: 'Schützt, wenn jemand vergisst, sich abzumelden – z. B. am Computer im Vereinsheim.',
+      beispiele: ['Nach 30 Minuten abmelden', '5 Minuten vorher warnen'],
+    },
+    tun: ['Minuten eintragen, Warnzeit eintragen, oben rechts „Speichern“.'],
+    wirkung: ['Gilt für alle in der Verwaltung, ab dem nächsten Seitenaufruf.', 'Vor der Abmeldung erscheint „Bist du noch da?“ mit „Angemeldet bleiben“.', 'Unabhängig davon endet jede Anmeldung spätestens nach 8 Stunden.'],
+    tipps: ['30 Minuten sind ein guter Kompromiss zwischen Sicherheit und Bequemlichkeit.'],
   },
 
   texte: {

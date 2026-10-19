@@ -20,6 +20,9 @@ import { Probetraining } from './collections/Probetraining'
 import { Ausfaelle } from './collections/Ausfaelle'
 import { Kontaktanfragen } from './collections/Kontaktanfragen'
 import { Verein } from './Verein/config'
+import { Startseite } from './Startseite/config'
+import { Sicherheit } from './Sicherheit/config'
+import { startseiteUmziehen } from './Startseite/umziehen'
 import { Texte } from './Texte/config'
 import { Menue } from './Menue/config'
 import { HilfeFeedback, HilfeInhalte } from './Hilfe/config'
@@ -86,6 +89,7 @@ export default buildConfig({
     await doppelteHauptsponsorenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Doppelte Hauptsponsoren aufräumen fehlgeschlagen'))
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
     await trainerUmbenennen(payload).catch((e) => payload.logger.warn({ err: e }, 'Trainer-Umbenennung fehlgeschlagen'))
+    await startseiteUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme „Startseite & Bilder“ fehlgeschlagen'))
     taeglicheAufgaben(payload)
   },
   admin: {
@@ -108,6 +112,8 @@ export default buildConfig({
         Logo: '@/components/Admin/Logo',
         Icon: '@/components/Admin/Icon',
       },
+      // Automatisch abmelden nach Inaktivität (Warnung vorher) – auf allen Seiten der Verwaltung
+      providers: ['@/components/Admin/AutoAbmelden'],
       beforeNavLinks: ['@/components/Admin/NavKopf'],
       afterNavLinks: ['@/components/Admin/NavZusatz', '@/components/Admin/NavFuss', '@/components/Admin/AppSymbol'],
       // „? Hilfe“-Knopf oben rechts – erklärt jeden Bereich in einfachen Worten
@@ -199,7 +205,7 @@ export default buildConfig({
   graphQL: { disable: true },
   // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
   upload: { limits: { fileSize: 25 * 1024 * 1024 } },
-  globals: [Header, Footer, Menue, Texte, Verein, Datenschutz, HilfeInhalte, RollenRechte],
+  globals: [Header, Footer, Menue, Texte, Startseite, Verein, Datenschutz, HilfeInhalte, RollenRechte, Sicherheit],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

@@ -7,14 +7,14 @@ import React from 'react'
 import { Bild } from '@/bsv/components/Bild'
 import { GruppenFilter, type Gruppe } from '@/bsv/components/GruppenFilter'
 import { T } from '@/bsv/components/Text'
-import { getAngebote, getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
+import { getAngebote, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
 import { kurzZeit, UNTERGRUPPE_LABEL } from '@/bsv/lib'
 
 export const revalidate = 60
 export const metadata: Metadata = seite('Fußball', 'Alle Fußballteams des BSV: Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Probetraining.')
 
 export default async function FussballSeite() {
-  const [angebote, verein, tx, w] = await Promise.all([getAngebote(), getVerein(), getTexte(), getPlatzhalter()])
+  const [angebote, start, tx, w, verein] = await Promise.all([getAngebote(), getStartseite(), getTexte(), getPlatzhalter(), getVerein()])
   const teams = angebote.filter((a) => a.bereich === 'fussball')
 
   const gruppen: Gruppe[] = (['junioren', 'juniorinnen', 'senioren', 'seniorinnen'] as const)
@@ -43,7 +43,7 @@ export default async function FussballSeite() {
           </Link>
         </p>
         <div className="in3" style={{ maxWidth: 1180, margin: '48px auto 0', borderRadius: 32, overflow: 'hidden', aspectRatio: '21 / 9', boxShadow: '0 30px 60px rgba(21,122,67,0.15)', background: 'var(--bsv-green-tint)' }}>
-          <Bild media={verein.startseite?.bildFussball} size="xlarge" priority sizes="(max-width: 1220px) 100vw, 1180px" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+          <Bild media={start.startseite?.bildFussball} size="xlarge" priority sizes="(max-width: 1220px) 100vw, 1180px" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
         </div>
       </section>
 

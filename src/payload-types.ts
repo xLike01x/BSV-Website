@@ -147,20 +147,24 @@ export interface Config {
     footer: Footer;
     menue: Menue;
     texte: Texte;
+    startseite: Startseite;
     verein: Verein;
     datenschutz: Datenschutz;
     hilfe: Hilfe;
     rollenRechte: RollenRechte;
+    sicherheit: Sicherheit;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
     footer: FooterSelect<false> | FooterSelect<true>;
     menue: MenueSelect<false> | MenueSelect<true>;
     texte: TexteSelect<false> | TexteSelect<true>;
+    startseite: StartseiteSelect<false> | StartseiteSelect<true>;
     verein: VereinSelect<false> | VereinSelect<true>;
     datenschutz: DatenschutzSelect<false> | DatenschutzSelect<true>;
     hilfe: HilfeSelect<false> | HilfeSelect<true>;
     rollenRechte: RollenRechteSelect<false> | RollenRechteSelect<true>;
+    sicherheit: SicherheitSelect<false> | SicherheitSelect<true>;
   };
   locale: null;
   widgets: {
@@ -3241,7 +3245,52 @@ export interface Texte {
   createdAt?: string | null;
 }
 /**
- * Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Downloads und Bilder der Startseite.
+ * Die grüne Aktions-Box auf der Startseite und die Bilder der Startseite, der Bereichsseiten und der Vereinsseite. Die Texte dazu stehen unter „Website-Texte“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "startseite".
+ */
+export interface Startseite {
+  id: number;
+  uebernommen?: boolean | null;
+  aktion?: {
+    /**
+     * Haken entfernen = Box ausblenden. Der Inhalt bleibt für später gespeichert.
+     */
+    aktiv?: boolean | null;
+    kicker?: string | null;
+    titel?: string | null;
+    text?: string | null;
+    linkText?: string | null;
+    /**
+     * z. B. /kunstrasen oder https://…
+     */
+    linkUrl?: string | null;
+    /**
+     * Hochformat sieht am besten aus.
+     */
+    bild?: (number | null) | Media;
+  };
+  startseite?: {
+    heroBilder?: (number | Media)[] | null;
+    /**
+     * Kleines Schild auf den Bildern oben.
+     */
+    heroTag1?: string | null;
+    heroTag2?: string | null;
+    bildFussball?: (number | null) | Media;
+    bildKids?: (number | null) | Media;
+    bildFitness?: (number | null) | Media;
+    bildBreitensport1?: (number | null) | Media;
+    bildBreitensport2?: (number | null) | Media;
+    bildBreitensport3?: (number | null) | Media;
+    bildVerein?: (number | null) | Media;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Startseite & Bilder“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "verein".
@@ -3437,6 +3486,8 @@ export interface Hilfe {
           | 'users'
           | 'menue'
           | 'verein'
+          | 'startseite'
+          | 'sicherheit'
           | 'texte'
           | 'forms'
           | 'form-submissions'
@@ -3504,6 +3555,8 @@ export interface Hilfe {
               | 'users'
               | 'menue'
               | 'verein'
+              | 'startseite'
+              | 'sicherheit'
               | 'texte'
               | 'forms'
               | 'form-submissions'
@@ -3556,6 +3609,29 @@ export interface RollenRechte {
   teamredaktion?: {
     ausfaelle?: boolean | null;
   };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Wer in der Verwaltung eine Weile nichts tut (kein Klick, keine Taste, kein Scrollen), wird automatisch abgemeldet – wichtig an gemeinsam genutzten Computern, z. B. im Vereinsheim. Vorher erscheint eine Warnung mit „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sicherheit".
+ */
+export interface Sicherheit {
+  id: number;
+  /**
+   * Empfohlen: 30. Höchstens 480 (8 Stunden).
+   */
+  minuten: number;
+  /**
+   * Empfohlen: 5.
+   */
+  warnenMinuten: number;
+  /**
+   * Nicht empfohlen. Dann gilt nur die feste Höchstdauer von 8 Stunden.
+   */
+  aus?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3828,6 +3904,41 @@ export interface TexteSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "startseite_select".
+ */
+export interface StartseiteSelect<T extends boolean = true> {
+  uebernommen?: T;
+  aktion?:
+    | T
+    | {
+        aktiv?: T;
+        kicker?: T;
+        titel?: T;
+        text?: T;
+        linkText?: T;
+        linkUrl?: T;
+        bild?: T;
+      };
+  startseite?:
+    | T
+    | {
+        heroBilder?: T;
+        heroTag1?: T;
+        heroTag2?: T;
+        bildFussball?: T;
+        bildKids?: T;
+        bildFitness?: T;
+        bildBreitensport1?: T;
+        bildBreitensport2?: T;
+        bildBreitensport3?: T;
+        bildVerein?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "verein_select".
  */
 export interface VereinSelect<T extends boolean = true> {
@@ -4013,6 +4124,18 @@ export interface RollenRechteSelect<T extends boolean = true> {
     | {
         ausfaelle?: T;
       };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sicherheit_select".
+ */
+export interface SicherheitSelect<T extends boolean = true> {
+  minuten?: T;
+  warnenMinuten?: T;
+  aus?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

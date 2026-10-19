@@ -6,7 +6,7 @@ import React from 'react'
 
 import { Bild } from '@/bsv/components/Bild'
 import { T } from '@/bsv/components/Text'
-import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
+import { getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
 import { abMonat, euroKurz, proMonat } from '@/bsv/beitrag'
 import { bildUrl, initialen, zahl } from '@/bsv/lib'
 
@@ -14,7 +14,7 @@ export const revalidate = 60
 export const metadata: Metadata = seite('Verein', 'Seit 1919 in Büderich: Vorstand, Mitgliedsbeiträge, Satzung und Datenschutz des Büdericher Spielvereins.')
 
 export default async function VereinSeite() {
-  const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])
+  const [v, tx, w, start] = await Promise.all([getVerein(), getTexte(), getPlatzhalter(), getStartseite()])
   const beitraege = v.beitraege ?? []
   // Günstigster Monatsbeitrag für aktive Mitglieder (passiv zählt nicht – „alle Kurse inklusive“)
   const guenstigster = abMonat(beitraege)
@@ -44,9 +44,9 @@ export default async function VereinSeite() {
             </a>
           ))}
         </nav>
-        {v.startseite?.bildVerein && (
+        {start.startseite?.bildVerein && (
           <div className="in3" style={{ maxWidth: 1100, margin: '48px auto 0', borderRadius: 32, overflow: 'hidden', aspectRatio: '21 / 9' }}>
-            <Bild media={v.startseite.bildVerein} size="xlarge" priority sizes="(max-width: 1140px) 100vw, 1100px" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
+            <Bild media={start.startseite.bildVerein} size="xlarge" priority sizes="(max-width: 1140px) 100vw, 1100px" style={{ width: '100%', height: '100%', objectFit: 'cover', display: 'block' }} />
           </div>
         )}
       </section>

@@ -58,6 +58,7 @@ const WEGE: { ich: string; wo: string; href: string; symbol: string }[] = [
   { ich: 'Texte auf der Startseite ändern', wo: 'Website-Texte', href: '/admin/globals/texte', symbol: '✏️' },
   { ich: 'das Menü oder die Fußzeile ändern', wo: 'Menü & Fußzeile', href: '/admin/globals/menue', symbol: '🧭' },
   { ich: 'Vorstand, Beiträge oder Mitgliederzahl ändern', wo: 'Vereinsdaten', href: '/admin/globals/verein', symbol: '🏟️' },
+  { ich: 'Bilder der Startseite oder die grüne Aktions-Box ändern', wo: 'Startseite & Bilder', href: '/admin/globals/startseite', symbol: '🖼️' },
   { ich: 'Bilder hochladen', wo: 'Mediathek', href: '/admin/collections/media/create', symbol: '🖼️' },
 ]
 
