@@ -39,6 +39,14 @@ export const Datenschutz: GlobalConfig = {
       ],
     },
     {
+      name: 'passUnterlagenTage',
+      label: 'Passanträge: Unterlagen (Ausweis, Foto …) löschen – Tage nach Abschluss',
+      type: 'number',
+      min: 1,
+      defaultValue: 30,
+      admin: { description: 'Läuft immer automatisch. Der Antrag selbst (Name, Team, Status) bleibt als Nachweis erhalten.' },
+    },
+    {
       name: 'automatisch',
       label: 'Automatisch aufräumen (einmal täglich in den Papierkorb verschieben)',
       type: 'checkbox',

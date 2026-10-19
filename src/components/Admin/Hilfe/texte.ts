@@ -229,6 +229,30 @@ export const HILFE: Record<string, HilfeText> = {
     ],
   },
 
+  passantraege: {
+    titel: 'Passanträge (Fußball)',
+    kurz: 'Anträge auf Spielerlaubnis aus dem Mitgliederbereich – mit allen Unterlagen für das DFBnet.',
+    wozu: {
+      text: 'Wer in Meisterschaft, Pokal oder Turnieren mit Passpflicht spielen will, braucht einen Spielerpass. Mitglieder stellen den Antrag online – auch für ihre Kinder – und laden Ausweis, Passfoto & Co. hoch.',
+      beispiele: ['Neues Kind bei den Bambini', 'Spieler wechselt von einem anderen Verein', 'Wechsel aus dem Ausland'],
+    },
+    tun: [
+      'Neue Anträge öffnen (Status „Eingereicht“) und die Unterlagen anklicken – sie öffnen sich in einem neuen Fenster.',
+      'Fehlt etwas: Status „Unterlagen fehlen“ und beim „Hinweis an die antragstellende Person“ schreiben, was fehlt. Die Person sieht das im Mitgliederbereich und kann nachreichen.',
+      'Passt alles: Antrag im DFBnet einreichen, Status „Beim Verband“, die Vorgangsnummer in die interne Notiz.',
+      'Kommt die Spielerlaubnis: Status „Spielerlaubnis erteilt“.',
+    ],
+    wirkung: [
+      'Die antragstellende Person sieht den Status und deinen Hinweis im Mitgliederbereich.',
+      'Nach „Spielerlaubnis erteilt“ oder „Abgelehnt“ werden die Unterlagen automatisch gelöscht (Frist unter „Datenschutz-Fristen“, Standard 30 Tage). Der Antrag selbst bleibt als Nachweis.',
+    ],
+    tipps: [
+      'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ (alle Teams) und die Übungsleitung des jeweiligen Teams. Team-Redaktion und andere Trainer sehen sie nicht.',
+      'Es sind Ausweiskopien von Kindern dabei – bitte nichts herunterladen, ausdrucken oder weiterleiten, was nicht für das DFBnet nötig ist.',
+      'Die leere Vorlage für den Passantrag hinterlegst du unter „Vereinsdaten“ → „Fußball: Vorlage Passantrag“.',
+    ],
+  },
+
   kontaktanfragen: {
     titel: 'Kontaktanfragen',
     kurz: 'Nachrichten, die über das Kontaktformular der Website geschickt wurden.',

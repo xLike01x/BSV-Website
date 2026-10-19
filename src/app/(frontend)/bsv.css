@@ -480,3 +480,19 @@
 .avatar--gross { width: 112px; height: 112px; font-size: 44px; }
 .profilfoto { display: flex; gap: 20px; align-items: center; flex-wrap: wrap; }
 .profilfoto-knoepfe { display: flex; gap: 10px; flex-wrap: wrap; }
+
+/* Passantrag */
+.pa-block { border: 0; margin: 0; padding: 0; display: grid; gap: 14px; }
+.pa-block legend { font-size: 20px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 10px; padding: 0; }
+.pa-zeile { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 14px; }
+.pa-wahl { display: flex; gap: 10px; flex-wrap: wrap; }
+.pa-wahl--senkrecht { flex-direction: column; }
+.pa-chip { display: flex; gap: 10px; align-items: flex-start; padding: 12px 16px; border-radius: 14px; border: 1.5px solid rgba(0,0,0,.12); cursor: pointer; background: #fff; transition: border-color .2s, background-color .2s; }
+.pa-chip input { accent-color: var(--bsv-green); margin-top: 3px; }
+.pa-chip span { display: flex; flex-direction: column; gap: 2px; }
+.pa-chip small { color: var(--bsv-muted); font-size: 14px; }
+.pa-chip.ist-aktiv { border-color: var(--bsv-green); background: var(--bsv-green-tint); }
+.pa-datei { display: flex; align-items: center; justify-content: space-between; gap: 14px; flex-wrap: wrap; padding: 14px 16px; border-radius: 16px; background: var(--bsv-soft); }
+.pa-datei > div { display: flex; flex-direction: column; gap: 2px; flex: 1 1 240px; }
+.pa-datei small { color: var(--bsv-muted); font-size: 14px; line-height: 1.4; }
+.pa-datei.ist-da small { color: var(--bsv-green); font-weight: 600; }

@@ -29,6 +29,7 @@ const ROLLEN: { key: string; label: string; farbe: string; text: string }[] = [
   { key: 'admin', label: 'Admin', farbe: '#7c3aed', text: 'Alles außer Admin-Rechte vergeben' },
   { key: 'redaktion', label: 'Redaktion', farbe: '#1d4ed8', text: 'News, Seiten, Menü, Texte, Vereinsdaten' },
   { key: 'kasse', label: 'Kasse', farbe: '#b45309', text: 'Mitgliedsanträge, Beiträge' },
+  { key: 'passwesen', label: 'Passwesen', farbe: '#be123c', text: 'Fußball-Passanträge aller Teams' },
   { key: 'uebungsleitung', label: 'Übungsleitung', farbe: '#157a43', text: 'Eigene Teams inkl. Probetraining' },
   { key: 'teamredaktion', label: 'Team-Redaktion', farbe: '#0e7490', text: 'News und Fotos für eigene Teams' },
   { key: 'mitglied', label: 'Mitglied', farbe: '#6e6e73', text: 'Nur Mitgliederbereich' },
@@ -306,7 +307,7 @@ function Testkonten({ personen, test }: { personen: Person[]; test: { erlaubt: b
   }
 
   const gruppen = personen.reduce<Record<string, Person[]>>((acc, p) => {
-    const g = p.rollen.includes('admin') || p.rollen.includes('redaktion') || p.rollen.includes('kasse') || p.rollen.every((r) => r === 'mitglied') ? 'Rollen' : p.email.startsWith('abteilung-') || p.email.startsWith('pressewart-') ? 'Abteilungen' : 'Trainer je Team'
+    const g = p.rollen.includes('admin') || p.rollen.includes('redaktion') || p.rollen.includes('kasse') || p.rollen.includes('passwesen') || p.rollen.every((r) => r === 'mitglied') ? 'Rollen' : p.email.startsWith('abteilung-') || p.email.startsWith('pressewart-') ? 'Abteilungen' : 'Trainer je Team'
     ;(acc[g] ??= []).push(p)
     return acc
   }, {})

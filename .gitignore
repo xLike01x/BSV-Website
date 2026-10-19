@@ -11,6 +11,7 @@ next-env.d.ts
 public/media/
 /medien/
 /profilbilder/
+/passantraege/
 
 public/robots.txt
 public/sitemap*.xml

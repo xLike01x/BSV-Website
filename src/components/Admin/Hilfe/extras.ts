@@ -9,7 +9,7 @@ export type Feld = { name: string; text: string }
 export type Faq = { frage: string; antwort: string; bereich?: string }
 
 /** Rollen-Schlüssel wie in den Benutzerkonten */
-export type RolleKey = 'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
+export type RolleKey = 'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
 
 /* ------------------------------------------------------------------ */
 /* Schritt-für-Schritt-Anleitungen                                     */
@@ -305,6 +305,19 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Titel, Beginn und (optional) Ende eintragen – mit Uhrzeit.',
         'Ort und eine kurze Beschreibung ergänzen.',
         'Den Bereich wählen und speichern.',
+      ],
+    },
+  ],
+  passantraege: [
+    {
+      id: 'passantrag-bearbeiten',
+      titel: 'Einen Passantrag bearbeiten',
+      schritte: [
+        'Links unter „Sport“ auf „Passanträge“ klicken und einen Antrag mit Status „Eingereicht“ öffnen.',
+        'Die Angaben zur Spielerin / zum Spieler prüfen und unter „Unterlagen“ jede Datei anklicken.',
+        'Fehlt etwas oder ist unleserlich: Status „Unterlagen fehlen“, beim Hinweis kurz schreiben, was fehlt, und speichern.',
+        'Alles da: Antrag im DFBnet einreichen, Status „Beim Verband“ und die Vorgangsnummer in die interne Notiz.',
+        'Spielerlaubnis erteilt: Status „Spielerlaubnis erteilt“ und speichern. Die Unterlagen werden danach automatisch gelöscht.',
       ],
     },
   ],
@@ -666,6 +679,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wer sieht die Passanträge und Ausweiskopien?',
+    antwort: 'Die antragstellende Person (ihre eigenen), Admins, Konten mit der Rolle „Passwesen“ (alle Teams – auch ohne eigenes Team) und die Übungsleitung des Teams, für das der Antrag gestellt wurde. Team-Redaktion, Kasse und Trainer anderer Teams sehen sie nicht. Die Rolle „Passwesen“ vergibst du unter „Benutzer“.',
+    bereich: 'passantraege',
+  },
+  {
     frage: 'Jemand hat sich auf der Website registriert – was muss ich tun?',
     antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Ist die Person Mitglied, auf „Freigeben“ klicken – der Hinweis „Mitgliedsantrag vorhanden ✓“ hilft beim Prüfen. Sonst „Ablehnen“, dann wird das Konto gelöscht. Danach unter „Benutzer“ die Teams & Kurse des Mitglieds eintragen, damit es seine Ausfälle sieht.',
     bereich: 'users',
@@ -882,6 +900,13 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       ['verein', 'vorstand'],
     ],
   },
+  passwesen: {
+    label: 'Passwesen',
+    kurz: 'Du bearbeitest die Fußball-Passanträge aller Teams und gibst sie an den Verband weiter.',
+    darf: ['Passanträge aller Fußball-Teams sehen und bearbeiten', 'Unterlagen prüfen und fehlende nachfordern', 'Status setzen (z. B. „beim Verband“, „Spielerlaubnis erteilt“)'],
+    darfNicht: ['News und Seiten veröffentlichen', 'Mitgliedsanträge oder Bankdaten sehen', 'Benutzer verwalten'],
+    anleitungen: [['passantraege', 'passantrag-bearbeiten']],
+  },
   uebungsleitung: {
     label: 'Übungsleitung',
     kurz: 'Du pflegst deine eigenen Teams oder Kurse.',
@@ -914,7 +939,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   },
 }
 
-export const ROLLEN_REIHENFOLGE: RolleKey[] = ['webadmin', 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion']
+export const ROLLEN_REIHENFOLGE: RolleKey[] = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion']
 
 /** Wichtigste Rolle eines Kontos (für Begrüßung und Hinweise) */
 export function hauptRolle(rollen: string[] | undefined | null): RolleKey {

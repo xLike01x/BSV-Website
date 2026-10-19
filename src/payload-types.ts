@@ -81,6 +81,8 @@ export interface Config {
     kontaktanfragen: Kontaktanfragen;
     sponsoren: Sponsoren;
     gesuche: Gesuche;
+    passantraege: Passantraege;
+    passdokumente: Passdokumente;
     users: User;
     profilbilder: Profilbilder;
     'hilfe-feedback': HilfeFeedback;
@@ -118,6 +120,8 @@ export interface Config {
     kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
     sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
     gesuche: GesucheSelect<false> | GesucheSelect<true>;
+    passantraege: PassantraegeSelect<false> | PassantraegeSelect<true>;
+    passdokumente: PassdokumenteSelect<false> | PassdokumenteSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
     profilbilder: ProfilbilderSelect<false> | ProfilbilderSelect<true>;
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
@@ -511,9 +515,11 @@ export interface User {
    */
   name: string;
   /**
-   * Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
+   * Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
    */
-  roles: ('webadmin' | 'admin' | 'redaktion' | 'kasse' | 'uebungsleitung' | 'teamredaktion' | 'mitglied')[];
+  roles: (
+    'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
+  )[];
   /**
    * Angebote, an denen diese Person als Mitglied teilnimmt.
    */
@@ -1366,6 +1372,94 @@ export interface Gesuche {
   deletedAt?: string | null;
 }
 /**
+ * Anträge auf Spielerlaubnis (Spielerpass) aus dem Mitgliederbereich. Unterlagen prüfen, fehlende nachfordern, im DFBnet einreichen und den Status setzen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passantraege".
+ */
+export interface Passantraege {
+  id: number;
+  spielerName?: string | null;
+  status: 'eingereicht' | 'pruefung' | 'unterlagen_fehlen' | 'verband' | 'erteilt' | 'abgelehnt';
+  team: number | Angebote;
+  /**
+   * Sieht die Person im Mitgliederbereich – z. B. „Bitte die Geburtsurkunde nachreichen“. Bei fehlenden Unterlagen den Status auf „Unterlagen fehlen“ setzen.
+   */
+  hinweis?: string | null;
+  /**
+   * Nur für die Verwaltung sichtbar, z. B. DFBnet-Vorgangsnummer.
+   */
+  notiz?: string | null;
+  fuer?: ('selbst' | 'kind') | null;
+  spielerVorname: string;
+  spielerNachname: string;
+  geburtsdatum: string;
+  staatsangehoerigkeit?: string | null;
+  erziehungsberechtigte?: string | null;
+  art: 'neu' | 'wechsel' | 'international';
+  bisherigerVerein?: string | null;
+  abmeldedatum?: string | null;
+  /**
+   * Ausgefüllt und unterschrieben – bei Minderjährigen zusätzlich von den Erziehungsberechtigten. Foto oder Scan genügt.
+   */
+  passantrag?: (number | null) | Passdokumente;
+  /**
+   * Kopie zum Nachweis von Identität und Geburtsdatum.
+   */
+  ausweis?: (number | null) | Passdokumente;
+  /**
+   * Aktuelles Foto für das Spielerprofil im DFBnet (Gesicht gut erkennbar, heller Hintergrund).
+   */
+  passfoto?: (number | null) | Passdokumente;
+  /**
+   * Unterschriebene Datenschutz- und Foto-Erklärung (z. B. für FUSSBALL.DE).
+   */
+  einwilligung?: (number | null) | Passdokumente;
+  /**
+   * Nachweis der fristgerechten Abmeldung – nur bei Vereinswechsel.
+   */
+  abmeldung?: (number | null) | Passdokumente;
+  /**
+   * Nur bei internationalem Wechsel von Jugendlichen.
+   */
+  meldebescheinigung?: (number | null) | Passdokumente;
+  bestaetigt?: boolean | null;
+  antragsteller?: (number | null) | User;
+  nachgereichtAm?: string | null;
+  abgeschlossenAm?: string | null;
+  /**
+   * Nach Abschluss werden Ausweis, Foto usw. automatisch gelöscht (Frist unter „Datenschutz-Fristen“).
+   */
+  unterlagenGeloeschtAm?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Die einzelnen Dateien zu den Passanträgen. Normalerweise öffnest du sie direkt im Passantrag.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passdokumente".
+ */
+export interface Passdokumente {
+  id: number;
+  art?:
+    ('passantrag' | 'ausweis' | 'passfoto' | 'einwilligung' | 'abmeldung' | 'meldebescheinigung' | 'sonstiges') | null;
+  hochgeladenVon?: (number | null) | User;
+  antrag?: (number | null) | Passantraege;
+  team?: (number | null) | Angebote;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * Was Nutzer über die Hilfetexte gesagt haben. Viele 👎 bei einem Bereich = Text verbessern.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1626,6 +1720,14 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'gesuche';
         value: number | Gesuche;
+      } | null)
+    | ({
+        relationTo: 'passantraege';
+        value: number | Passantraege;
+      } | null)
+    | ({
+        relationTo: 'passdokumente';
+        value: number | Passdokumente;
       } | null)
     | ({
         relationTo: 'users';
@@ -2207,6 +2309,60 @@ export interface GesucheSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passantraege_select".
+ */
+export interface PassantraegeSelect<T extends boolean = true> {
+  spielerName?: T;
+  status?: T;
+  team?: T;
+  hinweis?: T;
+  notiz?: T;
+  fuer?: T;
+  spielerVorname?: T;
+  spielerNachname?: T;
+  geburtsdatum?: T;
+  staatsangehoerigkeit?: T;
+  erziehungsberechtigte?: T;
+  art?: T;
+  bisherigerVerein?: T;
+  abmeldedatum?: T;
+  passantrag?: T;
+  ausweis?: T;
+  passfoto?: T;
+  einwilligung?: T;
+  abmeldung?: T;
+  meldebescheinigung?: T;
+  bestaetigt?: T;
+  antragsteller?: T;
+  nachgereichtAm?: T;
+  abgeschlossenAm?: T;
+  unterlagenGeloeschtAm?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "passdokumente_select".
+ */
+export interface PassdokumenteSelect<T extends boolean = true> {
+  art?: T;
+  hochgeladenVon?: T;
+  antrag?: T;
+  team?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
@@ -2785,6 +2941,10 @@ export interface Verein {
     logo?: (number | null) | Media;
   };
   /**
+   * Leeres Formular zum Herunterladen, Ausfüllen und Unterschreiben – erscheint beim Passantrag im Mitgliederbereich. Gibt es beim Verband bzw. im DFBnet.
+   */
+  passantragVorlage?: (number | null) | Media;
+  /**
    * Erscheint im Mitgliedsantrag beim SEPA-Mandat.
    */
   glaeubigerId?: string | null;
@@ -2991,6 +3151,7 @@ export interface Hilfe {
           | 'ausfaelle'
           | 'probetraining'
           | 'mitgliedsantraege'
+          | 'passantraege'
           | 'kontaktanfragen'
           | 'users'
           | 'menue'
@@ -3055,6 +3216,7 @@ export interface Hilfe {
               | 'ausfaelle'
               | 'probetraining'
               | 'mitgliedsantraege'
+              | 'passantraege'
               | 'kontaktanfragen'
               | 'users'
               | 'menue'
@@ -3098,6 +3260,10 @@ export interface Datenschutz {
    */
   antraegeMonate?: number | null;
   eingaengeMonate?: number | null;
+  /**
+   * Läuft immer automatisch. Der Antrag selbst (Name, Team, Status) bleibt als Nachweis erhalten.
+   */
+  passUnterlagenTage?: number | null;
   /**
    * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
    */
@@ -3255,6 +3421,7 @@ export interface VereinSelect<T extends boolean = true> {
         url?: T;
         logo?: T;
       };
+  passantragVorlage?: T;
   glaeubigerId?: T;
   vorstand?:
     | T
@@ -3504,6 +3671,7 @@ export interface DatenschutzSelect<T extends boolean = true> {
   kontaktMonate?: T;
   antraegeMonate?: T;
   eingaengeMonate?: T;
+  passUnterlagenTage?: T;
   automatisch?: T;
   updatedAt?: T;
   createdAt?: T;

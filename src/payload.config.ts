@@ -28,6 +28,8 @@ import { PAPIERKORB, papierkorbSchutz } from './utilities/papierkorb'
 import { hauptsponsorUmziehen } from './utilities/hauptsponsorUmziehen'
 import { medienUmziehen } from './utilities/medienUmziehen'
 import { Profilbilder } from './collections/Profilbilder'
+import { Passantraege } from './passantraege/Passantraege'
+import { Passdokumente } from './passantraege/Passdokumente'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { Datenschutz } from './datenschutz/config'
 import { Dokumente } from './collections/Dokumente'
@@ -126,7 +128,7 @@ export default buildConfig({
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
-  collections: [Posts, Termine, Media, Alben, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Sponsoren, Gesuche, Users, Profilbilder, HilfeFeedback].map((c) =>
+  collections: [Posts, Termine, Media, Alben, Dokumente, Pages, Categories, Angebote, Ausfaelle, Probetraining, Mitgliedsantraege, Kontaktanfragen, Sponsoren, Gesuche, Passantraege, Passdokumente, Users, Profilbilder, HilfeFeedback].map((c) =>
     PAPIERKORB.includes(c.slug)
       ? (() => {
           const schutz = papierkorbSchutz(c.slug)

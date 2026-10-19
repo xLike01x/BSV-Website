@@ -12,17 +12,28 @@ import type { Angebote } from '@/payload-types'
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Mein BSV', robots: { index: false } }
 
+const PASS_STATUS: Record<string, { text: string; farbe: string }> = {
+  eingereicht: { text: 'Eingereicht – wird geprüft', farbe: 'var(--bsv-muted)' },
+  pruefung: { text: 'In Prüfung', farbe: '#1d4ed8' },
+  unterlagen_fehlen: { text: 'Unterlagen fehlen', farbe: '#e8590c' },
+  verband: { text: 'Beim Verband eingereicht', farbe: '#7c3aed' },
+  erteilt: { text: '✓ Spielerlaubnis erteilt', farbe: 'var(--bsv-green)' },
+  abgelehnt: { text: 'Abgelehnt / zurückgezogen', farbe: '#b91c1c' },
+}
+
 const ROLLE: Record<string, string> = {
   webadmin: 'Web-Admin',
   admin: 'Admin',
   redaktion: 'Redaktion',
   kasse: 'Kasse',
+  passwesen: 'Passwesen',
   uebungsleitung: 'Übungsleitung',
   teamredaktion: 'Team-Redaktion',
   mitglied: 'Mitglied',
 }
 
-export default async function MitgliederSeite() {
+export default async function MitgliederSeite({ searchParams }: { searchParams: Promise<{ passantrag?: string }> }) {
+  const { passantrag: passOk } = await searchParams
   const user = await aktuellerBenutzer()
   if (!user) redirect('/login?weiter=/mitglieder')
 
@@ -83,6 +94,12 @@ export default async function MitgliederSeite() {
     ? (await p.find({ collection: 'angebote', where: { leitung: { contains: user.id } }, depth: 0, limit: 50, overrideAccess: true })).docs
     : []
   const alleIds = Array.from(new Set([...meine, ...geleitet].map((a) => a.id)))
+  // Eigene Passanträge (auch für Kinder gestellte)
+  const passantraege = (
+    await p
+      .find({ collection: 'passantraege', where: { antragsteller: { equals: user.id } }, sort: '-createdAt', limit: 20, depth: 1, user, overrideAccess: false })
+      .catch(() => ({ docs: [] }))
+  ).docs
   const [ausfaelle, termine, verein, anfragen] = await Promise.all([
     alleIds.length ? getAusfaelle(alleIds) : Promise.resolve([]),
     getTermine(6),
@@ -242,6 +259,46 @@ export default async function MitgliederSeite() {
               <strong>{d.titel}</strong>
             </a>
           ))}
+        </div>
+
+        <div id="passantraege" style={{ background: '#fff', borderRadius: 28, padding: 32 }}>
+          <h2 className="t-3" style={{ fontSize: 26, marginBottom: 8 }}>
+            Spielerpass (Fußball)
+          </h2>
+          {passOk === 'ok' && (
+            <p className="success" role="status" style={{ padding: '12px 16px', margin: '0 0 12px', textAlign: 'left' }}>
+              ✓ Danke! Dein Antrag ist eingegangen. Den Stand siehst du hier.
+            </p>
+          )}
+          {passantraege.length === 0 ? (
+            <p className="muted" style={{ margin: '0 0 16px', lineHeight: 1.5 }}>
+              Für Meisterschaft und Pokal braucht jede Spielerin und jeder Spieler einen Spielerpass. Den Antrag stellst du hier – auch für dein Kind.
+            </p>
+          ) : (
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 16 }}>
+              {passantraege.map((a) => {
+                const st = PASS_STATUS[a.status] ?? PASS_STATUS.eingereicht!
+                return (
+                  <div key={a.id} className="card card-soft" style={{ padding: 16, gap: 4 }}>
+                    <span style={{ fontSize: 13, fontWeight: 700, color: st.farbe }}>{st.text}</span>
+                    <strong style={{ fontSize: 18 }}>
+                      {a.spielerVorname} {a.spielerNachname}
+                    </strong>
+                    <span className="card-meta">{typeof a.team === 'object' && a.team ? a.team.title : ''}</span>
+                    {a.status === 'unterlagen_fehlen' && a.hinweis && <span style={{ fontSize: 15 }}>Hinweis: {a.hinweis}</span>}
+                    {['eingereicht', 'unterlagen_fehlen'].includes(a.status) && (
+                      <Link href={`/mitglieder/passantrag?id=${a.id}`} className="link-more" style={{ fontSize: 15 }}>
+                        {a.status === 'unterlagen_fehlen' ? 'Unterlagen nachreichen ›' : 'Ansehen / ändern ›'}
+                      </Link>
+                    )}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+          <Link href="/mitglieder/passantrag" className="btn btn-primary">
+            Passantrag stellen
+          </Link>
         </div>
 
         <div style={{ background: '#fff', borderRadius: 28, padding: 32 }}>

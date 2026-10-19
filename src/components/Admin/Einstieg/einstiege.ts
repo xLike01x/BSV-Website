@@ -280,6 +280,18 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ],
   },
 
+  passantraege: {
+    titel: 'Wie laufen Passanträge?',
+    text: 'Mitglieder beantragen im Mitgliederbereich einen Spielerpass – auch für ihre Kinder – und laden die Unterlagen hoch. Du prüfst, reichst im DFBnet ein und setzt den Status.',
+    textTeam: 'Du siehst nur die Passanträge deiner eigenen Teams.',
+    ablauf: [
+      { key: 'antrag', titel: 'Antrag kommt rein', text: 'Status „Eingereicht“, Unterlagen hängen dran.', wo: 'Mitgliederbereich → Spielerpass' },
+      { key: 'pruefen', titel: 'Prüfen', text: 'Fehlt etwas? „Unterlagen fehlen“ + Hinweis – die Person reicht nach.' },
+      { key: 'verband', titel: 'DFBnet', text: 'Einreichen, Status „Beim Verband“.' },
+      { key: 'fertig', titel: 'Fertig', text: '„Spielerlaubnis erteilt“ – Unterlagen werden nach 30 Tagen gelöscht.' },
+    ],
+  },
+
   kontaktanfragen: {
     titel: 'Was sind Kontaktanfragen?',
     text: 'Nachrichten aus dem Kontaktformular der Website und Fragen aus der Hilfe („Frage an den Admin“).',

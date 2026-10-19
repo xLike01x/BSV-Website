@@ -7,13 +7,14 @@ import type { Access, FieldAccess, PayloadRequest, Where } from 'payload'
  * - admin:          alles, inkl. Rollen vergeben (außer Admin/Web-Admin)
  * - redaktion:      News für die Startseite, Termine, Seiten, alle Teams & Kurse
  * - kasse:          Mitgliedsanträge inkl. Bankdaten
+ * - passwesen:      Fußball-Passanträge aller Teams (auch ohne eigenes Team)
  * - uebungsleitung: eigene Teams/Kurse pflegen, Ausfälle, Probetraining-Anfragen, Team-News und -Bilder
  * - teamredaktion:  eigene Teams/Kurse: News, Bilder, Zeiten, Ausfälle (z. B. Pressewart einer Mannschaft)
  * - mitglied:       nur Mitgliederbereich auf der Website
  *
  * „Eigene“ Teams sind die, bei denen die Person im Angebot unter „Verantwortliche“ eingetragen ist.
  */
-export const ROLES = ['webadmin', 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion', 'mitglied'] as const
+export const ROLES = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'mitglied'] as const
 export type Role = (typeof ROLES)[number]
 
 export const ROLE_OPTIONS: { label: string; value: Role }[] = [
@@ -21,6 +22,7 @@ export const ROLE_OPTIONS: { label: string; value: Role }[] = [
   { label: 'Admin', value: 'admin' },
   { label: 'Redaktion (Startseite & alle News)', value: 'redaktion' },
   { label: 'Kasse', value: 'kasse' },
+  { label: 'Passwesen (Spielerpässe Fußball)', value: 'passwesen' },
   { label: 'Übungsleitung', value: 'uebungsleitung' },
   { label: 'Team-Redaktion', value: 'teamredaktion' },
   { label: 'Mitglied', value: 'mitglied' },
@@ -55,7 +57,7 @@ export const isFinance: Access = ({ req }) => hasRole(userOf(req), 'admin', 'kas
 
 /** Wer darf das Admin-Panel unter /admin öffnen? Mitglieder nutzen nur die Website. */
 export const canUseAdminPanel = ({ req }: { req: PayloadRequest }): boolean =>
-  hasRole(userOf(req), 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion')
+  hasRole(userOf(req), 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
 
 /** Medien hochladen: alle mit Inhaltsrechten. */
 export const canUpload: Access = ({ req }) => hasRole(userOf(req), 'admin', 'redaktion', ...TEAM_ROLLEN)

@@ -57,7 +57,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   const darfGlobal = (slug: string) => Boolean((permissions.globals as Record<string, Record<string, unknown>> | undefined)?.[slug]?.update)
 
   const rollen = ((user as { roles?: string[] }).roles ?? []) as string[]
-  const istTeamRolle = !rollen.some((r) => ['admin', 'redaktion', 'kasse'].includes(r))
+  const istTeamRolle = !rollen.some((r) => ['admin', 'redaktion', 'kasse', 'passwesen'].includes(r))
   const vorname = ((user as { name?: string }).name || user.email || '').split(/[\s@]/)[0]
   const zaehle = (collection: CollectionSlug, where?: Where) =>
     sicher(async () => (await payload.count({ collection, where, user, overrideAccess: false, req })).totalDocs, 0)
@@ -166,7 +166,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
 
   // Erste Schritte: erste eigene News (bzw. Ausfall für Übungsleitungen)
   const ersteAufgabe =
-    rolle === 'kasse'
+    rolle === 'kasse' || rolle === 'passwesen'
       ? undefined
       : rolle === 'uebungsleitung'
         ? {

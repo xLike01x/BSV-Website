@@ -6,7 +6,7 @@ export type Stufe = 'ja' | 'eigene' | 'nein' | 'website'
 export type RechteZeile = { slug: string; art: 'bereich' | 'einstellung'; titel: string; gruppe: string; ansehen: Stufe; anlegen: Stufe; bearbeiten: Stufe; loeschen: Stufe }
 export type RechteMatrix = Record<string, RechteZeile[]>
 
-const AUSLASSEN = new Set(['hilfe-feedback', 'search', 'payload-folders'])
+const AUSLASSEN = new Set(['hilfe-feedback', 'search', 'payload-folders', 'passdokumente', 'profilbilder'])
 const TEAM_ROLLEN = ['uebungsleitung', 'teamredaktion']
 /** Einschränkungen, die zusätzlich beim Speichern bzw. in der Liste greifen (Hooks, Filter) */
 const ZUSATZ_TEAM: Record<string, Partial<Record<'ansehen' | 'anlegen', Stufe>>> = {

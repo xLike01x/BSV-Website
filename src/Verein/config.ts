@@ -99,6 +99,13 @@ export const Verein: GlobalConfig = {
         { name: 'logo', label: 'Logo', type: 'upload', relationTo: 'media' },
       ],
     },
+    {
+      name: 'passantragVorlage',
+      label: 'Fußball: Vorlage Passantrag (PDF)',
+      type: 'upload',
+      relationTo: 'media',
+      admin: { description: 'Leeres Formular zum Herunterladen, Ausfüllen und Unterschreiben – erscheint beim Passantrag im Mitgliederbereich. Gibt es beim Verband bzw. im DFBnet.' },
+    },
     { name: 'glaeubigerId', label: 'SEPA-Gläubiger-ID', type: 'text', admin: { description: 'Erscheint im Mitgliedsantrag beim SEPA-Mandat.' } },
     {
       name: 'vorstand',

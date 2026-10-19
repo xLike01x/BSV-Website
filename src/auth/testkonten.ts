@@ -62,6 +62,7 @@ export function testkontenPlan(angebote: Angebot[]): Plan[] {
     { email: `admin@${TESTDOMAIN}`, name: 'Test Admin', roles: ['admin'], teams: [], gruppe: 'Rollen' },
     { email: `redaktion@${TESTDOMAIN}`, name: 'Test Redaktion', roles: ['redaktion'], teams: [], gruppe: 'Rollen' },
     { email: `kasse@${TESTDOMAIN}`, name: 'Test Kasse', roles: ['kasse'], teams: [], gruppe: 'Rollen' },
+    { email: `passwesen@${TESTDOMAIN}`, name: 'Test Passwesen', roles: ['passwesen'], teams: [], gruppe: 'Rollen' },
     { email: `mitglied@${TESTDOMAIN}`, name: 'Test Mitglied', roles: ['mitglied'], teams: [], gruppe: 'Rollen' },
   ]
   for (const [key, label] of Object.entries(ABTEILUNG)) {

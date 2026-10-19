@@ -24,7 +24,7 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
       overrideAccess: true,
       where: {
         and: [
-          { roles: { in: ['webadmin', 'admin', 'redaktion', 'kasse', 'uebungsleitung', 'teamredaktion'] } },
+          { roles: { in: ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion'] } },
           { testkonto: { not_equals: true } },
           { or: [{ letzteAnmeldung: { less_than: halbesJahr } }, { and: [{ letzteAnmeldung: { exists: false } }, { createdAt: { less_than: vorMonat } }] }] },
         ],
@@ -32,6 +32,12 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     })
     if (totalDocs)
       a.push({ key: 'zugaenge', art: 'info', symbol: '👥', text: `${totalDocs} ${totalDocs === 1 ? 'Zugang mit Verwaltungsrechten wurde' : 'Zugänge mit Verwaltungsrechten wurden'} seit über 6 Monaten nicht genutzt. Noch nötig?`, href: '/admin/rollen', link: 'Prüfen' })
+  }
+  if (admin || rollen.includes('passwesen') || rollen.includes('uebungsleitung')) {
+    // Nur die Anträge, die diese Person auch sehen darf (Übungsleitung: eigene Teams)
+    const neu = await req.payload.count({ collection: 'passantraege', where: { status: { equals: 'eingereicht' } }, user: req.user, overrideAccess: false, req }).catch(() => ({ totalDocs: 0 }))
+    if (neu.totalDocs)
+      a.push({ key: 'passantraege', art: 'warn', symbol: '⚽', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Passantrag wartet' : 'neue Passanträge warten'} auf Prüfung.`, href: '/admin/collections/passantraege?where[status][equals]=eingereicht', link: 'Prüfen' })
   }
   if (admin || rollen.includes('kasse')) {
     const wartend = await req.payload.count({ collection: 'users', where: { freigegeben: { equals: false } }, overrideAccess: true }).catch(() => ({ totalDocs: 0 }))
