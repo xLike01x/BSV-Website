@@ -5,6 +5,8 @@ import React, { useMemo, useState } from 'react'
 import type { RechteMatrix, Stufe } from './rechte'
 import RollenReiter from './Reiter'
 
+type Zugang = 'mit' | 'ohne' | 'zusatz' | 'alle'
+
 export type Person = {
   id: number
   name: string
@@ -137,13 +139,20 @@ export default function RollenClient({
 }) {
   const [tab, setTab] = useState<Tab>('personen')
   const [suche, setSuche] = useState('')
-  const [zugang, setZugang] = useState<'mit' | 'ohne' | 'alle'>('mit')
+  const [zugang, setZugang] = useState<Zugang>('mit')
+  // Kennzahl anklicken: Liste „Nach Person“ passend filtern und hinscrollen
+  const zeige = (z: Zugang) => {
+    setTab('personen')
+    setZugang(z)
+    setSuche('')
+    requestAnimationFrame(() => document.querySelector('.bsv-rollen__filter')?.scrollIntoView({ behavior: 'smooth', block: 'start' }))
+  }
   const q = suche.trim().toLocaleLowerCase('de-DE')
 
   const gefiltertePersonen = useMemo(
     () =>
       personen
-        .filter((p) => zugang === 'alle' || (zugang === 'mit') === hatZugang(p))
+        .filter((p) => zugang === 'alle' || (zugang === 'zusatz' ? p.zusatzrechte.length > 0 : (zugang === 'mit') === hatZugang(p)))
         .filter(
           (p) =>
             !q ||
@@ -188,14 +197,16 @@ export default function RollenClient({
       </header>
 
       <div className="bsv-rollen__zahlen">
-        <div>
+        <button type="button" onClick={() => zeige('mit')} title="Liste anzeigen">
           <strong>{personen.filter((p) => hatZugang(p)).length}</strong>
           <span>Konten mit Verwaltungs-Zugang</span>
-        </div>
-        <div>
+          <em>Anzeigen ›</em>
+        </button>
+        <button type="button" onClick={() => zeige('ohne')} title="Liste anzeigen">
           <strong>{personen.filter((p) => !hatZugang(p)).length}</strong>
           <span>Konten ohne Verwaltungs-Zugang (nur Mitgliederbereich)</span>
-        </div>
+          <em>Anzeigen ›</em>
+        </button>
         <div className={ohneVerantwortliche ? 'is-warn' : ''}>
           <strong>{ohneVerantwortliche}</strong>
           <span>aktive Teams ohne Verantwortliche</span>
@@ -208,10 +219,11 @@ export default function RollenClient({
           <strong>{alteZugaenge}</strong>
           <span>Zugänge seit 6 Monaten ungenutzt</span>
         </div>
-        <div>
+        <button type="button" onClick={() => zeige('zusatz')} title="Liste anzeigen">
           <strong>{personen.filter((p) => p.zusatzrechte.length > 0).length}</strong>
           <span>Personen mit Zusatzrechten (einzeln vergeben)</span>
-        </div>
+          <em>Anzeigen ›</em>
+        </button>
       </div>
 
       <div className="bsv-rollen__leiste">
@@ -260,8 +272,9 @@ export default function RollenClient({
                   'ohne',
                   `Ohne Verwaltungs-Zugang – nur Mitgliederbereich (${personen.filter((p) => !hatZugang(p)).length})`,
                 ],
+                ['zusatz', `Mit Zusatzrechten (${personen.filter((p) => p.zusatzrechte.length > 0).length})`],
                 ['alle', `Alle (${personen.length})`],
-              ] as ['mit' | 'ohne' | 'alle', string][]
+              ] as [Zugang, string][]
             ).map(([k, l]) => (
               <label key={k}>
                 <input
