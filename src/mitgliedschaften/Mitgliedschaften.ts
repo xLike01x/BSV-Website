@@ -24,7 +24,7 @@ export const Mitgliedschaften: CollectionConfig = {
       if (!user || !istMitgliedOderMehr(user)) return false
       if ((user.roles ?? []).some((r) => r === 'admin' || r === 'kasse')) return true
       // Nur über die feste Verknüpfung mit dem Konto – nicht über die E-Mail (die ist nicht bestätigt)
-      return { konto: { equals: (user as { id?: number }).id } } as Where
+      return { and: [{ konto: { equals: (user as { id?: number }).id } }, { deletedAt: { exists: false } }] } as Where
     },
     create: isFinance,
     update: isFinance,

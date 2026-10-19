@@ -9,7 +9,7 @@ const KURZ = ['ausweis', 'passfoto', 'einwilligung', 'abmeldung', 'meldebeschein
  * Datenschutz nach Abschluss eines Passantrags (erteilt/abgelehnt):
  * 1. Ausweis, Passfoto, Erklärungen usw. nach der kurzen Frist löschen (Standard 30 Tage).
  * 2. Der unterschriebene Passantrag muss 2 Jahre aufbewahrt werden – danach Antrag samt Datei löschen.
- * Dazu: hochgeladene Dateien, die nie zu einem Antrag wurden, nach 2 Tagen löschen.
+ * Dazu: hochgeladene Dateien, die nie zu einem Antrag wurden, nach 7 Tagen löschen.
  */
 export async function passUnterlagenAufraeumen(payload: Payload) {
   const f = (await payload.findGlobal({ slug: 'datenschutz' as never, overrideAccess: true }).catch(() => ({}))) as Fristen
@@ -27,9 +27,11 @@ export async function passUnterlagenAufraeumen(payload: Payload) {
     overrideAccess: true,
   })
   for (const a of faellig.docs) {
+    // Alles löschen, was am Antrag hängt – außer der Datei im Feld „Passantrag (unterschrieben)“
+    const behalten = a.passantrag && typeof a.passantrag === 'object' ? a.passantrag.id : a.passantrag
     const r = await payload.delete({
       collection: 'passdokumente',
-      where: { and: [{ antrag: { equals: a.id } }, { art: { not_equals: 'passantrag' } }] },
+      where: { and: [{ antrag: { equals: a.id } }, ...(behalten ? [{ id: { not_equals: behalten } }] : [])] },
       overrideAccess: true,
     })
     n += r.docs.length
@@ -52,7 +54,7 @@ export async function passUnterlagenAufraeumen(payload: Payload) {
 
   const verwaist = await payload.delete({
     collection: 'passdokumente',
-    where: { and: [{ antrag: { exists: false } }, { createdAt: { less_than: new Date(Date.now() - 2 * 86400000).toISOString() } }] },
+    where: { and: [{ antrag: { exists: false } }, { createdAt: { less_than: new Date(Date.now() - 7 * 86400000).toISOString() } }] },
     overrideAccess: true,
   })
   n += verwaist.docs.length

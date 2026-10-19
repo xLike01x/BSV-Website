@@ -64,7 +64,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
     const res = await fetch('/api/passdokumente', { method: 'POST', body: fd, credentials: 'same-origin' }).catch(() => null)
     setLaedtHoch(null)
     const d = (await res?.json().catch(() => null)) as { doc?: { id: number; filename: string }; errors?: { message?: string }[] } | null
-    if (!res?.ok || !d?.doc) return setFehler(d?.errors?.[0]?.message?.includes('type') ? 'Bitte ein Foto (JPG, PNG, HEIC) oder eine PDF-Datei wählen.' : 'Das Hochladen hat nicht geklappt. Bitte erneut versuchen.')
+    if (!res?.ok || !d?.doc) return setFehler(d?.errors?.[0]?.message?.includes('type') ? 'Bitte ein Foto (JPG oder PNG) oder eine PDF-Datei wählen.' : 'Das Hochladen hat nicht geklappt. Bitte erneut versuchen.')
     setDateien((x) => ({ ...x, [feld]: { id: d.doc!.id, name: datei.name } }))
   }
 
@@ -202,7 +202,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
       <fieldset className="pa-block">
         <legend>3. Unterlagen</legend>
         <p className="muted" style={{ margin: '0 0 6px', fontSize: 15, lineHeight: 1.5 }}>
-          Foto mit dem Handy oder Scan genügt (JPG, PNG, HEIC oder PDF).
+          Foto mit dem Handy oder Scan genügt (JPG, PNG oder PDF).
           {minderjaehrig && ' Bei Minderjährigen müssen auch die Erziehungsberechtigten unterschreiben.'}
           {vorlage && (
             <>
@@ -229,7 +229,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
                 <input
                   type="file"
                   hidden
-                  accept="image/jpeg,image/png,image/webp,image/heic,image/heif,application/pdf"
+                  accept="image/jpeg,image/png,image/webp,application/pdf"
                   disabled={laedtHoch !== null}
                   onChange={(e) => {
                     const datei = e.target.files?.[0]

@@ -112,6 +112,26 @@ export const Passantraege: CollectionConfig = {
         if (operation === 'create') {
           if (user) data.antragsteller = user.id
           if (!bearbeiter || !data.status) data.status = 'eingereicht'
+        } else if (originalDoc) {
+          // Wer den Antrag gestellt hat, ändert sich nie
+          data.antragsteller = id(originalDoc.antragsteller)
+        }
+        // Verlaufs-Felder setzt nur die Website selbst
+        data.nachgereichtAm = originalDoc?.nachgereichtAm ?? null
+        data.unterlagenGeloeschtAm = originalDoc?.unterlagenGeloeschtAm ?? null
+        const antragsteller = id(data.antragsteller)
+
+        // Jede angehängte Datei muss frei sein (oder schon zu diesem Antrag gehören)
+        // und von der antragstellenden oder der bearbeitenden Person hochgeladen worden sein
+        if (user) {
+          for (const u of UNTERLAGEN) {
+            const dok = id(data[u.feld])
+            if (!dok || dok === id(originalDoc?.[u.feld])) continue
+            const d = await req.payload.findByID({ collection: 'passdokumente', id: dok, depth: 0, overrideAccess: true, req }).catch(() => null)
+            const frei = d && (!d.antrag || id(d.antrag) === id(originalDoc?.id))
+            const vonWem = d && [antragsteller, user.id].includes(id(d.hochgeladenVon))
+            if (!frei || !vonWem) throw new APIError('Eine der Unterlagen gehört nicht zu diesem Antrag. Bitte neu hochladen.', 400)
+          }
         }
 
         if (!bearbeiter && user) {
@@ -120,7 +140,6 @@ export const Passantraege: CollectionConfig = {
             data.status = originalDoc.status === 'unterlagen_fehlen' ? 'eingereicht' : originalDoc.status
             data.hinweis = originalDoc.hinweis
             data.notiz = originalDoc.notiz
-            data.antragsteller = id(originalDoc.antragsteller)
             if (originalDoc.status === 'unterlagen_fehlen') data.nachgereichtAm = new Date().toISOString()
           } else {
             data.hinweis = null
@@ -132,20 +151,16 @@ export const Passantraege: CollectionConfig = {
             const namen = UNTERLAGEN.filter((u) => fehlen.includes(u.feld)).map((u) => u.label)
             throw new APIError(`Bitte noch hochladen: ${namen.join(', ')}.`, 400)
           }
-          for (const u of UNTERLAGEN) {
-            const dok = id(data[u.feld])
-            if (!dok) continue
-            const d = await req.payload.findByID({ collection: 'passdokumente', id: dok, depth: 0, overrideAccess: true, req }).catch(() => null)
-            const gehoert = d && id(d.hochgeladenVon) === user.id && (!d.antrag || id(d.antrag) === id(originalDoc?.id))
-            if (!gehoert) throw new APIError('Eine der Unterlagen gehört nicht zu deinem Konto. Bitte neu hochladen.', 400)
-          }
           if (!data.bestaetigt) throw new APIError('Bitte bestätige, dass die Angaben stimmen.', 400)
         }
 
         // Abschluss merken (für die automatische Löschung der Unterlagen)
         const status = data.status ?? originalDoc?.status
         if (ABGESCHLOSSEN.includes(status) && !ABGESCHLOSSEN.includes(originalDoc?.status)) data.abgeschlossenAm = new Date().toISOString()
-        if (!ABGESCHLOSSEN.includes(status)) data.abgeschlossenAm = null
+        if (!ABGESCHLOSSEN.includes(status)) {
+          data.abgeschlossenAm = null
+          data.unterlagenGeloeschtAm = null // wieder geöffnet → Fristen laufen neu
+        }
         return data
       },
     ],
@@ -153,11 +168,23 @@ export const Passantraege: CollectionConfig = {
       // Unterlagen diesem Antrag und Team zuordnen; ersetzte Dateien löschen
       async ({ doc, previousDoc, req }) => {
         const team = id(doc.team)
-        const jetzt = UNTERLAGEN.map((u) => id(doc[u.feld])).filter((x): x is number => Boolean(x))
-        if (jetzt.length)
-          await req.payload.update({ collection: 'passdokumente', where: { id: { in: jetzt } }, data: { antrag: doc.id, team } as never, overrideAccess: true, req })
+        const jetzt: number[] = []
+        for (const u of UNTERLAGEN) {
+          const dok = id(doc[u.feld])
+          if (!dok) continue
+          jetzt.push(dok)
+          // Art kommt vom Feld (nicht vom Hochladenden) – wichtig für die Aufbewahrungsfristen
+          await req.payload.update({
+            collection: 'passdokumente',
+            where: { and: [{ id: { equals: dok } }, { or: [{ antrag: { exists: false } }, { antrag: { equals: doc.id } }] }] },
+            data: { antrag: doc.id, team, art: u.feld } as never,
+            overrideAccess: true,
+            req,
+          })
+        }
         const vorher = UNTERLAGEN.map((u) => id(previousDoc?.[u.feld])).filter((x): x is number => Boolean(x) && !jetzt.includes(x as number))
-        if (vorher.length) await req.payload.delete({ collection: 'passdokumente', where: { id: { in: vorher } }, overrideAccess: true, req })
+        if (vorher.length)
+          await req.payload.delete({ collection: 'passdokumente', where: { and: [{ id: { in: vorher } }, { antrag: { equals: doc.id } }] }, overrideAccess: true, req })
         return doc
       },
     ],

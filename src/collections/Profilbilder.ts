@@ -2,7 +2,8 @@ import path from 'path'
 import type { Access, CollectionConfig, Where } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { ausblendenAusser, eigeneAngebotIds, hasRole, TEAM_ROLLEN } from '@/access/roles'
+import { ausblendenAusser, eigeneAngebotIds, hasRole } from '@/access/roles'
+import { privateDatei } from '@/utilities/privateDatei'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -21,7 +22,8 @@ const fotoLesen: Access = async ({ req }) => {
   if (!user) return false
   if (hasRole(user as never, 'admin', 'kasse')) return true
   const eigenes: Where = { besitzer: { equals: user.id } }
-  if (hasRole(user as never, ...TEAM_ROLLEN)) {
+  // Nur Übungsleitung – Team-Redaktion (z. B. Pressewarte) sieht keine Mitgliederfotos
+  if (hasRole(user as never, 'uebungsleitung')) {
     const ids = await eigeneAngebotIds(req)
     if (ids.length) return { or: [eigenes, { 'besitzer.angebote': { in: ids } }] } as Where
   }
@@ -55,6 +57,7 @@ export const Profilbilder: CollectionConfig = {
   upload: {
     staticDir: path.resolve(dirname, '../../profilbilder'),
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp'],
+    modifyResponseHeaders: privateDatei,
     // Original gleich verkleinern (quadratisch) – entfernt auch Standort- und Kameradaten aus dem Foto
     resizeOptions: { width: 800, height: 800, fit: 'cover', position: 'attention' },
     formatOptions: { format: 'webp', options: { quality: 82 } },

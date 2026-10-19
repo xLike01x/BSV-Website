@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url'
 
 import { ausblendenAusser, hasRole, istMitgliedOderMehr } from '@/access/roles'
 
+import { privateDatei } from '@/utilities/privateDatei'
+
 import { dokumenteUmziehen } from './dokumenteUmziehen'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -35,6 +37,7 @@ export const Dokumente: CollectionConfig = {
   fields: [{ name: 'titel', label: 'Titel', type: 'text', admin: { description: 'Nur intern, z. B. „Protokoll JHV 2026“.' } }],
   upload: {
     staticDir: path.resolve(dirname, '../../dokumente'),
+    modifyResponseHeaders: privateDatei,
     mimeTypes: ['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.*', 'application/vnd.ms-excel', 'text/plain'],
   },
 }

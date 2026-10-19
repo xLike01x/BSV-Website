@@ -1,6 +1,6 @@
 import type { Endpoint } from 'payload'
 
-import { eigeneAngebotIds, hasRole, TEAM_ROLLEN } from '@/access/roles'
+import { eigeneAngebotIds, hasRole } from '@/access/roles'
 
 /** Mitglieder eines Teams/Kurses mit Foto – für Admin, Redaktion, Kasse und die Verantwortlichen des Kurses */
 export const teilnehmendeEndpunkt: Endpoint = {
@@ -11,7 +11,7 @@ export const teilnehmendeEndpunkt: Endpoint = {
     const user = req.user
     if (!user || !id) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
     const verwaltung = hasRole(user as never, 'admin', 'redaktion', 'kasse')
-    const trainer = hasRole(user as never, ...TEAM_ROLLEN) && (await eigeneAngebotIds(req)).includes(id)
+    const trainer = hasRole(user as never, 'uebungsleitung') && (await eigeneAngebotIds(req)).includes(id)
     if (!verwaltung && !trainer) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
     const r = await req.payload.find({
       collection: 'users',

@@ -4,6 +4,8 @@ import { fileURLToPath } from 'url'
 
 import { ausblendenAusser, istMitgliedOderMehr } from '@/access/roles'
 
+import { privateDatei } from '@/utilities/privateDatei'
+
 import { istPassVerwaltung, passLesen } from './zugriff'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
@@ -37,7 +39,9 @@ export const Passdokumente: CollectionConfig = {
   },
   upload: {
     staticDir: path.resolve(dirname, '../../passantraege'),
-    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/heic', 'image/heif'],
+    // Ohne HEIC: das zeigen viele Browser nicht an. iPhones wandeln Fotos beim Hochladen automatisch in JPG um.
+    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
+    modifyResponseHeaders: privateDatei,
   },
   hooks: {
     beforeChange: [
