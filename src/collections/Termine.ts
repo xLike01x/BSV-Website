@@ -1,5 +1,5 @@
 import { hinweisFeld } from '@/fields/hinweise'
-import { ausblendenAusser } from '@/access/roles'
+import { ausblendenAusserMit, rolleOderRecht } from '@/access/roles'
 import type { Access, CollectionConfig } from 'payload'
 
 import { hasRole, isEditor, istMitgliedOderMehr } from '../access/roles'
@@ -16,15 +16,15 @@ export const Termine: CollectionConfig = {
   labels: { singular: 'Termin', plural: 'Termine' },
   access: {
     read: readTermine,
-    create: isEditor,
-    update: isEditor,
-    delete: isEditor,
+    create: rolleOderRecht('termine', 'admin', 'redaktion'),
+    update: rolleOderRecht('termine', 'admin', 'redaktion'),
+    delete: rolleOderRecht('termine', 'admin', 'redaktion'),
   },
   admin: {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Veranstaltungen für den Vereinskalender auf der Seite „Termine“.',
     group: 'Inhalte',
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserMit('termine', 'admin', 'redaktion'),
     useAsTitle: 'title',
     defaultColumns: ['title', 'beginn', 'bereich', 'nurMitglieder'],
   },

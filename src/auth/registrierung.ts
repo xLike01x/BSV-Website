@@ -1,6 +1,7 @@
 import crypto from 'crypto'
 import type { Endpoint, PayloadRequest, Where } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { ratenGrenze } from '@/hooks/spamSchutz'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -36,7 +37,9 @@ export const WARTEND: Where = {
 /** Bei einer frischen Installation darf sich niemand von außen als Erstes registrieren (das erste Konto wird Web-Admin) */
 const eingerichtet = async (req: PayloadRequest) => (await req.payload.count({ collection: 'users', overrideAccess: true })).totalDocs > 0
 
-const darfFreigeben = (req: PayloadRequest) => hasRole(req.user as never, 'admin', 'kasse')
+/** Admin, Kasse oder Einzelrecht „Registrierungen freigeben“ */
+export const darfRegistrierungen = (user: unknown) => hasRole(user as never, 'admin', 'kasse') || hatRecht(user, 'registrierungen')
+const darfFreigeben = (req: PayloadRequest) => darfRegistrierungen(req.user)
 
 const vonDerWebsite = (req: PayloadRequest) => {
   if (!(req.headers.get('content-type') ?? '').includes('application/json')) return false

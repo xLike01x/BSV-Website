@@ -1,7 +1,7 @@
 import type { Access, CollectionConfig, Field, PayloadRequest, Where } from 'payload'
 import { APIError } from 'payload'
 
-import { ausblendenAusser, istMitgliedOderMehr } from '@/access/roles'
+import { ausblendenAusserMit, istMitgliedOderMehr } from '@/access/roles'
 
 import { istBearbeiter, istPassVerwaltung, passLesen, passTeams } from './zugriff'
 import { teamBenachrichtigen } from '@/sport/teamMail'
@@ -85,7 +85,7 @@ export const Passantraege: CollectionConfig = {
   },
   admin: {
     group: 'Posteingang',
-    hidden: ausblendenAusser('admin', 'passwesen', 'uebungsleitung'),
+    hidden: ausblendenAusserMit('passantraege', 'admin', 'passwesen', 'uebungsleitung'),
     useAsTitle: 'spielerName',
     defaultColumns: ['spielerName', 'team', 'art', 'status', 'createdAt'],
     components: {

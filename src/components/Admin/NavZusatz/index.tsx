@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 
-import { EINTRAEGE, type Eintrag } from './eintraege'
+import { EINTRAEGE, type Eintrag, eintragSichtbar } from './eintraege'
 import './nav-zusatz.scss'
 
 /** Bereiche mit Zähler „neu“ (Schlüssel = Sammlung) */
@@ -38,7 +38,7 @@ export default function NavZusatz() {
   const { user } = useAuth<{ roles?: string[] }>()
   const pfad = usePathname()
   const rollen = user?.roles ?? []
-  const sichtbar = EINTRAEGE.filter((e) => e.rollen.some((r) => rollen.includes(r)))
+  const sichtbar = EINTRAEGE.filter((e) => eintragSichtbar(e, user))
   const [ziele, setZiele] = useState<Record<string, Element | null>>({})
   const [zahlen, setZahlen] = useState<Record<string, number>>({})
 
@@ -69,7 +69,7 @@ export default function NavZusatz() {
     beobachter.observe(nav, { childList: true, subtree: true })
     return () => beobachter.disconnect()
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [user, rollen.join(',')])
+  }, [user, rollen.join(','), sichtbar.length])
 
   // Zähler laden: beim Seitenwechsel und jede Minute
   const laden = useCallback(async () => {

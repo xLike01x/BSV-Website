@@ -1,5 +1,5 @@
 import { medienPruefen } from '@/hooks/medienPruefen'
-import { medienAuswahl } from '@/access/roles'
+import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
@@ -117,6 +117,7 @@ export const Posts: CollectionConfig<'posts'> = {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.',
     group: 'Inhalte',
+    hidden: ausblendenBeiNurEinzelrechten,
     defaultColumns: ['title', 'team', 'aufStartseite', '_status', 'publishedAt'],
     livePreview: {
       url: ({ data, req }) =>

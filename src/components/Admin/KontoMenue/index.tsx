@@ -1,5 +1,6 @@
 'use client'
 import { useAuth } from '@payloadcms/ui'
+import { einzelrechteVon } from '@/access/einzelrechte'
 import React, { useEffect, useRef, useState } from 'react'
 
 import './konto.scss'
@@ -62,6 +63,7 @@ export default function KontoMenue() {
   const rolle = rollen
     .filter((r) => !(r === 'admin' && rollen.includes('webadmin')))
     .map((r) => ROLLEN[r] ?? r)
+    .concat(einzelrechteVon(user).length ? [`+${einzelrechteVon(user).length} Zusatzrecht${einzelrechteVon(user).length === 1 ? '' : 'e'}`] : [])
     .join(' · ')
 
   async function raus() {

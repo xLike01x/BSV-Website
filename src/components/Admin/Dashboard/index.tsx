@@ -4,7 +4,9 @@ import type { AdminViewServerProps, CollectionSlug, Where } from 'payload'
 import React from 'react'
 
 import { hauptRolle, ROLLEN_PROFIL } from '../Hilfe/extras'
-import { EINTRAEGE, REIHENFOLGE, VERSTECKT } from '../NavZusatz/eintraege'
+import { einzelrechteVon, einzelrechtLabel } from '@/access/einzelrechte'
+import { nurEinzelrechte } from '@/access/roles'
+import { EINTRAEGE, eintragSichtbar, REIHENFOLGE, VERSTECKT } from '../NavZusatz/eintraege'
 import Tour from '../Tour'
 import ErsteSchritte from './ErsteSchritte'
 import { aufgabenFuer } from './aufgaben'
@@ -58,7 +60,9 @@ export default async function Dashboard(props: AdminViewServerProps) {
   const darfGlobal = (slug: string) => Boolean((permissions.globals as Record<string, Record<string, unknown>> | undefined)?.[slug]?.update)
 
   const rollen = ((user as { roles?: string[] }).roles ?? []) as string[]
-  const istTeamRolle = !rollen.some((r) => ['admin', 'redaktion', 'kasse', 'passwesen'].includes(r))
+  // Nur über Einzelrechte hier (keine Verwaltungs-Rolle): schlankes Dashboard nur mit den freigegebenen Bereichen
+  const nurZusatz = nurEinzelrechte(user)
+  const istTeamRolle = !nurZusatz && !rollen.some((r) => ['admin', 'redaktion', 'kasse', 'passwesen'].includes(r))
   const vorname = ((user as { name?: string }).name || user.email || '').split(/[\s@]/)[0]
   const zaehle = (collection: CollectionSlug, where?: Where) =>
     sicher(async () => (await payload.count({ collection, where, user, overrideAccess: false, req })).totalDocs, 0)
@@ -98,7 +102,9 @@ export default async function Dashboard(props: AdminViewServerProps) {
 
   type Karte = { label: string; wert: number | string; farbe: string; href?: string; hinweis?: string }
   const karten: Karte[] = []
-  if (!istTeamRolle) {
+  if (nurZusatz) {
+    // keine Vereins- oder Team-Zahlen – nur die Bereiche aus den Zusatzrechten (folgen unten)
+  } else if (!istTeamRolle) {
     karten.push({ label: 'Mitglieder', wert: (verein?.mitglieder ?? 0).toLocaleString('de-DE'), farbe: 'gruen', href: `${ADMIN}/globals/verein`, hinweis: 'laut Vereinsdaten' })
   } else {
     karten.push({ label: eigeneTeams.length === 1 ? 'Mein Team' : 'Meine Teams', wert: eigeneTeams.length, farbe: 'gruen' })
@@ -106,9 +112,9 @@ export default async function Dashboard(props: AdminViewServerProps) {
   if (antraege !== null) karten.push({ label: 'Offene Mitgliedsanträge', wert: antraege, farbe: 'orange', href: `${ADMIN}/collections/mitgliedsantraege?where[status][equals]=neu` })
   if (probe !== null) karten.push({ label: 'Neue Probetraining-Anfragen', wert: probe, farbe: 'blau', href: `${ADMIN}/collections/probetraining?where[status][equals]=neu` })
   if (kontakt !== null && karten.length < 4) karten.push({ label: 'Neue Kontaktanfragen', wert: kontakt, farbe: 'orange', href: `${ADMIN}/collections/kontaktanfragen?where[status][equals]=neu` })
-  karten.push({ label: istTeamRolle ? 'News meiner Teams' : 'News veröffentlicht', wert: news, farbe: 'lila', href: `${ADMIN}/collections/posts` })
-  if (karten.length < 4) karten.push({ label: 'Kommende Termine', wert: termine, farbe: 'blau', href: `${ADMIN}/collections/termine` })
-  if (karten.length < 4) karten.push({ label: 'Gemeldete Ausfälle', wert: ausfaelle, farbe: 'orange', href: `${ADMIN}/collections/ausfaelle` })
+  if (!nurZusatz) karten.push({ label: istTeamRolle ? 'News meiner Teams' : 'News veröffentlicht', wert: news, farbe: 'lila', href: `${ADMIN}/collections/posts` })
+  if (karten.length < 4 && (!nurZusatz || darf('termine', 'create'))) karten.push({ label: 'Kommende Termine', wert: termine, farbe: 'blau', href: `${ADMIN}/collections/termine` })
+  if (karten.length < 4 && (!nurZusatz || einzelrechteVon(user).includes('ausfaelle'))) karten.push({ label: 'Gemeldete Ausfälle', wert: ausfaelle, farbe: 'orange', href: `${ADMIN}/collections/ausfaelle` })
 
   // Schnellzugriff – nur was die Rolle wirklich darf
   const aktionen: { label: string; href: string; primaer?: boolean }[] = []
@@ -164,7 +170,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
     label: g.label,
     eintraege: [
       ...g.entities.filter((e) => !VERSTECKT.includes(e.slug)).map((e) => ({ key: e.slug, href: `${ADMIN}/${e.type}/${e.slug}`, label: getTranslation(e.label, i18n) })),
-      ...EINTRAEGE.filter((z) => z.gruppe === g.label && z.rollen.some((r) => rollen.includes(r))).map((z) => ({ key: z.key, href: z.href, label: z.label })),
+      ...EINTRAEGE.filter((z) => z.gruppe === g.label && eintragSichtbar(z, user)).map((z) => ({ key: z.key, href: z.href, label: z.label })),
     ]
       .map((e, i) => ({ ...e, i }))
       .sort((a, b) => rang(a.key) - rang(b.key) || a.i - b.i),
@@ -172,12 +178,20 @@ export default async function Dashboard(props: AdminViewServerProps) {
 
   // Willkommen: Was darf ich mit meiner Rolle?
   const rolle = hauptRolle(rollen)
-  const profil = ROLLEN_PROFIL[rolle]
+  const profil = nurZusatz
+    ? {
+        ...ROLLEN_PROFIL.mitglied,
+        label: 'Mitglied mit Zusatzrechten',
+        kurz: 'Ein Admin hat dir einzelne Bereiche der Verwaltung freigegeben.',
+        darf: einzelrechteVon(user).map(einzelrechtLabel),
+        darfNicht: ['Alle anderen Bereiche der Verwaltung'],
+      }
+    : ROLLEN_PROFIL[rolle]
   const teamNamen = eigeneTeams.map((t) => t.title)
 
   // Erste Schritte: erste eigene News (bzw. Ausfall für Übungsleitungen)
   const ersteAufgabe =
-    rolle === 'kasse' || rolle === 'passwesen'
+    rolle === 'kasse' || rolle === 'passwesen' || nurZusatz
       ? undefined
       : rolle === 'uebungsleitung'
         ? {

@@ -1,4 +1,4 @@
-import { WARTEND } from '@/auth/registrierung'
+import { darfRegistrierungen, WARTEND } from '@/auth/registrierung'
 import type { PayloadRequest } from 'payload'
 
 import { faellige } from '@/datenschutz/aufraeumen'
@@ -40,7 +40,7 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     if (neu.totalDocs)
       a.push({ key: 'passantraege', art: 'warn', symbol: '⚽', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Passantrag wartet' : 'neue Passanträge warten'} auf Prüfung.`, href: '/admin/collections/passantraege?where[status][equals]=eingereicht', link: 'Prüfen' })
   }
-  if (admin || rollen.includes('kasse')) {
+  if (darfRegistrierungen(req.user)) {
     const wartend = await req.payload.count({ collection: 'users', where: WARTEND, overrideAccess: true }).catch(() => ({ totalDocs: 0 }))
     if (wartend.totalDocs)
       a.push({ key: 'registrierungen', art: 'warn', symbol: '🙋', text: `${wartend.totalDocs} ${wartend.totalDocs === 1 ? 'neue Registrierung wartet' : 'neue Registrierungen warten'} auf Freigabe.`, href: '/admin/registrierungen', link: 'Ansehen' })

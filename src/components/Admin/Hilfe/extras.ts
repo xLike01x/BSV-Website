@@ -815,6 +815,11 @@ export const FAQ: Faq[] = [
     bereich: 'dashboard',
   },
   {
+    frage: 'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
+    antwort: 'Ja. Benutzer öffnen → unten „Zusatzrechte nur für diese Person“ → Häkchen setzen → Speichern. Zur Wahl stehen: Kontaktanfragen, Probetraining-Anfragen aller Teams, Passanträge aller Teams, Registrierungen freigeben, Formular-Eingänge, Termine, Ehrenamt & Mitmachen, Trainingsausfälle für alle Teams und Mitgliedschaften (nur lesen). Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Admin. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. In „Rollen & Rechte“ stehen Zusatzrechte als orange „+ …“ unter den Rollen der Person.',
+    bereich: 'users',
+  },
+  {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
     bereich: 'users',

@@ -1,6 +1,7 @@
 import type { CollectionConfig, Where } from 'payload'
 
 import { hasRole, isFinance, istMitgliedOderMehr } from '@/access/roles'
+import { hatRecht } from '@/access/einzelrechte'
 import { darf, rechteLaden } from '@/access/rollenRechte'
 
 export const MITGLIEDSART: Record<string, string> = {
@@ -23,7 +24,7 @@ export const Mitgliedschaften: CollectionConfig = {
     read: async ({ req }) => {
       const user = req.user as { email?: string; roles?: string[] } | null
       if (!user || !istMitgliedOderMehr(user)) return false
-      if ((user.roles ?? []).some((r) => r === 'admin' || r === 'kasse')) return true
+      if ((user.roles ?? []).some((r) => r === 'admin' || r === 'kasse') || hatRecht(user, 'mitgliedschaften')) return true
       await rechteLaden(req.payload)
       if (darf(user, 'passwesen', 'mitgliedschaften')) return true
       // Nur über die feste Verknüpfung mit dem Konto – nicht über die E-Mail (die ist nicht bestätigt)
@@ -35,7 +36,7 @@ export const Mitgliedschaften: CollectionConfig = {
   },
   admin: {
     group: 'Mitglieder',
-    hidden: ({ user }) => !(hasRole(user as never, 'admin', 'kasse') || darf(user, 'passwesen', 'mitgliedschaften')),
+    hidden: ({ user }) => !(hasRole(user as never, 'admin', 'kasse') || darf(user, 'passwesen', 'mitgliedschaften') || hatRecht(user, 'mitgliedschaften')),
     useAsTitle: 'anzeigeName',
     defaultColumns: ['anzeigeName', 'mitgliedsnummer', 'art', 'eintritt', 'konto', 'aktiv'],
     components: { beforeList: ['@/components/Admin/Einstieg'] },

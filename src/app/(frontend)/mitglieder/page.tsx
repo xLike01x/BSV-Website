@@ -1,3 +1,4 @@
+import { hatEinzelrechte } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { darf, rechteLaden } from '@/access/rollenRechte'
 import { TeamPflege } from '@/bsv/components/TeamPflege'
@@ -94,7 +95,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
   const echteRollen = zf._rollen ?? user.roles ?? []
   const rollen = user.roles ?? []
   // Knopf „Zur Verwaltung“ nur für Rollen, die die Verwaltung auch öffnen dürfen (gleiche Liste wie canUseAdminPanel)
-  const istStaff = hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
+  const istStaff = hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(user)
   const zweiFaktorOffen = Boolean(zf._zweiFaktorOffen)
   const meine = (user.angebote ?? []).filter((a): a is Angebote => typeof a === 'object')
   const geleitet = rollen.includes('uebungsleitung') || rollen.includes('teamredaktion')

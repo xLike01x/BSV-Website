@@ -2,6 +2,7 @@ import type { CollectionConfig, PayloadRequest } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { hasRole } from '../access/roles'
+import { hatRecht } from '../access/einzelrechte'
 import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { mailHtml } from '@/auth/mail'
@@ -18,8 +19,8 @@ export const Kontaktanfragen: CollectionConfig = {
   access: {
     create: anyone,
     // Redaktion immer; Kasse, wenn der Web-Admin es unter „Rollen-Rechte“ eingeschaltet hat
-    read: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin', 'redaktion') || darf(req.user, 'kasse', 'kontaktanfragen')),
-    update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin', 'redaktion') || darf(req.user, 'kasse', 'kontaktanfragen')),
+    read: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin', 'redaktion') || darf(req.user, 'kasse', 'kontaktanfragen') || hatRecht(req.user, 'kontaktanfragen')),
+    update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin', 'redaktion') || darf(req.user, 'kasse', 'kontaktanfragen') || hatRecht(req.user, 'kontaktanfragen')),
     delete: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'redaktion', 'kontaktLoeschen')),
   },
   admin: {

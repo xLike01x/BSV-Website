@@ -31,11 +31,15 @@ type ZfUser = {
   zweiFaktorSitzungen?: Sitzung[] | null
   zweiFaktorLetzterSchritt?: number | null
   _rollen?: string[]
+  zusatzrechte?: Record<string, unknown> | null
+  _zusatzrechte?: Record<string, unknown> | null
   _zweiFaktorOffen?: boolean
   testkonto?: boolean | null
 }
 
-const istPersonal = (roles?: string[] | null) => (roles ?? []).some((r) => r !== 'mitglied')
+/** Verwaltungs-Zugang: jede Rolle außer „Mitglied“ – oder mindestens ein Einzelrecht (Zusatzrechte der Person) */
+const istPersonal = (roles?: string[] | null, zusatz?: Record<string, unknown> | null) =>
+  (roles ?? []).some((r) => r !== 'mitglied') || Object.values(zusatz ?? {}).some((v) => v === true)
 
 /** Felder, die nie über die API sichtbar oder änderbar sind */
 const geheim = { read: () => false, create: () => false, update: () => false }
@@ -77,27 +81,31 @@ export const zweiFaktorStrategie: AuthStrategy = {
     const u = res.user as unknown as ZfUser | null
     if (!u) return res
     u._rollen = [...(u.roles ?? [])]
+    u._zusatzrechte = { ...(u.zusatzrechte ?? {}) }
     try {
       // Testkonten (nur lokal) brauchen keinen zweiten Faktor
       const testOhne2fa = Boolean(u.testkonto) && testkontenErlaubt(args.headers)
-      if (!AUS() && !testOhne2fa && istPersonal(u.roles)) {
+      if (!AUS() && !testOhne2fa && istPersonal(u.roles, u.zusatzrechte)) {
         const jetzt = Date.now()
         const sitzungen = Array.isArray(u.zweiFaktorSitzungen) ? u.zweiFaktorSitzungen : []
         const ok = Boolean(u._sid && sitzungen.some((s) => s?.sid === u._sid && new Date(s.bis).getTime() > jetzt))
         if (!ok) {
           // Ohne bestätigten Code: angemeldet, aber ohne jede Rolle – auch der Mitgliederbereich öffnet sich erst nach dem Code
           u.roles = []
+          u.zusatzrechte = {}
           u._zweiFaktorOffen = true
         }
       }
       // Selbst registriert und noch nicht freigegeben: angemeldet, aber ohne Rechte (auch kein Mitgliederbereich)
       if ((u as { freigegeben?: boolean | null }).freigegeben === false) {
         u.roles = []
+        u.zusatzrechte = {}
         ;(u as { _wartetAufFreigabe?: boolean })._wartetAufFreigabe = true
       }
     } catch {
       // Im Zweifel geschlossen: lieber gar keine Rechte als Verwaltung ohne zweiten Faktor
       u.roles = []
+      u.zusatzrechte = {}
       u._zweiFaktorOffen = true
     }
     entferneGeheimes(u)
@@ -156,7 +164,7 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const rollen = u._rollen ?? u.roles ?? []
       return json({
         angemeldet: true,
-        personal: istPersonal(rollen),
+        personal: istPersonal(rollen, u._zusatzrechte ?? u.zusatzrechte),
         eingerichtet: Boolean(u.zweiFaktorAktiv),
         offen: Boolean(u._zweiFaktorOffen),
         abgeschaltet: AUS() || (Boolean(u.testkonto) && testkontenErlaubt(req.headers)),
@@ -170,7 +178,7 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
     handler: async (req) => {
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
-      if (!istPersonal(u._rollen ?? u.roles)) return json({ fehler: 'Nur für Zugänge zur Verwaltung nötig.' }, 400)
+      if (!istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) return json({ fehler: 'Nur für Zugänge zur Verwaltung nötig.' }, 400)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Die Zwei-Faktor-Anmeldung ist bereits eingerichtet.' }, 400)
       const geheimnis = neuesGeheimnis()
       await req.payload.update({

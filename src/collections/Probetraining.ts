@@ -2,6 +2,7 @@ import type { Access, CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { hasRole, isEditorField } from '../access/roles'
+import { hatRecht } from '../access/einzelrechte'
 import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
@@ -11,7 +12,7 @@ import { teamBenachrichtigen } from '@/sport/teamMail'
 const readAnfragen: Access = async ({ req }) => {
   const user = req.user as { id: number; roles?: string[] } | null
   if (!user) return false
-  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  if (hasRole(user as never, 'admin', 'redaktion') || hatRecht(user, 'probetraining')) return true
   await rechteLaden(req.payload)
   if (darf(user, 'uebungsleitung', 'probetraining')) {
     const eigene = await req.payload.find({

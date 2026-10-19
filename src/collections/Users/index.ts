@@ -5,6 +5,7 @@ import { webadminLoeschSchutz, webadminSchutz } from './webadminSchutz'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
+import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
@@ -96,6 +97,18 @@ export const Users: CollectionConfig = {
         description: 'Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Trainer oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.',
         defaultColumns: ['title', 'bereich'],
       },
+    },
+    {
+      // Einzelne Berechtigungen nur für diese Person – zusätzlich zu den Rollen (siehe src/access/einzelrechte.ts)
+      name: 'zusatzrechte',
+      label: 'Zusatzrechte nur für diese Person',
+      type: 'group',
+      access: { create: isAdminField, update: isAdminField },
+      admin: {
+        description:
+          'Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.',
+      },
+      fields: EINZELRECHTE.map((r) => ({ name: r.key, label: r.label, type: 'checkbox' as const, defaultValue: false, admin: { description: `${r.gruppe} · ${r.text}` } })),
     },
     {
       name: 'profilbild',
@@ -242,4 +255,4 @@ export const Users: CollectionConfig = {
 }
 
 export const isStaffUser = (user: unknown) =>
-  hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
+  hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(user)

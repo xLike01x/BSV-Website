@@ -1,6 +1,6 @@
 import { teilnehmendeEndpunkt } from '@/components/Admin/Teilnehmende/endpunkt'
 import { medienPruefen } from '@/hooks/medienPruefen'
-import { medienAuswahl } from '@/access/roles'
+import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 import { slugField } from 'payload'
@@ -37,6 +37,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.',
     group: 'Sport',
+    hidden: ausblendenBeiNurEinzelrechten,
     useAsTitle: 'title',
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],

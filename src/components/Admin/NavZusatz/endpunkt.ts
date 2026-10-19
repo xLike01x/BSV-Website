@@ -1,7 +1,8 @@
 import type { Endpoint, Where } from 'payload'
 
 import { hasRole } from '@/access/roles'
-import { WARTEND } from '@/auth/registrierung'
+import { darfRegistrierungen, WARTEND } from '@/auth/registrierung'
+import { istPassVerwaltung } from '@/passantraege/zugriff'
 
 /** Was gilt im Posteingang als „neu“? (gleiche Werte wie der Reiter „Neu“ über der Liste) */
 const NEU: { sammlung: string; status: string[] }[] = [
@@ -22,14 +23,16 @@ export const posteingangEndpunkt: Endpoint = {
     const user = req.user
     if (!user) return Response.json({}, { status: 401 })
     const zahlen: Record<string, number> = {}
+    // Passanträge nur für die, die sie bearbeiten (nicht die eigenen Anträge als Mitglied)
+    const passBearbeiter = istPassVerwaltung(user) || hasRole(user as never, 'uebungsleitung')
     await Promise.all(
-      NEU.map(async ({ sammlung, status }) => {
+      NEU.filter((n) => n.sammlung !== 'passantraege' || passBearbeiter).map(async ({ sammlung, status }) => {
         const where: Where = { status: { in: status } }
         const r = await req.payload.count({ collection: sammlung as never, where, user, overrideAccess: false, req }).catch(() => null)
         if (r) zahlen[sammlung] = r.totalDocs
       }),
     )
-    if (hasRole(user as never, 'admin', 'kasse')) {
+    if (darfRegistrierungen(user)) {
       zahlen.registrierungen = (await req.payload.count({ collection: 'users', where: WARTEND, overrideAccess: true, req })).totalDocs
     }
     return Response.json(zahlen, { headers: { 'Cache-Control': 'no-store' } })

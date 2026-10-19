@@ -1,19 +1,19 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '@/access/anyone'
-import { ausblendenAusser, isEditor } from '@/access/roles'
+import { ausblendenAusserMit, rolleOderRecht } from '@/access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '@/hooks/revalidateAlles'
 
 /** „Wir suchen“: Ehrenamt, Trainer, Helfer – erscheint auf /mitmachen */
 export const Gesuche: CollectionConfig = {
   slug: 'gesuche',
   labels: { singular: 'Gesuch (Ehrenamt)', plural: 'Ehrenamt & Mitmachen' },
-  access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
+  access: { read: anyone, create: rolleOderRecht('gesuche', 'admin', 'redaktion'), update: rolleOderRecht('gesuche', 'admin', 'redaktion'), delete: rolleOderRecht('gesuche', 'admin', 'redaktion') },
   admin: {
     group: 'Inhalte',
     useAsTitle: 'titel',
     defaultColumns: ['titel', 'aufwand', 'aktiv'],
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserMit('gesuche', 'admin', 'redaktion'),
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Wen der Verein gerade sucht – Trainer, Helfer, Schiris, Vorstand. Erscheint auf der Seite „Mitmachen“.',
   },

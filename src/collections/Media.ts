@@ -1,3 +1,4 @@
+import { ausblendenBeiNurEinzelrechten } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
@@ -47,6 +48,7 @@ export const Media: CollectionConfig = {
   admin: {
     description: 'Alle Bilder und Dateien, sortiert in Ordner je Team. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.',
     group: 'Inhalte',
+    hidden: ausblendenBeiNurEinzelrechten,
     defaultColumns: ['filename', 'alt', 'team', 'allgemein', 'inGalerie'],
     // Team-Rollen sehen nur Bilder ihrer Teams und „Verein allgemein“
     baseFilter: ({ req }) => medienSichtbar(req),

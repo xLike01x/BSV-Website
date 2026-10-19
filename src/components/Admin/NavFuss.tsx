@@ -1,5 +1,6 @@
 'use client'
 import { useAuth } from '@payloadcms/ui'
+import { einzelrechteVon } from '@/access/einzelrechte'
 import React from 'react'
 
 const ROLLEN: Record<string, string> = {
@@ -28,6 +29,7 @@ export default function NavFuss() {
   const rolle = rollen
     .filter((r) => !(r === 'admin' && rollen.includes('webadmin')))
     .map((r) => ROLLEN[r] ?? r)
+    .concat(einzelrechteVon(user).length ? [`+${einzelrechteVon(user).length} Zusatzrecht${einzelrechteVon(user).length === 1 ? '' : 'e'}`] : [])
     .join(' · ')
   return (
     <div className="bsv-nav-fuss">

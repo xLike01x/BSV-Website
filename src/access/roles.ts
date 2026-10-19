@@ -1,5 +1,7 @@
 import type { Access, FieldAccess, PayloadRequest, Where } from 'payload'
 
+import { type EinzelrechtKey, hatEinzelrechte, hatRecht } from './einzelrechte'
+
 /**
  * Rollen im BSV. Ein Login für alle – die Rolle bestimmt die Rechte.
  * - webadmin:       Technik-Verantwortliche/r: alles wie Admin, dazu Technik-Bereiche und Schutz der
@@ -57,7 +59,7 @@ export const isFinance: Access = ({ req }) => hasRole(userOf(req), 'admin', 'kas
 
 /** Wer darf das Admin-Panel unter /admin öffnen? Mitglieder nutzen nur die Website. */
 export const canUseAdminPanel = ({ req }: { req: PayloadRequest }): boolean =>
-  hasRole(userOf(req), 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
+  hasRole(userOf(req), 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(req.user)
 
 /** Medien hochladen: alle mit Inhaltsrechten. */
 export const canUpload: Access = ({ req }) => hasRole(userOf(req), 'admin', 'redaktion', ...TEAM_ROLLEN)
@@ -130,6 +132,25 @@ export const ausblendenAusser =
   (...roles: Role[]) =>
   ({ user }: { user: unknown }): boolean =>
     !hasRole(user as MaybeUser, ...roles)
+
+/** Nur über Einzelrechte in der Verwaltung (keine Verwaltungs-Rolle)? Dann Bereiche ohne passendes Recht ausblenden. */
+export const nurEinzelrechte = (user: unknown): boolean =>
+  hatEinzelrechte(user) && !hasRole(user as MaybeUser, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
+
+/** Für Personen, die nur über Einzelrechte hier sind, ausblenden (z. B. News, Mediathek, die sie nur lesen könnten) */
+export const ausblendenBeiNurEinzelrechten = ({ user }: { user: unknown }): boolean => nurEinzelrechte(user)
+
+/** Wie ausblendenAusser – zusätzlich sichtbar für Personen mit diesem Einzelrecht */
+export const ausblendenAusserMit =
+  (recht: EinzelrechtKey, ...roles: Role[]) =>
+  ({ user }: { user: unknown }): boolean =>
+    !hasRole(user as MaybeUser, ...roles) && !hatRecht(user, recht)
+
+/** Zugriff für diese Rollen ODER Personen mit diesem Einzelrecht */
+export const rolleOderRecht =
+  (recht: EinzelrechtKey, ...roles: Role[]): Access =>
+  ({ req }) =>
+    hasRole(userOf(req), ...roles) || hatRecht(req.user, recht)
 
 /**
  * Welche Bilder darf jemand in der Verwaltung sehen und auswählen?

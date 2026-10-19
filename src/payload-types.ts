@@ -539,6 +539,47 @@ export interface User {
     totalDocs?: number;
   };
   /**
+   * Für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Wer welche Zusatzrechte hat, zeigt „Rollen & Rechte“.
+   */
+  zusatzrechte?: {
+    /**
+     * Posteingang · Alle Nachrichten aus dem Kontaktformular.
+     */
+    kontaktanfragen?: boolean | null;
+    /**
+     * Posteingang · Nicht nur die der eigenen Teams.
+     */
+    probetraining?: boolean | null;
+    /**
+     * Posteingang · Wie die Rolle Passwesen, inkl. Pass-Unterlagen.
+     */
+    passantraege?: boolean | null;
+    /**
+     * Posteingang · Selbst registrierte Mitglieder freischalten oder ablehnen.
+     */
+    registrierungen?: boolean | null;
+    /**
+     * Posteingang · Einsendungen aus Formularen, die auf Seiten eingebaut sind.
+     */
+    formulare?: boolean | null;
+    /**
+     * Inhalte · Der Vereinskalender auf der Seite „Termine“.
+     */
+    termine?: boolean | null;
+    /**
+     * Inhalte · Gesuche für Helfer und Ehrenamt.
+     */
+    gesuche?: boolean | null;
+    /**
+     * Sport · Nicht nur für die eigenen Teams.
+     */
+    ausfaelle?: boolean | null;
+    /**
+     * Mitglieder · Mitgliedsnummer, Eintritt, Abteilungen (ohne Bankdaten).
+     */
+    mitgliedschaften?: boolean | null;
+  };
+  /**
    * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
    */
   profilbild?: (number | null) | Profilbilder;
@@ -2481,6 +2522,19 @@ export interface UsersSelect<T extends boolean = true> {
   roles?: T;
   angebote?: T;
   verantwortlichFuer?: T;
+  zusatzrechte?:
+    | T
+    | {
+        kontaktanfragen?: T;
+        probetraining?: T;
+        passantraege?: T;
+        registrierungen?: T;
+        formulare?: T;
+        termine?: T;
+        gesuche?: T;
+        ausfaelle?: T;
+        mitgliedschaften?: T;
+      };
   profilbild?: T;
   freigegeben?: T;
   registriertUeber?: T;

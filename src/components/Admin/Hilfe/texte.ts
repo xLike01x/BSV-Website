@@ -299,6 +299,7 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       'Neue Konten anlegen und Rollen vergeben.',
       'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Einstellungen“ → „Rollen & Rechte“.',
+      'Einzelne Rechte nur für diese Person: beim Benutzer unten „Zusatzrechte nur für diese Person“ – Häkchen setzen, speichern. Für Ausnahmen, wenn eine ganze Rolle zu viel wäre.',
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
@@ -458,6 +459,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Reiter „Nach Rolle“: alle Personen, gruppiert nach Rolle, mit Anzahl.',
       'Reiter „Rechte je Rolle“: Rolle anklicken und sehen, welche Bereiche sie sehen, anlegen, bearbeiten und löschen darf – berechnet aus den echten Regeln.',
       'Reiter „Testkonten“: Testkonten je Rolle, Abteilung und Team anlegen, um die Rechte auszuprobieren (nur lokal, ohne Zwei-Faktor).',
+      'Orange gestrichelte Kästchen „+ …“ unter den Rollen: Zusatzrechte, die nur diese Person hat (vergeben beim Benutzer).',
       'Spalte „Zuletzt da“: Wer sich seit über 6 Monaten nicht angemeldet hat, ist mit ⚠️ markiert – Rechte noch nötig?',
       'Oben suchen: Name, Team oder Rolle eintippen.',
       'Rolle ändern: bei der Person auf „Bearbeiten“. Team zuordnen: beim Team auf „Zuordnen“ und unter „Verantwortliche“ eintragen.',

@@ -1,11 +1,17 @@
+import { type EinzelrechtKey, hatRecht } from '@/access/einzelrechte'
+
 /** Sonderseiten, die Payload nicht von selbst in die Gruppen der Seitenleiste setzt */
-export type Eintrag = { key: string; gruppe: string; href: string; label: string; rollen: string[]; zaehler?: string; auch?: string[] }
+export type Eintrag = { key: string; gruppe: string; href: string; label: string; rollen: string[]; recht?: EinzelrechtKey; zaehler?: string; auch?: string[] }
 
 export const EINTRAEGE: Eintrag[] = [
-  { key: 'registrierungen', gruppe: 'Posteingang', href: '/admin/registrierungen', label: 'Registrierungen', rollen: ['admin', 'kasse'], zaehler: 'registrierungen' },
+  { key: 'registrierungen', gruppe: 'Posteingang', href: '/admin/registrierungen', label: 'Registrierungen', rollen: ['admin', 'kasse'], recht: 'registrierungen', zaehler: 'registrierungen' },
   { key: 'rollen', gruppe: 'Einstellungen', href: '/admin/rollen', label: 'Rollen & Rechte', rollen: ['admin'], auch: ['/admin/globals/rollenRechte'] },
   { key: 'sicherung', gruppe: 'Einstellungen', href: '/admin/sicherung', label: 'Datensicherung', rollen: ['webadmin'] },
 ]
+
+/** Sieht diese Person den Eintrag? (Rolle oder passendes Einzelrecht) */
+export const eintragSichtbar = (e: Eintrag, user: unknown) =>
+  ((user as { roles?: string[] | null } | null)?.roles ?? []).some((r) => e.rollen.includes(r)) || (e.recht ? hatRecht(user, e.recht) : false)
 
 /** Feste Reihenfolge innerhalb der Gruppen (wie nav-zusatz.scss); alles andere folgt danach */
 export const REIHENFOLGE = ['verein', 'rollen', 'datenschutz', 'sicherung', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']

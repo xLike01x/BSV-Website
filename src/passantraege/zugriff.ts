@@ -1,12 +1,13 @@
 import type { Access, PayloadRequest, Where } from 'payload'
 
 import { eigeneAngebotIds, hasRole, istMitgliedOderMehr } from '@/access/roles'
+import { hatRecht } from '@/access/einzelrechte'
 import { darf, rechteLaden } from '@/access/rollenRechte'
 
 type U = { id: number; roles?: string[] | null } | null
 
-/** Admin und Passwesen sehen alle Passanträge */
-export const istPassVerwaltung = (user: unknown) => hasRole(user as never, 'admin', 'passwesen')
+/** Admin, Passwesen und Personen mit dem Einzelrecht „Passanträge“ sehen alle Passanträge */
+export const istPassVerwaltung = (user: unknown) => hasRole(user as never, 'admin', 'passwesen') || hatRecht(user, 'passantraege')
 
 /** Teams, deren Passanträge diese Person sehen darf – nur Übungsleitung (nicht Team-Redaktion) */
 export const passTeams = async (req: PayloadRequest): Promise<number[]> => {

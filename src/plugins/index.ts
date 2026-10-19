@@ -6,7 +6,7 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { anyone } from '@/access/anyone'
-import { ausblendenAusser, isAdmin, isEditor, isEditorField } from '@/access/roles'
+import { ausblendenAusser, ausblendenAusserMit, isAdmin, isEditor, isEditorField, rolleOderRecht } from '@/access/roles'
 import { spamSchutz } from '@/hooks/spamSchutz'
 
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
@@ -70,8 +70,8 @@ export const plugins: Plugin[] = [
       // Formulare aus dem Baukasten (Seiten). Eingänge liegen im „Posteingang“, die Formulare selbst unter „Website-Aufbau“.
       labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
       trash: true,
-      admin: { group: 'Posteingang', hidden: ausblendenAusser('admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
-      access: { create: anyone, read: isEditor, update: isAdmin, delete: isAdmin },
+      admin: { group: 'Posteingang', hidden: ausblendenAusserMit('formulare', 'admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
+      access: { create: anyone, read: rolleOderRecht('formulare', 'admin', 'redaktion'), update: isAdmin, delete: isAdmin },
       // Gleicher Schutz wie bei Kontakt & Co.: Anfragen pro Adresse begrenzen, übergroße Eingaben abweisen
       hooks: { beforeValidate: [spamSchutz('formular')] },
     },

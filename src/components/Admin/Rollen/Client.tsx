@@ -16,6 +16,8 @@ export type Person = {
   angelegt?: string | null
   verantwortlich: { id: number; title: string }[]
   mitgliedIn: number[]
+  /** Einzelrechte nur für diese Person (Beschriftungen) */
+  zusatzrechte: string[]
 }
 export type Team = {
   id: number
@@ -102,7 +104,7 @@ const VERWALTUNG = [
   'uebungsleitung',
   'teamredaktion',
 ]
-const hatZugang = (p: { rollen: string[] }) => p.rollen.some((r) => VERWALTUNG.includes(r))
+const hatZugang = (p: { rollen: string[]; zusatzrechte?: string[] }) => p.rollen.some((r) => VERWALTUNG.includes(r)) || (p.zusatzrechte ?? []).length > 0
 
 const MONAT = 30 * 86400000
 /** Verwaltungs-Zugang, aber seit über 6 Monaten nicht angemeldet (oder nie, obwohl das Konto älter als 1 Monat ist) */
@@ -206,6 +208,10 @@ export default function RollenClient({
           <strong>{alteZugaenge}</strong>
           <span>Zugänge seit 6 Monaten ungenutzt</span>
         </div>
+        <div>
+          <strong>{personen.filter((p) => p.zusatzrechte.length > 0).length}</strong>
+          <span>Personen mit Zusatzrechten (einzeln vergeben)</span>
+        </div>
       </div>
 
       <div className="bsv-rollen__leiste">
@@ -299,6 +305,13 @@ export default function RollenClient({
                           <Chip key={r} rolle={r} />
                         ))}
                       </span>
+                      {p.zusatzrechte.length > 0 && (
+                        <span className="bsv-rollen__zusatz" title="Zusatzrechte nur für diese Person – ändern beim Benutzer">
+                          {p.zusatzrechte.map((z) => (
+                            <span key={z}>+ {z}</span>
+                          ))}
+                        </span>
+                      )}
                     </td>
                     <td>
                       {hatZugang(p) ? (

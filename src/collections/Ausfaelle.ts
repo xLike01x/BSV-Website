@@ -3,7 +3,8 @@ import type { Access, CollectionConfig, PayloadRequest } from 'payload'
 import { APIError } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { eigeneAngebotIds, hasRole, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../access/roles'
+import { eigeneAngebotIds, hasRole, nurEinzelrechte, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../access/roles'
+import { hatRecht } from '../access/einzelrechte'
 import { rechteLaden, schalter } from '../access/rollenRechte'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
@@ -14,14 +15,16 @@ const ohneTeamredaktion = async (req: PayloadRequest) => {
   await rechteLaden(req.payload)
   return hasRole(req.user as never, 'teamredaktion') && !hasRole(req.user as never, 'admin', 'redaktion', 'uebungsleitung') && !schalter('teamredaktion', 'ausfaelle')
 }
-const canManage: Access = async (args) => ((await ohneTeamredaktion(args.req)) ? false : eigeneTeams(args))
+const canManage: Access = async (args) => (hatRecht(args.req.user, 'ausfaelle') ? true : (await ohneTeamredaktion(args.req)) ? false : eigeneTeams(args))
+/** Darf Ausfälle für alle Teams melden: Admin, Redaktion oder Einzelrecht „Trainingsausfälle für alle Teams“ */
+const alleTeams = (user: unknown) => hasRole(user as never, 'admin', 'redaktion') || hatRecht(user, 'ausfaelle')
 
 export const Ausfaelle: CollectionConfig = {
   slug: 'ausfaelle',
   labels: { singular: 'Trainingsausfall', plural: 'Trainingsausfälle' },
   access: {
     read: anyone,
-    create: async ({ req }) => !(await ohneTeamredaktion(req)) && hasRole(req.user as never, 'admin', 'redaktion', ...TEAM_ROLLEN),
+    create: async ({ req }) => hatRecht(req.user, 'ausfaelle') || (!(await ohneTeamredaktion(req)) && hasRole(req.user as never, 'admin', 'redaktion', ...TEAM_ROLLEN)),
     update: canManage,
     delete: canManage,
   },
@@ -29,6 +32,7 @@ export const Ausfaelle: CollectionConfig = {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Fällt ein Training aus? Hier eintragen – es erscheint sofort auf der Seite des Teams.',
     group: 'Sport',
+    hidden: ({ user }) => nurEinzelrechte(user) && !hatRecht(user, 'ausfaelle'),
     useAsTitle: 'grund',
     defaultColumns: ['angebot', 'datum', 'grund'],
   },
@@ -42,7 +46,7 @@ export const Ausfaelle: CollectionConfig = {
       relationTo: 'angebote',
       required: true,
       // Team-Rollen sehen in der Auswahl nur ihre eigenen Teams
-      filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+      filterOptions: ({ user }) => (!user || alleTeams(user) ? true : { leitung: { contains: user.id } }),
       admin: { description: 'Welches Team oder welcher Kurs ausfällt.' },
     },
     { name: 'datum', label: 'Datum', type: 'date', required: true, admin: { description: 'Nach diesem Tag verschwindet der Hinweis automatisch.', date: { displayFormat: 'dd.MM.yyyy' } } },
@@ -63,7 +67,7 @@ export const Ausfaelle: CollectionConfig = {
       // Team-Rollen dürfen Ausfälle nur für eigene Angebote anlegen.
       async ({ req, data, operation }) => {
         const user = req.user as { id: number } | null
-        if (operation === 'create' && user && !hasRole(user as never, 'admin', 'redaktion')) {
+        if (operation === 'create' && user && !alleTeams(user)) {
           const ids = await eigeneAngebotIds(req)
           const ziel = typeof data.angebot === 'object' ? data.angebot?.id : data.angebot
           if (!ids.includes(Number(ziel))) throw new APIError('Du kannst nur für deine eigenen Angebote einen Ausfall melden.', 403)

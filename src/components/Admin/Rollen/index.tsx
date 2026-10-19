@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
+import { einzelrechteVon, einzelrechtLabel } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 
 import { TESTPASSWORT, testkontenErlaubt } from '@/auth/testkonten'
@@ -38,6 +39,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       angelegt: d.createdAt ?? null,
       verantwortlich: angebote.docs.filter((a) => (a.leitung ?? []).some((l) => idv(l as never) === d.id)).map((a) => ({ id: a.id, title: a.title })),
       mitgliedIn: (d.angebote ?? []).map(idv),
+      zusatzrechte: einzelrechteVon(u).map(einzelrechtLabel),
     }
   })
 
