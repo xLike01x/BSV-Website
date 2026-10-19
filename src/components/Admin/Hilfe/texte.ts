@@ -263,8 +263,9 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Wird ein Mitgliedsantrag auf „Aufgenommen“ gesetzt, entsteht der Eintrag automatisch (auch für Familienmitglieder). Du ergänzt nur noch die Mitgliedsnummer.',
-      'Für Mitglieder ohne Online-Antrag: „Neu erstellen“, Name, Nummer, „Mitglied seit“, Art und die E-Mail des Kontos eintragen.',
-      'Bei Kindern die E-Mail der Eltern eintragen – dann erscheinen alle Ausweise der Familie in deren Konto.',
+      'Für Mitglieder ohne Online-Antrag: „Neu erstellen“, Name, Nummer, „Mitglied seit“, Art und die E-Mail eintragen.',
+      'Sichtbar wird der Ausweis im verknüpften Benutzerkonto. Das passiert automatisch, wenn du eine Registrierung mit gleicher E-Mail freigibst – oder du wählst das Konto bei „Benutzerkonto“ selbst aus.',
+      'Bei Kindern das Konto der Eltern verknüpfen – dann erscheinen alle Ausweise der Familie dort.',
       'Austritt: „Gültig bis“ setzen oder den Haken „Mitgliedschaft gültig“ entfernen.',
     ],
     wirkung: [

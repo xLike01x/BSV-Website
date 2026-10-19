@@ -7,7 +7,10 @@ export function sicheresZiel(w: string | null | undefined, fallback: string): st
   try {
     const basis = 'https://bsv.invalid'
     const u = new URL(w, basis)
-    return u.origin === basis ? u.pathname + u.search + u.hash : fallback
+    if (u.origin !== basis) return fallback
+    // Nach dem Auflösen von „/./“, „/../“, %2e … nochmals prüfen (z. B. „/.//evil.com“ → „//evil.com“)
+    const ziel = (u.pathname + u.search + u.hash).replace(/^\/+/, '/')
+    return ziel.startsWith('/') && !ziel.startsWith('//') && !ziel.startsWith('/\\') ? ziel : fallback
   } catch {
     return fallback
   }

@@ -680,7 +680,7 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 export const FAQ: Faq[] = [
   {
     frage: 'Warum sieht ein Mitglied keinen Ausweis?',
-    antwort: 'Der Ausweis erscheint unter dem Konto, dessen E-Mail bei der Mitgliedschaft eingetragen ist. Prüfe unter „Mitgliedschaften“, ob es einen Eintrag gibt und die E-Mail genau stimmt (bei Kindern die der Eltern). Außerdem muss das Konto freigegeben sein.',
+    antwort: 'Der Ausweis erscheint im Konto, das bei der Mitgliedschaft unter „Benutzerkonto“ eingetragen ist. Prüfe unter „Mitgliedschaften“, ob es einen Eintrag gibt und das Konto verknüpft ist (bei Kindern das der Eltern). Verknüpft wird automatisch bei der Freigabe einer Registrierung mit gleicher E-Mail.',
     bereich: 'mitgliedschaften',
   },
   {
@@ -690,7 +690,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Jemand hat sich auf der Website registriert – was muss ich tun?',
-    antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Ist die Person Mitglied, auf „Freigeben“ klicken – der Hinweis „Mitgliedsantrag vorhanden ✓“ hilft beim Prüfen. Sonst „Ablehnen“, dann wird das Konto gelöscht. Danach unter „Benutzer“ die Teams & Kurse des Mitglieds eintragen, damit es seine Ausfälle sieht.',
+    antwort: 'Links unten auf „🙋 Registrierungen“ (das Dashboard erinnert auch daran). Ist die Person Mitglied, auf „Freigeben“ klicken. Steht dort „E-Mail nicht bestätigt“ und es würden Ausweise verknüpft, im Zweifel kurz bei der Person nachfragen – die Adresse wurde nicht geprüft. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen von selbst. Sonst „Ablehnen“, dann wird das Konto gelöscht. Danach unter „Benutzer“ die Teams & Kurse des Mitglieds eintragen, damit es seine Ausfälle sieht.',
     bereich: 'users',
   },
   {

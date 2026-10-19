@@ -44,6 +44,7 @@ export function ratenGrenze(req: PayloadRequest, schluessel: string, max = MAX_P
   if (liste.length >= max) throw new APIError('Zu viele Anfragen. Bitte versuche es in ein paar Minuten erneut.', 429)
   liste.push(jetzt)
   zaehler.set(key, liste)
+  if (zaehler.size > 5000) for (const [k, v] of zaehler) if (v.every((t) => jetzt - t >= FENSTER_MS)) zaehler.delete(k)
 }
 
 export const spamSchutz =

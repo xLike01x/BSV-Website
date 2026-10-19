@@ -20,6 +20,9 @@ export default async function Registrierungen({ initPageResult, params, searchPa
   const antraege = emails.length
     ? (await req.payload.find({ collection: 'mitgliedsantraege', where: { email: { in: emails } }, limit: 500, depth: 0, overrideAccess: true, select: { email: true, status: true } as never })).docs
     : []
+  const mitglieder = emails.length
+    ? (await req.payload.find({ collection: 'mitgliedschaften', where: { and: [{ email: { in: emails } }, { konto: { exists: false } }] }, limit: 500, depth: 0, overrideAccess: true })).docs
+    : []
   const eintraege: Eintrag[] = r.docs.map((u) => {
     const foto = u.profilbild && typeof u.profilbild === 'object' ? (u.profilbild.sizes?.klein?.url ?? u.profilbild.url ?? null) : null
     return {
@@ -30,6 +33,8 @@ export default async function Registrierungen({ initPageResult, params, searchPa
       am: u.createdAt,
       foto,
       antrag: antraege.some((a) => (a as { email?: string }).email?.toLowerCase() === u.email.toLowerCase()),
+      bestaetigt: Boolean((u as { emailBestaetigt?: boolean | null }).emailBestaetigt),
+      ausweise: mitglieder.filter((m) => m.email === u.email.toLowerCase()).map((m) => `${m.vorname} ${m.nachname}`),
     }
   })
   return (

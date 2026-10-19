@@ -98,6 +98,7 @@ export const Profilbilder: CollectionConfig = {
       type: 'relationship',
       relationTo: 'users',
       index: true,
+      access: { update: ({ req }) => hasRole(req.user as never, 'admin') },
       admin: { readOnly: true },
     },
   ],

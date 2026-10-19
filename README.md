@@ -46,7 +46,7 @@ pnpm seed:beispiele --loeschen   # wieder entfernen
 
 **Rollen-Übersicht** (`/admin/rollen`, nur Admins): wer welche Rolle hat und für welche Teams – mit Reitern nach Person, Team und Rolle.
 
-**Testkonten** (Rollen-Übersicht → Reiter „Testkonten“): je Rolle, Abteilung und Team ein Konto `…@bsv.test` mit Passwort `BSV-Test-2026!`, ohne Zwei-Faktor. Funktionieren nur mit `pnpm dev` (in Produktion gesperrt, außer `BSV_TESTKONTEN=an`). Mit „Alle Testkonten löschen“ wieder entfernen.
+**Testkonten** (Rollen-Übersicht → Reiter „Testkonten“): je Rolle, Abteilung und Team ein Konto `…@bsv.test` mit Passwort `BSV-Test-2026!`, ohne Zwei-Faktor. Funktionieren nur mit `pnpm dev` (nur über localhost erreichbar; `pnpm dev:netzwerk` für Zugriff aus dem WLAN – dann ohne Testkonten) (in Produktion gesperrt, außer `BSV_TESTKONTEN=an`). Mit „Alle Testkonten löschen“ wieder entfernen.
 
 „Eigene“ Teams: im jeweiligen Team/Kurs unter **Verantwortliche** eintragen. Team-News erscheinen auf der Teamseite; auf Startseite und im Newsroom erst, wenn die Redaktion den Haken „Auch auf Startseite“ setzt.
 
@@ -91,7 +91,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 ## Digitaler Mitgliedsausweis
 
 - Sammlung **Mitgliedschaften** (Admin/Kasse): Name, Mitgliedsnummer, Mitglied seit, Art (Einzel jugend/aktiv/passiv oder Familie), Kurse, gültig/Austritt, E-Mail des Kontos. Entsteht automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird (inkl. Familienmitglieder).
-- Im Mitgliederbereich zeigt jedes Konto alle Ausweise mit seiner E-Mail (Eltern sehen die ihrer Kinder) – live (Uhr, schimmernder Streifen) mit QR-Code. Der QR-Code führt zu `/ausweis/<signierter Code>` und zeigt live gültig/ungültig mit minimalen Daten.
+- Sichtbar im verknüpften Benutzerkonto (Feld „Benutzerkonto“; wird bei Freigabe einer Registrierung mit gleicher E-Mail bzw. bei Aufnahme eines Antrags mit bestehendem Konto gesetzt). Eltern sehen die Ausweise ihrer Kinder – live (Uhr, schimmernder Streifen) mit QR-Code. Der QR-Code führt zu `/ausweis/<signierter Code>` und zeigt live gültig/ungültig mit minimalen Daten.
 
 ## Fußball-Passanträge
 
@@ -101,7 +101,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 
 ## Registrierung, Google-Anmeldung, Profilfotos
 
-- `/registrieren`: Mitglieder erstellen selbst ein Konto (E-Mail + Passwort oder Google). Das Konto ist sofort angemeldet, hat aber **keine Rechte**, bis Admin oder Kasse es unter **Registrierungen** (`/admin/registrierungen`) freigibt. Ablehnen löscht das Konto.
+- `/registrieren`: Mitglieder erstellen selbst ein Konto (E-Mail + Passwort oder Google). Das Konto ist sofort angemeldet, hat aber **keine Rechte** (E-Mail per Registrierung nicht bestätigt, per Google bestätigt; eigene E-Mail-Änderung nur durch Admin; Google wird nie automatisch mit Verwaltungskonten verknüpft; nicht freigegebene Registrierungen nach 60 Tagen gelöscht), bis Admin oder Kasse es unter **Registrierungen** (`/admin/registrierungen`) freigibt. Ablehnen löscht das Konto.
 - Google: nur aktiv mit `GOOGLE_CLIENT_ID` und `GOOGLE_CLIENT_SECRET` in der `.env` (Weiterleitungs-URI `<Adresse>/api/users/google/callback`). Verknüpft über die Google-ID bzw. die von Google bestätigte E-Mail. Für Personal gilt danach weiter die Zwei-Faktor-Abfrage.
 - Profilfotos (`profilbilder/`, nicht öffentlich): Mitglied lädt im Mitgliederbereich hoch; sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse (im Team: „Mitglieder in diesem Team / Kurs“). Wird beim Löschen des Kontos mit gelöscht und ist Teil der Datensicherung.
 

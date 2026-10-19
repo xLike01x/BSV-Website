@@ -13,6 +13,7 @@ const GOOGLE_FEHLER: Record<string, string> = {
   'google-fehler': 'Die Anmeldung mit Google hat nicht geklappt. Bitte noch einmal versuchen.',
   'zu-viele': 'Zu viele Versuche. Bitte in ein paar Minuten erneut probieren.',
   gesperrt: 'Dieses Konto ist gerade gesperrt. Bitte später erneut versuchen.',
+  'google-personal': 'Konten der Verwaltung melden sich bitte mit E-Mail, Passwort und Code an – nicht mit Google.',
   'nicht-eingerichtet': 'Die Website ist noch nicht eingerichtet.',
 }
 

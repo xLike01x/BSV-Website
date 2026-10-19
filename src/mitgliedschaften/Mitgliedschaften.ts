@@ -23,7 +23,8 @@ export const Mitgliedschaften: CollectionConfig = {
       const user = req.user as { email?: string; roles?: string[] } | null
       if (!user || !istMitgliedOderMehr(user)) return false
       if ((user.roles ?? []).some((r) => r === 'admin' || r === 'kasse')) return true
-      return { email: { equals: (user.email ?? '').toLowerCase() } } as Where
+      // Nur über die feste Verknüpfung mit dem Konto – nicht über die E-Mail (die ist nicht bestätigt)
+      return { konto: { equals: (user as { id?: number }).id } } as Where
     },
     create: isFinance,
     update: isFinance,
@@ -33,9 +34,9 @@ export const Mitgliedschaften: CollectionConfig = {
     group: 'Verwaltung',
     hidden: ausblendenAusser('admin', 'kasse'),
     useAsTitle: 'anzeigeName',
-    defaultColumns: ['anzeigeName', 'mitgliedsnummer', 'art', 'eintritt', 'email', 'aktiv'],
+    defaultColumns: ['anzeigeName', 'mitgliedsnummer', 'art', 'eintritt', 'konto', 'aktiv'],
     components: { beforeList: ['@/components/Admin/Einstieg'] },
-    description: 'Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen.',
+    description: 'Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen. Sichtbar wird der Ausweis im verknüpften Benutzerkonto.',
   },
   defaultSort: 'nachname',
   hooks: {
@@ -79,12 +80,25 @@ export const Mitgliedschaften: CollectionConfig = {
       ],
     },
     {
-      name: 'email',
-      label: 'E-Mail des Kontos',
-      type: 'email',
-      required: true,
-      index: true,
-      admin: { description: 'Unter diesem Konto erscheint der Ausweis im Mitgliederbereich. Bei Kindern die E-Mail der Eltern – dann sehen sie alle Ausweise der Familie.' },
+      type: 'row',
+      fields: [
+        {
+          name: 'konto',
+          label: 'Benutzerkonto',
+          type: 'relationship',
+          relationTo: 'users',
+          index: true,
+          admin: { width: '50%', description: 'Unter diesem Konto erscheint der Ausweis. Wird bei der Freigabe einer Registrierung mit gleicher E-Mail automatisch verknüpft. Bei Kindern das Konto der Eltern.' },
+        },
+        {
+          name: 'email',
+          label: 'E-Mail',
+          type: 'email',
+          required: true,
+          index: true,
+          admin: { width: '50%', description: 'Zum Verknüpfen: Registriert sich jemand mit dieser E-Mail und wird freigegeben, wird das Konto hier eingetragen.' },
+        },
+      ],
     },
     {
       name: 'angebote',

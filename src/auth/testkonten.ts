@@ -18,7 +18,7 @@ const hostname = (h?: string | null) => (h ?? '').split(',')[0].trim().toLowerCa
  */
 export const testkontenErlaubt = (headers?: Headers | null) => {
   if (process.env.BSV_TESTKONTEN === 'an') return true
-  if (process.env.NODE_ENV === 'production') return false
+  if (process.env.BSV_TESTKONTEN === 'aus' || process.env.NODE_ENV === 'production') return false
   if (!headers) return true
   const weitergeleitet = headers.get('x-forwarded-host')
   if (weitergeleitet && !LOKAL.includes(hostname(weitergeleitet))) return false

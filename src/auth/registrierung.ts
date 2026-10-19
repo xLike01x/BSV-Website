@@ -26,7 +26,7 @@ const umleiten = (ziel: string, cookies: string[] = []) => {
 }
 const b64url = (b: Buffer) => b.toString('base64url')
 
-type RohUser = { id: number; email: string; roles?: string[]; sessions?: { id: string; createdAt: Date | string; expiresAt: Date | string }[]; testkonto?: boolean; lockUntil?: string | null }
+type RohUser = { id: number; email: string; registriertUeber?: string | null; emailBestaetigt?: boolean | null; roles?: string[]; sessions?: { id: string; createdAt: Date | string; expiresAt: Date | string }[]; testkonto?: boolean; lockUntil?: string | null }
 
 /**
  * Meldet einen Benutzer an, ohne Passwort (nach Registrierung oder Google-Anmeldung) –
@@ -69,6 +69,10 @@ export const registrierungEndpunkte: Endpoint[] = [
     path: '/registrieren',
     method: 'post',
     handler: async (req) => {
+      // Nur echte Formular-Anfragen von der eigenen Website (Schutz gegen Anmeldung über fremde Seiten)
+      if (!(req.headers.get('content-type') ?? '').includes('application/json')) return json({ fehler: 'Ungültige Anfrage.' }, 400)
+      const herkunft = req.headers.get('origin')
+      if (prod() && herkunft && herkunft !== new URL(getServerSideURL()).origin) return json({ fehler: 'Ungültige Anfrage.' }, 403)
       const body = (await req.json?.().catch(() => ({}))) as { name?: string; email?: string; passwort?: string; datenschutz?: boolean; website?: string }
       if (body.website) return json({ fehler: 'Die Anfrage konnte nicht verarbeitet werden.' }, 400)
       try {
@@ -184,7 +188,22 @@ export const registrierungEndpunkte: Endpoint[] = [
       let user = (await p.find({ collection: 'users', where: { googleId: { equals: profil.sub } }, limit: 1, depth: 0, overrideAccess: true, showHiddenFields: true })).docs[0] as RohUser | undefined
       if (!user) {
         user = (await p.find({ collection: 'users', where: { email: { equals: email } }, limit: 1, depth: 0, overrideAccess: true })).docs[0] as RohUser | undefined
-        if (user) await p.db.updateOne({ collection: 'users', id: user.id, data: { googleId: profil.sub } as never, req, returning: false })
+        if (user) {
+          // Verwaltungskonten nie automatisch mit Google verknüpfen (Passwort + Code bleiben der einzige Weg)
+          if ((user.roles ?? []).some((r) => r !== 'mitglied')) return fehler('google-personal')
+          // Google beweist: diese Person besitzt die E-Mail. Hatte jemand anderes das Konto vorher ohne Bestätigung
+          // selbst registriert, verliert dessen Passwort und Sitzung die Gültigkeit.
+          const unbestaetigt = user.registriertUeber === 'email' && !user.emailBestaetigt
+          // Zuerst das alte Passwort ungültig machen (das löscht eine Google-Verknüpfung), dann verknüpfen
+          if (unbestaetigt) await p.update({ collection: 'users', id: user.id, data: { password: b64url(crypto.randomBytes(32)) } as never, overrideAccess: true, context: { zweiFaktorIntern: true }, req })
+          await p.db.updateOne({
+            collection: 'users',
+            id: user.id,
+            data: { googleId: profil.sub, emailBestaetigt: true, ...(unbestaetigt ? { sessions: [] } : {}) } as never,
+            req,
+            returning: false,
+          })
+        }
       }
       if (!user) {
         try {
@@ -199,7 +218,7 @@ export const registrierungEndpunkte: Endpoint[] = [
           overrideAccess: true,
           req,
         })
-        await p.db.updateOne({ collection: 'users', id: neu.id, data: { googleId: profil.sub, registriertUeber: 'google' } as never, req, returning: false })
+        await p.db.updateOne({ collection: 'users', id: neu.id, data: { googleId: profil.sub, registriertUeber: 'google', emailBestaetigt: true } as never, req, returning: false })
         user = neu as unknown as RohUser
       }
       if (user.lockUntil && new Date(user.lockUntil) > new Date()) return fehler('gesperrt')
@@ -235,7 +254,9 @@ export const registrierungEndpunkte: Endpoint[] = [
       if (!u || (u as { freigegeben?: boolean }).freigegeben !== false || (u.roles ?? []).some((r) => r !== 'mitglied')) return json({ fehler: 'Diese Registrierung gibt es nicht (mehr).' }, 404)
       if (body.aktion === 'freigeben') {
         await req.payload.update({ collection: 'users', id, data: { freigegeben: true } as never, overrideAccess: true, context: { zweiFaktorIntern: true }, req })
-        return json({ ok: true })
+        // Mitgliedschaften mit gleicher E-Mail (noch ohne Konto) verknüpfen → Ausweis erscheint
+        const r = await req.payload.update({ collection: 'mitgliedschaften', where: { and: [{ email: { equals: u.email.toLowerCase() } }, { konto: { exists: false } }] }, data: { konto: id } as never, overrideAccess: true, req })
+        return json({ ok: true, ausweise: r.docs.length })
       }
       if (body.aktion === 'ablehnen') {
         await req.payload.delete({ collection: 'users', id, overrideAccess: true, req })

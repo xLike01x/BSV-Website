@@ -2,7 +2,7 @@
 import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
-export type Eintrag = { id: number; name: string; email: string; ueber: string; am: string; foto: string | null; antrag: boolean }
+export type Eintrag = { id: number; name: string; email: string; ueber: string; am: string; foto: string | null; antrag: boolean; bestaetigt: boolean; ausweise: string[] }
 
 export default function RegistrierungenClient({ eintraege }: { eintraege: Eintrag[] }) {
   const router = useRouter()
@@ -25,7 +25,9 @@ export default function RegistrierungenClient({ eintraege }: { eintraege: Eintra
       <p className="bsv-reg__intro">
         Hier landen Personen, die sich auf der Website selbst ein Konto erstellt haben (mit E-Mail oder Google). Erst nach deiner Freigabe sehen sie den Mitgliederbereich.
         <br />
-        <strong>Freigeben</strong>, wenn die Person Mitglied ist (Tipp: „Mitgliedsantrag vorhanden“ hilft). <strong>Ablehnen</strong> löscht das Konto.
+        <strong>Freigeben</strong>, wenn die Person Mitglied ist. <strong>Ablehnen</strong> löscht das Konto.
+        <br />
+        Wichtig: Bei Registrierung per E-Mail ist nicht geprüft, ob die Adresse wirklich der Person gehört. Wenn dabei Ausweise verknüpft werden, im Zweifel kurz nachfragen (z. B. anrufen), bevor du freigibst.
       </p>
       {fehler && <p className="bsv-reg__fehler">{fehler}</p>}
       {eintraege.length === 0 ? (
@@ -40,8 +42,10 @@ export default function RegistrierungenClient({ eintraege }: { eintraege: Eintra
                 <span>{e.email}</span>
                 <small>
                   {new Date(e.am).toLocaleString('de-DE', { dateStyle: 'medium', timeStyle: 'short' })} · {e.ueber === 'google' ? 'mit Google' : 'mit E-Mail'}
-                  {e.antrag && <em> · Mitgliedsantrag vorhanden ✓</em>}
+                  {e.antrag && <em> · Mitgliedsantrag mit dieser E-Mail vorhanden</em>}
                 </small>
+                <small className={e.bestaetigt ? 'bsv-reg__ok' : 'bsv-reg__warn'}>{e.bestaetigt ? '✓ E-Mail durch Google bestätigt' : '⚠ E-Mail nicht bestätigt'}</small>
+                {e.ausweise.length > 0 && <small>Bei Freigabe erscheinen die Ausweise von: {e.ausweise.join(', ')}</small>}
               </div>
               <div className="bsv-reg__knoepfe">
                 <button type="button" className="bsv-reg__ja" disabled={laeuft === e.id} onClick={() => aktion(e.id, 'freigeben')}>

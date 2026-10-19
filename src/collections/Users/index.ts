@@ -62,6 +62,8 @@ export const Users: CollectionConfig = {
       type: 'relationship',
       relationTo: 'angebote',
       hasMany: true,
+      // Ordnet die Verwaltung zu (steht auf dem Ausweis und gibt Trainern Einblick ins Profilfoto)
+      access: { update: isAdminField },
       admin: {
         description: 'Angebote, an denen diese Person als Mitglied teilnimmt.',
       },
@@ -109,6 +111,14 @@ export const Users: CollectionConfig = {
       access: { create: () => false, update: () => false },
       admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.registriertUeber) },
     },
+    {
+      name: 'emailBestaetigt',
+      label: 'E-Mail bestätigt',
+      type: 'checkbox',
+      defaultValue: false,
+      access: { create: () => false, update: () => false },
+      admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.registriertUeber), description: 'Bestätigt durch die Anmeldung mit Google. Bei Registrierung per E-Mail nicht geprüft.' },
+    },
     // Verknüpfung mit dem Google-Konto (nie über die Schnittstelle sichtbar)
     { name: 'googleId', type: 'text', index: true, access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
     ...zweiFaktorFelder,
@@ -139,6 +149,22 @@ export const Users: CollectionConfig = {
     ],
     afterChange: [zweiFaktorZuruecksetzen as never],
     beforeChange: [
+      // Eigene E-Mail nur über die Verwaltung ändern (sonst könnte man sich z. B. fremde Mitgliedsausweise „holen“).
+      // Selbst registrierte Konten können bis zur Freigabe auch den Namen nicht mehr ändern.
+      ({ req, operation, data, originalDoc }) => {
+        if (operation !== 'update' || !originalDoc || !req.user || hasRole(req.user as never, 'admin')) return data
+        if (typeof data.email === 'string' && data.email.trim().toLowerCase() !== String(originalDoc.email).toLowerCase())
+          throw new APIError('Die E-Mail-Adresse kann nur die Verwaltung ändern. Bitte kurz Bescheid geben.', 403)
+        if (originalDoc.freigegeben === false && typeof data.name === 'string' && data.name !== originalDoc.name)
+          throw new APIError('Der Name kann bis zur Freigabe nicht geändert werden.', 403)
+        return data
+      },
+      // E-Mail oder Passwort geändert → Verknüpfung mit Google aufheben (z. B. bei Übergabe eines Funktionspostfachs)
+      ({ data, originalDoc, operation }) => {
+        if (operation === 'update' && originalDoc && ((typeof data.email === 'string' && data.email.toLowerCase() !== String(originalDoc.email).toLowerCase()) || data.password))
+          data.googleId = null
+        return data
+      },
       // Die allererste Person, die sich anlegt, wird automatisch Web-Admin.
       async ({ req, operation, data }) => {
         if (operation === 'create') {

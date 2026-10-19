@@ -15,11 +15,13 @@ export const mitgliedschaftAusAntrag: CollectionAfterChangeHook = async ({ doc, 
     { vorname: doc.vorname, nachname: doc.nachname, geburtsdatum: doc.geburtsdatum, angebote },
     ...(doc.mitgliedsart === 'familie' ? (doc.familienmitglieder ?? []).map((f: { vorname?: string; nachname?: string; geburtsdatum?: string }) => ({ vorname: f.vorname, nachname: f.nachname || doc.nachname, geburtsdatum: f.geburtsdatum, angebote: [] })) : []),
   ]
+  // Gibt es schon ein freigegebenes Konto mit dieser E-Mail? Dann gleich verknüpfen.
+  const konto = (await req.payload.find({ collection: 'users', where: { and: [{ email: { equals: email } }, { freigegeben: { not_equals: false } }] }, limit: 1, depth: 0, overrideAccess: true, req })).docs[0]
   for (const p of personen) {
     if (!p.vorname) continue
     await req.payload.create({
       collection: 'mitgliedschaften',
-      data: { ...p, email, art: doc.mitgliedsart ?? 'aktiv', eintritt: heute, aktiv: true, antrag: doc.id } as never,
+      data: { ...p, email, konto: konto?.id ?? null, art: doc.mitgliedsart ?? 'aktiv', eintritt: heute, aktiv: true, antrag: doc.id } as never,
       overrideAccess: true,
       req,
     })

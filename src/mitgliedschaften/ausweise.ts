@@ -14,7 +14,7 @@ const titel = (a: unknown) => (a && typeof a === 'object' ? (a as { title?: stri
 /** Ausweise für das angemeldete Konto – immer frisch aus den Mitgliedsdaten und den Kursen */
 export async function ausweiseFuer(user: User): Promise<Ausweis[]> {
   const p = await payload()
-  const r = await p.find({ collection: 'mitgliedschaften', where: { email: { equals: user.email.toLowerCase() } }, sort: 'eintritt', limit: 20, depth: 1, user, overrideAccess: false }).catch(() => ({ docs: [] }))
+  const r = await p.find({ collection: 'mitgliedschaften', where: { konto: { equals: user.id } }, sort: 'eintritt', limit: 20, depth: 1, user, overrideAccess: false }).catch(() => ({ docs: [] }))
   const kontoKurse = (user.angebote ?? []).map(titel).filter(Boolean) as string[]
   const kontoName = (user.name ?? '').trim().toLowerCase()
   // Kontoinhaber/in zuerst, dann nach Eintritt

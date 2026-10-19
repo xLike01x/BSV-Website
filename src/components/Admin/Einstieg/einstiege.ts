@@ -286,7 +286,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ablauf: [
       { key: 'antrag', titel: 'Antrag aufgenommen', text: 'Eintrag entsteht automatisch – auch für Familienmitglieder.', href: '/admin/collections/mitgliedsantraege', wo: 'Verwaltung → Mitgliedsanträge' },
       { key: 'nummer', titel: 'Nummer ergänzen', text: 'Mitgliedsnummer eintragen, ggf. Kurse.' },
-      { key: 'ausweis', titel: 'Ausweis ist da', text: 'Im Mitgliederbereich unter der E-Mail des Kontos – bei Kindern die der Eltern.' },
+      { key: 'ausweis', titel: 'Ausweis ist da', text: 'Im verknüpften Konto – verknüpft wird bei der Freigabe einer Registrierung mit gleicher E-Mail.' },
     ],
   },
 

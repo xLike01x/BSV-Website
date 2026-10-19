@@ -543,6 +543,10 @@ export interface User {
    */
   freigegeben?: boolean | null;
   registriertUeber?: ('verwaltung' | 'email' | 'google') | null;
+  /**
+   * Bestätigt durch die Anmeldung mit Google. Bei Registrierung per E-Mail nicht geprüft.
+   */
+  emailBestaetigt?: boolean | null;
   googleId?: string | null;
   /**
    * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
@@ -1374,7 +1378,7 @@ export interface Gesuche {
   deletedAt?: string | null;
 }
 /**
- * Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen.
+ * Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen. Sichtbar wird der Ausweis im verknüpften Benutzerkonto.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "mitgliedschaften".
@@ -1395,7 +1399,11 @@ export interface Mitgliedschaften {
    */
   geburtsdatum?: string | null;
   /**
-   * Unter diesem Konto erscheint der Ausweis im Mitgliederbereich. Bei Kindern die E-Mail der Eltern – dann sehen sie alle Ausweise der Familie.
+   * Unter diesem Konto erscheint der Ausweis. Wird bei der Freigabe einer Registrierung mit gleicher E-Mail automatisch verknüpft. Bei Kindern das Konto der Eltern.
+   */
+  konto?: (number | null) | User;
+  /**
+   * Zum Verknüpfen: Registriert sich jemand mit dieser E-Mail und wird freigegeben, wird das Konto hier eingetragen.
    */
   email: string;
   /**
@@ -2364,6 +2372,7 @@ export interface MitgliedschaftenSelect<T extends boolean = true> {
   eintritt?: T;
   art?: T;
   geburtsdatum?: T;
+  konto?: T;
   email?: T;
   angebote?: T;
   aktiv?: T;
@@ -2439,6 +2448,7 @@ export interface UsersSelect<T extends boolean = true> {
   profilbild?: T;
   freigegeben?: T;
   registriertUeber?: T;
+  emailBestaetigt?: T;
   googleId?: T;
   zweiFaktorAktiv?: T;
   zweiFaktorGeheimnis?: T;
