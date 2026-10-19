@@ -4,6 +4,7 @@
  * an einer Stelle möglich sind. Tailwind bleibt für die Baukasten-Blöcke aktiv.
  */
 :root {
+  color-scheme: only light;
   --bsv-green: #157a43;
   --bsv-green-dark: #0f5c32;
   --bsv-green-tint: #e8f6ee;
@@ -152,8 +153,10 @@
 .nav-panel ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
 .bsv .nav-panel ul a { display: block; color: var(--bsv-ink); text-decoration: none; font-size: 14px; font-weight: 500; padding: 5px 0; }
 .bsv .nav-panel ul a:hover { color: var(--bsv-green); }
-.nav-burger { display: none; margin-left: auto; width: 44px; height: 44px; border: 0; background: transparent; cursor: pointer; border-radius: 12px; align-items: center; justify-content: center; }
-.nav-burger span, .nav-burger span::before, .nav-burger span::after { display: block; width: 20px; height: 2px; background: var(--bsv-ink); border-radius: 2px; position: relative; transition: transform 0.3s, background 0.3s; }
+.nav-burger { display: none; margin-left: auto; height: 44px; padding: 0 14px 0 12px; gap: 9px; border: 1.5px solid var(--bsv-line); background: #fff; color: var(--bsv-ink); cursor: pointer; border-radius: 999px; align-items: center; justify-content: center; font: inherit; }
+.nav-burger:active { background: var(--bsv-soft); }
+.nav-burger-text { font-size: 15px; font-weight: 600; }
+.nav-burger span, .nav-burger span::before, .nav-burger span::after { display: block; width: 18px; height: 2.5px; background: var(--bsv-ink); border-radius: 2px; position: relative; transition: transform 0.3s, background 0.3s; }
 .nav-burger span::before, .nav-burger span::after { content: ''; position: absolute; left: 0; }
 .nav-burger span::before { top: -6px; }
 .nav-burger span::after { top: 6px; }

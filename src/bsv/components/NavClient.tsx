@@ -129,7 +129,8 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
             aria-label={mobil ? 'Menü schließen' : 'Menü öffnen'}
             onClick={() => setMobil(!mobil)}
           >
-            <span />
+            <span aria-hidden="true" />
+            <b className="nav-burger-text" aria-hidden="true">{mobil ? 'Schließen' : 'Menü'}</b>
           </button>
         </div>
       </div>

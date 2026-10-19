@@ -60,4 +60,6 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: '#157A43',
+  // Die Website ist bewusst hell. „only light“ verhindert, dass Handy-Browser sie im Dunkelmodus automatisch umfärben
+  colorScheme: 'only light',
 }
