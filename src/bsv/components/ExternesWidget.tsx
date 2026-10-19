@@ -25,9 +25,12 @@ export function ExternesWidget({ anbieter, titel, widgetId, typ }: Props) {
     const script = document.createElement('script')
     if (anbieter === 'FuPa') {
       const root = document.createElement('div')
-      root.id = widgetId.startsWith('fp-widget_root-') ? widgetId : `fp-widget_root-${widgetId}`
+      // Auch ältere Einträge, in denen noch der komplette FuPa-Code steht, funktionieren
+      const id = widgetId.match(/fp-widget_root-([A-Za-z0-9_-]+)/)?.[1] ?? widgetId.trim()
+      root.id = `fp-widget_root-${id}`
       el.appendChild(root)
-      script.src = 'https://widget-api.fupa.net/vendor/widget.js?v1'
+      // Nach Seitenwechsel neu laden, damit FuPa das neue Widget findet
+      script.src = `https://widget-api.fupa.net/vendor/widget.js?v1&t=${Date.now()}`
     } else {
       const root = document.createElement('div')
       root.className = 'fussballde_widget'

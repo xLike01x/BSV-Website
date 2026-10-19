@@ -15,6 +15,14 @@ import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../ho
  * Ein neues Angebot erscheint automatisch im Menü, im Angebotsfinder
  * und im Anmeldeformular.
  */
+/** Holt die Widget-ID aus dem eingefügten FuPa-Code (oder lässt eine reine ID stehen) */
+export const fupaId = (wert: unknown) => {
+  const v = String(wert ?? '').trim()
+  if (!v) return v
+  const treffer = v.match(/fp-widget_root-([A-Za-z0-9_-]+)/)
+  return treffer ? treffer[1] : v
+}
+
 export const Angebote: CollectionConfig<'angebote'> = {
   slug: 'angebote',
   labels: { singular: 'Angebot', plural: 'Teams & Kurse' },
@@ -158,7 +166,18 @@ export const Angebote: CollectionConfig<'angebote'> = {
       admin: { initCollapsed: true, condition: (data) => data?.bereich === 'fussball' },
       fields: [
         { name: 'spielklasse', label: 'Spielklasse', type: 'text' },
-        { name: 'fupaWidgetId', label: 'FuPa-Widget-ID (Kader)', type: 'text' },
+        {
+          name: 'fupaWidgetId',
+          label: 'FuPa-Widget (Kader, Tabelle oder Spielplan)',
+          type: 'text',
+          admin: {
+            description:
+              'Bei FuPa im Widget-Builder auf „Speichern“ klicken und den kompletten Code hier einfügen – die Website liest die ID automatisch heraus. Wichtig: Bei FuPa als „URL der Webseite“ die echte Vereinsadresse eintragen; auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an.',
+          },
+          // Aus dem kompletten FuPa-Code nur die ID behalten (z. B. 3Kuku8Auad7WJFmIvEpH7zFzfAK)
+          hooks: { beforeValidate: [({ value }) => fupaId(value)] },
+          validate: (wert: unknown) => (!wert || /^[A-Za-z0-9_-]{6,80}$/.test(String(wert)) ? true : 'Das sieht nicht nach einem FuPa-Widget aus. Bitte den Code aus dem FuPa-Widget-Builder einfügen.'),
+        },
         { name: 'fussballDeTeamId', label: 'FUSSBALL.DE Team-ID (Spielplan/Tabelle)', type: 'text' },
       ],
     },

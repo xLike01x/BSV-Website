@@ -497,6 +497,9 @@ export interface Angebote {
   plaetzeBegrenzt?: boolean | null;
   maxPlaetze?: number | null;
   spielklasse?: string | null;
+  /**
+   * Bei FuPa im Widget-Builder auf „Speichern“ klicken und den kompletten Code hier einfügen – die Website liest die ID automatisch heraus. Wichtig: Bei FuPa als „URL der Webseite“ die echte Vereinsadresse eintragen; auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an.
+   */
   fupaWidgetId?: string | null;
   fussballDeTeamId?: string | null;
   /**

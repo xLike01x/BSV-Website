@@ -213,7 +213,7 @@ export default async function AngebotSeite({ params }: Args) {
             Kader, Spiele &amp; Tabelle
           </h2>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 380px), 1fr))', gap: 16 }}>
-            {a.fupaWidgetId && <ExternesWidget anbieter="FuPa" titel="Kader" widgetId={a.fupaWidgetId} />}
+            {a.fupaWidgetId && <ExternesWidget anbieter="FuPa" titel="FuPa: Kader, Spiele & Tabelle" widgetId={a.fupaWidgetId} />}
             {a.fussballDeTeamId && <ExternesWidget anbieter="FUSSBALL.DE" titel="Spielplan" widgetId={a.fussballDeTeamId} typ="spielplan" />}
             {a.fussballDeTeamId && <ExternesWidget anbieter="FUSSBALL.DE" titel="Tabelle" widgetId={a.fussballDeTeamId} typ="tabelle" />}
           </div>

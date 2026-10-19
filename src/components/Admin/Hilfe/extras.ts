@@ -549,7 +549,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Verantwortliche', text: 'Benutzerkonten, die dieses Team pflegen dürfen (News, Bilder, Ausfälle).' },
     { name: 'Trainer- und Betreuerteam', text: 'Nur zur Anzeige auf der Teamseite (Name, Rolle, optional Foto). Wer bearbeiten darf, steht bei „Verantwortliche“.' },
     { name: 'Kursplätze', text: 'Eingeklappt: Wenn ein Kurs nur begrenzt Plätze hat, hier die Höchstzahl eintragen.' },
-    { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse sowie die Nummern von FuPa (Kader) und FUSSBALL.DE (Spielplan/Tabelle). Die Nummer steht in der Adresse der Teamseite bei FuPa bzw. FUSSBALL.DE. Besucher sehen die Widgets erst nach einem Klick (Datenschutz).' },
+    { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse, FuPa-Widget und FUSSBALL.DE-Nummer (Spielplan/Tabelle). FuPa: im Widget-Builder auf fupa.net das Widget zusammenstellen (Kader, Tabelle, Spielplan), als „URL der Webseite“ die echte Vereinsadresse eintragen, „Speichern“ und den kompletten Code einfügen – die ID wird automatisch herausgelesen. Auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an, auf der Live-Website schon. Besucher sehen die Widgets erst nach einem Klick (Datenschutz).' },
     { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne in Listen und Menüs.' },
     { name: 'Aktiv', text: 'Nur aktive Angebote sind auf der Website sichtbar.' },
   ],
