@@ -157,6 +157,15 @@ export default buildConfig({
     // Alltagssprache statt Fachbegriffe in der Verwaltung
     translations: {
       de: {
+        // Das Weiterleitungs-Plugin bringt kein Deutsch mit
+        'plugin-redirects': {
+          customUrl: 'Eigene Adresse',
+          documentToRedirect: 'Weiterleiten zu (Seite oder News)',
+          fromUrl: 'Von Adresse',
+          internalLink: 'Seite auf der Website',
+          redirectType: 'Art der Weiterleitung',
+          toUrlType: 'Ziel',
+        },
         general: {
           selectValue: 'Bitte auswählen …',
           creating: 'Neu:',
