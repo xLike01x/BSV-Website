@@ -197,6 +197,7 @@ export function MedienHinweise() {
   const galerie = useFormFields(([f]) => f.inGalerie?.value as boolean | undefined)
   const team = useFormFields(([f]) => f.team?.value)
   const allgemein = useFormFields(([f]) => f.allgemein?.value as boolean | undefined)
+  const sponsoren = useFormFields(([f]) => Boolean(f.sponsoren?.value))
   const personen = useFormFields(([f]) => f.personen?.value as string | undefined)
 
   const bytes = (datei && typeof datei === 'object' && 'size' in datei ? datei.size : undefined) ?? groesse
@@ -206,9 +207,10 @@ export function MedienHinweise() {
   if (!alt) h.push({ art: 'warn', text: 'Bitte eine kurze Bildbeschreibung eingeben.' })
   if (galerie && !idVon(team)) h.push({ art: 'warn', text: '„In Galerie zeigen“ wirkt nur, wenn ein Team gewählt ist.' })
   if (galerie && idVon(team)) h.push({ art: 'info', text: 'Erscheint in der Fotogalerie des gewählten Teams.' })
-  if (!idVon(team) && !allgemein)
-    h.push({ art: 'warn', text: 'Noch kein Ordner: rechts ein Team wählen oder „Verein allgemein“ anhaken. Sonst können Trainer das Bild nicht benutzen.' })
-  if (!idVon(team) && allgemein) h.push({ art: 'ok', text: 'Liegt in „Verein allgemein“ – alle Trainer dürfen es benutzen.' })
+  if (!idVon(team) && !allgemein && !sponsoren)
+    h.push({ art: 'warn', text: 'Noch kein Ordner: rechts ein Team wählen, „Verein allgemein“ oder „Sponsoren-Logo“ anhaken. Sonst können Trainer das Bild nicht benutzen. (Sponsor-Logos kommen beim Speichern des Sponsors automatisch in „Sponsoren“.)' })
+  if (!idVon(team) && sponsoren) h.push({ art: 'ok', text: 'Liegt im Ordner „Sponsoren“.' })
+  else if (!idVon(team) && allgemein) h.push({ art: 'ok', text: 'Liegt in „Verein allgemein“ – alle Trainer dürfen es benutzen.' })
   if (idVon(team)) h.push({ art: 'ok', text: 'Liegt im Ordner des gewählten Teams.' })
   if (!personen) h.push({ art: 'warn', text: 'Noch keine Angabe, ob Personen zu erkennen sind. Bitte oben auswählen.' })
   else if (personen === 'einwilligung') h.push({ art: 'ok', text: 'Einwilligung liegt vor – bitte die schriftliche Einwilligung aufbewahren.' })

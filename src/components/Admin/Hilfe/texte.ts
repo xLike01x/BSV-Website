@@ -93,6 +93,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Oben im Kasten „Ordner“ ein Team anklicken, um nur dessen Bilder zu sehen.',
       'Verschieben: ein Bild unten in der Liste mit der Maus auf einen Ordner ziehen. Angehakte Bilder wandern zusammen. Danach kannst du es mit „Rückgängig“ zurücknehmen.',
       'Oder: Bild öffnen → rechts „Ordner (Team / Kurs)“. Bilder ohne Team für alle Trainer freigeben: Haken „Verein allgemein“.',
+      'Sponsor-Logos landen automatisch im Ordner „🤝 Sponsoren“, sobald sie bei einem Sponsor gespeichert werden (oder Haken „Sponsoren-Logo“).',
       'Viele Bilder auf einmal: links anhaken → oben „Bearbeiten“ → Feld „Ordner (Team / Kurs)“ wählen.',
       'Redaktion: „Automatisch zuordnen“ schlägt für Bilder ohne Ordner das passende Team vor – erst Vorschau, dann „Übernehmen“.',
     ],

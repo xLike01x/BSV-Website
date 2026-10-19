@@ -62,10 +62,11 @@ export default async function SponsorenSeite() {
                   {liste.map((s) => {
                     const inhalt = (
                       <>
+                        {/* Mit Logo: Logo + Name darunter. Ohne Logo: Name nur einmal, groß */}
                         <span className="sponsor-logo">
                           {s.logo && typeof s.logo === 'object' ? <Bild media={s.logo} size="small" sizes="240px" alt={s.name} /> : <strong>{s.name}</strong>}
                         </span>
-                        <span className="sponsor-name">{s.name}</span>
+                        {s.logo && typeof s.logo === 'object' && <span className="sponsor-name">{s.name}</span>}
                         {s.text && <span className="muted sponsor-text">{s.text}</span>}
                       </>
                     )

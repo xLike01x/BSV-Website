@@ -52,7 +52,17 @@ export const Media: CollectionConfig = {
     components: { beforeList: ['@/components/Admin/MedienOrdner'] },
   },
   endpoints: [autoZuordnenEndpunkt],
-  hooks: { beforeChange: [teamBildPruefen] },
+  hooks: {
+    beforeChange: [
+      teamBildPruefen,
+      // Ordner eindeutig halten: Team-Ordner schließt „Sponsoren“ aus, „Sponsoren“ zählt als Vereinsbild (alle dürfen es benutzen)
+      ({ data }) => {
+        if (data.team) data.sponsoren = false
+        else if (data.sponsoren) data.allgemein = true
+        return data
+      },
+    ],
+  },
   fields: [
     {
       name: 'alt',
@@ -101,6 +111,20 @@ export const Media: CollectionConfig = {
         position: 'sidebar',
         condition: (data) => !data?.team,
         description: 'Für Bilder ohne Team, z. B. Logo, Sportplatz, Vereinsfotos. Alle Trainer dürfen sie benutzen, aber nicht ändern.',
+      },
+    },
+    {
+      name: 'sponsoren',
+      label: 'Sponsoren-Logo',
+      type: 'checkbox',
+      access: {
+        create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+        update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+      },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => !data?.team,
+        description: 'Legt das Bild in den Ordner „Sponsoren“. Passiert automatisch, sobald es bei einem Sponsor als Logo gespeichert wird.',
       },
     },
     {

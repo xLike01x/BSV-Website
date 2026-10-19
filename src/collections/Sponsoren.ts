@@ -19,7 +19,20 @@ export const Sponsoren: CollectionConfig = {
     description: 'Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.',
   },
   defaultSort: 'reihenfolge',
-  hooks: { afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
+  hooks: {
+    afterChange: [
+      revalidateAllesNachAenderung,
+      // Sponsor-Logos landen automatisch im Mediathek-Ordner „Sponsoren“
+      async ({ doc, req }) => {
+        const id = doc.logo && typeof doc.logo === 'object' ? doc.logo.id : doc.logo
+        if (!id) return doc
+        const m = (await req.payload.findByID({ collection: 'media', id, depth: 0, overrideAccess: true, req }).catch(() => null)) as { team?: unknown; sponsoren?: boolean | null } | null
+        if (m && !m.team && !m.sponsoren) await req.payload.update({ collection: 'media', id, data: { allgemein: true, sponsoren: true } as never, overrideAccess: true, req, context: { disableRevalidate: true } }).catch(() => null)
+        return doc
+      },
+    ],
+    afterDelete: [revalidateAllesNachLoeschen],
+  },
   fields: [
     { name: 'name', label: 'Name', type: 'text', required: true },
     {
@@ -27,7 +40,7 @@ export const Sponsoren: CollectionConfig = {
       label: 'Logo',
       type: 'upload',
       relationTo: 'media',
-      admin: { description: 'Am besten mit transparentem oder weißem Hintergrund (PNG), quer.' },
+      admin: { description: 'Am besten mit transparentem oder weißem Hintergrund (PNG), quer. Beim Hochladen kein Team wählen – das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.' },
     },
     { name: 'url', label: 'Website', type: 'text', validate: sichereAdresse, admin: { placeholder: 'https://…' } },
     { name: 'text', label: 'Kurzer Text (optional)', type: 'textarea', maxLength: 200, admin: { description: 'Z. B. „Unterstützt seit 2015 unsere Jugend“.' } },

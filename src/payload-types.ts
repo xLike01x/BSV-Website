@@ -304,6 +304,10 @@ export interface Media {
    */
   allgemein?: boolean | null;
   /**
+   * Legt das Bild in den Ordner „Sponsoren“. Passiert automatisch, sobald es bei einem Sponsor als Logo gespeichert wird.
+   */
+  sponsoren?: boolean | null;
+  /**
    * Nur Fotos mit Einwilligung der abgebildeten Personen – bei Kindern der Eltern.
    */
   inGalerie?: boolean | null;
@@ -1337,7 +1341,7 @@ export interface Sponsoren {
   id: number;
   name: string;
   /**
-   * Am besten mit transparentem oder weißem Hintergrund (PNG), quer.
+   * Am besten mit transparentem oder weißem Hintergrund (PNG), quer. Beim Hochladen kein Team wählen – das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
    */
   logo?: (number | null) | Media;
   url?: string | null;
@@ -1922,6 +1926,7 @@ export interface MediaSelect<T extends boolean = true> {
   personen?: T;
   team?: T;
   allgemein?: T;
+  sponsoren?: T;
   inGalerie?: T;
   caption?: T;
   folder?: T;

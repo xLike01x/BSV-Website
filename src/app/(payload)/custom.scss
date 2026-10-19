@@ -415,3 +415,10 @@ body {
     display: none;
   }
 }
+
+/* Payload-eigene „Folder“-Auswahl ausblenden – wir nutzen „Ordner (Team / Kurs)“ und „Verein allgemein“ */
+.folder-edit-field,
+#field-folder,
+.field-type[id='field-folder'] {
+  display: none !important;
+}

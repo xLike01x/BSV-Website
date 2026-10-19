@@ -27,7 +27,7 @@ import { Header } from './Header/config'
 import { plugins } from './plugins'
 import { sicherungEndpunkte } from './sicherung/endpunkte'
 import { PAPIERKORB, papierkorbSchutz } from './utilities/papierkorb'
-import { hauptsponsorUmziehen } from './utilities/hauptsponsorUmziehen'
+import { doppelteHauptsponsorenAufraeumen, hauptsponsorUmziehen, sponsorLogosEinordnen } from './utilities/hauptsponsorUmziehen'
 import { medienUmziehen } from './utilities/medienUmziehen'
 import { Profilbilder } from './collections/Profilbilder'
 import { Passantraege } from './passantraege/Passantraege'
@@ -76,6 +76,8 @@ export default buildConfig({
     if (process.env.NEXT_PHASE === 'phase-production-build') return
     medienUmziehen(payload)
     await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
+    await doppelteHauptsponsorenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Doppelte Hauptsponsoren aufräumen fehlgeschlagen'))
+    await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
     taeglicheAufgaben(payload)
   },
   admin: {
