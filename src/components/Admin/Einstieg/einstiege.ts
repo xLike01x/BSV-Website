@@ -102,6 +102,67 @@ export const EINSTIEGE: Record<string, Einstieg> = {
         }),
       },
       {
+        key: 'angebot',
+        symbol: '🆕',
+        titel: 'Neues Angebot',
+        text: 'Neuer Kurs oder neue Mannschaft – mit Zeiten und Probetraining.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Neu im BSV: [Name des Angebots]',
+          content: richText([
+            { p: '[Ab wann gibt es das Angebot? Für wen ist es gedacht?]' },
+            { liste: ['Wann: [Wochentag, Uhrzeit]', 'Wo: [Halle/Platz]', 'Für wen: [Alter, Vorkenntnisse]', 'Leitung: [Name]'] },
+            { p: 'Einfach vorbeikommen und kostenlos mitmachen – Probetraining über die Seite des Angebots anfragen.' },
+          ]),
+        }),
+      },
+      {
+        key: 'glueckwunsch',
+        symbol: '🏅',
+        titel: 'Glückwunsch & Ehrung',
+        text: 'Meisterschaft, Aufstieg, Jubiläum oder Ehrung.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Herzlichen Glückwunsch: [Wer und wofür?]',
+          content: richText([
+            { p: '[Was wurde erreicht? Ein, zwei Sätze.]' },
+            { h: 'h2', p: 'So kam es dazu' },
+            { p: '[Kurzer Rückblick: Saison, Weg, besondere Momente.]' },
+            { p: 'Der ganze Verein gratuliert!' },
+          ]),
+        }),
+      },
+      {
+        key: 'hinweis',
+        symbol: '⚠️',
+        titel: 'Wichtiger Hinweis',
+        text: 'Platzsperre, geänderte Zeiten, Hallenschließung.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Wichtig: [Was ändert sich?]',
+          content: richText([
+            { p: '[Was genau ändert sich – und warum?]' },
+            { liste: ['Betrifft: [Teams/Kurse]', 'Ab: [Datum]', 'Bis: [Datum oder „bis auf Weiteres“]'] },
+            { p: 'Fragen? [Ansprechperson]' },
+          ]),
+        }),
+      },
+      {
+        key: 'helfer',
+        symbol: '🙋',
+        titel: 'Helfer gesucht',
+        text: 'Aufruf für Fest, Turnier oder Arbeitseinsatz.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Helfer gesucht: [Wofür?]',
+          content: richText([
+            { p: '[Wofür brauchen wir Unterstützung? Wann und wo?]' },
+            { liste: ['Aufgaben: [z. B. Grill, Kuchentheke, Aufbau]', 'Zeit: [z. B. zwei Stunden]'] },
+            { p: 'Wer helfen mag: einfach über die Seite „Mitmachen“ oder das Kontaktformular melden. Danke!' },
+          ]),
+        }),
+      },
+      {
         key: 'leer',
         symbol: '➕',
         titel: 'Leere News',
@@ -147,6 +208,38 @@ export const EINSTIEGE: Record<string, Einstieg> = {
         text: 'Samstag ab 10 Uhr, Bereich Fußball.',
         art: 'vorfuellen',
         daten: () => ({ title: 'Turnier', beginn: naechsterSamstag(10), ende: naechsterSamstag(17), bereich: 'fussball', beschreibung: 'Zuschauer willkommen – für Essen und Getränke ist gesorgt.' }),
+      },
+      {
+        key: 'arbeitseinsatz',
+        symbol: '🛠️',
+        titel: 'Arbeitseinsatz',
+        text: 'Samstag 9–13 Uhr, Platz und Heim auf Vordermann.',
+        art: 'vorfuellen',
+        daten: () => ({ title: 'Arbeitseinsatz am Sportpark', beginn: naechsterSamstag(9), ende: naechsterSamstag(13), bereich: 'verein', beschreibung: 'Gemeinsam machen wir Platz und Vereinsheim fit. Bitte Arbeitshandschuhe mitbringen – für Getränke und Verpflegung ist gesorgt.' }),
+      },
+      {
+        key: 'weihnachtsfeier',
+        symbol: '🎄',
+        titel: 'Weihnachtsfeier',
+        text: 'Abends im Vereinsheim, für Mitglieder.',
+        art: 'vorfuellen',
+        daten: () => ({ title: 'Weihnachtsfeier', beginn: inTagen(21, 18), ende: inTagen(21, 22), bereich: 'verein', nurMitglieder: true, beschreibung: 'Gemütliches Beisammensein zum Jahresabschluss. Bitte kurz Bescheid geben, wer kommt.' }),
+      },
+      {
+        key: 'kinder',
+        symbol: '🧸',
+        titel: 'Kinderfest',
+        text: 'Spiele und Mitmach-Aktionen, Bereich BSV Kids.',
+        art: 'vorfuellen',
+        daten: () => ({ title: 'Kinderfest', beginn: naechsterSamstag(11), ende: naechsterSamstag(15), bereich: 'kids', beschreibung: 'Hüpfburg, Torwandschießen, Kinderschminken und vieles mehr. Eltern und Geschwister sind herzlich willkommen!' }),
+      },
+      {
+        key: 'kurs',
+        symbol: '🧘',
+        titel: 'Schnupperkurs',
+        text: 'Neuer Kurs zum Ausprobieren, Bereich Breitensport.',
+        art: 'vorfuellen',
+        daten: () => ({ title: 'Schnupperkurs: [Name]', beginn: inTagen(7, 19), ende: inTagen(7, 20), bereich: 'erwachsene', beschreibung: 'Einfach vorbeikommen und kostenlos ausprobieren. Bitte Sportkleidung und etwas zu trinken mitbringen.' }),
       },
       {
         key: 'leer',
@@ -218,6 +311,148 @@ export const EINSTIEGE: Record<string, Einstieg> = {
               links: [{ link: { type: 'custom', url: '/kontakt', label: 'Jetzt anmelden', appearance: 'default' } }],
             },
           ],
+        }),
+      },
+      {
+        key: 'abteilung',
+        symbol: '🏟️',
+        titel: 'Abteilung vorstellen',
+        text: 'Text, Ansprechperson, neueste News, Kasten „Probetraining“.',
+        art: 'anlegen',
+        daten: () => ({
+          title: '[Name der Abteilung]',
+          hero: { type: 'lowImpact', richText: richText([{ h: 'h2', p: '[Name der Abteilung]' }, { p: '[Ein Satz: Was macht die Abteilung besonders?]' }]) },
+          layout: [
+            {
+              blockType: 'content',
+              columns: [
+                { size: 'twoThirds', richText: richText([{ h: 'h3', p: 'Über uns' }, { p: '[Wer trainiert hier? Seit wann gibt es die Abteilung? Was erwartet neue Mitglieder?]' }]) },
+                { size: 'oneThird', richText: richText([{ h: 'h3', p: 'Ansprechperson' }, { p: '[Name]' }, { p: '[Funktion]' }, { p: 'Kontakt über das Kontaktformular' }]) },
+              ],
+            },
+            { blockType: 'archive', populateBy: 'collection', relationTo: 'posts', limit: 3, introContent: richText([{ h: 'h3', p: 'Neues aus der Abteilung' }]) },
+            {
+              blockType: 'cta',
+              richText: richText([{ h: 'h3', p: 'Lust mitzumachen?' }, { p: 'Komm zum kostenlosen Probetraining vorbei.' }]),
+              links: [{ link: { type: 'custom', url: '/kontakt', label: 'Probetraining anfragen', appearance: 'default' } }],
+            },
+          ],
+        }),
+      },
+      {
+        key: 'faq',
+        symbol: '❓',
+        titel: 'Häufige Fragen',
+        text: 'Fragen und Antworten untereinander.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Häufige Fragen',
+          hero: { type: 'lowImpact', richText: richText([{ h: 'h2', p: 'Häufige Fragen' }, { p: 'Hier findest du Antworten auf die wichtigsten Fragen.' }]) },
+          layout: [
+            {
+              blockType: 'content',
+              columns: [
+                {
+                  size: 'full',
+                  richText: richText([
+                    { h: 'h3', p: 'Wie werde ich Mitglied?' },
+                    { p: 'Über die Seite „Mitglied werden“ – der Antrag dauert nur wenige Minuten.' },
+                    { h: 'h3', p: 'Kann ich vorher ein Probetraining machen?' },
+                    { p: 'Ja, bei jedem Team und Kurs kostenlos. Anfragen geht direkt auf der Seite des Angebots.' },
+                    { h: 'h3', p: '[Weitere Frage]' },
+                    { p: '[Antwort]' },
+                    { h: 'h3', p: '[Weitere Frage]' },
+                    { p: '[Antwort]' },
+                  ]),
+                },
+              ],
+            },
+          ],
+        }),
+      },
+      {
+        key: 'ansprechpartner',
+        symbol: '👥',
+        titel: 'Ansprechpersonen',
+        text: 'Drei Spalten mit Name, Aufgabe und Kontakt.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Ansprechpersonen',
+          hero: { type: 'lowImpact', richText: richText([{ h: 'h2', p: 'Ansprechpersonen' }, { p: 'Wer hilft bei welcher Frage weiter?' }]) },
+          layout: [
+            {
+              blockType: 'content',
+              columns: [1, 2, 3].map((n) => ({ size: 'oneThird', richText: richText([{ h: 'h3', p: `[Name ${n}]` }, { p: '[Aufgabe, z. B. Jugendleitung]' }, { p: '[Erreichbar über das Kontaktformular]' }]) })),
+            },
+          ],
+        }),
+      },
+      {
+        key: 'chronik',
+        symbol: '📜',
+        titel: 'Vereinsgeschichte',
+        text: 'Chronik mit Jahreszahlen untereinander.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Unsere Geschichte',
+          hero: { type: 'lowImpact', richText: richText([{ h: 'h2', p: 'Unsere Geschichte' }, { p: 'Seit 1919 ein Verein für alle.' }]) },
+          layout: [
+            {
+              blockType: 'content',
+              columns: [
+                {
+                  size: 'full',
+                  richText: richText([
+                    { h: 'h3', p: '1919' },
+                    { p: '[Gründung: Wer, wo, warum?]' },
+                    { h: 'h3', p: '[Jahr]' },
+                    { p: '[Wichtiges Ereignis]' },
+                    { h: 'h3', p: '[Jahr]' },
+                    { p: '[Wichtiges Ereignis]' },
+                    { h: 'h3', p: 'Heute' },
+                    { p: '[Wie viele Mitglieder, welche Abteilungen?]' },
+                  ]),
+                },
+              ],
+            },
+          ],
+        }),
+      },
+      {
+        key: 'unterstuetzen',
+        symbol: '💚',
+        titel: 'Unterstützen & Spenden',
+        text: 'Warum helfen, wie helfen – mit Kasten „Kontakt aufnehmen“.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Unterstützen',
+          hero: { type: 'lowImpact', richText: richText([{ h: 'h2', p: 'Unterstütze den BSV' }, { p: '[Ein Satz: Wofür braucht der Verein Unterstützung?]' }]) },
+          layout: [
+            {
+              blockType: 'content',
+              columns: [
+                { size: 'half', richText: richText([{ h: 'h3', p: 'Spenden' }, { p: '[Wofür wird das Geld verwendet? Spendenquittung möglich?]' }]) },
+                { size: 'half', richText: richText([{ h: 'h3', p: 'Mitanpacken' }, { p: '[Helfer bei Festen, Arbeitseinsätzen, Fahrdiensten – jede Stunde hilft.]' }]) },
+              ],
+            },
+            {
+              blockType: 'cta',
+              richText: richText([{ h: 'h3', p: 'Fragen oder Ideen?' }, { p: 'Wir freuen uns über jede Nachricht.' }]),
+              links: [{ link: { type: 'custom', url: '/kontakt', label: 'Kontakt aufnehmen', appearance: 'default' } }],
+            },
+          ],
+        }),
+      },
+      {
+        key: 'newsliste',
+        symbol: '🗞️',
+        titel: 'Seite mit News-Liste',
+        text: 'Kurzer Text und die neuesten News darunter.',
+        art: 'anlegen',
+        daten: () => ({
+          title: 'Aktuelles',
+          hero: { type: 'lowImpact', richText: richText([{ h: 'h2', p: '[Überschrift]' }, { p: '[Ein Satz zur Seite]' }]) },
+          layout: [{ blockType: 'archive', populateBy: 'collection', relationTo: 'posts', limit: 6 }],
         }),
       },
       {
@@ -341,6 +576,15 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'website', titel: 'Erscheint auf „Mitmachen“', text: 'Besucher können es auch per WhatsApp teilen.', href: '/mitmachen', wo: 'Website → Mitmachen' },
       { key: 'melden', titel: 'Meldungen kommen an', text: 'Als Kontaktanfrage mit dem Betreff des Gesuchs.', href: '/admin/collections/kontaktanfragen', wo: 'Posteingang → Kontaktanfragen' },
       { key: 'aus', titel: 'Gefunden?', text: 'Haken „Auf der Website zeigen“ entfernen – oder löschen.' },
+    ],
+    vorlagenTitel: 'Mit einer Vorlage starten (wird erst beim Speichern angelegt)',
+    vorlagen: [
+      { key: 'trainer', symbol: '⚽', titel: 'Trainer/in', text: 'Für eine Mannschaft oder einen Kurs.', art: 'vorfuellen', daten: () => ({ titel: 'Trainer/in für [Team/Kurs]', text: 'Du hast Spaß an Sport und am Umgang mit Kindern oder Erwachsenen? Wir suchen Verstärkung für unser Trainerteam. Vorkenntnisse sind willkommen, aber kein Muss – Lizenzen fördern wir gern.', aufwand: '1–2 Termine pro Woche', symbol: '⚽' }) },
+      { key: 'fest', symbol: '🎉', titel: 'Helfer fürs Fest', text: 'Grill, Kuchen, Aufbau – ein paar Stunden.', art: 'vorfuellen', daten: () => ({ titel: 'Helfer/innen für [Fest]', text: 'Für unser Fest brauchen wir helfende Hände: am Grill, an der Kuchentheke, beim Auf- und Abbau. Jede Stunde hilft!', aufwand: 'ca. 2 Stunden', symbol: '🎉' }) },
+      { key: 'schiri', symbol: '🧑‍⚖️', titel: 'Schiedsrichter/in', text: 'Ausbildung übernimmt der Verein.', art: 'vorfuellen', daten: () => ({ titel: 'Schiedsrichter/in', text: 'Ohne Schiris kein Spiel: Wir suchen Menschen ab 12 Jahren, die Lust haben, Spiele zu leiten. Die Ausbildung bezahlt der Verein.', aufwand: 'nach Absprache', symbol: '🧑‍⚖️' }) },
+      { key: 'kasse', symbol: '🧾', titel: 'Kassenprüfer/in', text: 'Einmal im Jahr die Kasse prüfen.', art: 'vorfuellen', daten: () => ({ titel: 'Kassenprüfer/in', text: 'Einmal im Jahr schaust du gemeinsam mit einer zweiten Person auf die Vereinskasse und berichtest in der Jahreshauptversammlung.', aufwand: 'ca. 1 Abend pro Jahr', symbol: '🧾' }) },
+      { key: 'foto', symbol: '📸', titel: 'Fotograf/in', text: 'Bilder von Spielen und Festen.', art: 'vorfuellen', daten: () => ({ titel: 'Fotograf/in für Spiele und Feste', text: 'Du fotografierst gern? Dann halte unsere Spiele, Turniere und Feste fest – die Bilder erscheinen in Galerie und News.', aufwand: 'nach Lust und Laune', symbol: '📸' }) },
+      { key: 'leer', symbol: '➕', titel: 'Leeres Gesuch', text: 'Alles selbst eintragen.', art: 'vorfuellen', daten: () => ({}) },
     ],
   },
 

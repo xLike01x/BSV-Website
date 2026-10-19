@@ -825,6 +825,11 @@ export const FAQ: Faq[] = [
     bereich: 'users',
   },
   {
+    frage: 'Welche Vorlagen gibt es?',
+    antwort: 'Oben in der Liste unter „Mit einer Vorlage starten“ – ein Klick, danach alles anpassen. Seiten (als Entwurf): Infoseite, Veranstaltung, Abteilung vorstellen, Häufige Fragen, Ansprechpersonen, Vereinsgeschichte, Unterstützen & Spenden, Seite mit News-Liste, Leere Seite. News (als Entwurf): Spielbericht, Ankündigung, Rückblick mit Fotos, Neues Angebot, Glückwunsch & Ehrung, Wichtiger Hinweis, Helfer gesucht. Termine: Vereinsfest, Versammlung, Turnier, Arbeitseinsatz, Weihnachtsfeier, Kinderfest, Schnupperkurs. Ehrenamt & Mitmachen: Trainer/in, Helfer fürs Fest, Schiedsrichter/in, Kassenprüfer/in, Fotograf/in. Formulare: eigene Vorlagen im Bereich Formulare. Texte in eckigen Klammern [ … ] ersetzt du durch deine eigenen.',
+    bereich: 'pages',
+  },
+  {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
     bereich: 'users',

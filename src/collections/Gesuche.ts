@@ -20,6 +20,8 @@ export const Gesuche: CollectionConfig = {
   defaultSort: 'reihenfolge',
   hooks: { afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
+    // Übernimmt eine im Einstiegs-Kasten gewählte Vorlage in „Neu erstellen“
+    { name: 'vorlage', type: 'ui', admin: { components: { Field: '@/components/Admin/Einstieg/VorlageUebernehmen' } } },
     { name: 'titel', label: 'Wen suchen wir?', type: 'text', required: true, admin: { placeholder: 'z. B. Trainer/in für die F-Jugend' } },
     { name: 'text', label: 'Beschreibung', type: 'textarea', required: true, admin: { description: 'Was ist zu tun? Was bieten wir? Kurz und einladend.' } },
     {
