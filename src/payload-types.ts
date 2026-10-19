@@ -2941,7 +2941,11 @@ export interface Verein {
     logo?: (number | null) | Media;
   };
   /**
-   * Leeres Formular zum Herunterladen, Ausfüllen und Unterschreiben – erscheint beim Passantrag im Mitgliederbereich. Gibt es beim Verband bzw. im DFBnet.
+   * Offizielles Formular des Verbands (WDFV) – ist immer aktuell. Erscheint beim Passantrag im Mitgliederbereich.
+   */
+  passantragVorlageUrl?: string | null;
+  /**
+   * Nur falls ihr ein eigenes Formular nutzt – hat Vorrang vor dem Link.
    */
   passantragVorlage?: (number | null) | Media;
   /**
@@ -3421,6 +3425,7 @@ export interface VereinSelect<T extends boolean = true> {
         url?: T;
         logo?: T;
       };
+  passantragVorlageUrl?: T;
   passantragVorlage?: T;
   glaeubigerId?: T;
   vorstand?:

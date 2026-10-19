@@ -208,7 +208,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
             <>
               {' '}
               <a href={vorlage} target="_blank" rel="noopener">
-                Vorlage Passantrag herunterladen ›
+                Formular „Antrag auf Spielberechtigung“ herunterladen ›
               </a>
             </>
           )}

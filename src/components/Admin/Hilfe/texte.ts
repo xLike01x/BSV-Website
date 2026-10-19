@@ -249,7 +249,7 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: [
       'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ (alle Teams) und die Übungsleitung des jeweiligen Teams. Team-Redaktion und andere Trainer sehen sie nicht.',
       'Es sind Ausweiskopien von Kindern dabei – bitte nichts herunterladen, ausdrucken oder weiterleiten, was nicht für das DFBnet nötig ist.',
-      'Die leere Vorlage für den Passantrag hinterlegst du unter „Vereinsdaten“ → „Fußball: Vorlage Passantrag“.',
+      'Der Link zum offiziellen Formular (WDFV) ist unter „Vereinsdaten“ → „Fußball: Passantrag“ hinterlegt – dort auch änderbar.',
     ],
   },
 

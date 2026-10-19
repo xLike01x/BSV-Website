@@ -3,6 +3,7 @@ import { ausblendenAusser } from '@/access/roles'
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
+import { sichereAdresse } from '@/fields/sichereAdresse'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
 
 /** Vereinsdaten an einer Stelle: Adressen, Kennzahlen, Beiträge, Hauptsponsor. */
@@ -100,11 +101,24 @@ export const Verein: GlobalConfig = {
       ],
     },
     {
-      name: 'passantragVorlage',
-      label: 'Fußball: Vorlage Passantrag (PDF)',
-      type: 'upload',
-      relationTo: 'media',
-      admin: { description: 'Leeres Formular zum Herunterladen, Ausfüllen und Unterschreiben – erscheint beim Passantrag im Mitgliederbereich. Gibt es beim Verband bzw. im DFBnet.' },
+      type: 'row',
+      fields: [
+        {
+          name: 'passantragVorlageUrl',
+          label: 'Fußball: Passantrag – Link zum Formular',
+          type: 'text',
+          defaultValue: 'https://wdfv.de/download/spielberechtigungen/spielberechtigungsantrag.pdf',
+          validate: sichereAdresse,
+          admin: { width: '60%', description: 'Offizielles Formular des Verbands (WDFV) – ist immer aktuell. Erscheint beim Passantrag im Mitgliederbereich.' },
+        },
+        {
+          name: 'passantragVorlage',
+          label: 'oder eigene PDF',
+          type: 'upload',
+          relationTo: 'media',
+          admin: { width: '40%', description: 'Nur falls ihr ein eigenes Formular nutzt – hat Vorrang vor dem Link.' },
+        },
+      ],
     },
     { name: 'glaeubigerId', label: 'SEPA-Gläubiger-ID', type: 'text', admin: { description: 'Erscheint im Mitgliedsantrag beim SEPA-Mandat.' } },
     {

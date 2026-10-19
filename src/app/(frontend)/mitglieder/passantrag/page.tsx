@@ -55,7 +55,8 @@ export default async function PassantragSeite({ searchParams }: { searchParams: 
       hinweis: a.status === 'unterlagen_fehlen' ? a.hinweis : null,
     }
   }
-  const vorlage = bildUrl((verein as { passantragVorlage?: unknown }).passantragVorlage as never) || null
+  const v = verein as { passantragVorlage?: unknown; passantragVorlageUrl?: string | null }
+  const vorlage = bildUrl(v.passantragVorlage as never) || v.passantragVorlageUrl || 'https://wdfv.de/download/spielberechtigungen/spielberechtigungsantrag.pdf'
 
   return (
     <div style={{ background: 'var(--bsv-soft)', minHeight: '80vh' }}>

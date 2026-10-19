@@ -92,7 +92,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 
 - Mitglieder stellen im Mitgliederbereich (`/mitglieder/passantrag`) einen Antrag auf Spielerlaubnis – auch für ihre Kinder – und laden die Unterlagen hoch (Passantrag, Ausweis/Geburtsurkunde, Passfoto, Einverständniserklärungen, ggf. Abmeldung und Meldebescheinigung). Pflicht-Unterlagen hängen von der Art (erster Pass, Vereinswechsel, international) und dem Alter ab.
 - Verwaltung: „Sport → Passanträge“. Sichtbar für Admin, die neue Rolle **Passwesen** (alle Teams) und die **Übungsleitung** des Teams (nicht Team-Redaktion). Status: Eingereicht → In Prüfung / Unterlagen fehlen (mit Hinweis, Person reicht nach) → Beim Verband → Erteilt/Abgelehnt.
-- Dateien in `passantraege/` (nicht öffentlich). Nach Abschluss werden sie automatisch gelöscht (Datenschutz-Fristen, Standard 30 Tage); nie zugeordnete Uploads nach 2 Tagen. Leere Antrags-Vorlage: Vereinsdaten → „Fußball: Vorlage Passantrag“.
+- Dateien in `passantraege/` (nicht öffentlich). Nach Abschluss werden sie automatisch gelöscht (Datenschutz-Fristen, Standard 30 Tage); nie zugeordnete Uploads nach 2 Tagen. Formular-Link (Standard: WDFV-Spielberechtigungsantrag) bzw. eigene PDF: Vereinsdaten → „Fußball: Passantrag“.
 
 ## Registrierung, Google-Anmeldung, Profilfotos
 
