@@ -35,8 +35,20 @@ export const Kontaktanfragen: CollectionConfig = {
       // Nur Anliegen aus der Liste (sonst „Allgemeine Frage“ bzw. das erste Anliegen)
       async ({ data, operation, req }) => {
         if (operation !== 'create' || !data) return data
-        const liste = anliegenListe(await verein(req)).map((a) => a.titel as string)
-        if (!liste.includes(String(data.an ?? ''))) data.an = liste.find((a) => a === 'Allgemeine Frage') ?? liste[0]
+        const v = (await verein(req)) as unknown as { vorstand?: { id?: string; rolle?: string; konto?: number | { id: number } | null }[] } | null
+        // Direkt an ein Vorstandsmitglied mit verknüpftem Konto
+        const an = String(data.an ?? '')
+        if (an.startsWith('vorstand-')) {
+          const z = (v?.vorstand ?? []).find((x) => `vorstand-${x.id}` === an)
+          const konto = z?.konto && typeof z.konto === 'object' ? z.konto.id : z?.konto
+          if (z && konto) {
+            req.context.kontaktAnKonto = konto
+            data.an = `An: ${z.rolle}`
+            return data
+          }
+        }
+        const liste = anliegenListe(v as never).map((a) => a.titel as string)
+        if (!liste.includes(an)) data.an = liste.find((a) => a === 'Allgemeine Frage') ?? liste[0]
         return data
       },
     ],
@@ -47,7 +59,10 @@ export const Kontaktanfragen: CollectionConfig = {
         const liste = anliegenListe(await verein(req))
         const treffer = liste.find((a) => a.titel === doc.an)
         const allgemein = liste.find((a) => a.titel === 'Allgemeine Frage') ?? liste[0]
-        const an = adressen(treffer?.empfaenger).length ? adressen(treffer?.empfaenger) : adressen(allgemein?.empfaenger)
+        // Direkt an ein Vorstandsmitglied: E-Mail aus dem verknüpften Konto (bleibt für Besucher unsichtbar)
+        const kontoId = req.context.kontaktAnKonto as number | undefined
+        const person = kontoId ? ((await req.payload.findByID({ collection: 'users', id: kontoId, depth: 0, overrideAccess: true }).catch(() => null)) as { email?: string } | null) : null
+        const an = person?.email ? [person.email] : adressen(treffer?.empfaenger).length ? adressen(treffer?.empfaenger) : adressen(allgemein?.empfaenger)
         if (!an.length) return doc
         const einzeilig = (x: unknown) => String(x ?? '').replace(/[\r\n]+/g, ' ').slice(0, 200)
         const link = `${getServerSideURL()}/admin/collections/kontaktanfragen/${doc.id}`

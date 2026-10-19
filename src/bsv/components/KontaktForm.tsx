@@ -13,10 +13,12 @@ const passend = (anliegen: string[], wunsch: string) => {
   return anliegen.find((a) => a.toLowerCase() === w) ?? anliegen.find((a) => w.includes(a.toLowerCase()) || a.toLowerCase().includes(w))
 }
 
-export function KontaktForm({ anliegen }: { anliegen: string[] }) {
+export function KontaktForm({ anliegen, direkt = [] }: { anliegen: string[]; direkt?: { wert: string; label: string }[] }) {
   const sp = useSearchParams()
   const thema = sp.get('thema') ?? ''
-  const vorwahl = passend(anliegen, sp.get('an') ?? '') ?? passend(anliegen, thema) ?? anliegen[0]
+  // „Nachricht senden“ bei einem Vorstandsmitglied: diese Person steht oben und ist ausgewählt
+  const person = direkt.find((d) => d.wert === sp.get('an'))
+  const vorwahl = person?.wert ?? passend(anliegen, sp.get('an') ?? '') ?? passend(anliegen, thema) ?? anliegen[0]
   const [status, setStatus] = useState<'offen' | 'sendet' | 'fertig'>('offen')
   const [fehler, setFehler] = useState<string | null>(null)
 
@@ -67,6 +69,7 @@ export function KontaktForm({ anliegen }: { anliegen: string[] }) {
       <label className="field field-full">
         Worum geht es?
         <select name="an" defaultValue={vorwahl}>
+          {person && <option value={person.wert}>{person.label}</option>}
           {anliegen.map((o) => (
             <option key={o}>{o}</option>
           ))}

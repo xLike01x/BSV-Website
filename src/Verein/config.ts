@@ -132,8 +132,44 @@ export const Verein: GlobalConfig = {
         {
           type: 'row',
           fields: [
-            { name: 'name', label: 'Name', type: 'text', required: true },
+            {
+              name: 'name',
+              label: 'Name',
+              type: 'text',
+              validate: (wert: unknown, { siblingData }: { siblingData?: { konto?: unknown } }) =>
+                wert || siblingData?.konto ? true : 'Bitte einen Namen eintragen oder ein Benutzerkonto verknüpfen.',
+              admin: { description: 'Mit verknüpftem Konto: leer lassen – dann steht dort immer der aktuelle Name aus dem Konto.' },
+            },
             { name: 'rolle', label: 'Funktion', type: 'text', required: true },
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            {
+              name: 'konto',
+              label: 'Benutzerkonto (optional)',
+              type: 'relationship',
+              relationTo: 'users',
+              // Nur freigegebene Konten; nicht über die öffentliche Schnittstelle sichtbar
+              filterOptions: { freigegeben: { not_equals: false } },
+              access: { read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
+              admin: {
+                width: '50%',
+                description: 'Verknüpfen, sobald die Person ein Konto hat: „Nachricht senden“ geht dann per E-Mail direkt an sie (die Adresse sieht niemand), und ihr Name bleibt aktuell.',
+              },
+            },
+            {
+              name: 'fotoAusKonto',
+              label: 'Profilfoto aus dem Konto auf der Vereinsseite zeigen',
+              type: 'checkbox',
+              access: { read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
+              admin: {
+                width: '50%',
+                condition: (_, s) => Boolean(s?.konto) && !s?.foto,
+                description: 'Nur mit Einverständnis der Person – Profilfotos sind sonst nie öffentlich. Ein Foto im Feld darunter hat Vorrang.',
+              },
+            },
           ],
         },
         { name: 'foto', label: 'Foto (optional)', type: 'upload', relationTo: 'media' },

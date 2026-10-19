@@ -59,20 +59,33 @@ export default async function VereinSeite() {
               <T text={tx.verein?.vorstandText} werte={w} />
             </p>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 16 }}>
-              {v.vorstand!.map((b, i) => (
-                <div key={b.id ?? i} className="rv" style={{ background: '#fff', borderRadius: 26, padding: 28, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                  <span className="avatar" style={{ width: 80, height: 80, fontSize: 24 }}>
-                    {b.foto && typeof b.foto === 'object' ? <Bild media={b.foto} size="small" sizes="80px" alt="" /> : initialen(b.name)}
-                  </span>
-                  <span>
-                    <strong style={{ display: 'block', fontSize: 20 }}>{b.name}</strong>
-                    <span className="muted">{b.rolle}</span>
-                  </span>
-                  <Link href={`/kontakt?thema=${encodeURIComponent(`An: ${b.rolle}`)}`} className="link-more" style={{ fontSize: 15 }}>
-                    Nachricht senden ›
-                  </Link>
-                </div>
-              ))}
+              {v.vorstand!.map((b, i) => {
+                // Verknüpftes Konto: aktueller Name, Nachricht direkt an die Person, Foto nur mit Haken
+                const konto = b.konto && typeof b.konto === 'object' ? b.konto : null
+                const name = konto?.name || b.name || ''
+                const kontoFoto = konto && b.fotoAusKonto && konto.profilbild && b.id ? `/api/vorstand-foto/${b.id}` : null
+                const link = konto && b.id ? `/kontakt?an=${encodeURIComponent(`vorstand-${b.id}`)}` : `/kontakt?thema=${encodeURIComponent(`An: ${b.rolle}`)}`
+                return (
+                  <div key={b.id ?? i} className="rv" style={{ background: '#fff', borderRadius: 26, padding: 28, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                    <span className="avatar" style={{ width: 80, height: 80, fontSize: 24, overflow: 'hidden' }}>
+                      {b.foto && typeof b.foto === 'object' ? (
+                        <Bild media={b.foto} size="small" sizes="80px" alt="" />
+                      ) : kontoFoto ? (
+                        <img src={kontoFoto} alt="" width={80} height={80} style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+                      ) : (
+                        initialen(name)
+                      )}
+                    </span>
+                    <span>
+                      <strong style={{ display: 'block', fontSize: 20 }}>{name}</strong>
+                      <span className="muted">{b.rolle}</span>
+                    </span>
+                    <Link href={link} className="link-more" style={{ fontSize: 15 }}>
+                      Nachricht senden ›
+                    </Link>
+                  </div>
+                )
+              })}
             </div>
           </div>
         </section>

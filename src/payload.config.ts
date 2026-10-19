@@ -37,6 +37,7 @@ import { taeglicheAufgaben } from './utilities/taeglich'
 import { trainerUmbenennen } from './utilities/trainerUmbenennen'
 import { Datenschutz } from './datenschutz/config'
 import { RollenRechte } from './rollenRechte/config'
+import { vorstandFotoEndpunkt } from './Verein/vorstandFoto'
 import { rechteLaden } from './access/rollenRechte'
 import { Dokumente } from './collections/Dokumente'
 import { Alben } from './collections/Alben'
@@ -73,7 +74,7 @@ const email = process.env.SMTP_HOST
 
 export default buildConfig({
   email,
-  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte],
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return

@@ -443,6 +443,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Nach unten zu „Vorstand und Ansprechpersonen“ scrollen.',
         'Mit „Person hinzufügen“ jemanden ergänzen: Name und Funktion.',
+        'Hat die Person ein Konto auf der Website (selbst registriert und freigegeben)? Dann bei „Benutzerkonto“ auswählen: „Nachricht senden“ geht per E-Mail direkt an sie, und der Name bleibt automatisch aktuell (Feld „Name“ darf dann leer bleiben). Ihr Profilfoto erscheint nur mit Haken „Profilfoto aus dem Konto zeigen“ – und nur mit ihrem Einverständnis.',
         'Mit dem Griff links die Reihenfolge ändern, über die drei Punkte rechts jemanden entfernen.',
         'Oben rechts „Speichern“.',
       ],

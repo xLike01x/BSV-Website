@@ -3075,8 +3075,19 @@ export interface Verein {
    */
   vorstand?:
     | {
-        name: string;
+        /**
+         * Mit verknüpftem Konto: leer lassen – dann steht dort immer der aktuelle Name aus dem Konto.
+         */
+        name?: string | null;
         rolle: string;
+        /**
+         * Verknüpfen, sobald die Person ein Konto hat: „Nachricht senden“ geht dann per E-Mail direkt an sie (die Adresse sieht niemand), und ihr Name bleibt aktuell.
+         */
+        konto?: (number | null) | User;
+        /**
+         * Nur mit Einverständnis der Person – Profilfotos sind sonst nie öffentlich. Ein Foto im Feld darunter hat Vorrang.
+         */
+        fotoAusKonto?: boolean | null;
         foto?: (number | null) | Media;
         id?: string | null;
       }[]
@@ -3602,6 +3613,8 @@ export interface VereinSelect<T extends boolean = true> {
     | {
         name?: T;
         rolle?: T;
+        konto?: T;
+        fotoAusKonto?: T;
         foto?: T;
         id?: T;
       };
