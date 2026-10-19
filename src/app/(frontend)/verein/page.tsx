@@ -68,7 +68,7 @@ export default async function VereinSeite() {
                     <strong style={{ display: 'block', fontSize: 20 }}>{b.name}</strong>
                     <span className="muted">{b.rolle}</span>
                   </span>
-                  <Link href={`/kontakt?an=${encodeURIComponent(`${b.name} (${b.rolle})`)}`} className="link-more" style={{ fontSize: 15 }}>
+                  <Link href={`/kontakt?thema=${encodeURIComponent(`An: ${b.rolle}`)}`} className="link-more" style={{ fontSize: 15 }}>
                     Nachricht senden ›
                   </Link>
                 </div>

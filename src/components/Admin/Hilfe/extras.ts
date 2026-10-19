@@ -694,6 +694,11 @@ export const FAQ: Faq[] = [
     bereich: 'users',
   },
   {
+    frage: 'Wie lege ich fest, wer Nachrichten aus dem Kontaktformular bekommt?',
+    antwort: 'Vereinsdaten → „Kontaktformular: Worum geht es?“ aufklappen. Jede Zeile ist ein Anliegen, das Besucher auswählen (z. B. „Mitgliedschaft & Beiträge“) – bewusst ohne Namen. Rechts daneben trägt ein Admin die E-Mail-Adresse(n) ein, mit Komma getrennt. Ohne Adresse geht die Nachricht an die Empfänger von „Allgemeine Frage“. Neue Anliegen mit „Anliegen hinzufügen“, Reihenfolge per Ziehen. Jede Nachricht steht außerdem unter „Kontaktanfragen“. Die E-Mails kommen, sobald der E-Mail-Versand eingerichtet ist.',
+    bereich: 'verein',
+  },
+  {
     frage: 'Warum erscheint eine Registrierung nicht unter „Registrierungen“?',
     antwort: 'Die Person hat den Link in der Bestätigungs-E-Mail noch nicht angeklickt. Oben auf der Seite steht, wie viele noch darauf warten. Tipp für die Person: im Spam-Ordner nachsehen oder auf der Anmeldeseite „Bestätigungs-E-Mail noch einmal senden“ nutzen. Auch „Passwort vergessen?“ zählt als Bestätigung.',
     bereich: 'users',

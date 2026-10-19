@@ -1,8 +1,13 @@
-import type { CollectionConfig } from 'payload'
+import type { CollectionConfig, PayloadRequest } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { isAdmin, isEditor } from '../access/roles'
 import { spamSchutz } from '../hooks/spamSchutz'
+import { mailHtml } from '@/auth/mail'
+import { getServerSideURL } from '@/utilities/getURL'
+import { adressen, anliegenListe } from '@/Verein/anliegen'
+
+const verein = async (req: PayloadRequest) => (await req.payload.findGlobal({ slug: 'verein', depth: 0, overrideAccess: true, req }).catch(() => null)) as never
 
 /** Nachrichten aus dem Kontaktformular. Telefonnummern und E-Mail-Adressen des Vorstands bleiben so geschützt. */
 export const Kontaktanfragen: CollectionConfig = {
@@ -22,7 +27,45 @@ export const Kontaktanfragen: CollectionConfig = {
     defaultColumns: ['betreff', 'name', 'an', 'status', 'createdAt'],
   },
   defaultSort: '-createdAt',
-  hooks: { beforeValidate: [spamSchutz('kontakt')] },
+  hooks: {
+    beforeValidate: [
+      spamSchutz('kontakt'),
+      // Nur Anliegen aus der Liste (sonst „Allgemeine Frage“ bzw. das erste Anliegen)
+      async ({ data, operation, req }) => {
+        if (operation !== 'create' || !data) return data
+        const liste = anliegenListe(await verein(req)).map((a) => a.titel as string)
+        if (!liste.includes(String(data.an ?? ''))) data.an = liste.find((a) => a === 'Allgemeine Frage') ?? liste[0]
+        return data
+      },
+    ],
+    // Neue Nachricht → per E-Mail an die Empfänger des Anliegens (Antworten gehen direkt an den Absender)
+    afterChange: [
+      async ({ doc, operation, req }) => {
+        if (operation !== 'create') return doc
+        const liste = anliegenListe(await verein(req))
+        const treffer = liste.find((a) => a.titel === doc.an)
+        const allgemein = liste.find((a) => a.titel === 'Allgemeine Frage') ?? liste[0]
+        const an = adressen(treffer?.empfaenger).length ? adressen(treffer?.empfaenger) : adressen(allgemein?.empfaenger)
+        if (!an.length) return doc
+        const einzeilig = (x: unknown) => String(x ?? '').replace(/[\r\n]+/g, ' ').slice(0, 200)
+        const link = `${getServerSideURL()}/admin/collections/kontaktanfragen/${doc.id}`
+        const absaetze = [`Anliegen: ${einzeilig(doc.an)}`, `Von: ${einzeilig(doc.name)} <${einzeilig(doc.email)}>`, `Betreff: ${einzeilig(doc.betreff)}`, String(doc.nachricht ?? '')]
+        const fuss = 'Einfach auf diese E-Mail antworten – die Antwort geht direkt an den Absender. Danach in der Verwaltung auf „Erledigt“ setzen.'
+        try {
+          await req.payload.sendEmail({
+            to: an,
+            replyTo: einzeilig(doc.email),
+            subject: `Kontaktformular: ${einzeilig(doc.betreff)} (${einzeilig(doc.an)})`,
+            text: `${absaetze.join('\n\n')}\n\nIn der Verwaltung: ${link}\n\n${fuss}`,
+            html: mailHtml({ titel: 'Neue Nachricht über die Website', absaetze, knopf: 'In der Verwaltung öffnen', link, fuss }),
+          })
+        } catch (e) {
+          req.payload.logger.error({ err: e }, 'Kontakt-Benachrichtigung fehlgeschlagen')
+        }
+        return doc
+      },
+    ],
+  },
   fields: [
     {
       name: 'status',
@@ -37,7 +80,7 @@ export const Kontaktanfragen: CollectionConfig = {
       admin: { position: 'sidebar' },
       access: { create: () => false },
     },
-    { name: 'an', label: 'An', type: 'text', admin: { description: 'Gewählte Ansprechperson oder Thema' } },
+    { name: 'an', label: 'Anliegen', type: 'text', admin: { description: 'Was im Formular bei „Worum geht es?“ gewählt wurde. Die Auswahl pflegst du unter Vereinsdaten → „Kontaktformular: Worum geht es?“.' } },
     {
       type: 'row',
       fields: [

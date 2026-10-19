@@ -12,7 +12,7 @@ export function mailHtml({ titel, absaetze, knopf, link, fuss }: { titel: string
 <table role="presentation" width="100%" style="max-width:520px;background:#fff;border-radius:16px" cellpadding="0" cellspacing="0"><tr><td style="padding:32px">
 <p style="margin:0 0 4px;font-size:13px;color:#2e7d4f;font-weight:bold">BSV 1919 e.V.</p>
 <h1 style="margin:0 0 16px;font-size:24px">${esc(titel)}</h1>
-${absaetze.map((a) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5">${esc(a)}</p>`).join('')}
+${absaetze.map((a) => `<p style="margin:0 0 14px;font-size:16px;line-height:1.5;white-space:pre-line">${esc(a)}</p>`).join('')}
 ${knopf && link ? `<p style="margin:24px 0"><a href="${esc(link)}" style="display:inline-block;background:#2e7d4f;color:#fff;text-decoration:none;font-weight:bold;padding:14px 24px;border-radius:999px">${esc(knopf)}</a></p><p style="margin:0 0 14px;font-size:13px;color:#667;word-break:break-all">Knopf geht nicht? Diesen Link in den Browser kopieren:<br>${esc(link)}</p>` : ''}
 ${fuss ? `<p style="margin:20px 0 0;font-size:13px;color:#667;line-height:1.5">${esc(fuss)}</p>` : ''}
 </td></tr></table></td></tr></table></body></html>`

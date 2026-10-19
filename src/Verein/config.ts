@@ -1,4 +1,5 @@
-import { hasRole, istMitgliedOderMehr } from '@/access/roles'
+import { hasRole, isAdminField, istMitgliedOderMehr } from '@/access/roles'
+import { STANDARD_ANLIEGEN } from './anliegen'
 import { ausblendenAusser } from '@/access/roles'
 import type { GlobalConfig } from 'payload'
 
@@ -126,7 +127,7 @@ export const Verein: GlobalConfig = {
       label: 'Vorstand und Ansprechpersonen',
       labels: { singular: 'Person', plural: 'Personen' },
       type: 'array',
-      admin: { description: 'Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular, keine Telefonnummern.' },
+      admin: { description: 'Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular (dort ohne Namen), keine Telefonnummern.' },
       fields: [
         {
           type: 'row',
@@ -136,6 +137,34 @@ export const Verein: GlobalConfig = {
           ],
         },
         { name: 'foto', label: 'Foto (optional)', type: 'upload', relationTo: 'media' },
+      ],
+    },
+    {
+      name: 'kontaktAnliegen',
+      label: 'Kontaktformular: Worum geht es?',
+      labels: { singular: 'Anliegen', plural: 'Anliegen' },
+      type: 'array',
+      defaultValue: STANDARD_ANLIEGEN.map((titel) => ({ titel })),
+      admin: {
+        initCollapsed: true,
+        description:
+          'Diese Auswahl sehen Besucher im Kontaktformular – bewusst ohne Namen. Pro Anliegen legt ein Admin fest, wer die Nachricht per E-Mail bekommt (unsichtbar für Besucher). Reihenfolge per Ziehen ändern. Leer gelassen = Standardliste. Ohne Empfänger geht die Nachricht an die Empfänger von „Allgemeine Frage“ (bzw. das erste Anliegen); unter „Kontaktanfragen“ steht sie immer.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            { name: 'titel', label: 'Anliegen (sichtbar)', type: 'text', required: true, maxLength: 80, admin: { width: '45%', placeholder: 'z. B. Mitgliedschaft & Beiträge' } },
+            {
+              name: 'empfaenger',
+              label: 'Geht per E-Mail an (nur Admins)',
+              type: 'text',
+              maxLength: 500,
+              access: { read: isAdminField, update: isAdminField, create: isAdminField },
+              admin: { width: '55%', placeholder: 'vorstand@…, kasse@…', description: 'Eine oder mehrere Adressen, mit Komma getrennt. Funktioniert, sobald der E-Mail-Versand eingerichtet ist.' },
+            },
+          ],
+        },
       ],
     },
     { name: 'downloadsSchutz', type: 'ui', admin: { components: { Field: '@/Verein/DownloadsSchutz' } } },

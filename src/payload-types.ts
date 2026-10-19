@@ -1315,7 +1315,7 @@ export interface Kontaktanfragen {
   id: number;
   status?: ('neu' | 'bearbeitung' | 'erledigt') | null;
   /**
-   * Gewählte Ansprechperson oder Thema
+   * Was im Formular bei „Worum geht es?“ gewählt wurde. Die Auswahl pflegst du unter Vereinsdaten → „Kontaktformular: Worum geht es?“.
    */
   an?: string | null;
   name: string;
@@ -3038,13 +3038,26 @@ export interface Verein {
    */
   glaeubigerId?: string | null;
   /**
-   * Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular, keine Telefonnummern.
+   * Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular (dort ohne Namen), keine Telefonnummern.
    */
   vorstand?:
     | {
         name: string;
         rolle: string;
         foto?: (number | null) | Media;
+        id?: string | null;
+      }[]
+    | null;
+  /**
+   * Diese Auswahl sehen Besucher im Kontaktformular – bewusst ohne Namen. Pro Anliegen legt ein Admin fest, wer die Nachricht per E-Mail bekommt (unsichtbar für Besucher). Reihenfolge per Ziehen ändern. Leer gelassen = Standardliste. Ohne Empfänger geht die Nachricht an die Empfänger von „Allgemeine Frage“ (bzw. das erste Anliegen); unter „Kontaktanfragen“ steht sie immer.
+   */
+  kontaktAnliegen?:
+    | {
+        titel: string;
+        /**
+         * Eine oder mehrere Adressen, mit Komma getrennt. Funktioniert, sobald der E-Mail-Versand eingerichtet ist.
+         */
+        empfaenger?: string | null;
         id?: string | null;
       }[]
     | null;
@@ -3525,6 +3538,13 @@ export interface VereinSelect<T extends boolean = true> {
         name?: T;
         rolle?: T;
         foto?: T;
+        id?: T;
+      };
+  kontaktAnliegen?:
+    | T
+    | {
+        titel?: T;
+        empfaenger?: T;
         id?: T;
       };
   downloads?:

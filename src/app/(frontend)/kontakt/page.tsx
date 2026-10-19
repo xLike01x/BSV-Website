@@ -7,13 +7,14 @@ import { Karte } from '@/bsv/components/Karte'
 import { KontaktForm } from '@/bsv/components/KontaktForm'
 import { T } from '@/bsv/components/Text'
 import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
+import { anliegenListe } from '@/Verein/anliegen'
 
 export const revalidate = 60
 export const metadata: Metadata = seite('Kontakt', 'Schreib dem Büdericher Spielverein – Anfahrt zum Kutscher-Remy-Sportpark und zur Sporthalle Petristraße.')
 
 export default async function KontaktSeite() {
   const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])
-  const empfaenger = (v.vorstand ?? []).map((b) => `${b.name} (${b.rolle})`)
+  const anliegen = anliegenListe(v as never).map((a) => a.titel as string)
 
   return (
     <>
@@ -30,7 +31,7 @@ export default async function KontaktSeite() {
         <div className="wrap-narrow" style={{ padding: 0, display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
           <div style={{ flex: '999 1 520px', minWidth: 0 }}>
             <Suspense fallback={<div className="form" style={{ minHeight: 480 }} />}>
-              <KontaktForm empfaenger={empfaenger} />
+              <KontaktForm anliegen={anliegen} />
             </Suspense>
           </div>
           <aside style={{ flex: '1 1 300px', minWidth: 0, display: 'flex', flexDirection: 'column', gap: 16 }}>

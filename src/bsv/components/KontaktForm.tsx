@@ -6,10 +6,17 @@ import React, { useState } from 'react'
 
 import { sendeFormular } from './sendeFormular'
 
-export function KontaktForm({ empfaenger }: { empfaenger: string[] }) {
+/** Passt ein Link-Thema (z. B. ?thema=Sponsoring) zu einem Anliegen? Dann ist es vorausgewählt. */
+const passend = (anliegen: string[], wunsch: string) => {
+  const w = wunsch.toLowerCase()
+  if (!w) return undefined
+  return anliegen.find((a) => a.toLowerCase() === w) ?? anliegen.find((a) => w.includes(a.toLowerCase()) || a.toLowerCase().includes(w))
+}
+
+export function KontaktForm({ anliegen }: { anliegen: string[] }) {
   const sp = useSearchParams()
-  const vorwahl = sp.get('an') ?? sp.get('thema') ?? ''
-  const optionen = Array.from(new Set(['Allgemeine Frage', ...empfaenger, 'Sponsoring', 'Website', ...(vorwahl ? [vorwahl] : [])]))
+  const thema = sp.get('thema') ?? ''
+  const vorwahl = passend(anliegen, sp.get('an') ?? '') ?? passend(anliegen, thema) ?? anliegen[0]
   const [status, setStatus] = useState<'offen' | 'sendet' | 'fertig'>('offen')
   const [fehler, setFehler] = useState<string | null>(null)
 
@@ -58,9 +65,9 @@ export function KontaktForm({ empfaenger }: { empfaenger: string[] }) {
         </label>
       </div>
       <label className="field field-full">
-        An
-        <select name="an" defaultValue={vorwahl || 'Allgemeine Frage'}>
-          {optionen.map((o) => (
+        Worum geht es?
+        <select name="an" defaultValue={vorwahl}>
+          {anliegen.map((o) => (
             <option key={o}>{o}</option>
           ))}
         </select>
@@ -75,7 +82,7 @@ export function KontaktForm({ empfaenger }: { empfaenger: string[] }) {
       </label>
       <label className="field field-full">
         Betreff
-        <input name="betreff" type="text" required maxLength={200} defaultValue={sp.get('thema') ?? ''} />
+        <input name="betreff" type="text" required maxLength={200} defaultValue={thema} />
       </label>
       <label className="field field-full">
         Nachricht
