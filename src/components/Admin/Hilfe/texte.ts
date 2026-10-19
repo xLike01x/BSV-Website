@@ -462,6 +462,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Die Übersicht zeigt nur an – geändert wird beim Benutzer bzw. beim Team.',
+      'Wer keinen Zugang zur Verwaltung hat, zeigt der Kasten „🚫 Kein Zugang zur Verwaltung“ unter „Rechte je Rolle“. Unter „Nach Person“ lassen sich Konten mit und ohne Verwaltungs-Zugang getrennt anzeigen.',
       '⚠️ markiert Lücken: Trainer ohne Team, Teams ohne Verantwortliche, Zugänge ohne Zwei-Faktor.',
     ],
     tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Nur Admins und Web-Admins sehen diese Seite.'],

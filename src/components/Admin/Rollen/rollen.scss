@@ -461,3 +461,38 @@
     font-size: 12px;
   }
 }
+
+.bsv-rollen__keinzugang {
+  margin: 20px 0 12px;
+  background: #fff4f2;
+  border-radius: 16px;
+  padding: 16px 20px;
+  h3 {
+    margin: 0 0 8px;
+    font-size: 16px;
+  }
+  ul {
+    margin: 0;
+    padding-left: 18px;
+    display: grid;
+    gap: 6px;
+    line-height: 1.5;
+    font-size: 14px;
+  }
+}
+.bsv-rollen__filter[role='radiogroup'] {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  label {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    cursor: pointer;
+  }
+}
+.bsv-rollen__ok {
+  color: #157a43;
+  font-weight: 600;
+  white-space: nowrap;
+}

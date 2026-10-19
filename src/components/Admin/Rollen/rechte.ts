@@ -3,7 +3,7 @@ import type { PayloadRequest } from 'payload'
 import { ROLES } from '@/access/roles'
 
 export type Stufe = 'ja' | 'eigene' | 'nein' | 'website'
-export type RechteZeile = { slug: string; art: 'bereich' | 'einstellung'; titel: string; gruppe: string; ansehen: Stufe; anlegen: Stufe; bearbeiten: Stufe; loeschen: Stufe }
+export type RechteZeile = { slug: string; art: 'bereich' | 'einstellung' | 'seite'; titel: string; gruppe: string; ansehen: Stufe; anlegen: Stufe; bearbeiten: Stufe; loeschen: Stufe }
 export type RechteMatrix = Record<string, RechteZeile[]>
 
 const AUSLASSEN = new Set(['hilfe-feedback', 'search', 'payload-folders', 'passdokumente', 'profilbilder'])
@@ -13,7 +13,18 @@ const ZUSATZ_TEAM: Record<string, Partial<Record<'ansehen' | 'anlegen', Stufe>>>
   posts: { anlegen: 'eigene' },
   ausfaelle: { anlegen: 'eigene' },
   media: { ansehen: 'eigene', anlegen: 'eigene' },
+  alben: { anlegen: 'eigene' },
 }
+
+/** Eigene Seiten der Verwaltung (keine Sammlungen) – wer sie öffnen darf */
+const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeiten: boolean }[] = [
+  { slug: 'hilfe', titel: 'Hilfe-Center', rollen: 'alle', bearbeiten: false },
+  { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true },
+  { slug: 'rollen', titel: 'Rollen-Übersicht', rollen: ['admin'], bearbeiten: false },
+  { slug: 'sicherung', titel: 'Datensicherung', rollen: ['webadmin'], bearbeiten: true },
+]
+/** Diese Einträge legen Mitglieder selbst im Mitgliederbereich an (nicht in der Verwaltung) */
+const UEBER_MITGLIEDERBEREICH = new Set(['passantraege'])
 
 /**
  * Rechte je Rolle – direkt aus den echten Zugriffsregeln berechnet (nicht von Hand gepflegt).
@@ -65,9 +76,13 @@ export async function rechteBerechnen(req: PayloadRequest): Promise<RechteMatrix
         titel: typeof label === 'string' ? label : ((label as Record<string, string> | undefined)?.de ?? c.slug),
         gruppe: typeof c.admin?.group === 'string' ? c.admin.group : 'Weitere',
         ansehen: ansehen !== 'nein' && zusatz.ansehen ? zusatz.ansehen : ansehen,
-        anlegen: ansehen === 'nein' ? 'nein' : oeffentlich ? 'website' : zusatz.anlegen && (await stufe(a.create)) !== 'nein' ? zusatz.anlegen : await stufe(a.create),
+        anlegen: ansehen === 'nein' ? 'nein' : oeffentlich ? 'website' : UEBER_MITGLIEDERBEREICH.has(c.slug) && (await stufe(a.update)) !== 'ja' ? 'website' : zusatz.anlegen && (await stufe(a.create)) !== 'nein' ? zusatz.anlegen : await stufe(a.create),
         bearbeiten: ansehen === 'nein' ? 'nein' : await stufe(a.update),
-        loeschen: ansehen === 'nein' ? 'nein' : await stufe(a.delete),
+        loeschen: ansehen === 'nein' ? 'nein' : await (async () => {
+          const l = await stufe(a.delete)
+          // Passanträge: Mitglieder ziehen nur ihren eigenen Antrag im Mitgliederbereich zurück
+          return UEBER_MITGLIEDERBEREICH.has(c.slug) && l === 'eigene' ? 'website' : l
+        })(),
       })
     }
     for (const g of req.payload.config.globals) {
@@ -85,6 +100,10 @@ export async function rechteBerechnen(req: PayloadRequest): Promise<RechteMatrix
         bearbeiten: ansehen === 'nein' ? 'nein' : await stufe(a.update),
         loeschen: 'nein',
       })
+    }
+    for (const s of SEITEN) {
+      const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)))
+      zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten (links unten)', ansehen: darf ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
     }
     matrix[rolle] = zeilen
   }
