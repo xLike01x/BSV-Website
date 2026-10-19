@@ -1,3 +1,4 @@
+import { hasRole } from '@/access/roles'
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import { redirect } from 'next/navigation'
@@ -89,7 +90,8 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
   const zf = user as typeof user & { _rollen?: string[]; _zweiFaktorOffen?: boolean }
   const echteRollen = zf._rollen ?? user.roles ?? []
   const rollen = user.roles ?? []
-  const istStaff = rollen.some((r) => r !== 'mitglied')
+  // Knopf „Zur Verwaltung“ nur für Rollen, die die Verwaltung auch öffnen dürfen (gleiche Liste wie canUseAdminPanel)
+  const istStaff = hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
   const zweiFaktorOffen = Boolean(zf._zweiFaktorOffen)
   const meine = (user.angebote ?? []).filter((a): a is Angebote => typeof a === 'object')
   const geleitet = rollen.includes('uebungsleitung') || rollen.includes('teamredaktion')
