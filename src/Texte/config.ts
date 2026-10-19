@@ -118,7 +118,7 @@ export const Texte: GlobalConfig = {
           name: 'breitensport',
           fields: [
             text('titel', 'Überschrift', '{kurse} Kurse.\nFür jedes Alter.', true),
-            text('text', 'Einleitung', 'Von den Nappy Dancers ab 1,5 Jahren bis zum Seniorenturnen. Unsere Übungsleitenden sind zum Teil lizenziert – und Schnuppern ist ausdrücklich erwünscht.', true),
+            text('text', 'Einleitung', 'Von den Nappy Dancers ab 1,5 Jahren bis zum Seniorenturnen. Unsere Trainerinnen und Trainer sind zum Teil lizenziert – und Schnuppern ist ausdrücklich erwünscht.', true),
             text('schnupperTitel', 'Abschluss: Titel', 'Erst schnuppern.\nDann entscheiden.', true),
             text('schnupperText', 'Abschluss: Text', 'Unsere Angebote richten sich an Mitglieder. Zum Ausprobieren bist du trotzdem jederzeit willkommen – auf jeder Kursseite kannst du ein Probetraining anfragen.', true),
           ],
@@ -128,7 +128,7 @@ export const Texte: GlobalConfig = {
           name: 'verein',
           fields: [
             text('titel', 'Überschrift', 'Seit {gruendung}\nin Büderich.', true),
-            text('text', 'Einleitung', '{mitglieder} Mitglieder, ein Verein für Fußball und Breitensport – getragen von Ehrenamtlichen, Übungsleitenden und vielen helfenden Händen.', true),
+            text('text', 'Einleitung', '{mitglieder} Mitglieder, ein Verein für Fußball und Breitensport – getragen von Ehrenamtlichen, Trainerinnen und Trainern und vielen helfenden Händen.', true),
             text('vorstandText', 'Vorstand: Text', 'Ansprechpersonen für alles rund um den Verein. Kontakt läuft über das Formular – E-Mail-Adressen und Telefonnummern bleiben geschützt.', true),
             text('beitraegeText', 'Beiträge: Text', 'Vierteljährlich per Lastschrift, jeweils zum 1. eines Quartals. Alle Kurse und Teams inklusive.', true),
             text('shopTitel', 'Shop: Überschrift', 'Zeig, wo du hingehörst.'),
@@ -154,7 +154,7 @@ export const Texte: GlobalConfig = {
             ]),
             gruppe('antrag', 'Mitglied werden', [
               text('titel', 'Überschrift', 'Anmelden beim BSV.'),
-              text('text', 'Text', 'Wähle deine Teams und Kurse, gib deine Daten ein, fertig. Die Übungsleitungen werden automatisch informiert.', true),
+              text('text', 'Text', 'Wähle deine Teams und Kurse, gib deine Daten ein, fertig. Die Trainer werden automatisch informiert.', true),
             ]),
             gruppe('sponsoren', 'Sponsoren', [
               text('titel', 'Überschrift', 'Danke an unsere Partner.'),

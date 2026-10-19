@@ -326,7 +326,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 Willkommen im BSV, {p.vorname}!
               </h2>
               <p className="muted" style={{ margin: '12px auto 0', maxWidth: 460 }}>
-                Wir haben deine Anmeldung erhalten. {gewaehlt.length > 0 ? `Die Übungsleitungen deiner ${gewaehlt.length === 1 ? 'Gruppe' : `${gewaehlt.length} Angebote`} melden sich bei dir.` : 'Der Vorstand meldet sich bei dir.'} Sobald die Kasse deinen Antrag bearbeitet hat, bekommst du deinen Zugang zum Mitgliederbereich.
+                Wir haben deine Anmeldung erhalten. {gewaehlt.length > 0 ? `Die Trainer deiner ${gewaehlt.length === 1 ? 'Gruppe' : `${gewaehlt.length} Angebote`} melden sich bei dir.` : 'Der Vorstand meldet sich bei dir.'} Sobald die Kasse deinen Antrag bearbeitet hat, bekommst du deinen Zugang zum Mitgliederbereich.
               </p>
               <Link href="/" className="btn btn-primary" style={{ marginTop: 24 }}>
                 Zur Startseite

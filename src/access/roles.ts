@@ -23,7 +23,7 @@ export const ROLE_OPTIONS: { label: string; value: Role }[] = [
   { label: 'Redaktion (Startseite & alle News)', value: 'redaktion' },
   { label: 'Kasse', value: 'kasse' },
   { label: 'Passwesen (Spielerpässe Fußball)', value: 'passwesen' },
-  { label: 'Übungsleitung', value: 'uebungsleitung' },
+  { label: 'Trainer', value: 'uebungsleitung' },
   { label: 'Team-Redaktion', value: 'teamredaktion' },
   { label: 'Mitglied', value: 'mitglied' },
 ]

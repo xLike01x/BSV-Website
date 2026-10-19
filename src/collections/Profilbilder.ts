@@ -52,7 +52,7 @@ export const Profilbilder: CollectionConfig = {
     group: 'Verwaltung',
     hidden: ausblendenAusser('admin'),
     useAsTitle: 'filename',
-    description: 'Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.',
+    description: 'Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.',
   },
   upload: {
     staticDir: path.resolve(dirname, '../../profilbilder'),

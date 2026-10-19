@@ -480,7 +480,7 @@ export interface Angebote {
       }[]
     | null;
   /**
-   * Personen mit Rolle Übungsleitung oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.
+   * Personen mit Rolle Trainer oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.
    */
   leitung?: (number | User)[] | null;
   /**
@@ -532,7 +532,7 @@ export interface User {
    */
   name: string;
   /**
-   * Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
+   * Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.
    */
   roles: (
     'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
@@ -542,7 +542,7 @@ export interface User {
    */
   angebote?: (number | Angebote)[] | null;
   /**
-   * Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Übungsleitung oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.
+   * Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Trainer oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.
    */
   verantwortlichFuer?: {
     docs?: (number | Angebote)[];
@@ -550,7 +550,7 @@ export interface User {
     totalDocs?: number;
   };
   /**
-   * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.
+   * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
    */
   profilbild?: (number | null) | Profilbilder;
   /**
@@ -622,7 +622,7 @@ export interface User {
   collection: 'users';
 }
 /**
- * Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.
+ * Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "profilbilder".

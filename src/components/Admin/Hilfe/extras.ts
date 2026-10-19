@@ -263,10 +263,10 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     },
     {
       id: 'team-verantwortliche',
-      titel: 'Einer Übungsleitung ein Team zuordnen',
+      titel: 'Einem Trainer ein Team zuordnen',
       video: '/hilfe/team-verantwortliche.mp4',
       schritte: [
-        'Zuerst muss die Person ein Benutzerkonto mit der Rolle „Übungsleitung“ oder „Team-Redaktion“ haben (Bereich „Benutzer“).',
+        'Zuerst muss die Person ein Benutzerkonto mit der Rolle „Trainer“ oder „Team-Redaktion“ haben (Bereich „Benutzer“).',
         'Dann das Team unter „Teams & Kurse“ öffnen.',
         'Bei „Verantwortliche“ die Person auswählen.',
         'Speichern. Ab sofort kann die Person News, Bilder und Ausfälle für dieses Team pflegen.',
@@ -405,12 +405,12 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   users: [
     {
       id: 'konto-anlegen',
-      titel: 'Ein Konto für eine neue Übungsleitung anlegen',
+      titel: 'Ein Konto für einen neuen Trainer anlegen',
       video: '/hilfe/konto-anlegen.mp4',
       schritte: [
         '„Neu erstellen“ klicken.',
         'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben.',
-        'Bei „Rollen“ „Übungsleitung“ (oder „Team-Redaktion“) wählen und speichern.',
+        'Bei „Rollen“ „Trainer“ (oder „Team-Redaktion“) wählen und speichern.',
         'Unter „Teams & Kurse“ die Person beim Team als „Verantwortliche“ eintragen.',
         'Der Person E-Mail und Passwort persönlich mitteilen. Beim ersten Anmelden richtet sie die Zwei-Faktor-App ein.',
       ],
@@ -597,7 +597,7 @@ export const FELDER: Record<string, Feld[]> = {
   rollen: [
     { name: 'Verantwortlich für', text: 'Teams, die die Person pflegen darf. Eingetragen wird das beim Team unter „Verantwortliche“.' },
     { name: 'Zwei-Faktor', text: 'Ob die Handy-App für die Anmeldung eingerichtet ist. Pflicht für alle außer „Mitglied“.' },
-    { name: '⚠️', text: 'Hier fehlt etwas: z. B. eine Übungsleitung ohne Team oder ein Team ohne Verantwortliche.' },
+    { name: '⚠️', text: 'Hier fehlt etwas: z. B. ein Trainer ohne Team oder ein Team ohne Verantwortliche.' },
   ],
   users: [
     { name: 'Name', text: 'Erscheint in der Verwaltung und als Autor:in von News.' },
@@ -689,7 +689,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wer sieht die Passanträge und Ausweiskopien?',
-    antwort: 'Die antragstellende Person (ihre eigenen), Admins, Konten mit der Rolle „Passwesen“ (alle Teams – auch ohne eigenes Team) und die Übungsleitung des Teams, für das der Antrag gestellt wurde. Team-Redaktion, Kasse und Trainer anderer Teams sehen sie nicht. Die Rolle „Passwesen“ vergibst du unter „Benutzer“.',
+    antwort: 'Die antragstellende Person (ihre eigenen), Admins, Konten mit der Rolle „Passwesen“ (alle Teams – auch ohne eigenes Team) und die Trainer des Teams, für das der Antrag gestellt wurde. Team-Redaktion, Kasse und Trainer anderer Teams sehen sie nicht. Die Rolle „Passwesen“ vergibst du unter „Benutzer“.',
     bereich: 'passantraege',
   },
   {
@@ -720,7 +720,7 @@ export const FAQ: Faq[] = [
 
   {
     frage: 'Wer sieht die Profilfotos der Mitglieder?',
-    antwort: 'Nur das Mitglied selbst, Admin und Kasse sowie die Übungsleitung / Team-Redaktion der Kurse, in denen das Mitglied eingetragen ist (im Team unter „Mitglieder in diesem Team / Kurs“). Nie öffentlich. Das Mitglied kann sein Foto jederzeit selbst entfernen.',
+    antwort: 'Nur das Mitglied selbst, Admin und Kasse sowie die Trainer der Kurse, in denen das Mitglied eingetragen ist (im Team unter „Mitglieder in diesem Team / Kurs“). Nie öffentlich. Das Mitglied kann sein Foto jederzeit selbst entfernen.',
     bereich: 'users',
   },
   {
@@ -933,7 +933,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
     anleitungen: [['passantraege', 'passantrag-bearbeiten']],
   },
   uebungsleitung: {
-    label: 'Übungsleitung',
+    label: 'Trainer',
     kurz: 'Du pflegst deine eigenen Teams oder Kurse.',
     darf: ['News für deine Teams schreiben', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern', 'Probetraining-Anfragen für deine Teams beantworten'],
     darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen'],
@@ -989,7 +989,7 @@ export const GLOSSAR: Feld[] = [
   { name: 'Mediathek', text: 'Der Ort für alle Bilder und Dateien. Was dort liegt, kann überall ausgewählt werden.' },
   { name: 'Baustein', text: 'Ein Teil einer Seite, z. B. ein Textabschnitt, ein Bild oder ein Button. Seiten bestehen aus Bausteinen untereinander.' },
   { name: 'Kategorie', text: 'Ein Schlagwort für News, nach dem Besucher filtern können.' },
-  { name: 'Rolle', text: 'Bestimmt, was jemand in der Verwaltung darf – z. B. Redaktion, Kasse oder Übungsleitung.' },
+  { name: 'Rolle', text: 'Bestimmt, was jemand in der Verwaltung darf – z. B. Redaktion, Kasse oder Trainer.' },
   { name: 'Verantwortliche', text: 'Die Benutzerkonten, die ein bestimmtes Team pflegen dürfen.' },
   { name: 'Zwei-Faktor-Anmeldung', text: 'Zusätzlich zum Passwort ein 6-stelliger Code aus einer Handy-App. Schützt die Daten des Vereins.' },
   { name: 'Wiederherstellungscodes', text: 'Zehn Einmal-Codes für den Notfall, falls das Handy fehlt. Gut aufbewahren!' },

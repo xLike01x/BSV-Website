@@ -162,7 +162,7 @@ export default async function AngebotSeite({ params }: Args) {
               </span>
               <span>
                 <span className="info-label" style={{ display: 'block' }}>
-                  {leitung.rolle || (istFussball ? 'Trainer' : 'Übungsleitung')}
+                  {leitung.rolle || 'Trainer'}
                 </span>
                 <strong style={{ fontSize: 19 }}>{leitung.name}</strong>
               </span>
@@ -184,7 +184,7 @@ export default async function AngebotSeite({ params }: Args) {
           {(a.team?.length ?? 0) > 0 && (
             <div style={{ flex: '1 1 280px', minWidth: 0 }}>
               <h2 className="t-3" style={{ marginBottom: 20 }}>
-                {istFussball ? 'Trainerteam' : 'Übungsleitung'}
+                {istFussball ? 'Trainerteam' : 'Trainer'}
               </h2>
               <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
                 {a.team!.map((t, i) => (
@@ -287,7 +287,7 @@ export default async function AngebotSeite({ params }: Args) {
             <T text={tx.probetraining?.titel} werte={w} />
           </h2>
           <p className="rv lead center" style={{ margin: '14px auto 36px', maxWidth: 520, fontSize: 19 }}>
-            {leitung ? `Die Anfrage geht direkt an ${leitung.name}.` : 'Die Anfrage geht direkt an die Übungsleitung.'} Wir melden uns per E-Mail.
+            {leitung ? `Die Anfrage geht direkt an ${leitung.name}.` : 'Die Anfrage geht direkt an die Trainer.'} Wir melden uns per E-Mail.
           </p>
           <ProbetrainingForm
             angebotId={a.id}

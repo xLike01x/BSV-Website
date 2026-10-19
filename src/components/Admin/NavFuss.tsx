@@ -8,7 +8,7 @@ const ROLLEN: Record<string, string> = {
   redaktion: 'Redaktion',
   kasse: 'Kasse',
   passwesen: 'Passwesen',
-  uebungsleitung: 'Übungsleitung',
+  uebungsleitung: 'Trainer',
   teamredaktion: 'Team-Redaktion',
   mitglied: 'Mitglied',
 }

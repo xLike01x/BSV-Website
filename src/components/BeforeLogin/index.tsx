@@ -5,7 +5,7 @@ const BeforeLogin: React.FC = () => {
     <div>
       <p>
         <b>BSV-Verwaltung</b>
-        {' – Anmeldung für Redaktion, Übungsleitungen, Kasse und Vorstand. Mitglieder melden sich unter '}
+        {' – Anmeldung für Redaktion, Trainer, Kasse und Vorstand. Mitglieder melden sich unter '}
         <a href="/login">buedericher-spielverein.de/login</a>
         {' an.'}
       </p>

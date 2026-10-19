@@ -132,7 +132,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
       hasMany: true,
       // Wer ein Team betreuen darf, entscheiden Admin/Redaktion – nicht die Trainer selbst
       access: { create: isEditorField, update: isEditorField },
-      admin: { description: 'Personen mit Rolle Übungsleitung oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.' },
+      admin: { description: 'Personen mit Rolle Trainer oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.' },
     },
     {
       name: 'team',
@@ -145,7 +145,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
           type: 'row',
           fields: [
             { name: 'name', label: 'Name', type: 'text', required: true },
-            { name: 'rolle', label: 'Rolle', type: 'text', admin: { placeholder: 'Trainer, Übungsleitung …' } },
+            { name: 'rolle', label: 'Rolle', type: 'text', admin: { placeholder: 'Trainer, Co-Trainerin, Betreuer …' } },
           ],
         },
         { name: 'foto', label: 'Foto', type: 'upload', relationTo: 'media', filterOptions: medienAuswahl },

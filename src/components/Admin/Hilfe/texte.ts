@@ -189,7 +189,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Der Ausfall erscheint sofort gut sichtbar auf der Seite des Teams und im Mitgliederbereich.',
       'Eltern und Mitglieder sehen so schnell, dass sie nicht kommen müssen.',
     ],
-    tipps: ['Als Übungsleitung siehst du nur deine eigenen Teams.'],
+    tipps: ['Als Trainer siehst du nur deine eigenen Teams.'],
   },
 
   probetraining: {
@@ -249,7 +249,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Nach „Spielerlaubnis erteilt“ oder „Abgelehnt“ werden Ausweis, Passfoto und Erklärungen automatisch gelöscht (Standard 30 Tage). Der unterschriebene Passantrag wird 2 Jahre aufbewahrt und dann samt Antrag gelöscht. Beide Fristen stehen unter „Datenschutz-Fristen“.',
     ],
     tipps: [
-      'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ (alle Teams) und die Übungsleitung des jeweiligen Teams. Team-Redaktion und andere Trainer sehen sie nicht.',
+      'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ (alle Teams) und die Trainer des jeweiligen Teams. Team-Redaktion und andere Trainer sehen sie nicht.',
       'Es sind Ausweiskopien von Kindern dabei – bitte nichts herunterladen, ausdrucken oder weiterleiten, was nicht für das DFBnet nötig ist.',
       'Der Link zum offiziellen Formular (WDFV) ist unter „Vereinsdaten“ → „Fußball: Passantrag“ hinterlegt – dort auch änderbar.',
     ],
@@ -293,7 +293,7 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Alle Personen, die sich anmelden können – vom Mitglied bis zum Admin.',
     wozu: {
       text: 'Jeder, der sich anmelden soll, braucht ein Konto. Die Rolle legt fest, was die Person darf.',
-      beispiele: ['Konto für eine neue Übungsleitung', 'Pressewart einer Mannschaft als Team-Redaktion'],
+      beispiele: ['Konto für einen neuen Trainer', 'Pressewart einer Mannschaft als Team-Redaktion'],
     },
     tun: [
       'Neue Konten anlegen und Rollen vergeben.',
@@ -301,7 +301,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
-      '• Übungsleitung / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
+      '• Trainer / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
       'Bei Teams & Kursen unter „Verantwortliche“ legst du fest, welche Teams jemand pflegt.',
       'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Registrierungen“ (links unten) auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
     ],
@@ -312,7 +312,7 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: [
       'Rollen sparsam vergeben: Jeder bekommt nur, was er wirklich braucht.',
       'Wer den Verein verlässt, dessen Konto bitte löschen – das Profilfoto wird dabei mit gelöscht.',
-      'Profilfotos laden Mitglieder selbst hoch. Sehen können sie nur das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.',
+      'Profilfotos laden Mitglieder selbst hoch. Sehen können sie nur das Mitglied, Admin/Kasse und die Trainer seiner Kurse.',
     ],
   },
 
@@ -448,7 +448,7 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich?',
     wozu: {
       text: 'Damit ihr schnell seht, wer welche Rechte hat – und wo noch jemand fehlt.',
-      beispiele: ['Wer pflegt die D-Jugend?', 'Hat die neue Übungsleitung schon Zwei-Faktor?'],
+      beispiele: ['Wer pflegt die D-Jugend?', 'Hat der neue Trainer schon Zwei-Faktor?'],
     },
     tun: [
       'Reiter „Nach Person“: jede Person mit ihren Rollen, ihren Teams und ob die Zwei-Faktor-Anmeldung eingerichtet ist.',
@@ -462,7 +462,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Die Übersicht zeigt nur an – geändert wird beim Benutzer bzw. beim Team.',
-      '⚠️ markiert Lücken: Übungsleitungen ohne Team, Teams ohne Verantwortliche, Zugänge ohne Zwei-Faktor.',
+      '⚠️ markiert Lücken: Trainer ohne Team, Teams ohne Verantwortliche, Zugänge ohne Zwei-Faktor.',
     ],
     tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Nur Admins und Web-Admins sehen diese Seite.'],
   },

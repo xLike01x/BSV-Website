@@ -72,7 +72,7 @@ export const Users: CollectionConfig = {
         create: isAdminField,
         update: isAdminField,
       },
-      admin: { description: 'Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Übungsleitung / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
+      admin: { description: 'Wer welche Rolle für welches Team hat: siehe „Rollen-Übersicht“ links unten. Web-Admin: alles inkl. Technik und Admin-Konten · Admin: alles außer Admin-/Web-Admin-Rechte vergeben · Redaktion: News, Seiten, Menü, Texte, Vereinsdaten · Kasse: Mitgliedsanträge, Beiträge · Passwesen: Fußball-Passanträge aller Teams · Trainer / Team-Redaktion: nur eigene Teams · Mitglied: nur Mitgliederbereich.' },
     },
     {
       name: 'angebote',
@@ -93,7 +93,7 @@ export const Users: CollectionConfig = {
       collection: 'angebote',
       on: 'leitung',
       admin: {
-        description: 'Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Übungsleitung oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.',
+        description: 'Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Trainer oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.',
         defaultColumns: ['title', 'bereich'],
       },
     },
@@ -104,7 +104,7 @@ export const Users: CollectionConfig = {
       relationTo: 'profilbilder',
       // Setzt das Mitglied selbst im Mitgliederbereich (Hochladen trägt es automatisch ein)
       access: { create: isAdminField, update: isAdminField },
-      admin: { position: 'sidebar', description: 'Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse.' },
+      admin: { position: 'sidebar', description: 'Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.' },
     },
     {
       name: 'freigegeben',

@@ -34,6 +34,7 @@ import { Passantraege } from './passantraege/Passantraege'
 import { Mitgliedschaften } from './mitgliedschaften/Mitgliedschaften'
 import { Passdokumente } from './passantraege/Passdokumente'
 import { taeglicheAufgaben } from './utilities/taeglich'
+import { trainerUmbenennen } from './utilities/trainerUmbenennen'
 import { Datenschutz } from './datenschutz/config'
 import { Dokumente } from './collections/Dokumente'
 import { Alben } from './collections/Alben'
@@ -78,6 +79,7 @@ export default buildConfig({
     await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
     await doppelteHauptsponsorenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Doppelte Hauptsponsoren aufräumen fehlgeschlagen'))
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
+    await trainerUmbenennen(payload).catch((e) => payload.logger.warn({ err: e }, 'Trainer-Umbenennung fehlgeschlagen'))
     taeglicheAufgaben(payload)
   },
   admin: {

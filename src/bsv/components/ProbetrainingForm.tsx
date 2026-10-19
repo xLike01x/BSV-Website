@@ -51,7 +51,7 @@ export function ProbetrainingForm({ angebotId, angebotName, ansprechperson, istK
         </div>
         <h2 className="t-2">Anfrage ist raus.</h2>
         <p className="muted" style={{ margin: '12px auto 0', maxWidth: 440 }}>
-          {ansprechperson ? `${ansprechperson} meldet sich bei dir.` : 'Die Übungsleitung meldet sich bei dir.'} Bring bequeme Kleidung und eine Trinkflasche mit.
+          {ansprechperson ? `${ansprechperson} meldet sich bei dir.` : 'Die Trainer melden sich bei dir.'} Bring bequeme Kleidung und eine Trinkflasche mit.
         </p>
         <button type="button" onClick={() => setStatus('offen')} className="btn" style={{ marginTop: 16, color: 'var(--bsv-green)', background: 'transparent' }}>
           Noch eine Anfrage

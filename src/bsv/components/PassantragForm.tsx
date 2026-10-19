@@ -246,7 +246,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
       <label className="check">
         <input type="checkbox" name="bestaetigt" required />
         <span>
-          Ich bestätige, dass die Angaben stimmen. Die Unterlagen sehen nur die Passverwaltung des Vereins und die Übungsleitung des Teams. Nach Abschluss werden Ausweis und Foto gelöscht; den unterschriebenen Antrag muss der Verein 2 Jahre aufbewahren.
+          Ich bestätige, dass die Angaben stimmen. Die Unterlagen sehen nur die Passverwaltung des Vereins und die Trainer des Teams. Nach Abschluss werden Ausweis und Foto gelöscht; den unterschriebenen Antrag muss der Verein 2 Jahre aufbewahren.
         </span>
       </label>
       {fehler && (

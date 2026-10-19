@@ -40,7 +40,7 @@ pnpm seed:beispiele --loeschen   # wieder entfernen
 | Admin | alles außer Admin-Rechte vergeben und Technik |
 | Redaktion | News, Termine, Seiten, Teams & Kurse |
 | Kasse | Mitgliedsanträge inkl. Bankdaten |
-| Übungsleitung | eigene Teams/Kurse pflegen, Ausfälle, Team-News und -Bilder, eigene Probetraining-Anfragen |
+| Trainer (`uebungsleitung`) | eigene Teams/Kurse pflegen, Ausfälle, Team-News und -Bilder, eigene Probetraining-Anfragen |
 | Team-Redaktion | eigene Teams/Kurse: Team-News, Bilder, Zeiten, Ausfälle (z. B. Pressewart einer Mannschaft) |
 | Mitglied | nur Mitgliederbereich auf der Website |
 
@@ -96,7 +96,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 ## Fußball-Passanträge
 
 - Mitglieder stellen im Mitgliederbereich (`/mitglieder/passantrag`) einen Antrag auf Spielerlaubnis – auch für ihre Kinder – und laden die Unterlagen hoch (Passantrag, Ausweis/Geburtsurkunde, Passfoto, Einverständniserklärungen, ggf. Abmeldung und Meldebescheinigung). Pflicht-Unterlagen hängen von der Art (erster Pass, Vereinswechsel, international) und dem Alter ab.
-- Verwaltung: „Sport → Passanträge“. Sichtbar für Admin, die neue Rolle **Passwesen** (alle Teams) und die **Übungsleitung** des Teams (nicht Team-Redaktion). Status: Eingereicht → In Prüfung / Unterlagen fehlen (mit Hinweis, Person reicht nach) → Beim Verband → Erteilt/Abgelehnt.
+- Verwaltung: „Sport → Passanträge“. Sichtbar für Admin, die neue Rolle **Passwesen** (alle Teams) und die **Trainer** des Teams (nicht Team-Redaktion). Status: Eingereicht → In Prüfung / Unterlagen fehlen (mit Hinweis, Person reicht nach) → Beim Verband → Erteilt/Abgelehnt.
 - Dateien in `passantraege/` (nicht öffentlich). Nach Abschluss werden Ausweis, Foto & Erklärungen automatisch gelöscht (Standard 30 Tage); der unterschriebene Passantrag wird 2 Jahre aufbewahrt, danach Antrag samt Formular gelöscht; nie zugeordnete Uploads nach 7 Tagen. Formular-Link (Standard: WDFV-Spielberechtigungsantrag) bzw. eigene PDF: Vereinsdaten → „Fußball: Passantrag“.
 
 ## Registrierung, E-Mail, Profilfotos
@@ -106,7 +106,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 - Bot-Schutz ohne Captcha und ohne Fremddienst (`src/auth/botschutz.ts`): Proof of Work (SHA-256, HMAC-signierte Aufgabe, 30 min gültig, einmalig), Zeitfalle ≥ 3 s, Honeypot, Rate-Limit pro IP.
 - E-Mail-Versand: `SMTP_*` in der `.env` (Nodemailer). Ohne SMTP beim Entwickeln werden alle Mails samt Link im Server-Log angezeigt; in Produktion ist die Registrierung ohne SMTP gesperrt. „Passwort vergessen“ verlinkt auf `/login/passwort-neu`.
 - Die frühere Google-Anmeldung wurde entfernt (Felder `googleId`/„Google“ bleiben nur, damit das Datenbankschema unverändert bleibt).
-- Profilfotos (`profilbilder/`, nicht öffentlich): Mitglied lädt im Mitgliederbereich hoch; sichtbar für das Mitglied, Admin/Kasse und die Übungsleitung seiner Kurse (im Team: „Mitglieder in diesem Team / Kurs“). Wird beim Löschen des Kontos mit gelöscht und ist Teil der Datensicherung.
+- Profilfotos (`profilbilder/`, nicht öffentlich): Mitglied lädt im Mitgliederbereich hoch; sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse (im Team: „Mitglieder in diesem Team / Kurs“). Wird beim Löschen des Kontos mit gelöscht und ist Teil der Datensicherung.
 
 ## Website-Seiten (neu)
 

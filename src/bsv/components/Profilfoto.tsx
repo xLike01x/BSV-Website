@@ -75,7 +75,7 @@ export function Profilfoto({ name, foto, fotoId }: { name: string; foto: string 
         </p>
       )}
       <p className="muted" style={{ fontSize: 14, margin: '14px 0 0', lineHeight: 1.5 }}>
-        Freiwillig. Sehen können es nur du, die Verwaltung und die Übungsleitung deiner Kurse – nie öffentlich. Du kannst es jederzeit entfernen.
+        Freiwillig. Sehen können es nur du, die Verwaltung und die Trainer deiner Kurse – nie öffentlich. Du kannst es jederzeit entfernen.
       </p>
     </div>
   )
