@@ -21,8 +21,25 @@ export const Mitgliedsantraege: CollectionConfig = {
     delete: isFinance,
   },
   admin: {
-    components: { beforeList: ['@/components/Admin/Einstieg'] },
-    description: 'Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln.',
+    components: {
+      beforeList: [
+        '@/components/Admin/Einstieg',
+        // Reiter „Neu · Rückfrage · Erledigt · Alle“ mit Anzahl – neue Anträge leuchten orange
+        {
+          path: '@/components/Admin/StatusReiter',
+          serverProps: {
+            sammlung: 'mitgliedsantraege',
+            reiter: [
+              { key: 'neu', titel: 'Neu', symbol: '🆕', status: ['neu'], hervorheben: true },
+              { key: 'rueckfrage', titel: 'Rückfrage', symbol: '⏳', status: ['rueckfrage'] },
+              { key: 'erledigt', titel: 'Erledigt', symbol: '✓', status: ['aufgenommen', 'abgelehnt'] },
+              { key: 'alle', titel: 'Alle', symbol: '🗂️', status: null },
+            ],
+          },
+        },
+      ],
+    },
+    description: 'Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln. Oben: „Neu“ leuchtet orange, sobald ein neuer Antrag da ist. Erledigt = aufgenommen oder abgelehnt.',
     group: 'Verwaltung',
     useAsTitle: 'nachname',
     defaultColumns: ['nachname', 'vorname', 'mitgliedsart', 'status', 'createdAt'],
@@ -40,7 +57,22 @@ export const Mitgliedsantraege: CollectionConfig = {
         { label: 'Aufgenommen', value: 'aufgenommen' },
         { label: 'Abgelehnt', value: 'abgelehnt' },
       ],
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        components: {
+          Cell: {
+            path: '@/components/Admin/StatusReiter/Pille',
+            clientProps: {
+              farben: {
+                neu: { text: '🆕 Neu', klasse: 'neu' },
+                rueckfrage: { text: '⏳ Rückfrage', klasse: 'warten' },
+                aufgenommen: { text: '✓ Aufgenommen', klasse: 'ok' },
+                abgelehnt: { text: 'Abgelehnt', klasse: 'aus' },
+              },
+            },
+          },
+        },
+      },
       access: { create: () => false },
     },
     {

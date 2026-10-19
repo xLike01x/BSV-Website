@@ -1310,7 +1310,7 @@ export interface Probetraining {
   deletedAt?: string | null;
 }
 /**
- * Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln.
+ * Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln. Oben: „Neu“ leuchtet orange, sobald ein neuer Antrag da ist. Erledigt = aufgenommen oder abgelehnt.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "mitgliedsantraege".

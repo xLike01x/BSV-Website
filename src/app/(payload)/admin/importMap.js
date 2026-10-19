@@ -29,6 +29,8 @@ import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } fro
 import { default as default_55f1f0469e11c520ea3427c3563b2e35 } from '@/components/Admin/Teilnehmende'
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { default as default_a9afc1bc5ee6748910d9e48427111396 } from '@/components/Admin/StatusReiter/Pille'
+import { default as default_2d7565a102af17e54aaa8173ce7a5f12 } from '@/components/Admin/StatusReiter'
 import { default as default_3128b959b5f53a177f9b2fbbb89048a9 } from '@/components/Admin/Sponsoren'
 import { FormularHinweise as FormularHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
@@ -91,6 +93,8 @@ export const importMap = {
   "@/components/Admin/Teilnehmende#default": default_55f1f0469e11c520ea3427c3563b2e35,
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/StatusReiter/Pille#default": default_a9afc1bc5ee6748910d9e48427111396,
+  "@/components/Admin/StatusReiter#default": default_2d7565a102af17e54aaa8173ce7a5f12,
   "@/components/Admin/Sponsoren#default": default_3128b959b5f53a177f9b2fbbb89048a9,
   "@/components/Admin/Hinweise#FormularHinweise": FormularHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,

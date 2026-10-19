@@ -1,0 +1,82 @@
+.bsv-status {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 var(--gutter-h, 60px) 16px;
+  &__reiter {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 10px 16px;
+    border-radius: 999px;
+    background: #fff;
+    color: #1d1d1f;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 15px;
+    box-shadow: 0 0 0 1px #e5e5ea;
+    &:hover {
+      box-shadow: 0 0 0 1px #157a43;
+    }
+    &.is-aktiv {
+      background: #157a43;
+      color: #fff;
+      box-shadow: none;
+      .bsv-status__zahl {
+        background: rgba(255, 255, 255, 0.25);
+        color: #fff;
+      }
+    }
+    &.is-neu:not(.is-aktiv) {
+      background: #fff4e5;
+      box-shadow: 0 0 0 2px #f59e0b;
+      animation: bsv-status-puls 2s ease-in-out 3;
+    }
+  }
+  &__zahl {
+    min-width: 24px;
+    padding: 1px 8px;
+    border-radius: 999px;
+    background: #f2f2f5;
+    font-size: 13px;
+    text-align: center;
+  }
+  .is-neu:not(.is-aktiv) &__zahl {
+    background: #f59e0b;
+    color: #fff;
+  }
+}
+@keyframes bsv-status-puls {
+  50% {
+    box-shadow: 0 0 0 5px rgba(245, 158, 11, 0.25);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bsv-status__reiter.is-neu {
+    animation: none;
+  }
+}
+.bsv-pille {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  &--neu {
+    background: #fff4e5;
+    color: #8a4b00;
+  }
+  &--warten {
+    background: #eef2ff;
+    color: #3730a3;
+  }
+  &--ok {
+    background: #e8f6ee;
+    color: #157a43;
+  }
+  &--aus {
+    background: #f2f2f5;
+    color: #6e6e73;
+  }
+}
