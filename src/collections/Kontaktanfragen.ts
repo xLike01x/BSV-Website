@@ -5,6 +5,7 @@ import { hasRole } from '../access/roles'
 import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { mailHtml } from '@/auth/mail'
+import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 import { getServerSideURL } from '@/utilities/getURL'
 import { adressen, anliegenListe } from '@/Verein/anliegen'
 
@@ -22,7 +23,17 @@ export const Kontaktanfragen: CollectionConfig = {
     delete: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'redaktion', 'kontaktLoeschen')),
   },
   admin: {
-    components: { beforeList: ['@/components/Admin/Einstieg'] },
+    components: {
+      beforeList: [
+        '@/components/Admin/Einstieg',
+        statusReiter('kontaktanfragen', [
+          { key: 'neu', titel: 'Neu', symbol: '🆕', status: ['neu'], hervorheben: true },
+          { key: 'arbeit', titel: 'In Bearbeitung', symbol: '⏳', status: ['bearbeitung'] },
+          { key: 'erledigt', titel: 'Erledigt', symbol: '✓', status: ['erledigt'] },
+          { key: 'alle', titel: 'Alle', symbol: '🗂️', status: null },
+        ]),
+      ],
+    },
     description: 'Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.',
     group: 'Verwaltung',
     useAsTitle: 'betreff',
@@ -94,7 +105,10 @@ export const Kontaktanfragen: CollectionConfig = {
         { label: 'In Bearbeitung', value: 'bearbeitung' },
         { label: 'Erledigt', value: 'erledigt' },
       ],
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        components: statusPille({ neu: { text: '🆕 Neu', klasse: 'neu' }, bearbeitung: { text: '⏳ In Bearbeitung', klasse: 'warten' }, erledigt: { text: '✓ Erledigt', klasse: 'ok' } }),
+      },
       access: { create: () => false },
     },
     { name: 'an', label: 'Anliegen', type: 'text', admin: { description: 'Was im Formular bei „Worum geht es?“ gewählt wurde. Die Auswahl pflegst du unter Vereinsdaten → „Kontaktformular: Worum geht es?“.' } },

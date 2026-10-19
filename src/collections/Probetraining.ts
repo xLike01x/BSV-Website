@@ -4,6 +4,7 @@ import { anyone } from '../access/anyone'
 import { hasRole, isEditorField } from '../access/roles'
 import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
+import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 import { teamBenachrichtigen } from '@/sport/teamMail'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
@@ -35,7 +36,17 @@ export const Probetraining: CollectionConfig = {
     delete: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'redaktion', 'probetrainingLoeschen')),
   },
   admin: {
-    components: { beforeList: ['@/components/Admin/Einstieg'] },
+    components: {
+      beforeList: [
+        '@/components/Admin/Einstieg',
+        statusReiter('probetraining', [
+          { key: 'neu', titel: 'Neu', symbol: '🆕', status: ['neu'], hervorheben: true },
+          { key: 'arbeit', titel: 'In Arbeit', symbol: '⏳', status: ['zugesagt', 'alternativ'] },
+          { key: 'erledigt', titel: 'Erledigt', symbol: '✓', status: ['erledigt'] },
+          { key: 'alle', titel: 'Alle', symbol: '🗂️', status: null },
+        ]),
+      ],
+    },
     description: 'Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.',
     group: 'Sport',
     useAsTitle: 'name',
@@ -89,7 +100,10 @@ export const Probetraining: CollectionConfig = {
         { label: 'Anderer Termin vorgeschlagen', value: 'alternativ' },
         { label: 'Erledigt', value: 'erledigt' },
       ],
-      admin: { position: 'sidebar' },
+      admin: {
+        position: 'sidebar',
+        components: statusPille({ neu: { text: '🆕 Neu', klasse: 'neu' }, zugesagt: { text: 'Zugesagt', klasse: 'warten' }, alternativ: { text: 'Anderer Termin', klasse: 'warten' }, erledigt: { text: '✓ Erledigt', klasse: 'ok' } }),
+      },
       access: { create: () => false },
     },
   ],

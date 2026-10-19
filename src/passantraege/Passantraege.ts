@@ -5,6 +5,7 @@ import { ausblendenAusser, istMitgliedOderMehr } from '@/access/roles'
 
 import { istBearbeiter, istPassVerwaltung, passLesen, passTeams } from './zugriff'
 import { teamBenachrichtigen } from '@/sport/teamMail'
+import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 
 /** Unterlagen-Felder im Antrag: Feldname = Art der Unterlage */
 export const UNTERLAGEN = [
@@ -87,7 +88,17 @@ export const Passantraege: CollectionConfig = {
     hidden: ausblendenAusser('admin', 'passwesen', 'uebungsleitung'),
     useAsTitle: 'spielerName',
     defaultColumns: ['spielerName', 'team', 'art', 'status', 'createdAt'],
-    components: { beforeList: ['@/components/Admin/Einstieg'] },
+    components: {
+      beforeList: [
+        '@/components/Admin/Einstieg',
+        statusReiter('passantraege', [
+          { key: 'neu', titel: 'Neu eingereicht', symbol: '🆕', status: ['eingereicht'], hervorheben: true },
+          { key: 'arbeit', titel: 'In Arbeit', symbol: '⏳', status: ['pruefung', 'unterlagen_fehlen', 'verband'] },
+          { key: 'fertig', titel: 'Abgeschlossen', symbol: '✓', status: ['erteilt', 'abgelehnt'] },
+          { key: 'alle', titel: 'Alle', symbol: '🗂️', status: null },
+        ]),
+      ],
+    },
     description: 'Anträge auf Spielerlaubnis (Spielerpass) aus dem Mitgliederbereich. Unterlagen prüfen, fehlende nachfordern, im DFBnet einreichen und den Status setzen.',
   },
   defaultSort: '-createdAt',
@@ -217,7 +228,26 @@ export const Passantraege: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'status', label: 'Status', type: 'select', options: STATUS, defaultValue: 'eingereicht', required: true, index: true, admin: { width: '50%' } },
+        {
+          name: 'status',
+          label: 'Status',
+          type: 'select',
+          options: STATUS,
+          defaultValue: 'eingereicht',
+          required: true,
+          index: true,
+          admin: {
+            width: '50%',
+            components: statusPille({
+              eingereicht: { text: '🆕 Eingereicht', klasse: 'neu' },
+              pruefung: { text: 'In Prüfung', klasse: 'warten' },
+              unterlagen_fehlen: { text: 'Unterlagen fehlen', klasse: 'warten' },
+              verband: { text: 'Beim Verband', klasse: 'warten' },
+              erteilt: { text: '✓ Erteilt', klasse: 'ok' },
+              abgelehnt: { text: 'Abgelehnt', klasse: 'aus' },
+            }),
+          },
+        },
         {
           name: 'team',
           label: 'Team',
