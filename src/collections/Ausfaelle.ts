@@ -1,20 +1,27 @@
 import { hinweisFeld } from '@/fields/hinweise'
-import type { CollectionConfig } from 'payload'
+import type { Access, CollectionConfig, PayloadRequest } from 'payload'
 import { APIError } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { eigeneAngebotIds, hasRole, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../access/roles'
+import { rechteLaden, schalter } from '../access/rollenRechte'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
 /** Ausfall melden: Admin/Redaktion für alle, Team-Rollen nur für eigene Angebote. */
-const canManage = redaktionOderEigeneTeams('angebot')
+const eigeneTeams = redaktionOderEigeneTeams('angebot')
+/** Team-Redaktion nur, wenn der Web-Admin „Trainingsausfälle melden“ eingeschaltet lässt */
+const ohneTeamredaktion = async (req: PayloadRequest) => {
+  await rechteLaden(req.payload)
+  return hasRole(req.user as never, 'teamredaktion') && !hasRole(req.user as never, 'admin', 'redaktion', 'uebungsleitung') && !schalter('teamredaktion', 'ausfaelle')
+}
+const canManage: Access = async (args) => ((await ohneTeamredaktion(args.req)) ? false : eigeneTeams(args))
 
 export const Ausfaelle: CollectionConfig = {
   slug: 'ausfaelle',
   labels: { singular: 'Trainingsausfall', plural: 'Trainingsausfälle' },
   access: {
     read: anyone,
-    create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', ...TEAM_ROLLEN),
+    create: async ({ req }) => !(await ohneTeamredaktion(req)) && hasRole(req.user as never, 'admin', 'redaktion', ...TEAM_ROLLEN),
     update: canManage,
     delete: canManage,
   },

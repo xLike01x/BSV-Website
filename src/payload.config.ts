@@ -36,6 +36,8 @@ import { Passdokumente } from './passantraege/Passdokumente'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { trainerUmbenennen } from './utilities/trainerUmbenennen'
 import { Datenschutz } from './datenschutz/config'
+import { RollenRechte } from './rollenRechte/config'
+import { rechteLaden } from './access/rollenRechte'
 import { Dokumente } from './collections/Dokumente'
 import { Alben } from './collections/Alben'
 import { Sponsoren } from './collections/Sponsoren'
@@ -76,6 +78,7 @@ export default buildConfig({
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
     medienUmziehen(payload)
+    await rechteLaden(payload, true)
     await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
     await doppelteHauptsponsorenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Doppelte Hauptsponsoren aufräumen fehlgeschlagen'))
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
@@ -180,7 +183,7 @@ export default buildConfig({
   graphQL: { disable: true },
   // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
   upload: { limits: { fileSize: 25 * 1024 * 1024 } },
-  globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte, Datenschutz],
+  globals: [Header, Footer, Menue, Verein, Texte, HilfeInhalte, Datenschutz, RollenRechte],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

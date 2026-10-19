@@ -2,6 +2,7 @@ import type { Access, CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { hasRole, isEditorField } from '../access/roles'
+import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
@@ -9,7 +10,8 @@ const readAnfragen: Access = async ({ req }) => {
   const user = req.user as { id: number; roles?: string[] } | null
   if (!user) return false
   if (hasRole(user as never, 'admin', 'redaktion')) return true
-  if (hasRole(user as never, 'uebungsleitung')) {
+  await rechteLaden(req.payload)
+  if (darf(user, 'uebungsleitung', 'probetraining')) {
     const eigene = await req.payload.find({
       collection: 'angebote',
       where: { leitung: { contains: user.id } },
@@ -29,7 +31,7 @@ export const Probetraining: CollectionConfig = {
     create: anyone,
     read: readAnfragen,
     update: readAnfragen,
-    delete: ({ req }) => hasRole(req.user as never, 'admin'),
+    delete: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'redaktion', 'probetrainingLoeschen')),
   },
   admin: {
     components: { beforeList: ['@/components/Admin/Einstieg'] },

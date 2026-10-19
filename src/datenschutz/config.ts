@@ -1,6 +1,7 @@
 import type { GlobalConfig } from 'payload'
 
-import { ausblendenAusser, hasRole } from '@/access/roles'
+import { hasRole } from '@/access/roles'
+import { darf, rechteLaden } from '@/access/rollenRechte'
 
 /** Datenschutz-Fristen: Wie lange bleiben persönliche Daten gespeichert? */
 export const Datenschutz: GlobalConfig = {
@@ -8,11 +9,11 @@ export const Datenschutz: GlobalConfig = {
   label: 'Datenschutz-Fristen',
   access: {
     read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse'),
-    update: ({ req }) => hasRole(req.user as never, 'admin'),
+    update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'kasse', 'datenschutz')),
   },
   admin: {
     group: 'Einstellungen',
-    hidden: ausblendenAusser('admin'),
+    hidden: ({ user }) => !(hasRole(user as never, 'admin') || darf(user, 'kasse', 'datenschutz')),
     description: 'Persönliche Daten nur so lange speichern, wie sie gebraucht werden (DSGVO). Hier legst du fest, wann erledigte Einträge aufgeräumt werden.',
   },
   fields: [

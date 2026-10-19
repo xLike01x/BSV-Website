@@ -1,6 +1,7 @@
 import type { Access, PayloadRequest, Where } from 'payload'
 
 import { eigeneAngebotIds, hasRole, istMitgliedOderMehr } from '@/access/roles'
+import { darf, rechteLaden } from '@/access/rollenRechte'
 
 type U = { id: number; roles?: string[] | null } | null
 
@@ -9,7 +10,8 @@ export const istPassVerwaltung = (user: unknown) => hasRole(user as never, 'admi
 
 /** Teams, deren Passanträge diese Person sehen darf – nur Übungsleitung (nicht Team-Redaktion) */
 export const passTeams = async (req: PayloadRequest): Promise<number[]> => {
-  if (!hasRole(req.user as never, 'uebungsleitung')) return []
+  await rechteLaden(req.payload)
+  if (!darf(req.user, 'uebungsleitung', 'passantraege')) return []
   return eigeneAngebotIds(req)
 }
 

@@ -662,7 +662,7 @@ function RechteJeRolle({ rechte, q }: { rechte: RechteMatrix; q: string }) {
       <h2 className="bsv-rollen__h2">Was darf welche Rolle?</h2>
       <p className="bsv-rollen__klein" style={{ marginBottom: 12 }}>
         Rolle wählen. Die Übersicht wird direkt aus den echten Zugriffsregeln berechnet – sie stimmt
-        also immer. Ändern lässt sich hier nichts: Rechte vergibst du über die Rolle beim Benutzer.
+        also immer. Wer welche Rolle hat, legst du beim Benutzer fest. Einzelne Zusatzrechte pro Rolle schaltet ein Web-Admin unter <a href="/admin/globals/rollenRechte">Einstellungen → Rollen-Rechte</a> ein oder aus.
       </p>
       <div className="bsv-rechte__rollen" role="tablist" aria-label="Rolle">
         {ROLLEN.map((r) => (

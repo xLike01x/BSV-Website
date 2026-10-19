@@ -489,6 +489,18 @@ export const HILFE: Record<string, HilfeText> = {
     ],
   },
 
+  rollenRechte: {
+    titel: 'Rollen-Rechte',
+    kurz: 'Zusatzrechte pro Rolle ein- oder ausschalten – nur für Web-Admins.',
+    wozu: {
+      text: 'Jede Rolle hat feste Grundrechte. Hier lassen sich einzelne Zusatzrechte passend zu eurem Verein ein- oder ausschalten.',
+      beispiele: ['Die Kasse soll Kontaktanfragen zu Beiträgen bearbeiten', 'Trainer sollen keine Mitgliederfotos sehen', 'Die Redaktion darf erledigte Anfragen löschen'],
+    },
+    tun: ['Häkchen bei der gewünschten Rolle setzen oder entfernen.', 'Oben rechts „Speichern“.', 'Zur Kontrolle: Rollen-Übersicht → „Rechte je Rolle“.'],
+    wirkung: ['Gilt sofort für alle mit dieser Rolle (spätestens nach 30 Sekunden).', 'Admins sehen die Seite, ändern kann sie nur ein Web-Admin.'],
+    tipps: ['Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar – das schützt vor versehentlichen Freigaben.', 'Weitere Schalter baut der Web-Admin bei Bedarf dazu.'],
+  },
+
   datenschutz: {
     titel: 'Datenschutz-Fristen',
     kurz: 'Wie lange persönliche Daten gespeichert bleiben – und was gerade aufgeräumt werden kann.',

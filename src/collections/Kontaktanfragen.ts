@@ -1,7 +1,8 @@
 import type { CollectionConfig, PayloadRequest } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { isAdmin, isEditor } from '../access/roles'
+import { hasRole } from '../access/roles'
+import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { mailHtml } from '@/auth/mail'
 import { getServerSideURL } from '@/utilities/getURL'
@@ -15,9 +16,10 @@ export const Kontaktanfragen: CollectionConfig = {
   labels: { singular: 'Kontaktanfrage', plural: 'Kontaktanfragen' },
   access: {
     create: anyone,
-    read: isEditor,
-    update: isEditor,
-    delete: isAdmin,
+    // Redaktion immer; Kasse, wenn der Web-Admin es unter „Rollen-Rechte“ eingeschaltet hat
+    read: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin', 'redaktion') || darf(req.user, 'kasse', 'kontaktanfragen')),
+    update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin', 'redaktion') || darf(req.user, 'kasse', 'kontaktanfragen')),
+    delete: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'redaktion', 'kontaktLoeschen')),
   },
   admin: {
     components: { beforeList: ['@/components/Admin/Einstieg'] },

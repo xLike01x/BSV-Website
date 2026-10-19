@@ -150,6 +150,7 @@ export interface Config {
     texte: Texte;
     hilfe: Hilfe;
     datenschutz: Datenschutz;
+    rollenRechte: RollenRechte;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -159,6 +160,7 @@ export interface Config {
     texte: TexteSelect<false> | TexteSelect<true>;
     hilfe: HilfeSelect<false> | HilfeSelect<true>;
     datenschutz: DatenschutzSelect<false> | DatenschutzSelect<true>;
+    rollenRechte: RollenRechteSelect<false> | RollenRechteSelect<true>;
   };
   locale: null;
   widgets: {
@@ -3297,6 +3299,7 @@ export interface Hilfe {
           | 'search'
           | 'rollen'
           | 'sicherung'
+          | 'rollenRechte'
           | 'datenschutz'
           | 'dokumente'
           | 'sponsoren'
@@ -3363,6 +3366,7 @@ export interface Hilfe {
               | 'search'
               | 'rollen'
               | 'sicherung'
+              | 'rollenRechte'
               | 'datenschutz'
               | 'dokumente'
               | 'sponsoren'
@@ -3407,6 +3411,36 @@ export interface Datenschutz {
    * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
    */
   automatisch?: boolean | null;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar. Wie sich das auswirkt, zeigt die Rollen-Übersicht unter „Rechte je Rolle“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rollenRechte".
+ */
+export interface RollenRechte {
+  id: number;
+  redaktion?: {
+    kontaktLoeschen?: boolean | null;
+    probetrainingLoeschen?: boolean | null;
+  };
+  kasse?: {
+    kontaktanfragen?: boolean | null;
+    datenschutz?: boolean | null;
+  };
+  passwesen?: {
+    mitgliedschaften?: boolean | null;
+  };
+  uebungsleitung?: {
+    probetraining?: boolean | null;
+    passantraege?: boolean | null;
+    mitgliederfotos?: boolean | null;
+  };
+  teamredaktion?: {
+    ausfaelle?: boolean | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -3821,6 +3855,44 @@ export interface DatenschutzSelect<T extends boolean = true> {
   passUnterlagenTage?: T;
   passAntragMonate?: T;
   automatisch?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "rollenRechte_select".
+ */
+export interface RollenRechteSelect<T extends boolean = true> {
+  redaktion?:
+    | T
+    | {
+        kontaktLoeschen?: T;
+        probetrainingLoeschen?: T;
+      };
+  kasse?:
+    | T
+    | {
+        kontaktanfragen?: T;
+        datenschutz?: T;
+      };
+  passwesen?:
+    | T
+    | {
+        mitgliedschaften?: T;
+      };
+  uebungsleitung?:
+    | T
+    | {
+        probetraining?: T;
+        passantraege?: T;
+        mitgliederfotos?: T;
+      };
+  teamredaktion?:
+    | T
+    | {
+        ausfaelle?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

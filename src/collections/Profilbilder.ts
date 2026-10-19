@@ -3,6 +3,7 @@ import type { Access, CollectionConfig, Where } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { ausblendenAusser, eigeneAngebotIds, hasRole } from '@/access/roles'
+import { darf, rechteLaden } from '@/access/rollenRechte'
 import { privateDatei } from '@/utilities/privateDatei'
 
 const filename = fileURLToPath(import.meta.url)
@@ -23,7 +24,8 @@ const fotoLesen: Access = async ({ req }) => {
   if (hasRole(user as never, 'admin', 'kasse')) return true
   const eigenes: Where = { besitzer: { equals: user.id } }
   // Nur Übungsleitung – Team-Redaktion (z. B. Pressewarte) sieht keine Mitgliederfotos
-  if (hasRole(user as never, 'uebungsleitung')) {
+  await rechteLaden(req.payload)
+  if (darf(user, 'uebungsleitung', 'mitgliederfotos')) {
     const ids = await eigeneAngebotIds(req)
     if (ids.length) return { or: [eigenes, { 'besitzer.angebote': { in: ids } }] } as Where
   }
