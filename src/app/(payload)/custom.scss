@@ -432,3 +432,38 @@ body {
   line-height: 1.4;
   color: var(--theme-elevation-500);
 }
+
+/*
+ * „Speichern“ ohne Änderungen: statt eines ausgegrauten Knopfs, auf den man nicht drücken kann,
+ * steht dort „✓ Alles gespeichert“. Sobald man etwas ändert, erscheint der grüne Knopf.
+ */
+.form-submit #action-save-draft.btn--disabled {
+  display: none !important;
+}
+#action-save:disabled,
+.btn--withPopup.btn--disabled {
+  background: transparent !important;
+  box-shadow: none !important;
+  border-color: transparent !important;
+}
+#action-save:disabled {
+  cursor: default !important;
+  opacity: 1 !important;
+  padding-inline: 4px !important;
+  .btn__content,
+  .btn__label,
+  .btn__icon {
+    display: none !important;
+  }
+  &::after {
+    content: '✓ Alles gespeichert';
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--theme-elevation-500);
+    white-space: nowrap;
+  }
+}
+.btn--withPopup.btn--disabled .popup,
+.btn--withPopup.btn--disabled .popup-button {
+  display: none !important;
+}
