@@ -214,6 +214,10 @@ export interface Mitgliedsantraege {
   plz: string;
   ort: string;
   mitgliedsart: 'jugend' | 'aktiv' | 'familie' | 'passiv';
+  /**
+   * Wird beim Absenden automatisch aus Vereinsdaten → Mitgliedsbeiträge übernommen – so bleibt sichtbar, welcher Betrag zum Zeitpunkt des Antrags galt.
+   */
+  beitragQuartal?: number | null;
   familienmitglieder?:
     | {
         vorname: string;
@@ -1963,6 +1967,7 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
   plz?: T;
   ort?: T;
   mitgliedsart?: T;
+  beitragQuartal?: T;
   familienmitglieder?:
     | T
     | {
@@ -3111,7 +3116,7 @@ export interface Menue {
   createdAt?: string | null;
 }
 /**
- * Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.
+ * Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "texte".

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
+import { proMonat } from '@/bsv/beitrag'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { sendeFormular } from './sendeFormular'
@@ -373,7 +374,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
               <span style={{ fontSize: 28, fontWeight: 800, letterSpacing: '-0.03em' }}>{euro(beitrag?.quartal ?? 0)}</span>
             </div>
             <p className="muted" style={{ margin: '4px 0 0', textAlign: 'right', fontSize: 13 }}>
-              pro Quartal{art !== 'passiv' ? ` · entspricht ${euro((beitrag?.quartal ?? 0) / 3)} im Monat` : ''}
+              pro Quartal · entspricht {euro(proMonat(beitrag?.quartal))} im Monat
             </p>
           </aside>
         )}

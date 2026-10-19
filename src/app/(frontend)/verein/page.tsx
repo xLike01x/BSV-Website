@@ -7,6 +7,7 @@ import React from 'react'
 import { Bild } from '@/bsv/components/Bild'
 import { T } from '@/bsv/components/Text'
 import { getPlatzhalter, getTexte, getVerein } from '@/bsv/data'
+import { abMonat, euroKurz, proMonat } from '@/bsv/beitrag'
 import { bildUrl, initialen, zahl } from '@/bsv/lib'
 
 export const revalidate = 60
@@ -15,7 +16,8 @@ export const metadata: Metadata = seite('Verein', 'Seit 1919 in Büderich: Vorst
 export default async function VereinSeite() {
   const [v, tx, w] = await Promise.all([getVerein(), getTexte(), getPlatzhalter()])
   const beitraege = v.beitraege ?? []
-  const guenstigster = Math.min(...beitraege.map((b) => b.quartal / 3))
+  // Günstigster Monatsbeitrag für aktive Mitglieder (passiv zählt nicht – „alle Kurse inklusive“)
+  const guenstigster = abMonat(beitraege)
 
   return (
     <>
@@ -94,7 +96,7 @@ export default async function VereinSeite() {
       <section id="beitraege" style={{ padding: '120px 22px', scrollMarginTop: 56 }}>
         <div className="wrap-narrow" style={{ padding: 0 }}>
           <h2 className="t-sec rv center" style={{ fontSize: 'clamp(44px, 6vw, 80px)' }}>
-            Ab {Number.isFinite(guenstigster) ? Math.round(guenstigster) : 5} € im Monat.
+            {guenstigster !== null ? `Ab ${euroKurz(guenstigster)} im Monat.` : 'Mitgliedsbeiträge'}
           </h2>
           <p className="rv lead center" style={{ margin: '16px auto 48px', maxWidth: 560, fontSize: 19 }}>
             <T text={tx.verein?.beitraegeText} werte={w} />
@@ -106,9 +108,9 @@ export default async function VereinSeite() {
                 <div key={b.key} className="rv" style={{ background: hervor ? 'var(--bsv-green)' : 'var(--bsv-soft)', color: hervor ? '#fff' : undefined, borderRadius: 28, padding: 32, display: 'flex', flexDirection: 'column', gap: 6 }}>
                   <span style={{ color: hervor ? '#D7F0E1' : 'var(--bsv-muted)' }}>{b.label}</span>
                   <span style={{ fontSize: 13, color: hervor ? '#D7F0E1' : 'var(--bsv-muted)' }}>{b.zielgruppe}</span>
-                  <strong style={{ fontSize: 52, letterSpacing: '-0.04em', marginTop: 16 }}>{b.quartal} €</strong>
+                  <strong style={{ fontSize: 52, letterSpacing: '-0.04em', marginTop: 16 }}>{euroKurz(Number(b.quartal))}</strong>
                   <span style={{ color: hervor ? '#D7F0E1' : 'var(--bsv-muted)' }}>
-                    pro Quartal{b.key !== 'passiv' ? ` · ${zahl(Math.round(b.quartal / 3))} € im Monat` : ''}
+                    pro Quartal · entspricht {euroKurz(proMonat(b.quartal))} im Monat
                   </span>
                 </div>
               )

@@ -1,10 +1,12 @@
 import type { Payload } from 'payload'
 
-/** Einmalig: „Übungsleitung“ heißt jetzt überall „Trainer“ – auch in bereits gespeicherten Texten */
+/** Einmalig: gespeicherte Texte nachziehen – „Übungsleitung“ → „Trainer“, fester Beitrag „5 €“ → Platzhalter {abMonat} */
 const ERSETZEN: [string, string][] = [
   ['Unsere Übungsleitenden sind zum Teil lizenziert', 'Unsere Trainerinnen und Trainer sind zum Teil lizenziert'],
   ['getragen von Ehrenamtlichen, Übungsleitenden und vielen helfenden Händen.', 'getragen von Ehrenamtlichen, Trainerinnen und Trainern und vielen helfenden Händen.'],
   ['Die Übungsleitungen werden automatisch informiert.', 'Die Trainer werden automatisch informiert.'],
+  // Beitrag nicht fest im Text, sondern aus den Vereinsdaten berechnet
+  ['Ab 5 € im Monat, alle Kurse inklusive.', 'Ab {abMonat} € im Monat, alle Kurse inklusive.'],
 ]
 
 const ersetzen = (wert: unknown): unknown => {

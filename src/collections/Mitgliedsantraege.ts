@@ -104,11 +104,22 @@ export const Mitgliedsantraege: CollectionConfig = {
       type: 'select',
       required: true,
       options: [
-        { label: 'Jugendliche (0–17) · 15 € / Quartal', value: 'jugend' },
-        { label: 'Erwachsene aktiv · 21 € / Quartal', value: 'aktiv' },
-        { label: 'Familie · 36 € / Quartal', value: 'familie' },
-        { label: 'Erwachsene passiv · 12 € / Quartal', value: 'passiv' },
+        // Beträge stehen in Vereinsdaten → Mitgliedsbeiträge (und beim Antrag unter „Beitrag laut Antrag“)
+        { label: 'Jugendliche (0–17)', value: 'jugend' },
+        { label: 'Erwachsene aktiv', value: 'aktiv' },
+        { label: 'Familie', value: 'familie' },
+        { label: 'Erwachsene passiv', value: 'passiv' },
       ],
+    },
+    {
+      name: 'beitragQuartal',
+      label: 'Beitrag laut Antrag (€ pro Quartal)',
+      type: 'number',
+      access: { create: () => false, update: () => false },
+      admin: {
+        readOnly: true,
+        description: 'Wird beim Absenden automatisch aus Vereinsdaten → Mitgliedsbeiträge übernommen – so bleibt sichtbar, welcher Betrag zum Zeitpunkt des Antrags galt.',
+      },
     },
     {
       name: 'familienmitglieder',
@@ -195,6 +206,16 @@ export const Mitgliedsantraege: CollectionConfig = {
         if (operation === 'create' && data && (!data.sepaMandat || !data.satzungAkzeptiert)) {
           throw new APIError('SEPA-Mandat und Satzung müssen bestätigt werden.', 400)
         }
+        return data
+      },
+    ],
+    beforeChange: [
+      // Betrag zum Zeitpunkt des Antrags festhalten (aus Vereinsdaten → Mitgliedsbeiträge)
+      async ({ data, req, operation }) => {
+        if (operation !== 'create' || !data) return data
+        const verein = (await req.payload.findGlobal({ slug: 'verein', depth: 0, req }).catch(() => null)) as { beitraege?: { key?: string; quartal?: number }[] } | null
+        const b = verein?.beitraege?.find((x) => x.key === data.mitgliedsart)
+        if (b?.quartal != null) data.beitragQuartal = Number(b.quartal)
         return data
       },
     ],

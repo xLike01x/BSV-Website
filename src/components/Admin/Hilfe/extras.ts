@@ -830,6 +830,11 @@ export const FAQ: Faq[] = [
     bereich: 'pages',
   },
   {
+    frage: 'Wo ändere ich die Mitgliedsbeiträge?',
+    antwort: 'Einstellungen → Vereinsdaten → „Mitgliedsbeiträge“: je Mitgliedsart den Betrag „€ pro Quartal“ eintragen und speichern. Alles andere rechnet sich automatisch: die Beitrags-Kacheln auf der Vereinsseite (inkl. „entspricht … € im Monat“), die Überschrift „Ab … € im Monat“ (günstigster Beitrag für aktive Mitglieder, passiv zählt nicht), der Online-Antrag und der Platzhalter {abMonat} in den Website-Texten. Bei jedem neuen Antrag wird der Betrag, der beim Absenden galt, unter „Beitrag laut Antrag“ festgehalten. Eine Aufnahmegebühr gibt es auf der Website nicht.',
+    bereich: 'verein',
+  },
+  {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
     bereich: 'users',

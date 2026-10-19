@@ -9,7 +9,7 @@ import { standardTexte, zusammenfuehren } from './standard'
 /**
  * Alle festen Überschriften und Texte der Website an einer Stelle.
  * Platzhalter in geschweiften Klammern werden automatisch ersetzt:
- * {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}
+ * {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat}
  */
 // Unter jedem Feld: „Auf der Website zeigen ↗“ (öffnet die Seite und markiert den Text)
 const zeigen = { components: { afterInput: ['@/Texte/WoSteht'] } }
@@ -31,7 +31,7 @@ export const Texte: GlobalConfig = {
   admin: {
     group: 'Website-Aufbau',
     hidden: ausblendenAusser('admin', 'redaktion'),
-    description: 'Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}. Ein Zeilenumbruch in Überschriften wird übernommen.',
+    description: 'Überschriften und Texte der Website. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.',
   },
   hooks: {
     // Leere Felder zeigen in der Verwaltung den Text, der auch auf der Website steht
@@ -95,7 +95,7 @@ export const Texte: GlobalConfig = {
               admin: { description: 'Alle 6 Sekunden zur nächsten News – Pause, sobald jemand mit der Maus darauf zeigt oder wischt. Ohne Haken blättert man nur selbst (Punkte, Pfeile, Wischen).' },
             },
             text('mitgliedTitel', 'Mitglied werden: Überschrift', 'In fünf Minuten\nMitglied.', true),
-            text('mitgliedText', 'Mitglied werden: Text', 'Ab 5 € im Monat, alle Kurse inklusive. Antrag, Beitragsrechner und SEPA-Mandat – alles online.', true),
+            text('mitgliedText', 'Mitglied werden: Text', 'Ab {abMonat} € im Monat, alle Kurse inklusive. Antrag, Beitragsrechner und SEPA-Mandat – alles online.', true),
             gruppe('schritte', 'Mitglied werden: drei Schritte', [
               { type: 'row', fields: [text('t1', 'Schritt 1: Titel', 'Probetraining'), text('d1', 'Schritt 1: Text', 'Angebot wählen, Termin anfragen, vorbeikommen.')] },
               { type: 'row', fields: [text('t2', 'Schritt 2: Titel', 'Online-Antrag'), text('d2', 'Schritt 2: Text', 'Teams und Kurse auswählen, Beitrag berechnen, fertig.')] },

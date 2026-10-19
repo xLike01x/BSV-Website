@@ -1,3 +1,4 @@
+import { abMonat, euroKurz } from '@/bsv/beitrag'
 import 'server-only'
 
 import configPromise from '@payload-config'
@@ -178,6 +179,8 @@ export const getPlatzhalter = cache(async (): Promise<Record<string, string>> =>
     angebote: String(angebote.length),
     kinder: String(v.kinderFussball ?? 0),
     gruendung: String(v.gruendung ?? 1919),
+    // Günstigster Monatsbeitrag (aktiv), z. B. „5“ oder „6,67“ – aus Vereinsdaten → Mitgliedsbeiträge
+    abMonat: euroKurz(abMonat(v.beitraege ?? []) ?? 0).replace(' €', ''),
   }
 })
 
