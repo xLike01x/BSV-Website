@@ -2,13 +2,13 @@ import Link from 'next/link'
 import React from 'react'
 
 import { getSponsoren } from '@/bsv/data'
-import { bildUrl } from '@/bsv/lib'
+import { SponsorLogo } from './SponsorLogo'
 
 /** Laufendes Logo-Band (nur Sponsoren mit Logo und Haken „Im Laufband“) – steht bei wenig Bewegung still */
 export async function SponsorenLaufband() {
   const sponsoren = (await getSponsoren()).filter((s) => s.imLaufband !== false && s.logo && typeof s.logo === 'object')
   if (sponsoren.length < 3) return null
-  const logos = sponsoren.map((s) => ({ id: s.id, name: s.name, url: s.url, src: bildUrl(s.logo, 'small') }))
+  const logos = sponsoren.map((s) => ({ id: s.id, name: s.name, url: s.url, logo: s.logo }))
   return (
     <section className="laufband-sec" aria-label="Unsere Sponsoren">
       <div className="wrap-narrow laufband-kopf">
@@ -19,7 +19,7 @@ export async function SponsorenLaufband() {
         <div className="laufband-spur">
           {[...logos, ...logos].map((l, i) => (
             <a key={`${l.id}-${i}`} href={l.url || '/sponsoren'} target={l.url ? '_blank' : undefined} rel="noopener noreferrer" aria-hidden={i >= logos.length} tabIndex={i >= logos.length ? -1 : undefined}>
-              <img src={l.src} alt={l.name} />
+              <SponsorLogo logo={l.logo} name={l.name} stufe="laufband" sofort />
             </a>
           ))}
         </div>

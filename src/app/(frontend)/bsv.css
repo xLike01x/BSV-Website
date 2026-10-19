@@ -411,7 +411,13 @@
 
 /* Sponsoren */
 .sponsor-haupt { background: #fff; border-radius: 28px; padding: 32px; text-align: center; }
-.sponsor-haupt img { max-height: 120px; width: auto; max-width: 320px; margin: 8px auto 0; display: block; }
+.sponsor-haupt { padding: 40px 28px; }
+.sponsor-haupt img { display: block; margin: 18px auto 0; }
+.sponsor-haupt-link { display: inline-block; }
+.sponsor-haupt-name { margin: 14px 0 0; font-weight: 700; font-size: 18px; }
+.sponsor-bild { display: flex; align-items: center; justify-content: center; background: #fff; border-bottom: 1px solid var(--bsv-line-2); padding: 18px; }
+.card-img.sponsor-bild img { width: auto; height: auto; object-fit: contain; }
+.sponsor-initialen { font-size: 44px; font-weight: 800; letter-spacing: -0.03em; color: var(--bsv-green); opacity: .55; }
 .sponsor-raster { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .sponsor-raster--premium { grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); }
 .sponsor-raster--foerderer { grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); }
@@ -435,7 +441,7 @@
 .laufband { overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .laufband-spur { display: flex; gap: 56px; width: max-content; animation: laufband 40s linear infinite; align-items: center; }
 .laufband:hover .laufband-spur { animation-play-state: paused; }
-.laufband-spur img { height: 54px; width: auto; max-width: 180px; object-fit: contain; filter: grayscale(1); opacity: .7; transition: filter .3s, opacity .3s; }
+.laufband-spur img { object-fit: contain; filter: grayscale(1); opacity: .7; transition: filter .3s, opacity .3s; }
 .laufband-spur a:hover img { filter: none; opacity: 1; }
 @keyframes laufband { to { transform: translateX(-50%); } }
 @media (prefers-reduced-motion: reduce) { .laufband-spur { animation: none; flex-wrap: wrap; width: auto; justify-content: center; } .laufband { mask-image: none; } }

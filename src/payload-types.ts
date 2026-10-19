@@ -388,6 +388,14 @@ export interface Media {
       filesize?: number | null;
       filename?: string | null;
     };
+    logo?: {
+      url?: string | null;
+      width?: number | null;
+      height?: number | null;
+      mimeType?: string | null;
+      filesize?: number | null;
+      filename?: string | null;
+    };
     og?: {
       url?: string | null;
       width?: number | null;
@@ -1341,7 +1349,7 @@ export interface Sponsoren {
   id: number;
   name: string;
   /**
-   * Am besten mit transparentem oder weißem Hintergrund (PNG), quer. Beim Hochladen kein Team wählen – das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
+   * Ideal: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000), nur das Logo ohne weitere Elemente drumherum. Größe und Seitenverhältnis sind egal – die Website entfernt den leeren Rand automatisch und gleicht alle Logos so an, dass sie gleich groß wirken. Beim Hochladen kein Team wählen; das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
    */
   logo?: (number | null) | Media;
   url?: string | null;
@@ -1996,6 +2004,16 @@ export interface MediaSelect<T extends boolean = true> {
               filename?: T;
             };
         xlarge?:
+          | T
+          | {
+              url?: T;
+              width?: T;
+              height?: T;
+              mimeType?: T;
+              filesize?: T;
+              filename?: T;
+            };
+        logo?:
           | T
           | {
               url?: T;

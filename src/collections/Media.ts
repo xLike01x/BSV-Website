@@ -14,6 +14,7 @@ import { APIError } from 'payload'
 
 import { canUpload, eigeneAngebotIds, hasRole, medienSichtbar, redaktionOderEigeneTeams } from '../access/roles'
 import { autoZuordnenEndpunkt } from './Media/autoZuordnen'
+import { LOGO_GROESSE } from '@/sponsoren/logo'
 
 /** Team-Rollen laden Bilder immer für eines ihrer Teams hoch */
 const teamBildPruefen: CollectionBeforeChangeHook = async ({ req, data, operation }) => {
@@ -190,6 +191,8 @@ export const Media: CollectionConfig = {
         formatOptions: { format: 'webp', options: { quality: 80 } },
         width: 1920,
       },
+      // Logo ohne leeren Rand – für die einheitliche Darstellung der Sponsoren
+      LOGO_GROESSE,
       {
         name: 'og',
         width: 1200,

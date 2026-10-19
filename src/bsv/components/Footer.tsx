@@ -2,16 +2,16 @@ import Link from 'next/link'
 import React from 'react'
 
 import { getHauptsponsor, getMenue, getTexte, getVerein } from '@/bsv/data'
-import { bildUrl } from '@/bsv/lib'
 
 import { zuLinks, type MenueEintrag } from './menueLinks'
+import { SponsorLogo } from './SponsorLogo'
 
 export async function Footer() {
   const [v, sponsor, menue, tx] = await Promise.all([getVerein(), getHauptsponsor(), getMenue(), getTexte()])
   const spalten = ((menue?.fusszeile ?? []) as { titel?: string | null; eintraege?: MenueEintrag[] | null }[]).map((sp) => ({ titel: sp.titel ?? '', links: zuLinks(sp.eintraege) }))
   const kontakt = (menue as { kontakt?: { anzeigen?: boolean | null; titel?: string | null; adresseZeigen?: boolean | null; links?: MenueEintrag[] | null } } | null)?.kontakt
   const kontaktLinks = zuLinks(kontakt?.links)
-  const logo = bildUrl(sponsor?.logo, 'small')
+  const logo = sponsor?.logo && typeof sponsor.logo === 'object' ? sponsor.logo : null
 
   return (
     <footer className="foot">
@@ -22,11 +22,11 @@ export async function Footer() {
           {sponsor?.name &&
             (sponsor.url ? (
               <a href={sponsor.url} target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--bsv-ink)' }}>
-                {logo ? <img src={logo} alt={sponsor.name} style={{ height: 32, width: 'auto' }} /> : sponsor.name}
+                {logo ? <SponsorLogo logo={logo} name={sponsor.name} stufe="fuss" /> : sponsor.name}
               </a>
             ) : (
               <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8, color: 'var(--bsv-ink)' }}>
-                {logo ? <img src={logo} alt={sponsor.name} style={{ height: 32, width: 'auto' }} /> : sponsor.name}
+                {logo ? <SponsorLogo logo={logo} name={sponsor.name} stufe="fuss" /> : sponsor.name}
               </span>
             ))}
           <Link href="/kontakt?thema=Sponsoring" style={{ color: 'var(--bsv-green)', marginLeft: 'auto' }}>

@@ -1,3 +1,4 @@
+import { logoFreistellen } from '@/sponsoren/logo'
 import type { Payload } from 'payload'
 
 type Alt = { name?: string | null; url?: string | null; logo?: number | { id: number } | null }
@@ -82,6 +83,8 @@ export async function sponsorLogosEinordnen(payload: Payload) {
   const r = await payload.find({ collection: 'sponsoren', where: { logo: { exists: true } }, limit: 500, depth: 0, overrideAccess: true, select: { logo: true } as never })
   const ids = [...new Set((r.docs as unknown as { logo?: number | { id: number } | null }[]).map((d) => (d.logo && typeof d.logo === 'object' ? d.logo.id : d.logo)).filter(Boolean))] as number[]
   if (!ids.length) return 0
+  // Ältere Logos ohne freigestellte Größe nachträglich erzeugen
+  for (const id of ids) await logoFreistellen(payload, id).catch((e) => payload.logger.warn({ err: e }, 'Logo freistellen fehlgeschlagen'))
   const u = await payload.update({
     collection: 'media',
     where: { and: [{ id: { in: ids } }, { team: { exists: false } }, { sponsoren: { not_equals: true } }] },

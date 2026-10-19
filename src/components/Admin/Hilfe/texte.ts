@@ -523,8 +523,17 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Alle Sponsoren und Partner des Vereins – für die Seite „Sponsoren“ und das Logo-Laufband auf der Startseite.',
     wozu: { text: 'Sponsoren freuen sich über Sichtbarkeit. Hier pflegst du sie an einer Stelle.', beispiele: ['Neuer Trikotsponsor', 'Bandenwerbung', 'Förderer der Jugend'] },
     tun: ['„Neu erstellen“: Name, Logo, Website, kurzer Text.', 'Rechts die Art wählen (Premium, Partner, Förderer) und die Reihenfolge.', '„Im Laufband“ anhaken, damit das Logo auf der Startseite mitläuft.'],
-    wirkung: ['Die Seite /sponsoren zeigt alle aktiven Sponsoren nach Art gruppiert.', 'Das Laufband erscheint ab drei Logos unten auf der Startseite.', 'Ein Sponsor mit der Art „Hauptsponsor“ steht ganz oben auf der Seite und zusätzlich unten in der Fußzeile jeder Seite.'],
-    tipps: ['Logos am besten als PNG mit transparentem Hintergrund, im Querformat.'],
+    wirkung: [
+      'Ein Sponsor mit der Art „Hauptsponsor“ steht groß ganz oben auf /sponsoren und zusätzlich unten in der Fußzeile jeder Seite.',
+      'Darunter alle anderen als Kacheln (Logo, Art, Name, Text, Link): erst Premium, dann Partner, dann Förderer.',
+      'Das Laufband erscheint ab drei Logos unten auf der Startseite.',
+      'Alle Logos wirken automatisch gleich groß: Der leere Rand wird entfernt und die Größe angeglichen – egal ob breiter Schriftzug oder rundes Logo.',
+    ],
+    tipps: [
+      'Ideales Logo: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000). Seitenverhältnis egal.',
+      'Nur das Logo selbst – keine Linien, Rahmen oder Adressen drumherum, die gehören nicht zum Logo und machen es kleiner.',
+      'Ohne Logo zeigt die Kachel die Anfangsbuchstaben des Namens.',
+    ],
   },
 
   alben: {
