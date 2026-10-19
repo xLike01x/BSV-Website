@@ -44,6 +44,7 @@ import { default as default_d0d2d8ba323ca751d647155bafea5b5d } from '@/Texte/WoS
 import { default as default_ee61798dbac84d4559f918344d524ea7 } from '@/datenschutz/Uebersicht'
 import { default as default_e26d2ce2fb829c050970d592e6488485 } from '@/components/Admin/Icon'
 import { default as default_1519062be06c6f010a03d3cd4e40f8fb } from '@/components/Admin/Logo'
+import { default as default_c66ce2d59c6901b2c1019a8078c24b55 } from '@/components/Admin/KontoMenue'
 import { default as default_3aa723e87d072df22350edc5f0ba8872 } from '@/components/Admin/Hilfe'
 import { default as default_8199d17e4dde2fb5d0783261ffe692e2 } from '@/components/Admin/NavFuss'
 import { default as default_6f2fa0a1b4cdd4874a42ed1b4a8e64a1 } from '@/components/Admin/AppSymbol'
@@ -105,6 +106,7 @@ export const importMap = {
   "@/datenschutz/Uebersicht#default": default_ee61798dbac84d4559f918344d524ea7,
   "@/components/Admin/Icon#default": default_e26d2ce2fb829c050970d592e6488485,
   "@/components/Admin/Logo#default": default_1519062be06c6f010a03d3cd4e40f8fb,
+  "@/components/Admin/KontoMenue#default": default_c66ce2d59c6901b2c1019a8078c24b55,
   "@/components/Admin/Hilfe#default": default_3aa723e87d072df22350edc5f0ba8872,
   "@/components/Admin/NavFuss#default": default_8199d17e4dde2fb5d0783261ffe692e2,
   "@/components/Admin/AppSymbol#default": default_6f2fa0a1b4cdd4874a42ed1b4a8e64a1,

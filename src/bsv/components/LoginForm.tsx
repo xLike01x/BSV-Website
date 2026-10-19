@@ -11,6 +11,7 @@ export function LoginForm() {
   const sp = useSearchParams()
   const [modus, setModus] = useState<'login' | 'vergessen' | 'gesendet'>('login')
   const [fehler, setFehler] = useState<string | null>(null)
+  const abgemeldet = sp.get('abgemeldet') === '1'
   const [unbestaetigt, setUnbestaetigt] = useState<string | null>(null)
   const [laedt, setLaedt] = useState(false)
 
@@ -82,6 +83,11 @@ export function LoginForm() {
 
   return (
     <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={modus === 'login' ? login : vergessen}>
+      {abgemeldet && modus === 'login' && !fehler && (
+        <p role="status" style={{ margin: 0, padding: '10px 14px', borderRadius: 14, background: '#e8f6ee', color: '#0f3d24', fontSize: 15 }}>
+          ✓ Du bist abgemeldet.
+        </p>
+      )}
       <label className="field">
         E-Mail
         <input name="email" type="email" required autoComplete="username" autoFocus />

@@ -103,7 +103,7 @@ export default buildConfig({
       beforeNavLinks: ['@/components/Admin/NavKopf'],
       afterNavLinks: ['@/components/Admin/NavFuss', '@/components/Admin/AppSymbol'],
       // „? Hilfe“-Knopf oben rechts – erklärt jeden Bereich in einfachen Worten
-      actions: ['@/components/Admin/Hilfe'],
+      actions: ['@/components/Admin/KontoMenue', '@/components/Admin/Hilfe'],
     },
     // Immer hell und freundlich – kein Dunkelmodus
     theme: 'light',

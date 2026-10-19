@@ -679,6 +679,10 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
+    antwort: 'Oben rechts auf dein Symbol (Foto oder Anfangsbuchstaben) klicken. Im Menü: „Mein Konto“ (Name, Passwort, Foto), „Zum Mitgliederbereich“ (Ausfälle, Ausweis, Downloads – so, wie Mitglieder die Website sehen), „Website ansehen“, „Hilfe-Center“ und „Abmelden“.',
+  },
+  {
     frage: 'Warum sieht ein Mitglied keinen Ausweis?',
     antwort: 'Der Ausweis erscheint im Konto, das bei der Mitgliedschaft unter „Benutzerkonto“ eingetragen ist. Prüfe unter „Mitgliedschaften“, ob es einen Eintrag gibt und das Konto verknüpft ist (bei Kindern das der Eltern). Verknüpft wird automatisch bei der Freigabe einer Registrierung mit gleicher E-Mail.',
     bereich: 'mitgliedschaften',
