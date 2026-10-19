@@ -88,6 +88,11 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
   ```
   Danach je Video: `ffmpeg -ss 0.8 -i hilfe-videos-roh/<name>.webm -vf scale=1152:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/<name>.mp4` (Vorschaubild `<name>.jpg` daneben).
 
+## Digitaler Mitgliedsausweis
+
+- Sammlung **Mitgliedschaften** (Admin/Kasse): Name, Mitgliedsnummer, Mitglied seit, Art (Einzel jugend/aktiv/passiv oder Familie), Kurse, gültig/Austritt, E-Mail des Kontos. Entsteht automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird (inkl. Familienmitglieder).
+- Im Mitgliederbereich zeigt jedes Konto alle Ausweise mit seiner E-Mail (Eltern sehen die ihrer Kinder) – live (Uhr, schimmernder Streifen) mit QR-Code. Der QR-Code führt zu `/ausweis/<signierter Code>` und zeigt live gültig/ungültig mit minimalen Daten.
+
 ## Fußball-Passanträge
 
 - Mitglieder stellen im Mitgliederbereich (`/mitglieder/passantrag`) einen Antrag auf Spielerlaubnis – auch für ihre Kinder – und laden die Unterlagen hoch (Passantrag, Ausweis/Geburtsurkunde, Passfoto, Einverständniserklärungen, ggf. Abmeldung und Meldebescheinigung). Pflicht-Unterlagen hängen von der Art (erster Pass, Vereinswechsel, international) und dem Alter ab.

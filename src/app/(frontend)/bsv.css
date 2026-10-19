@@ -496,3 +496,34 @@
 .pa-datei > div { display: flex; flex-direction: column; gap: 2px; flex: 1 1 240px; }
 .pa-datei small { color: var(--bsv-muted); font-size: 14px; line-height: 1.4; }
 .pa-datei.ist-da small { color: var(--bsv-green); font-weight: 600; }
+
+/* Digitaler Mitgliedsausweis */
+.ausweis-liste { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 380px), 1fr)); gap: 18px; }
+.ausweis { position: relative; overflow: hidden; border-radius: 26px; padding: 22px 22px 16px; color: #fff; background: linear-gradient(135deg, #157a43 0%, #0f5c32 55%, #0b3f23 100%); box-shadow: 0 18px 40px rgba(15,61,36,.25); display: flex; flex-direction: column; gap: 16px; }
+.ausweis--ungueltig { background: linear-gradient(135deg, #6e6e73, #3a3a3c); }
+.ausweis--gross { width: min(92vw, 520px); }
+.ausweis-schimmer { position: absolute; inset: 0; background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,.16) 45%, transparent 60%); background-size: 250% 100%; animation: ausweis-schimmer 4s linear infinite; pointer-events: none; }
+@keyframes ausweis-schimmer { from { background-position: 150% 0; } to { background-position: -100% 0; } }
+.ausweis-kopf { display: flex; align-items: center; gap: 12px; position: relative; }
+.ausweis-kopf img { background: #fff; border-radius: 10px; padding: 4px; width: 40px; height: 42px; object-fit: contain; }
+.ausweis-kopf > span:nth-child(2) { display: flex; flex-direction: column; line-height: 1.2; }
+.ausweis-kopf small { opacity: .8; font-size: 13px; }
+.ausweis-status { margin-left: auto; background: rgba(255,255,255,.18); border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; }
+.ausweis-status.ist-ungueltig { background: #b91c1c; }
+.ausweis-mitte { display: flex; gap: 16px; align-items: center; justify-content: space-between; position: relative; }
+.ausweis-name { display: block; font-size: 24px; font-weight: 800; letter-spacing: -0.02em; margin-bottom: 8px; }
+.ausweis-daten dl { margin: 0; display: grid; gap: 4px; }
+.ausweis-daten dl div { display: flex; gap: 8px; font-size: 14px; }
+.ausweis-daten dt { opacity: .75; min-width: 118px; }
+.ausweis-daten dd { margin: 0; font-weight: 600; }
+.ausweis-qr { flex: 0 0 auto; background: #fff; border: 0; border-radius: 14px; padding: 6px; cursor: zoom-in; line-height: 0; }
+.ausweis-qr img { width: 96px; height: 96px; }
+.ausweis--gross .ausweis-qr img { width: 180px; height: 180px; }
+.ausweis-qr:disabled { cursor: default; }
+.ausweis-kurse { display: flex; flex-wrap: wrap; gap: 6px; position: relative; }
+.ausweis-kurse span { background: rgba(255,255,255,.16); border-radius: 999px; padding: 4px 10px; font-size: 13px; font-weight: 600; }
+.ausweis-fuss { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; font-size: 12px; opacity: .8; position: relative; font-variant-numeric: tabular-nums; }
+.ausweis-overlay { position: fixed; inset: 0; z-index: 1000; background-color: rgba(20,20,22,.72); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); display: flex; align-items: center; justify-content: center; padding: 16px; }
+.ausweis-overlay > div { display: flex; flex-direction: column; align-items: center; }
+@media (prefers-reduced-motion: reduce) { .ausweis-schimmer { animation: none; } }
+@media (max-width: 420px) { .ausweis-mitte { flex-direction: column-reverse; align-items: flex-start; } }

@@ -221,6 +221,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Neue Anträge prüfen.',
       'Den Status setzen: „Rückfrage“, „Aufgenommen“ oder „Abgelehnt“.',
       'Die Daten in die Mitgliederverwaltung übernehmen.',
+      'Bei „Aufgenommen“ entsteht automatisch der Eintrag für den digitalen Mitgliedsausweis (unter „Mitgliedschaften“) – dort nur noch die Mitgliedsnummer ergänzen.',
     ],
     wirkung: ['Der Status ist intern. Die Zahl der offenen Anträge siehst du auch auf der Übersicht.'],
     tipps: [
@@ -251,6 +252,26 @@ export const HILFE: Record<string, HilfeText> = {
       'Es sind Ausweiskopien von Kindern dabei – bitte nichts herunterladen, ausdrucken oder weiterleiten, was nicht für das DFBnet nötig ist.',
       'Der Link zum offiziellen Formular (WDFV) ist unter „Vereinsdaten“ → „Fußball: Passantrag“ hinterlegt – dort auch änderbar.',
     ],
+  },
+
+  mitgliedschaften: {
+    titel: 'Mitgliedschaften (digitaler Ausweis)',
+    kurz: 'Die Daten, die auf dem digitalen Mitgliedsausweis im Mitgliederbereich stehen.',
+    wozu: {
+      text: 'Jedes Mitglied sieht nach dem Login seinen Ausweis – mit Mitgliedsnummer, Eintrittsdatum, Art der Mitgliedschaft und Kursen. Eltern sehen auch die Ausweise ihrer Kinder.',
+      beispiele: ['Ausweis beim Vereinsfest vorzeigen', 'Rabatt bei Partnern', 'Nachweis bei Turnieren'],
+    },
+    tun: [
+      'Wird ein Mitgliedsantrag auf „Aufgenommen“ gesetzt, entsteht der Eintrag automatisch (auch für Familienmitglieder). Du ergänzt nur noch die Mitgliedsnummer.',
+      'Für Mitglieder ohne Online-Antrag: „Neu erstellen“, Name, Nummer, „Mitglied seit“, Art und die E-Mail des Kontos eintragen.',
+      'Bei Kindern die E-Mail der Eltern eintragen – dann erscheinen alle Ausweise der Familie in deren Konto.',
+      'Austritt: „Gültig bis“ setzen oder den Haken „Mitgliedschaft gültig“ entfernen.',
+    ],
+    wirkung: [
+      'Der Ausweis aktualisiert sich sofort – Kurse, Gültigkeit und Daten kommen immer frisch aus diesen Einträgen.',
+      'Der QR-Code auf dem Ausweis führt zu einer Prüfseite, die live „gültig“ oder „nicht gültig“ zeigt – nur mit Vorname, Anfangsbuchstabe des Nachnamens und Nummer.',
+    ],
+    tipps: ['Die laufende Uhr und der schimmernde Streifen zeigen beim Vorzeigen, dass es kein Screenshot ist.'],
   },
 
   kontaktanfragen: {

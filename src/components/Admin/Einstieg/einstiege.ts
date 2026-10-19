@@ -280,6 +280,16 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ],
   },
 
+  mitgliedschaften: {
+    titel: 'Wozu sind Mitgliedschaften da?',
+    text: 'Daraus entsteht der digitale Mitgliedsausweis, den jedes Mitglied nach dem Login sieht – mit Nummer, Eintrittsdatum, Art und Kursen. Er aktualisiert sich automatisch.',
+    ablauf: [
+      { key: 'antrag', titel: 'Antrag aufgenommen', text: 'Eintrag entsteht automatisch – auch für Familienmitglieder.', href: '/admin/collections/mitgliedsantraege', wo: 'Verwaltung → Mitgliedsanträge' },
+      { key: 'nummer', titel: 'Nummer ergänzen', text: 'Mitgliedsnummer eintragen, ggf. Kurse.' },
+      { key: 'ausweis', titel: 'Ausweis ist da', text: 'Im Mitgliederbereich unter der E-Mail des Kontos – bei Kindern die der Eltern.' },
+    ],
+  },
+
   passantraege: {
     titel: 'Wie laufen Passanträge?',
     text: 'Mitglieder beantragen im Mitgliederbereich einen Spielerpass – auch für ihre Kinder – und laden die Unterlagen hoch. Du prüfst, reichst im DFBnet ein und setzt den Status.',

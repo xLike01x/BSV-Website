@@ -81,6 +81,7 @@ export interface Config {
     kontaktanfragen: Kontaktanfragen;
     sponsoren: Sponsoren;
     gesuche: Gesuche;
+    mitgliedschaften: Mitgliedschaften;
     passantraege: Passantraege;
     passdokumente: Passdokumente;
     users: User;
@@ -120,6 +121,7 @@ export interface Config {
     kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
     sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
     gesuche: GesucheSelect<false> | GesucheSelect<true>;
+    mitgliedschaften: MitgliedschaftenSelect<false> | MitgliedschaftenSelect<true>;
     passantraege: PassantraegeSelect<false> | PassantraegeSelect<true>;
     passdokumente: PassdokumenteSelect<false> | PassdokumenteSelect<true>;
     users: UsersSelect<false> | UsersSelect<true>;
@@ -1372,6 +1374,45 @@ export interface Gesuche {
   deletedAt?: string | null;
 }
 /**
+ * Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedschaften".
+ */
+export interface Mitgliedschaften {
+  id: number;
+  anzeigeName?: string | null;
+  vorname: string;
+  nachname: string;
+  /**
+   * Z. B. aus dem DFBnet oder eurer Mitgliederliste.
+   */
+  mitgliedsnummer?: string | null;
+  eintritt?: string | null;
+  art: 'jugend' | 'aktiv' | 'passiv' | 'familie';
+  /**
+   * Nur zur Unterscheidung, steht nicht auf dem Ausweis.
+   */
+  geburtsdatum?: string | null;
+  /**
+   * Unter diesem Konto erscheint der Ausweis im Mitgliederbereich. Bei Kindern die E-Mail der Eltern – dann sehen sie alle Ausweise der Familie.
+   */
+  email: string;
+  /**
+   * Stehen auf dem Ausweis. Leer lassen = die Kurse aus dem Benutzerkonto werden angezeigt.
+   */
+  angebote?: (number | Angebote)[] | null;
+  aktiv?: boolean | null;
+  /**
+   * Danach zeigt der Ausweis „nicht mehr gültig“.
+   */
+  austritt?: string | null;
+  antrag?: (number | null) | Mitgliedsantraege;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
  * Anträge auf Spielerlaubnis (Spielerpass) aus dem Mitgliederbereich. Unterlagen prüfen, fehlende nachfordern, im DFBnet einreichen und den Status setzen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1720,6 +1761,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'gesuche';
         value: number | Gesuche;
+      } | null)
+    | ({
+        relationTo: 'mitgliedschaften';
+        value: number | Mitgliedschaften;
       } | null)
     | ({
         relationTo: 'passantraege';
@@ -2303,6 +2348,27 @@ export interface GesucheSelect<T extends boolean = true> {
   symbol?: T;
   reihenfolge?: T;
   aktiv?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedschaften_select".
+ */
+export interface MitgliedschaftenSelect<T extends boolean = true> {
+  anzeigeName?: T;
+  vorname?: T;
+  nachname?: T;
+  mitgliedsnummer?: T;
+  eintritt?: T;
+  art?: T;
+  geburtsdatum?: T;
+  email?: T;
+  angebote?: T;
+  aktiv?: T;
+  austritt?: T;
+  antrag?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -3156,6 +3222,7 @@ export interface Hilfe {
           | 'probetraining'
           | 'mitgliedsantraege'
           | 'passantraege'
+          | 'mitgliedschaften'
           | 'kontaktanfragen'
           | 'users'
           | 'menue'
@@ -3221,6 +3288,7 @@ export interface Hilfe {
               | 'probetraining'
               | 'mitgliedsantraege'
               | 'passantraege'
+              | 'mitgliedschaften'
               | 'kontaktanfragen'
               | 'users'
               | 'menue'

@@ -5,6 +5,8 @@ import React from 'react'
 
 import { AbmeldenButton } from '@/bsv/components/AbmeldenButton'
 import { Profilfoto } from '@/bsv/components/Profilfoto'
+import { AusweisKarten } from '@/bsv/components/AusweisKarte'
+import { ausweiseFuer } from '@/mitgliedschaften/ausweise'
 import { aktuellerBenutzer, getAusfaelle, getTermine, getVerein, payload } from '@/bsv/data'
 import { bildUrl, datum, farbe, kurzZeit, uhrzeit } from '@/bsv/lib'
 import type { Angebote } from '@/payload-types'
@@ -100,6 +102,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
       .find({ collection: 'passantraege', where: { antragsteller: { equals: user.id } }, sort: '-createdAt', limit: 20, depth: 1, user, overrideAccess: false })
       .catch(() => ({ docs: [] }))
   ).docs
+  const ausweise = await ausweiseFuer(user).catch(() => [])
   const [ausfaelle, termine, verein, anfragen] = await Promise.all([
     alleIds.length ? getAusfaelle(alleIds) : Promise.resolve([]),
     getTermine(6),
@@ -143,6 +146,19 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
           )}
           <AbmeldenButton />
         </div>
+      </section>
+
+      <section className="wrap-narrow" style={{ paddingBottom: 24 }} id="ausweis">
+        <h2 className="t-3" style={{ fontSize: 26, marginBottom: 14 }}>
+          {ausweise.length > 1 ? 'Mitgliedsausweise' : 'Mein Mitgliedsausweis'}
+        </h2>
+        {ausweise.length ? (
+          <AusweisKarten ausweise={ausweise} />
+        ) : (
+          <p className="muted" style={{ margin: 0, background: '#fff', borderRadius: 20, padding: '18px 22px', lineHeight: 1.5 }}>
+            Dein digitaler Ausweis erscheint hier, sobald die Verwaltung deine Mitgliedsdaten hinterlegt hat.
+          </p>
+        )}
       </section>
 
       {ausfaelle.length > 0 && (

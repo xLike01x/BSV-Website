@@ -2,7 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionBeforeDeleteHook, Collection
 import { APIError } from 'payload'
 
 /** Bereiche mit Papierkorb (dazu Formulare und Formular-Eingänge über das Plugin) */
-export const PAPIERKORB: string[] = ['posts', 'termine', 'media', 'pages', 'categories', 'angebote', 'ausfaelle', 'probetraining', 'mitgliedsantraege', 'kontaktanfragen', 'dokumente', 'alben', 'sponsoren', 'gesuche']
+export const PAPIERKORB: string[] = ['posts', 'termine', 'media', 'pages', 'categories', 'angebote', 'ausfaelle', 'probetraining', 'mitgliedsantraege', 'kontaktanfragen', 'dokumente', 'alben', 'sponsoren', 'gesuche', 'mitgliedschaften']
 export const PAPIERKORB_TAGE = 30
 
 /** Einträge, die länger als 30 Tage im Papierkorb liegen, endgültig löschen */

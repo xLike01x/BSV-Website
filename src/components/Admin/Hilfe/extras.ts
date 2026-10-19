@@ -679,6 +679,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Warum sieht ein Mitglied keinen Ausweis?',
+    antwort: 'Der Ausweis erscheint unter dem Konto, dessen E-Mail bei der Mitgliedschaft eingetragen ist. Prüfe unter „Mitgliedschaften“, ob es einen Eintrag gibt und die E-Mail genau stimmt (bei Kindern die der Eltern). Außerdem muss das Konto freigegeben sein.',
+    bereich: 'mitgliedschaften',
+  },
+  {
     frage: 'Wer sieht die Passanträge und Ausweiskopien?',
     antwort: 'Die antragstellende Person (ihre eigenen), Admins, Konten mit der Rolle „Passwesen“ (alle Teams – auch ohne eigenes Team) und die Übungsleitung des Teams, für das der Antrag gestellt wurde. Team-Redaktion, Kasse und Trainer anderer Teams sehen sie nicht. Die Rolle „Passwesen“ vergibst du unter „Benutzer“.',
     bereich: 'passantraege',
@@ -893,7 +898,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   kasse: {
     label: 'Kasse',
     kurz: 'Du bearbeitest die Mitgliedsanträge und pflegst die Beiträge.',
-    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen'],
+    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen'],
     darfNicht: ['News und Seiten veröffentlichen', 'Benutzer verwalten'],
     anleitungen: [
       ['mitgliedsantraege', 'antrag-bearbeiten'],

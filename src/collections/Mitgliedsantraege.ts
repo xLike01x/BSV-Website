@@ -5,6 +5,7 @@ import { anyone } from '../access/anyone'
 import { isFinance } from '../access/roles'
 import { decrypt, encrypt, isValidIBAN } from '../utilities/crypto'
 import { spamSchutz } from '../hooks/spamSchutz'
+import { mitgliedschaftAusAntrag } from '@/mitgliedschaften/ausAntrag'
 
 /**
  * Online-Mitgliedsantrag. Anlegen darf jeder (öffentliches Formular),
@@ -161,6 +162,8 @@ export const Mitgliedsantraege: CollectionConfig = {
         return data
       },
     ],
+    // Aufgenommen → automatisch Mitgliedschaft(en) für den digitalen Ausweis
+    afterChange: [mitgliedschaftAusAntrag],
   },
   timestamps: true,
 }
