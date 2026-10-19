@@ -99,7 +99,7 @@ export default function MenueEinstieg() {
           {!zu && (
             <p>
               Unten im Reiter „Hauptmenü oben“ stehen die Einträge der Menüleiste – dort änderst du auch die Reihenfolge von Fußball, Breitensport und Verein. „Fußball“ und
-              „Breitensport“ füllen sich automatisch aus „Teams & Kurse“; die Reihenfolge darin sortierst du im Reiter „Aufklappmenüs Fußball & Breitensport“ mit Pfeilen. Im Reiter
+              „Breitensport“ füllen sich automatisch aus „Teams & Kurse“; die Reihenfolge darin ziehst du in den Reitern „Aufklappmenü Fußball“ und „Aufklappmenü Breitensport“. Im Reiter
               „Fußzeile unten“ stehen die Spalten ganz unten auf jeder Seite.
             </p>
           )}

@@ -211,7 +211,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
       ],
     },
     hinweisFeld('AngebotHinweise'),
-    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenüs Fußball & Breitensport“ → Pfeile.' } },
+    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.' } },
     { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, access: { create: isEditorField, update: isEditorField }, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
     slugField({ position: 'sidebar' }),
   ],

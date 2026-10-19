@@ -162,29 +162,31 @@ export const Menue: GlobalConfig = {
           ],
         },
         {
-          label: 'Aufklappmenüs „Fußball“ & „Breitensport“',
-          description: 'Was erscheint, wenn man über „Fußball“ oder „Breitensport“ fährt. Die Position in der Menüleiste änderst du im Reiter „Hauptmenü oben“.',
+          label: 'Aufklappmenü „Fußball“',
+          description: 'Was erscheint, wenn man über „Fußball“ fährt. Die Position in der Menüleiste änderst du im Reiter „Hauptmenü oben“.',
           fields: [
-            { name: 'aufklappUebersicht', type: 'ui', admin: { components: { Field: '@/Menue/AufklappUebersicht' } } },
             {
-              type: 'row',
-              fields: [
-                {
-                  name: 'fussballText',
-                  label: 'Text links im Fußball-Menü',
-                  type: 'textarea',
-                  defaultValue: 'Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Spielpläne.',
-                  admin: { width: '50%', description: 'Steht unter „… Teams“. Die Anzahl zählt automatisch.' },
-                },
-                {
-                  name: 'breitensportText',
-                  label: 'Text links im Breitensport-Menü',
-                  type: 'textarea',
-                  defaultValue: 'Tanzen, Turnen, Fitness und Gesundheit – vom Kleinkind bis ins hohe Alter.',
-                  admin: { width: '50%', description: 'Steht unter „… Kurse“. Die Anzahl zählt automatisch.' },
-                },
-              ],
+              name: 'fussballText',
+              label: 'Text links im Fußball-Menü',
+              type: 'textarea',
+              defaultValue: 'Junioren, Juniorinnen, Senioren und Damen. Trainingszeiten, Trainerteams und Spielpläne.',
+              admin: { description: 'Steht unter „… Teams“. Die Anzahl zählt automatisch.' },
             },
+            { name: 'fussballUebersicht', type: 'ui', admin: { components: { Field: { path: '@/Menue/AufklappUebersicht', clientProps: { menue: 'Fußball' } } } } },
+          ],
+        },
+        {
+          label: 'Aufklappmenü „Breitensport“',
+          description: 'Was erscheint, wenn man über „Breitensport“ fährt. Die Position in der Menüleiste änderst du im Reiter „Hauptmenü oben“.',
+          fields: [
+            {
+              name: 'breitensportText',
+              label: 'Text links im Breitensport-Menü',
+              type: 'textarea',
+              defaultValue: 'Tanzen, Turnen, Fitness und Gesundheit – vom Kleinkind bis ins hohe Alter.',
+              admin: { description: 'Steht unter „… Kurse“. Die Anzahl zählt automatisch.' },
+            },
+            { name: 'breitensportUebersicht', type: 'ui', admin: { components: { Field: { path: '@/Menue/AufklappUebersicht', clientProps: { menue: 'Breitensport' } } } } },
           ],
         },
         {

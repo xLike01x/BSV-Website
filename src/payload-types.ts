@@ -343,7 +343,7 @@ export interface Angebote {
   fupaWidgetId?: string | null;
   fussballDeTeamId?: string | null;
   /**
-   * Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenüs Fußball & Breitensport“ → Pfeile.
+   * Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.
    */
   reihenfolge?: number | null;
   /**
