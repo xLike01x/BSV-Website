@@ -533,6 +533,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Ideales Logo: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000). Seitenverhältnis egal.',
       'Nur das Logo selbst – keine Linien, Rahmen oder Adressen drumherum, die gehören nicht zum Logo und machen es kleiner.',
       'Ohne Logo zeigt die Kachel die Anfangsbuchstaben des Namens.',
+      'Hauptsponsoren können zusätzlich ein „Logo für die Fußzeile“ bekommen – eine kompakte, quere Variante (PNG, durchsichtig, mindestens 400 Pixel breit). Dort ist nur ca. 40 Pixel Höhe Platz. Leer = das normale Logo.',
     ],
   },
 

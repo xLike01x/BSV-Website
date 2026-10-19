@@ -9,6 +9,7 @@ const BeforeLogin: React.FC = () => {
         <a href="/login">buedericher-spielverein.de/login</a>
         {' an.'}
       </p>
+      <p style={{ fontSize: 12, opacity: 0.6, marginTop: 8 }}>© {new Date().getFullYear()} Thomas Wilms · Konzept, Design und Umsetzung</p>
     </div>
   )
 }

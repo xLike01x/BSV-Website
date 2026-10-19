@@ -6,7 +6,7 @@ export const LOGO_STUFEN = {
   haupt: { flaeche: 300 * 130, maxBreite: 460, maxHoehe: 190 },
   karte: { flaeche: 170 * 74, maxBreite: 220, maxHoehe: 110 },
   laufband: { flaeche: 130 * 50, maxBreite: 170, maxHoehe: 70 },
-  fuss: { flaeche: 90 * 34, maxBreite: 130, maxHoehe: 44 },
+  fuss: { flaeche: 120 * 40, maxBreite: 170, maxHoehe: 48 },
 }
 
 /** Sponsor-Logo in einheitlicher optischer Größe (gleiche Fläche, leerer Rand entfernt) */

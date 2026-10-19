@@ -9,7 +9,10 @@ import { T } from '@/bsv/components/Text'
 import { getPlatzhalter, getSponsoren, getTexte } from '@/bsv/data'
 
 export const revalidate = 60
-export const metadata: Metadata = seite('Sponsoren & Partner', 'Die Sponsoren und Partner des Büdericher Spielvereins 1919 – danke für eure Unterstützung!')
+export const metadata: Metadata = seite(
+  'Sponsoren & Partner',
+  'Die Sponsoren und Partner des Büdericher Spielvereins 1919 – danke für eure Unterstützung!',
+)
 
 const STUFE: Record<string, { label: string; farbe: string; rang: number }> = {
   premium: { label: 'Premium-Partner', farbe: '#b8860b', rang: 1 },
@@ -27,11 +30,15 @@ const initialen = (name: string) =>
 
 export default async function SponsorenSeite() {
   const [sponsoren, tx, w] = await Promise.all([getSponsoren(), getTexte(), getPlatzhalter()])
-  const haupt = sponsoren.find((s) => s.stufe === 'haupt')
+  const haupts = sponsoren.filter((s) => s.stufe === 'haupt')
   // Darunter alle anderen: erst Premium, dann Partner, dann Förderer – innerhalb nach „Reihenfolge“
   const weitere = sponsoren
-    .filter((s) => s.id !== haupt?.id)
-    .map((s, i) => ({ s, i, rang: STUFE[s.stufe === 'haupt' ? 'premium' : (s.stufe ?? 'partner')]?.rang ?? 2 }))
+    .filter((s) => s.stufe !== 'haupt')
+    .map((s, i) => ({
+      s,
+      i,
+      rang: STUFE[s.stufe === 'haupt' ? 'premium' : (s.stufe ?? 'partner')]?.rang ?? 2,
+    }))
     .sort((a, b) => a.rang - b.rang || a.i - b.i)
     .map((x) => x.s)
   return (
@@ -46,24 +53,48 @@ export default async function SponsorenSeite() {
       </section>
       <section className="sec-soft" style={{ padding: '56px 22px 100px' }}>
         <div className="wrap-narrow" style={{ padding: 0 }}>
-          {haupt?.name && (
-            <div className="sponsor-haupt rv">
-              <p className="kicker" style={{ fontSize: 16 }}>
-                Hauptsponsor
-              </p>
-              {(() => {
-                const inhalt = <SponsorLogo logo={haupt.logo} name={haupt.name} stufe="haupt" sofort />
-                const zeigen = haupt.logo && typeof haupt.logo === 'object' ? inhalt : <strong style={{ fontSize: 28 }}>{haupt.name}</strong>
-                return haupt.url ? (
-                  <a href={haupt.url} target="_blank" rel="noopener noreferrer" className="sponsor-haupt-link">
-                    {zeigen}
-                  </a>
-                ) : (
-                  zeigen
-                )
-              })()}
-              {haupt.logo && typeof haupt.logo === 'object' ? <p className="sponsor-haupt-name">{haupt.name}</p> : null}
-              {haupt.text && <p className="muted" style={{ margin: '8px 0 0' }}>{haupt.text}</p>}
+          {haupts.length > 0 && (
+            <div
+              className={`sponsor-haupt-reihe${haupts.length > 1 ? ' sponsor-haupt-reihe--mehrere' : ''}`}
+            >
+              {haupts.map((haupt) => (
+                <div key={haupt.id} className="sponsor-haupt rv">
+                  <p className="kicker" style={{ fontSize: 16 }}>
+                    Hauptsponsor
+                  </p>
+                  {(() => {
+                    const inhalt = (
+                      <SponsorLogo logo={haupt.logo} name={haupt.name} stufe="haupt" sofort />
+                    )
+                    const zeigen =
+                      haupt.logo && typeof haupt.logo === 'object' ? (
+                        inhalt
+                      ) : (
+                        <strong style={{ fontSize: 28 }}>{haupt.name}</strong>
+                      )
+                    return haupt.url ? (
+                      <a
+                        href={haupt.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="sponsor-haupt-link"
+                      >
+                        {zeigen}
+                      </a>
+                    ) : (
+                      zeigen
+                    )
+                  })()}
+                  {haupt.logo && typeof haupt.logo === 'object' ? (
+                    <p className="sponsor-haupt-name">{haupt.name}</p>
+                  ) : null}
+                  {haupt.text && (
+                    <p className="muted" style={{ margin: '8px 0 0' }}>
+                      {haupt.text}
+                    </p>
+                  )}
+                </div>
+              ))}
             </div>
           )}
           {weitere.length > 0 && (
@@ -73,7 +104,13 @@ export default async function SponsorenSeite() {
                 const inhalt = (
                   <>
                     <span className="card-img sponsor-bild">
-                      {s.logo && typeof s.logo === 'object' ? <SponsorLogo logo={s.logo} name={s.name} stufe="karte" /> : <span className="sponsor-initialen" aria-hidden="true">{initialen(s.name)}</span>}
+                      {s.logo && typeof s.logo === 'object' ? (
+                        <SponsorLogo logo={s.logo} name={s.name} stufe="karte" />
+                      ) : (
+                        <span className="sponsor-initialen" aria-hidden="true">
+                          {initialen(s.name)}
+                        </span>
+                      )}
                     </span>
                     <span className="card-body">
                       <span className="card-cat" style={{ color: STUFE[stufe]?.farbe }}>
@@ -86,7 +123,13 @@ export default async function SponsorenSeite() {
                   </>
                 )
                 return s.url ? (
-                  <a key={s.id} href={s.url} target="_blank" rel="noopener noreferrer" className="card rv">
+                  <a
+                    key={s.id}
+                    href={s.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="card rv"
+                  >
                     {inhalt}
                   </a>
                 ) : (
@@ -97,11 +140,16 @@ export default async function SponsorenSeite() {
               })}
             </div>
           )}
-          {sponsoren.length === 0 && <p className="muted">Hier stellen wir bald unsere Partner vor.</p>}
+          {sponsoren.length === 0 && (
+            <p className="muted">Hier stellen wir bald unsere Partner vor.</p>
+          )}
           <div className="sponsor-cta rv">
             <div>
               <strong>Sponsor werden</strong>
-              <span>Bandenwerbung, Trikots, Turniere oder einfach den Nachwuchs fördern – wir finden das passende Paket.</span>
+              <span>
+                Bandenwerbung, Trikots, Turniere oder einfach den Nachwuchs fördern – wir finden das
+                passende Paket.
+              </span>
             </div>
             <Link href="/kontakt?thema=Sponsoring" className="btn btn-primary">
               Jetzt anfragen

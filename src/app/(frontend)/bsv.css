@@ -412,6 +412,8 @@
 /* Sponsoren */
 .sponsor-haupt { background: #fff; border-radius: 28px; padding: 32px; text-align: center; }
 .sponsor-haupt { padding: 40px 28px; }
+.sponsor-haupt-reihe { display: grid; gap: 16px; }
+.sponsor-haupt-reihe--mehrere { grid-template-columns: repeat(auto-fit, minmax(min(100%, 360px), 1fr)); }
 .sponsor-haupt img { display: block; margin: 18px auto 0; }
 .sponsor-haupt-link { display: inline-block; }
 .sponsor-haupt-name { margin: 14px 0 0; font-weight: 700; font-size: 18px; }

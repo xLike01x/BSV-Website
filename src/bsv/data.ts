@@ -184,6 +184,14 @@ export const getSponsoren = cache(async () => {
   return res.docs
 })
 
+/** Alle Hauptsponsoren (Art „Hauptsponsor“) in ihrer Reihenfolge – für die Fußzeile */
+export const getHauptsponsoren = cache(async () => {
+  const alle = (await getSponsoren()).filter((s) => s.stufe === 'haupt')
+  if (alle.length) return alle
+  const einer = await getHauptsponsor()
+  return einer ? [einer] : []
+})
+
 /** Hauptsponsor (Art „Hauptsponsor“, kleinste Reihenfolge) – für Fußzeile und Sponsoren-Seite */
 export const getHauptsponsor = cache(async () => {
   const haupt = (await getSponsoren()).find((s) => s.stufe === 'haupt')

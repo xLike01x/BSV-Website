@@ -422,3 +422,13 @@ body {
 .field-type[id='field-folder'] {
   display: none !important;
 }
+
+/* Copyright unten in der Seitenleiste */
+.bsv-nav-copyright {
+  display: block;
+  margin: 10px 0 4px;
+  padding: 0 4px;
+  font-size: 11px;
+  line-height: 1.4;
+  color: var(--theme-elevation-500);
+}
