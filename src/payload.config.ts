@@ -3,6 +3,9 @@ import { Statistik } from './statistik/Statistik'
 import { statistikEndpunkt } from './statistik/endpunkt'
 import { papierkorbEndpunkte } from './papierkorb/endpunkt'
 import { startpruefung } from './utilities/startpruefung'
+import { gesundEndpunkt } from './utilities/gesund'
+import { cspBerichtEndpunkt } from './utilities/cspBericht'
+import { migrations } from './migrations'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
@@ -84,7 +87,7 @@ const email = process.env.SMTP_HOST
 
 const konfiguration = buildConfig({
   email,
-  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt, ...papierkorbEndpunkte],
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt, ...papierkorbEndpunkte, gesundEndpunkt, cspBerichtEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
@@ -176,6 +179,14 @@ const konfiguration = buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    // Datenbank-Aufbau:
+    // - Beim Entwickeln (pnpm dev) passt Payload die Tabellen automatisch an („push“).
+    // - Live (und bei Befehlen wie pnpm sicherung:einspielen) NIE automatisch – dort gelten nur die Migrationen in
+    //   src/migrations. Sie laufen beim Start der Live-Website von selbst (prodMigrations) bzw. mit `pnpm payload migrate`.
+    // Nach jeder Feld-Änderung: `pnpm payload migrate:create <name>` und die neue Datei mit committen (siehe deploy/README.md).
+    push: process.env.NODE_ENV === 'development',
+    migrationDir: path.resolve(dirname, 'migrations'),
+    prodMigrations: migrations,
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
@@ -269,25 +280,16 @@ const konfiguration = buildConfig({
   },
   plugins,
   secret: process.env.PAYLOAD_SECRET,
+  // Keine Nutzungsdaten an Payload senden
+  telemetry: false,
   sharp,
   typescript: {
     outputFile: path.resolve(dirname, 'payload-types.ts'),
   },
   jobs: {
     access: {
-      run: ({ req }: { req: PayloadRequest }): boolean => {
-        // Nur Admins (oder ein Zeitplan mit CRON_SECRET) dürfen Hintergrund-Aufgaben anstoßen
-        if (hasRole(req.user as never, 'admin')) return true
-
-        const secret = process.env.CRON_SECRET
-        if (!secret) return false
-
-        // If there is no logged in user, then check
-        // for the Vercel Cron secret to be present as an
-        // Authorization header:
-        const authHeader = req.headers.get('authorization')
-        return authHeader === `Bearer ${secret}`
-      },
+      // Hintergrund-Aufgaben (derzeit keine eingerichtet) nur durch Admins anstoßen
+      run: ({ req }: { req: PayloadRequest }): boolean => hasRole(req.user as never, 'admin'),
     },
     tasks: [],
   },

@@ -28,7 +28,7 @@ export function konfigurationPruefen(env: NodeJS.ProcessEnv = process.env, live 
   if (env.BSV_TESTKONTEN === 'an') fehler.push('BSV_TESTKONTEN=an ist auf der Live-Website verboten – Zeile aus der .env löschen')
   geheim('PREVIEW_SECRET', 24)
   const url = env.NEXT_PUBLIC_SERVER_URL ?? ''
-  if (!/^https:\/\/[^/]+$/.test(url)) fehler.push('NEXT_PUBLIC_SERVER_URL muss die Live-Adresse mit https:// sein, ohne / am Ende (z. B. https://www.bsv1919.de)')
+  if (!/^https:\/\/[^/]+$/.test(url)) fehler.push('NEXT_PUBLIC_SERVER_URL muss die Live-Adresse mit https:// sein, ohne / am Ende (z. B. https://www.buedericher-spielverein.de)')
   if (/localhost|127\.0\.0\.1/.test(url)) fehler.push('NEXT_PUBLIC_SERVER_URL zeigt noch auf localhost')
   if (/bsv:bsv@/.test(env.DATABASE_URL ?? '')) fehler.push('DATABASE_URL nutzt noch das Entwicklungs-Passwort „bsv“')
   if (!env.SMTP_HOST) warnungen.push('SMTP_HOST fehlt: Registrierung und „Passwort vergessen“ funktionieren nicht')

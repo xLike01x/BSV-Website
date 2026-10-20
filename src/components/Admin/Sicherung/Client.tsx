@@ -89,13 +89,13 @@ export default function SicherungClient({ sicherungen }: { sicherungen: Sicherun
             <strong>Zweiter Ort:</strong> Eine Sicherung auf demselben PC hilft nicht, wenn die Festplatte kaputtgeht. Lade sie herunter und speichere sie zusätzlich auf einem USB-Stick oder in einer Cloud.
           </li>
           <li>
-            <strong>Persönliche Daten:</strong> Die Datei enthält Mitgliedsanträge und Konten. Nicht per E-Mail verschicken, nicht öffentlich ablegen.
+            <strong>Verschlüsselt:</strong> Die Datei (Endung <code>.tar.gz.enc</code>) ist komplett verschlüsselt und lässt sich nur mit dem <code>ENCRYPTION_KEY</code> aus der Datei <code>.env</code> öffnen. Der Schlüssel ist absichtlich nicht in der Sicherung – bewahre ihn getrennt auf (z. B. im Passwortmanager des Vorstands). Ohne ihn ist jede Sicherung wertlos.
           </li>
           <li>
-            <strong>IBANs:</strong> sind verschlüsselt und lassen sich nur mit dem <code>ENCRYPTION_KEY</code> aus der Datei <code>.env</code> lesen. Der Schlüssel ist absichtlich nicht in der Sicherung – bewahre ihn getrennt auf (z. B. im Passwortmanager des Vorstands).
+            <strong>Persönliche Daten:</strong> Trotz Verschlüsselung nicht per E-Mail verschicken und nicht öffentlich ablegen. Ältere, unverschlüsselte Sicherungen verschlüsselt der Befehl <code>pnpm sicherung:alte-verschluesseln</code>.
           </li>
           <li>
-            <strong>Wie oft?</strong> Mindestens einmal pro Woche und vor größeren Änderungen. Nach 7 Tagen erinnert das Dashboard.
+            <strong>Wie oft?</strong> Auf der Live-Website automatisch jeden Tag (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Am eigenen PC mindestens einmal pro Woche und vor größeren Änderungen – nach 7 Tagen erinnert das Dashboard.
           </li>
         </ul>
       </section>
@@ -107,10 +107,10 @@ export default function SicherungClient({ sicherungen }: { sicherungen: Sicherun
           <li>Die Sicherungsdatei in den Ordner <code>backups</code> im Projektordner legen (falls sie nicht schon dort ist).</li>
           <li>Das Server-Fenster schließen.</li>
           <li>
-            Im Projektordner eine PowerShell öffnen und eingeben: <code>pnpm sicherung:einspielen bsv-sicherung_…tar.gz</code> (ohne Dateiname wird die neueste genommen).
+            Im Projektordner eine PowerShell öffnen und eingeben: <code>pnpm sicherung:einspielen bsv-sicherung_…tar.gz.enc</code> (ohne Dateiname wird die neueste genommen).
           </li>
           <li>„JA“ eintippen und warten, bis „Fertig“ erscheint.</li>
-          <li>Die Website wie gewohnt mit <code>BSV-Website-Update.bat</code> starten.</li>
+          <li>Die Website wie gewohnt mit <code>BSV-Website-Update.bat</code> starten. Abgelaufene Fristen (Datenschutz, Papierkorb) werden beim Einspielen sofort wieder angewendet.</li>
         </ol>
       </section>
     </div>

@@ -1,0 +1,35 @@
+# Caddy: HTTPS (Zertifikat automatisch von Let's Encrypt) + Weiterleitung an die Website
+# Einrichten:  sudo cp /srv/bsv/deploy/Caddyfile /etc/caddy/Caddyfile  →  Domain unten anpassen  →  sudo systemctl reload caddy
+# Domain ersetzen (beide Zeilen). NEXT_PUBLIC_SERVER_URL in der .env muss genau zur ersten Adresse passen.
+
+www.buedericher-spielverein.de {
+	encode zstd gzip
+
+	# Uploads bis 25 MB (wie in der Website eingestellt)
+	request_body {
+		max_size 26MB
+	}
+
+	reverse_proxy 127.0.0.1:3000 {
+		# WICHTIG: Die echte Besucher-Adresse selbst setzen – ein vom Besucher mitgeschickter Wert wird überschrieben.
+		# Darauf verlässt sich die Ratenbegrenzung (Login, Formulare, Registrierung) und die Besucherstatistik.
+		header_up X-Real-IP {remote_host}
+		header_up -X-Forwarded-For
+	}
+
+	# Bilder/Dateien dürfen Browser zwischenspeichern (geschützte Dateien setzen selbst „no-store“)
+	@medien path /api/media/file/*
+	header @medien Cache-Control "public, max-age=604800"
+
+	log {
+		output file /var/log/caddy/bsv.log {
+			roll_size 20MiB
+			roll_keep 5
+		}
+	}
+}
+
+# Ohne „www“ → auf www weiterleiten
+buedericher-spielverein.de {
+	redir https://www.buedericher-spielverein.de{uri} permanent
+}

@@ -6,7 +6,7 @@ import crypto from 'crypto'
  * leeren oder fremden Schlüssel weiterzurechnen (Audit F-28).
  * Der AES-Schlüssel für IBANs (utilities/crypto.ts) bleibt unverändert, sonst wären gespeicherte IBANs unlesbar.
  */
-export type Zweck = 'ausweis' | 'wiederherstellung' | 'botschutz'
+export type Zweck = 'ausweis' | 'wiederherstellung' | 'botschutz' | 'sicherung'
 
 export const basisSchluessel = (): string => {
   const k = process.env.ENCRYPTION_KEY

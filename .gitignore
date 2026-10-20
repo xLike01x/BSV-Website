@@ -30,3 +30,8 @@ hilfe-videos-roh/
 backups/
 # Geschützte Mitglieder-Dokumente
 dokumente/
+
+# Live-Builds im Wechsel (deploy/update.sh)
+/.next-a/
+/.next-b/
+/.build-env

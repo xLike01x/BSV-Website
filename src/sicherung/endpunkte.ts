@@ -40,7 +40,7 @@ export const sicherungEndpunkte: Endpoint[] = [
       const stream = Readable.toWeb(fs.createReadStream(p)) as unknown as ReadableStream
       return new Response(stream, {
         headers: {
-          'Content-Type': 'application/gzip',
+          'Content-Type': p.endsWith('.enc') ? 'application/octet-stream' : 'application/gzip',
           'Content-Disposition': `attachment; filename="${String(req.routeParams?.datei)}"`,
           'Content-Length': String(fs.statSync(p).size),
         },

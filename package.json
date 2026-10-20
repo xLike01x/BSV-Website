@@ -27,7 +27,9 @@
     "sicherung:einspielen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/einspielen.ts",
     "test:sicherheit": "node --env-file=.env tests/sicherheit/alle.mjs",
     "live:pruefen": "tsx --env-file=.env scripts/live-pruefen.ts",
-    "medien:exif": "tsx scripts/exif-entfernen.ts"
+    "medien:exif": "tsx scripts/exif-entfernen.ts",
+    "sicherung:entschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/entschluesseln.ts",
+    "sicherung:alte-verschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/altVerschluesseln.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",

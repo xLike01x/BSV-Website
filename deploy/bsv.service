@@ -1,0 +1,34 @@
+# systemd-Dienst für die BSV-Website
+# Einrichten:  sudo cp /srv/bsv/deploy/bsv.service /etc/systemd/system/bsv.service
+#              sudo systemctl daemon-reload && sudo systemctl enable --now bsv
+# Status/Log:  systemctl status bsv   ·   journalctl -u bsv -f
+[Unit]
+Description=BSV-Website (Next.js + Payload)
+After=network.target postgresql.service
+Requires=postgresql.service
+
+[Service]
+Type=simple
+User=bsv
+Group=bsv
+WorkingDirectory=/srv/bsv
+Environment=NODE_ENV=production
+Environment=NEXT_TELEMETRY_DISABLED=1
+# Welcher Build-Ordner gerade live ist (.next-a oder .next-b) – schreibt deploy/update.sh
+EnvironmentFile=-/srv/bsv/.build-env
+# Nur auf dem Server selbst erreichbar; von außen geht alles über Caddy/nginx (setzt X-Real-IP)
+Environment=NODE_OPTIONS=--no-deprecation
+ExecStart=/usr/bin/node /srv/bsv/node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000
+Restart=always
+RestartSec=5
+# Genau EINE Instanz: Ratenbegrenzung und tägliche Aufgaben laufen im Arbeitsspeicher
+UMask=0077
+# Härtung
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=true
+ReadWritePaths=/srv/bsv
+
+[Install]
+WantedBy=multi-user.target

@@ -7,11 +7,36 @@ const __filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(__filename)
 import { redirects } from './redirects'
 
-const NEXT_PUBLIC_SERVER_URL = process.env.VERCEL_PROJECT_PRODUCTION_URL
-  ? `https://${process.env.VERCEL_PROJECT_PRODUCTION_URL}`
-  : process.env.__NEXT_PRIVATE_ORIGIN || 'http://localhost:3000'
+const istDev = process.env.NODE_ENV !== 'production'
+
+/**
+ * Content-Security-Policy (Audit F-15): Skripte nur von der eigenen Website und – nach Klick – von FuPa/FUSSBALL.DE.
+ * 'unsafe-inline' ist nötig, weil Next.js und Payload kleine Skripte direkt in die Seite schreiben.
+ * Verstöße meldet der Browser an /api/csp-bericht (erscheinen im Server-Protokoll) – so fällt auf, wenn ein Widget mehr braucht.
+ */
+const EXTERN = 'https://*.fupa.net https://fupa.net https://*.fussball.de https://fussball.de'
+const CSP = [
+  "default-src 'self'",
+  `script-src 'self' 'unsafe-inline'${istDev ? " 'unsafe-eval'" : ''} ${EXTERN}`,
+  `style-src 'self' 'unsafe-inline' ${EXTERN}`,
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data: https:",
+  `connect-src 'self' ${EXTERN}${istDev ? ' ws: wss:' : ''}`,
+  `frame-src 'self' ${EXTERN} https://www.openstreetmap.org`,
+  "media-src 'self' blob:",
+  "worker-src 'self' blob:",
+  "object-src 'none'",
+  "base-uri 'self'",
+  "form-action 'self'",
+  "frame-ancestors 'self'",
+  ...(istDev ? [] : ['upgrade-insecure-requests']),
+  'report-uri /api/csp-bericht',
+].join('; ')
 
 const nextConfig: NextConfig = {
+  // Live: zwei Build-Ordner im Wechsel (.next-a/.next-b), damit ein Update ohne lange Ausfallzeit und mit
+  // Rückfallmöglichkeit läuft – siehe deploy/update.sh. Lokal bleibt es bei .next.
+  distDir: process.env.BSV_DIST_DIR || '.next',
   // Entwicklungsserver auch über einen Cloudflare-Quick-Tunnel (Vorschau für Kollegen) nutzbar machen.
   // Ohne diese Zeile blockiert Next.js die Skripte → Seite lädt, aber Login-Knopf u. Ä. reagieren nicht.
   allowedDevOrigins: ['*.trycloudflare.com'],
@@ -27,16 +52,6 @@ const nextConfig: NextConfig = {
       },
     ],
     qualities: [100],
-    remotePatterns: [
-      ...[NEXT_PUBLIC_SERVER_URL /* 'https://example.com' */].map((item) => {
-        const url = new URL(item)
-
-        return {
-          hostname: url.hostname,
-          protocol: url.protocol.replace(':', '') as 'http' | 'https',
-        }
-      }),
-    ],
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {
@@ -58,7 +73,7 @@ const nextConfig: NextConfig = {
         headers: [
           // Nicht in fremde Seiten einbetten (Klickfallen); eigene Vorschau im Admin bleibt möglich
           { key: 'X-Frame-Options', value: 'SAMEORIGIN' },
-          { key: 'Content-Security-Policy', value: "frame-ancestors 'self'; base-uri 'self'; object-src 'none'; form-action 'self'" },
+          { key: 'Content-Security-Policy', value: CSP },
           { key: 'X-Content-Type-Options', value: 'nosniff' },
           { key: 'Referrer-Policy', value: 'strict-origin-when-cross-origin' },
           { key: 'Permissions-Policy', value: 'camera=(), microphone=(), geolocation=(), payment=(), usb=(), interest-cohort=()' },

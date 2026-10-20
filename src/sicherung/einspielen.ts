@@ -9,6 +9,8 @@ import readline from 'readline/promises'
 import { getPayload } from 'payload'
 import config from '@payload-config'
 
+import { einmalAufraeumen } from '@/utilities/taeglich'
+
 import { SICHERUNGS_ORDNER, sicherungEinspielen, sicherungErstellen, sicherungenAuflisten, type Pool } from './kern'
 
 // „payload run“ reicht nur Wörter ohne „--“ durch: pnpm sicherung:einspielen <datei> [ja]
@@ -46,5 +48,10 @@ const pool = (payload.db as unknown as { pool: Pool }).pool
 const vorher = await sicherungErstellen(pool, 'automatisch vor dem Einspielen')
 console.log(`Zur Sicherheit wurde der jetzige Stand gesichert: backups/${vorher.datei}`)
 await sicherungEinspielen(pool, datei, console.log)
-console.log('\n✅ Fertig. Bitte die Website neu starten (Server-Fenster schließen und BSV-Website-Update.bat erneut starten).')
+// Was seit der Sicherung abgelaufen ist (Fristen, Papierkorb), sofort wieder entfernen
+await einmalAufraeumen(payload)
+console.log('Aufräum-Regeln (Datenschutz-Fristen, Papierkorb) wurden angewendet.')
+const test = await payload.count({ collection: 'users', where: { testkonto: { equals: true } }, overrideAccess: true })
+if (test.totalDocs && process.env.NODE_ENV === 'production') console.log(`⚠ ${test.totalDocs} Testkonten aus der Sicherung übernommen – bitte unter Rollen & Rechte → „Alle Testkonten löschen“ entfernen.`)
+console.log('\n✅ Fertig. Bitte die Website neu starten – am PC: Server-Fenster schließen und BSV-Website-Update.bat erneut starten; auf dem Server: sudo systemctl start bsv.')
 process.exit(0)
