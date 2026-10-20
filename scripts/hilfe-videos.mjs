@@ -752,7 +752,7 @@ let saisonTeam = null
 await aufnahme('saisonwechsel', admin, async ({ page, menueZeigen, untertitel, klick, zeige, gehe }) => {
   await gehe('/admin/saisonwechsel')
   await page.waitForSelector('.bsv-saison__liste', { timeout: 30000 })
-  await untertitel('Einmal im Jahr: links unter „Sport“ auf „Saisonwechsel“', 2200)
+  await untertitel('Vor jeder Fußball-Saison: links unter „Sport“ auf „Saisonwechsel“', 2200)
   await menueZeigen('Saisonwechsel')
   await untertitel('Zuerst „Neue Saison beginnen“ – das setzt die Häkchen vom letzten Jahr zurück', 2600)
   await zeige(page.getByRole('button', { name: /Neue Saison beginnen/ }))

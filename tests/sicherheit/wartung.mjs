@@ -3,7 +3,8 @@ import { api, B, login, mitWebAdmin, pruefe } from './lib.mjs'
 /** Wartung: Saisonwechsel-Assistent und „Wiederherstellung getestet“ – nur die vorgesehenen Rollen, nur gültige Anfragen */
 export default async function wartung(d) {
   const vorher = (await d.q('select saison_start, saison_geprueft, saisonwechsel_am, saisonwechsel_von, wiederherstellung_getestet_am, wiederherstellung_von from wartung limit 1'))[0] ?? null
-  const [team] = await d.q('select id from angebote order by id limit 1')
+  const [team] = await d.q(`select id from angebote where bereich = 'fussball' order by id limit 1`)
+  const [kurs] = await d.q(`select id from angebote where bereich <> 'fussball' order by id limit 1`)
   const red = await login('redaktion@bsv.test')
   const kasse = await login('kasse@bsv.test')
   const trainer = await login('trainer-f1-jugend@bsv.test')
@@ -21,7 +22,8 @@ export default async function wartung(d) {
     const start = await api(red, 'POST', '/api/globals/wartung/saison', { aktion: 'start' })
     pruefe('Redaktion: neue Saison beginnen', start.s === 200 && Object.keys(start.j?.saisonGeprueft ?? {}).length === 0, start.j)
     // Gleichzeitig mehrere Teams abhaken – keins darf verloren gehen
-    const teams = (await d.q('select id from angebote order by id limit 6')).map((t) => t.id)
+    if (kurs) pruefe('Breitensport-Kurs lässt sich nicht abhaken → 404', (await api(red, 'POST', '/api/globals/wartung/saison', { aktion: 'pruefen', id: kurs.id, geprueft: true })).s === 404)
+    const teams = (await d.q(`select id from angebote where bereich = 'fussball' order by id limit 6`)).map((t) => t.id)
     await Promise.all(teams.map((id) => api(red, 'POST', '/api/globals/wartung/saison', { aktion: 'pruefen', id, geprueft: true })))
     const [{ saison_geprueft: g }] = await d.q('select saison_geprueft from wartung limit 1')
     pruefe('6 gleichzeitige Haken: alle gespeichert', teams.every((id) => g?.[String(id)]), g)

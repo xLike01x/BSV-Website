@@ -64,7 +64,7 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
       const w = await wartungLesen(req.payload).catch(() => ({}) as Awaited<ReturnType<typeof wartungLesen>>)
       const zuletzt = w.saisonwechselAm ? new Date(w.saisonwechselAm) : null
       if (!zuletzt || zuletzt.getFullYear() < heute.getFullYear() || (zuletzt.getMonth() + 1) * 100 + zuletzt.getDate() < 515)
-        a.push({ key: 'saisonwechsel', art: 'info', symbol: '🔄', text: 'Neue Saison: Teams, Verantwortliche, Trainingszeiten und Fotos einmal durchgehen.', href: '/admin/saisonwechsel', link: 'Saisonwechsel' })
+        a.push({ key: 'saisonwechsel', art: 'info', symbol: '🔄', text: 'Neue Fußball-Saison: Teams, Trainer, Trainingszeiten und Fotos einmal durchgehen.', href: '/admin/saisonwechsel', link: 'Saisonwechsel' })
     }
   }
   if (darfRegistrierungen(req.user)) {

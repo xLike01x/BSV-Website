@@ -589,12 +589,12 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   saisonwechsel: [
     {
       id: 'saisonwechsel',
-      titel: 'Den Saisonwechsel machen',
+      titel: 'Den Saisonwechsel machen (Fußball)',
       video: '/hilfe/saisonwechsel.mp4',
       schritte: [
         'Links unter „Sport“ auf „Saisonwechsel“.',
         '„🔄 Neue Saison beginnen“ klicken und bestätigen.',
-        'Oben einen Bereich wählen (z. B. „Fußball“) und das erste Team öffnen (Klick auf den Namen).',
+        'Oben eine Gruppe wählen (z. B. „Junioren“) und das erste Team öffnen (Klick auf den Namen).',
         'Im Team Namen, Alter, Trainingszeiten und Verantwortliche anpassen, speichern, zurück zum Saisonwechsel.',
         'Beim Team das Häkchen setzen. Mit „Nur noch nicht geprüfte“ siehst du, was fehlt.',
         'Wenn alle abgehakt sind: „✓ Saisonwechsel abschließen“.',
@@ -977,7 +977,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Was ist der Saisonwechsel und wann mache ich ihn?',
-    antwort: 'Einmal im Jahr – meist im Sommer – gehen Admin oder Redaktion unter Sport → „Saisonwechsel“ alle Teams und Kurse durch: Namen, Verantwortliche, Trainingszeiten, alte Fotos. Jedes Team wird abgehakt, am Ende „Saisonwechsel abschließen“. Vom 15. Juni bis 30. September erinnert das Dashboard daran.',
+    antwort: 'Vor jeder Fußball-Saison – meist im Sommer – gehen Admin oder Redaktion unter Sport → „Saisonwechsel“ alle Fußballteams durch: Namen, Verantwortliche, Trainingszeiten, alte Fotos. Breitensport-Kurse haben keine Saison und stehen dort nicht. Jedes Team wird abgehakt, am Ende „Saisonwechsel abschließen“. Vom 15. Juni bis 30. September erinnert das Dashboard daran.',
     bereich: 'saisonwechsel',
   },
   {
@@ -1129,7 +1129,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Kategorien (nur Admins), Formulare, Menü & Fußzeile, Texte & Bilder. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen, Saisonwechsel (Admin und Redaktion). Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz-Fristen, E-Mail-Vorlagen Mitgliedsanträge, Hilfe-Texte, Hilfe-Rückmeldungen – Web-Admins zusätzlich Besucherstatistik, Papierkorb, Sicherheit und Datensicherung. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Kategorien (nur Admins), Formulare, Menü & Fußzeile, Texte & Bilder. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz-Fristen, E-Mail-Vorlagen Mitgliedsanträge, Hilfe-Texte, Hilfe-Rückmeldungen – Web-Admins zusätzlich Besucherstatistik, Papierkorb, Sicherheit und Datensicherung. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {

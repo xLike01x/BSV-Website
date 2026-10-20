@@ -4,10 +4,8 @@ import React, { useMemo, useState } from 'react'
 export type Zeile = {
   id: number
   title: string
-  bereich: string
   untergruppe: string | null
   aktiv: boolean
-  fussball: boolean
   leitung: { id: number; name: string; zuletzt: string | null; alt: boolean; ohneRolle: boolean; link: boolean }[]
   zeiten: string[]
   titelbildJahr: number | null
@@ -18,11 +16,12 @@ export type Zeile = {
 }
 type Stand = { saisonStart: string | null; saisonGeprueft: Record<string, string>; saisonwechselAm: string | null; saisonwechselVon: string | null }
 
-const BEREICHE: [string, string][] = [
+const GRUPPEN: [string, string][] = [
   ['', 'Alle'],
-  ['fussball', 'Fußball'],
-  ['kids', 'BSV Kids'],
-  ['erwachsene', 'Erwachsene & Senioren'],
+  ['junioren', 'Junioren'],
+  ['juniorinnen', 'Juniorinnen'],
+  ['senioren', 'Senioren'],
+  ['seniorinnen', 'Seniorinnen'],
 ]
 const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
 
@@ -40,7 +39,7 @@ function hinweise(z: Zeile): string[] {
 
 export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: Zeile[]; stand: Stand }) {
   const [stand, setStand] = useState(start)
-  const [bereich, setBereich] = useState('')
+  const [gruppe, setGruppe] = useState('')
   const [nurOffen, setNurOffen] = useState(false)
   const [laeuft, setLaeuft] = useState<string | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
@@ -52,7 +51,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
   const aktive = zeilen.filter((z) => z.aktiv)
   const inaktive = zeilen.filter((z) => !z.aktiv)
   const erledigt = aktive.filter((z) => geprueft(z.id)).length
-  const sichtbar = useMemo(() => aktive.filter((z) => (!bereich || z.bereich === bereich) && (!nurOffen || !geprueft(z.id))), [aktive, bereich, nurOffen, stand]) // eslint-disable-line react-hooks/exhaustive-deps
+  const sichtbar = useMemo(() => aktive.filter((z) => (!gruppe || z.untergruppe === gruppe) && (!nurOffen || !geprueft(z.id))), [aktive, gruppe, nurOffen, stand]) // eslint-disable-line react-hooks/exhaustive-deps
 
   const senden = async (body: object, schluessel: string) => {
     setLaeuft(schluessel)
@@ -90,7 +89,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
             </label>
             <div className="bsv-saison__name">
               <a href={`/admin/collections/angebote/${z.id}`}>{z.title}</a>
-              <span>{BEREICHE.find(([k]) => k === z.bereich)?.[1] ?? z.bereich}</span>
+              <span>{GRUPPEN.find(([k]) => k && k === z.untergruppe)?.[1] ?? 'ohne Gruppe'}</span>
               {h.length > 0 && !ok && <span className="bsv-saison__hinweise">⚠️ {h.join(' · ')}</span>}
             </div>
             <div className="bsv-saison__spalte">
@@ -131,7 +130,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
                   ⚠️ {z.alteFotos} {z.alteFotos === 1 ? 'Foto' : 'Fotos'} mit Personen, älter als 2 Jahre
                 </a>
               )}
-              {z.fussball && <span>{z.ergebnisdienst ? 'Spielplan verknüpft' : 'ohne Spielplan (FuPa / FUSSBALL.DE)'}</span>}
+              <span>{z.ergebnisdienst ? 'Spielplan verknüpft' : 'ohne Spielplan (FuPa / FUSSBALL.DE)'}</span>
             </div>
           </li>
         )
@@ -144,7 +143,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
       <header className="bsv-saison__kopf">
         <div>
           <h1>Saisonwechsel</h1>
-          <p>Einmal im Jahr – meist im Sommer – alle Teams und Kurse durchgehen: Wer betreut sie jetzt? Stimmen Namen, Zeiten und Fotos noch? Jedes Team abhaken, wenn es passt.</p>
+          <p>Vor jeder neuen Fußball-Saison alle Teams durchgehen: Wer trainiert sie jetzt? Stimmen Namen, Jahrgänge, Zeiten und Fotos noch? Jedes Team abhaken, wenn es passt. (Breitensport-Kurse haben keine Saison und stehen hier nicht.)</p>
         </div>
         <div className="bsv-saison__stand">
           <strong>
@@ -164,7 +163,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
             <strong>Neue Saison beginnen</strong> (Knopf unten) – setzt die Häkchen vom letzten Jahr zurück.
           </li>
           <li>
-            <strong>Namen anpassen</strong> (Fußball): Aus der D-Jugend wird die C-Jugend? Im Team den Namen, das Alter und die Reihenfolge ändern. News und Bilder bleiben am Team.
+            <strong>Namen anpassen:</strong> Aus der D-Jugend wird die C-Jugend? Im Team den Namen, das Alter und die Reihenfolge ändern. News und Bilder bleiben am Team.
           </li>
           <li>
             <strong>Verantwortliche prüfen:</strong> Wer aufhört, wird beim Team unter „Verantwortliche“ ausgetragen – und braucht er gar keinen Zugang mehr, beim Benutzer die Rolle auf „Mitglied“ ändern. Neue Trainer bekommen ein Konto (Rollen &amp; Rechte → „+ Konto anlegen“).
@@ -176,7 +175,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
             <strong>Fotos:</strong> Alte Mannschaftsfotos mit Personen ersetzen oder löschen – besonders bei Kindern, die nicht mehr im Team sind. Neues Titelbild nur mit Einwilligung.
           </li>
           <li>
-            <strong>Fußball:</strong> Spielplan-Verknüpfung (FuPa / FUSSBALL.DE) für die neue Saison prüfen.
+            <strong>Spielplan:</strong> Verknüpfung zu FuPa / FUSSBALL.DE für die neue Saison prüfen (die Team-IDs ändern sich oft).
           </li>
           <li>
             Teams, die es nicht mehr gibt: im Team den Haken <strong>„Aktiv“</strong> entfernen (verschwindet von der Website, nichts geht verloren).
@@ -188,9 +187,9 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
       </details>
 
       <div className="bsv-saison__werkzeuge">
-        <div className="bsv-saison__filter" role="radiogroup" aria-label="Bereich">
-          {BEREICHE.map(([k, l]) => (
-            <button key={k} type="button" role="radio" aria-checked={bereich === k} className={bereich === k ? 'is-aktiv' : undefined} onClick={() => setBereich(k)}>
+        <div className="bsv-saison__filter" role="radiogroup" aria-label="Gruppe">
+          {GRUPPEN.filter(([k]) => !k || aktive.some((z) => z.untergruppe === k)).map(([k, l]) => (
+            <button key={k} type="button" role="radio" aria-checked={gruppe === k} className={gruppe === k ? 'is-aktiv' : undefined} onClick={() => setGruppe(k)}>
               {l}
             </button>
           ))}
@@ -206,12 +205,12 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
         </p>
       )}
 
-      {sichtbar.length ? <Tabelle liste={sichtbar} /> : <p className="bsv-saison__leer">{nurOffen ? '🎉 Alles geprüft.' : 'Keine Teams in diesem Bereich.'}</p>}
+      {sichtbar.length ? <Tabelle liste={sichtbar} /> : <p className="bsv-saison__leer">{nurOffen ? '🎉 Alles geprüft.' : 'Keine Teams in dieser Gruppe.'}</p>}
 
       {inaktive.length > 0 && (
         <details className="bsv-saison__box">
           <summary>
-            Nicht aktive Teams und Kurse ({inaktive.length}) – auf der Website ausgeblendet
+            Nicht aktive Teams ({inaktive.length}) – auf der Website ausgeblendet
           </summary>
           <ul className="bsv-saison__inaktiv">
             {inaktive.map((z) => (

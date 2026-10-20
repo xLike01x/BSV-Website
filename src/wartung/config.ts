@@ -23,7 +23,7 @@ const getestetEndpunkt: Endpoint = {
   },
 }
 
-/** Saisonwechsel: Teams abhaken, neue Saison beginnen, abschließen (Admin und Redaktion) */
+/** Saisonwechsel (nur Fußball): Teams abhaken, neue Saison beginnen, abschließen (Admin und Redaktion) */
 export type SaisonStand = { saisonStart?: string | null; saisonGeprueft?: Record<string, string> | null; saisonwechselAm?: string | null; saisonwechselVon?: string | null }
 let kette: Promise<unknown> = Promise.resolve()
 const nacheinander = <T>(f: () => Promise<T>): Promise<T> => {
@@ -45,8 +45,8 @@ const saisonEndpunkt: Endpoint = {
     if (aktion === 'pruefen') {
       id = typeof body?.id === 'number' && Number.isInteger(body.id) && body.id > 0 && body.id <= 2147483647 ? body.id : null
       if (!id || typeof body?.geprueft !== 'boolean') return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 400 })
-      const da = await req.payload.count({ collection: 'angebote', where: { id: { equals: id } }, overrideAccess: true })
-      if (!da.totalDocs) return Response.json({ fehler: 'Dieses Team gibt es nicht (mehr).' }, { status: 404 })
+      const da = await req.payload.count({ collection: 'angebote', where: { and: [{ id: { equals: id } }, { bereich: { equals: 'fussball' } }] }, overrideAccess: true })
+      if (!da.totalDocs) return Response.json({ fehler: 'Dieses Fußballteam gibt es nicht (mehr).' }, { status: 404 })
     }
     return nacheinander(async () => {
       const alt = (await req.payload.findGlobal({ slug: 'wartung' as never, depth: 0, overrideAccess: true })) as SaisonStand

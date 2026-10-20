@@ -162,22 +162,23 @@ export const HILFE: Record<string, HilfeText> = {
 
   saisonwechsel: {
     titel: 'Saisonwechsel',
-    kurz: 'Einmal im Jahr alle Teams und Kurse durchgehen – Verantwortliche, Trainingszeiten, Fotos – und jedes abhaken.',
+    kurz: 'Vor jeder Fußball-Saison alle Fußballteams durchgehen – Namen, Trainer, Trainingszeiten, Fotos – und jedes abhaken. Breitensport-Kurse haben keine Saison und stehen hier nicht.',
     wozu: {
-      text: 'Jede Saison wechseln Jahrgänge, Trainer und Zeiten. Ohne festen Durchgang behalten Ehemalige ihre Rechte, Teamseiten zeigen alte Zeiten und Kinderfotos bleiben jahrelang online.',
-      beispiele: ['Aus der D-Jugend wird die C-Jugend', 'Ein Trainer hört auf, eine neue Trainerin kommt', 'Neue Hallenzeiten nach den Sommerferien'],
+      text: 'Jede Saison wechseln im Fußball Jahrgänge, Trainer und Zeiten. Ohne festen Durchgang behalten Ehemalige ihre Rechte, Teamseiten zeigen alte Zeiten und Kinderfotos bleiben jahrelang online.',
+      beispiele: ['Aus der D-Jugend wird die C-Jugend', 'Ein Trainer hört auf, eine neue Trainerin kommt', 'Neue Trainingszeiten zur neuen Saison'],
     },
     tun: [
       'Links unter „Sport“ auf „Saisonwechsel“.',
       '„🔄 Neue Saison beginnen“ – setzt die Häkchen vom letzten Jahr zurück.',
       'Team für Team: Namen und Alter anpassen, Verantwortliche aus- und eintragen, Trainingszeiten aktualisieren, alte Fotos ersetzen. Ein Klick auf den Namen öffnet das Team.',
-      'Passt alles, links das Häkchen setzen. „Nur noch nicht geprüfte“ zeigt, was fehlt.',
+      'Passt alles, links das Häkchen setzen. Oben nach Junioren, Juniorinnen, Senioren, Seniorinnen filtern; „Nur noch nicht geprüfte“ zeigt, was fehlt.',
       'Teams, die es nicht mehr gibt: im Team „Aktiv“ ausschalten.',
       'Zum Schluss „✓ Saisonwechsel abschließen“.',
     ],
     wirkung: [
       'Die Seite selbst ändert nichts an den Teams – sie zeigt nur an, was auffällt (⚠️), und merkt sich die Häkchen.',
       'Orange markiert: keine Verantwortlichen, Verantwortliche seit über 6 Monaten nicht angemeldet oder ohne Trainer-Rolle, keine Trainingszeiten, kein Titelbild, Fotos mit Personen älter als 2 Jahre.',
+      'Breitensport (BSV Kids, Erwachsene & Senioren) steht hier nicht – dort meldet das Dashboard fehlende oder lange nicht geänderte Trainingszeiten und ungenutzte Zugänge.',
       'Vom 15. Juni bis 30. September erinnert das Dashboard, solange der Saisonwechsel in diesem Jahr nicht abgeschlossen ist.',
     ],
     tipps: [

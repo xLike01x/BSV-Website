@@ -30,7 +30,7 @@ type Person = { id: number; name?: string | null; email: string; letzteAnmeldung
 
 const idVon = (v: number | { id: number }) => (typeof v === 'object' ? v.id : v)
 
-/** /admin/saisonwechsel – einmal im Jahr alle Teams und Kurse durchgehen (Admin und Redaktion) */
+/** /admin/saisonwechsel – einmal im Jahr alle Fußballteams durchgehen (Admin und Redaktion). Breitensport hat keine Saison. */
 export default async function Saisonwechsel({ initPageResult, params, searchParams }: AdminViewServerProps) {
   const { req, permissions, visibleEntities, locale } = initPageResult
   if (!req.user) redirect('/login?weiter=/admin/saisonwechsel')
@@ -39,7 +39,8 @@ export default async function Saisonwechsel({ initPageResult, params, searchPara
   const angebote = (
     await req.payload.find({
       collection: 'angebote',
-      sort: ['bereich', 'reihenfolge', 'title'],
+      where: { bereich: { equals: 'fussball' } },
+      sort: ['reihenfolge', 'title'],
       limit: 500,
       pagination: false,
       depth: 1,
@@ -71,10 +72,8 @@ export default async function Saisonwechsel({ initPageResult, params, searchPara
     return {
       id: a.id,
       title: a.title,
-      bereich: a.bereich ?? '',
       untergruppe: a.untergruppe ?? null,
       aktiv: a.aktiv !== false,
-      fussball: a.bereich === 'fussball',
       leitung: leitung.map((p) => {
         const zuletzt = p.letzteAnmeldung ?? null
         const alt = zuletzt ? Date.now() - new Date(zuletzt).getTime() > HALBES_JAHR : Date.now() - new Date(p.createdAt).getTime() > 30 * 86400000
