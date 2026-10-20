@@ -90,7 +90,7 @@ export default function KontoMenue() {
             </span>
           </div>
           <a role="menuitem" href="/admin/account">
-            <span aria-hidden="true">👤</span> Mein Konto <small>Name, Passwort, Foto</small>
+            <span aria-hidden="true">👤</span> Mein Konto <small>Name, E-Mail, Passwort, Benachrichtigungen</small>
           </a>
           <a role="menuitem" href="/mitglieder">
             <span aria-hidden="true">🏠</span> Zum Mitgliederbereich <small>Ausfälle, Ausweis, Downloads</small>

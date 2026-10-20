@@ -81,12 +81,13 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 - **Live-Hinweise** beim Bearbeiten (News, Teams, Termine, Ausfälle, Seiten, Bilder): warnen z. B. vor fehlendem Titelbild und zeigen, wo ein Eintrag erscheint.
 - **Tour** und **Erste Schritte** auf dem Dashboard für neue Nutzer.
 - Eingebaute Texte: `src/components/Admin/Hilfe/texte.ts` und `extras.ts`. Eigene Ergänzungen ohne Code unter **Einstellungen → Hilfe-Texte**; Rückmeldungen unter **Einstellungen → Hilfe-Rückmeldungen** (nur Admins).
-- **14 Hilfe-Videos** mit Untertiteln liegen in `public/hilfe/`. Neu aufnehmen (nach Design-Änderungen, nur lokal mit Testkonten – alles Angelegte wird danach wieder entfernt):
+- **21 Hilfe-Videos** mit Untertiteln liegen in `public/hilfe/`. Neu aufnehmen (nach Änderungen an der Verwaltung, nur lokal mit Testkonten – alles Angelegte wird danach wieder entfernt). Zwei Durchläufe empfohlen: der erste lässt den Entwicklungsserver alle Seiten übersetzen, erst der zweite ist flüssig.
   ```
-  BSV_URL=http://localhost:3000 BSV_ADMIN_EMAIL=… BSV_ADMIN_PASSWORT=… BSV_ADMIN_TOTP=… \
-  BSV_TEAM_EMAIL=… BSV_TEAM_PASSWORT=… BSV_TEAM_TOTP=… node scripts/hilfe-videos.mjs [name …]
+  BSV_URL=http://localhost:3000 node scripts/hilfe-videos.mjs                  # alle, nur aufnehmen (hilfe-videos-roh/)
+  BSV_URL=http://localhost:3000 BSV_FERTIG=1 node scripts/hilfe-videos.mjs     # aufnehmen + nach public/hilfe/*.mp4/.jpg
+  BSV_URL=http://localhost:3000 node scripts/hilfe-videos.mjs news-schreiben   # nur ein Video
   ```
-  Danach je Video: `ffmpeg -ss 0.8 -i hilfe-videos-roh/<name>.webm -vf scale=1152:-2 -c:v libx264 -crf 28 -pix_fmt yuv420p -movflags +faststart -an public/hilfe/<name>.mp4` (Vorschaubild `<name>.jpg` daneben).
+  Standard sind die Testkonten (admin@, redaktion@, kasse@, trainer-f1-jugend@bsv.test). Andere Konten: `BSV_<ADMIN|REDAKTION|KASSE|TEAM>_EMAIL`, `_PASSWORT`, `_TOTP` (Zwei-Faktor-Geheimnis, nur wenn 2FA aktiv).
 
 ## Digitaler Mitgliedsausweis
 

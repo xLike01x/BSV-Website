@@ -3,7 +3,7 @@ import type { Endpoint, PayloadRequest, Where } from 'payload'
 import { hasRole } from '@/access/roles'
 import { emailAktiv, mailHtml, mailSenden } from '@/auth/mail'
 import { ratenGrenze } from '@/hooks/spamSchutz'
-import { fehlerAntwort, idAus, jsonVon, nurJson, posteingangAendern } from '@/posteingang/endpunkte'
+import { fehlerAntwort, idAus, jsonVon, nurJson, posteingangAendern, posteingangVermerken } from '@/posteingang/endpunkte'
 import { type Entscheidung, MITGLIEDSART_LABEL } from './texte'
 
 const ENTSCHEIDUNGEN: Entscheidung[] = ['aufgenommen', 'rueckfrage', 'abgelehnt']
@@ -64,12 +64,12 @@ const entscheidung: Endpoint = {
             : versand === 'nicht-eingerichtet'
               ? 'E-Mail nicht gesendet: Versand ist noch nicht eingerichtet'
               : 'E-Mail konnte nicht gesendet werden'
-        await posteingangAendern(req, 'mitgliedsantraege', id, () => ({}), { text: vermerk, art: 'status' })
+        await posteingangVermerken(req, 'mitgliedsantraege', id, () => ({}), { text: vermerk, art: 'status' })
       }
       return Response.json({ ok: true, status, versand })
     } catch (e) {
       if ((e as { status?: number }).status === 429) return Response.json({ fehler: (e as Error).message }, { status: 429 })
-      return fehlerAntwort(e)
+      return fehlerAntwort(e, req)
     }
   },
 }
@@ -128,7 +128,7 @@ const pruefung: Endpoint = {
         mailAktiv: emailAktiv() || process.env.NODE_ENV !== 'production',
       })
     } catch (e) {
-      return fehlerAntwort(e)
+      return fehlerAntwort(e, req)
     }
   },
 }
@@ -237,7 +237,7 @@ const exportEndpunkt: Endpoint = {
       // Jeder Antrag wird für sich markiert, Fehler werden gezählt (nicht markierte erscheinen beim nächsten Export wieder).
       let fehlgeschlagen = 0
       for (const a of antraege) {
-        await posteingangAendern(req, 'mitgliedsantraege', a.id, () => (a.exportiertAm ? {} : { exportiertAm: jetzt }), { text: a.exportiertAm ? 'Erneut exportiert' : 'Für die Kasse exportiert', art: 'status' }).catch((e) => {
+        await posteingangVermerken(req, 'mitgliedsantraege', a.id, () => (a.exportiertAm ? {} : { exportiertAm: jetzt }), { text: a.exportiertAm ? 'Erneut exportiert' : 'Für die Kasse exportiert', art: 'status' }).catch((e) => {
           fehlgeschlagen++
           req.payload.logger.error({ err: e }, `Export: Antrag ${a.id} konnte nicht als exportiert markiert werden`)
         })
@@ -255,7 +255,7 @@ const exportEndpunkt: Endpoint = {
       })
     } catch (e) {
       if ((e as { status?: number }).status === 429) return Response.json({ fehler: (e as Error).message }, { status: 429 })
-      return fehlerAntwort(e)
+      return fehlerAntwort(e, req)
     }
   },
 }

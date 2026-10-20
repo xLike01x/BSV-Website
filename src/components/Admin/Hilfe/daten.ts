@@ -81,6 +81,7 @@ export function ansichtAus(pfad: string): Ansicht {
   if (teile[0] === 'sicherung') return { schluessel: 'sicherung', art: 'seite' }
   if (teile[0] === 'statistik') return { schluessel: 'statistik', art: 'seite' }
   if (teile[0] === 'papierkorb') return { schluessel: 'papierkorb', art: 'seite' }
+  if (teile[0] === 'registrierungen') return { schluessel: 'registrierungen', art: 'seite' }
   if (teile[0] === 'hilfe') return { schluessel: 'hilfe-center', art: 'seite' }
   return { schluessel: 'dashboard', art: 'seite' }
 }

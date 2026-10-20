@@ -48,8 +48,31 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Bei „Titelbild“ auf „Aus vorhandenen auswählen“ klicken – oder mit „Neu erstellen“ ein Foto vom Rechner hochladen.',
         'Ins große Textfeld darunter klicken und den Text schreiben. Die Werkzeugleiste darüber macht Text fett, kursiv oder zu einer Zwischenüberschrift.',
         'Rechts bei „Team / Kurs“ das passende Team wählen (oder leer lassen für Vereins-News).',
+        'Rechts im Kasten „Vor dem Veröffentlichen“ nachsehen: Steht da noch ein ⚠️, kurz nachbessern.',
+        'Trainer und Team-Redaktion: Soll die News auch auf die Startseite? „Für die Startseite vorschlagen“ anhaken.',
         'Oben rechts „Entwurf speichern“ – dann ist nichts verloren.',
         'Wenn alles passt: „Veröffentlichen“. Fertig!',
+      ],
+    },
+    {
+      id: 'vorschlag-annehmen',
+      titel: 'Vorschläge für die Startseite annehmen (Redaktion)',
+      video: '/hilfe/vorschlag-annehmen.mp4',
+      schritte: [
+        'Auf der Übersicht (Startseite der Verwaltung) steht oben „⭐ Für die Startseite vorgeschlagen“, sobald ein Trainer etwas vorschlägt.',
+        'Auf den Titel klicken, um die News zu lesen.',
+        'Passt sie: „Auf die Startseite“. Sonst „Nein, danke“ – die News bleibt dann auf der Teamseite.',
+        'Ist die News noch ein Entwurf, erscheint sie auf der Startseite, sobald der Trainer sie veröffentlicht.',
+      ],
+    },
+    {
+      id: 'startseite-vorschlagen',
+      titel: 'Eine Team-News für die Startseite vorschlagen (Trainer, Team-Redaktion)',
+      schritte: [
+        'News schreiben und rechts bei „Team / Kurs“ dein Team wählen.',
+        'Rechts „Für die Startseite vorschlagen“ anhaken.',
+        '„Veröffentlichen“ – die Redaktion sieht den Vorschlag auf ihrer Übersicht und entscheidet.',
+        'Bis dahin steht die News auf der Seite deines Teams.',
       ],
     },
     {
@@ -121,7 +144,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Links auf „Mediathek“ und dann auf „Neu erstellen“ klicken.',
         'Das Foto in das Feld ziehen oder „Datei auswählen“ klicken.',
         'Bei „Bildbeschreibung“ kurz beschreiben, was zu sehen ist, z. B. „Die F1 jubelt mit dem Pokal“.',
-        'Optional: Team wählen und „In Galerie zeigen“ anhaken.',
+        'Pflicht: Bei „Sind Personen zu erkennen?“ „Nein“ oder „Ja – und die Einwilligung liegt vor“ wählen. Bei Kindern nur mit Einwilligung der Eltern.',
+        'Rechts bei „Ordner (Team / Kurs)“ dein Team wählen. Optional „In der Bildergalerie des Teams zeigen“ anhaken.',
         'Oben rechts „Speichern“.',
       ],
     },
@@ -142,7 +166,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'In der Mediathek oben auf „Mehrere Dateien hochladen“ klicken.',
         'Alle Fotos auf einmal auswählen oder hineinziehen.',
-        'Für jedes Foto die Bildbeschreibung ausfüllen und speichern.',
+        'Für jedes Foto Bildbeschreibung und „Sind Personen zu erkennen?“ ausfüllen und speichern.',
       ],
     },
   ],
@@ -153,7 +177,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Links auf „Seiten“ und dann auf „Neu erstellen“ klicken.',
         'Einen Titel eingeben, z. B. „Sommerfest 2027“.',
-        'Im Reiter „Inhalt“ auf „Baustein hinzufügen“ klicken und z. B. „Inhalt“ (Text) oder „Medien“ (Bild) wählen.',
+        'Im Reiter „Inhalt (Bausteine)“ auf „Baustein hinzufügen“ klicken und z. B. „Text (in Spalten)“ oder „Bild oder Video“ wählen.',
         'Mit dem Bildschirm-Symbol oben die Vorschau öffnen und prüfen.',
         '„Veröffentlichen“ klicken. Die Seite ist jetzt unter /sommerfest-2027 erreichbar.',
       ],
@@ -188,7 +212,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Die Seite muss veröffentlicht sein.',
         'Links auf „Menü & Fußzeile“ klicken.',
-        'Unter „Links in der Menüleiste“ auf „Eintrag hinzufügen“ klicken.',
+        'Im Reiter „Hauptmenü oben“ bei „Einträge in der Menüleiste“ auf „Eintrag hinzufügen“ klicken.',
         'Text eingeben, „Seite aus ‚Seiten‘“ wählen und die Seite aussuchen.',
         'Oben rechts „Speichern“.',
       ],
@@ -266,10 +290,22 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Einem Trainer ein Team zuordnen',
       video: '/hilfe/team-verantwortliche.mp4',
       schritte: [
-        'Am einfachsten beim Benutzer: Benutzer öffnen → bei „Team-Berechtigungen“ das Team auswählen (ohne passende Rolle wird automatisch „Trainer“ gesetzt).',
-        'Oder beim Team: das Team unter „Teams & Kurse“ öffnen.',
-        'Bei „Verantwortliche“ die Person auswählen – beide Wege führen zum selben Ergebnis.',
+        'Admins: links unter „Mitglieder“ auf „Benutzer“ und die Person öffnen.',
+        'Bei „Rollen“ die Kachel „Trainer“ (oder „Team-Redaktion“ für Pressewarte) ankreuzen.',
+        'Direkt darunter bei „Team-Berechtigungen“ das Team auswählen (ohne Team-Rolle wird beim Speichern automatisch „Trainer“ gesetzt).',
         'Speichern. Ab sofort kann die Person News, Bilder und Ausfälle für dieses Team pflegen.',
+        'Redaktion und Admins geht es auch von der anderen Seite: das Team unter „Teams & Kurse“ öffnen und bei „Verantwortliche“ die Person wählen – gleiches Ergebnis.',
+        'Achtung: „Teams & Kurse“ weiter unten beim Benutzer heißt nur „spielt dort mit“ (für den Ausweis) und gibt keine Rechte.',
+      ],
+    },
+    {
+      id: 'hinweis-banner',
+      titel: 'Einen kurzen Hinweis auf die Teamseite setzen (z. B. „Heute in Halle 2“)',
+      schritte: [
+        'Im Mitgliederbereich beim Team „Hinweis setzen“ – oder in der Verwaltung beim Team „Hinweis-Banner auf der Teamseite“.',
+        'Text eingeben und „ℹ️ Info“ oder „⚠️ Wichtig“ wählen.',
+        'Optional „Anzeigen bis einschließlich“ – danach verschwindet der Hinweis von selbst.',
+        '„Hinweis speichern“ bzw. oben rechts „Speichern“.',
       ],
     },
     {
@@ -277,9 +313,9 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Ein neues Team oder einen neuen Kurs anlegen',
       schritte: [
         '„Neu erstellen“ klicken.',
-        'Name, Bereich (Fußball, Kids oder Erwachsene) und Altersangabe eintragen.',
+        'Name, Bereich (Fußball, BSV Kids oder Erwachsene & Senioren) und Altersangabe eintragen.',
         'Beschreibung, Titelbild und Trainingszeiten ergänzen.',
-        '„Aktiv“ anhaken und speichern – das Angebot erscheint automatisch im Menü und im Mitgliedsantrag.',
+        'Haken „Aktiv (öffentlich sichtbar)“ prüfen (ist schon gesetzt) und speichern – das Angebot erscheint automatisch im Menü und im Mitgliedsantrag.',
       ],
     },
   ],
@@ -289,10 +325,21 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Einen Trainingsausfall melden',
       video: '/hilfe/ausfall-melden.mp4',
       schritte: [
-        'Links auf „Trainingsausfälle“ und dann auf „Neu erstellen“ klicken.',
-        'Bei „Angebot“ dein Team wählen.',
-        'Das Datum eintragen und den Grund auswählen, z. B. „Halle belegt“. Optional einen Hinweis ergänzen.',
-        'Oben rechts „Speichern“ – der Hinweis steht sofort auf der Teamseite.',
+        'Links auf „Trainingsausfälle“ klicken.',
+        'Oben im Kasten „Schnell melden“: Team wählen (bei nur einem Team schon gewählt).',
+        'Tag antippen – Heute, Morgen, Übermorgen oder ein anderes Datum.',
+        'Den Grund auswählen, z. B. „Halle belegt“, und „Ausfall melden“ klicken – der Hinweis steht sofort auf der Teamseite und im Mitgliederbereich.',
+        'Nachholtermin oder Hinweis ergänzen: den Eintrag in der Liste öffnen, Text eintragen, speichern.',
+      ],
+    },
+    {
+      id: 'ausfall-handy',
+      titel: 'Einen Ausfall vom Handy melden (Mitgliederbereich)',
+      schritte: [
+        'Auf der Website anmelden und den Mitgliederbereich öffnen.',
+        'Im Kasten „Meine Teams & Kurse zum Pflegen“ beim Team auf „Ausfall melden“ tippen.',
+        'Tag antippen (die nächsten Trainingstage stehen schon da) und den Grund antippen.',
+        '„Ausfall jetzt melden“ – er steht sofort auf der Teamseite. Versehentlich gemeldet? Daneben „zurücknehmen“.',
       ],
     },
   ],
@@ -300,11 +347,13 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     {
       id: 'termin-anlegen',
       titel: 'Einen Termin eintragen',
+      video: '/hilfe/termin-anlegen.mp4',
       schritte: [
-        '„Neu erstellen“ klicken.',
+        'Oben in der Liste eine Vorlage wählen (z. B. „Vereinsfest“, „Versammlung“) – oder „Neu erstellen“.',
         'Titel, Beginn und (optional) Ende eintragen – mit Uhrzeit.',
-        'Ort und eine kurze Beschreibung ergänzen.',
-        'Den Bereich wählen und speichern.',
+        'Ort und eine kurze Beschreibung ergänzen, den Bereich wählen.',
+        'Rechts steht, ob der Termin für alle oder nur für Mitglieder sichtbar ist.',
+        '„Speichern“ – der Termin steht sofort im Kalender.',
       ],
     },
   ],
@@ -334,15 +383,172 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Später in der Liste „📥 … neue exportieren“ für die Übernahme ins DFBnet.',
       ],
     },
+    {
+      id: 'antraege-exportieren',
+      titel: 'Aufgenommene Anträge für das DFBnet exportieren',
+      video: '/hilfe/antraege-exportieren.mp4',
+      schritte: [
+        'Links unter „Posteingang“ auf „Mitgliedsanträge“.',
+        'Oben im Kasten „Für die Kasse“ auf „📥 … neue exportieren“ klicken.',
+        'Die Datei (CSV) mit Excel öffnen: eine Zeile pro Person, Familienmitglieder einzeln, ohne Bankdaten.',
+        'Daten ins DFBnet bzw. die Mitgliederliste übernehmen, danach die Datei löschen.',
+        'Beim nächsten Export kommen nur neue Anträge. Alles noch einmal: „alle aufgenommenen (auch schon exportierte)“.',
+      ],
+    },
+    {
+      id: 'antrag-vorlagen',
+      titel: 'Die Texte der Antwort-Mails ändern',
+      schritte: [
+        'Links unter „Einstellungen“ auf „E-Mail-Vorlagen Mitgliedsanträge“.',
+        'Für „Aufgenommen“, „Rückfrage“ und „Abgelehnt“ Betreff und Text anpassen.',
+        'Platzhalter wie {vorname} stehen lassen – sie werden automatisch ersetzt. Stellen in [ECKIGEN KLAMMERN] füllt man später im Antrag aus.',
+        'Speichern.',
+      ],
+    },
   ],
   probetraining: [
     {
       id: 'probe-bearbeiten',
       titel: 'Eine Probetraining-Anfrage beantworten',
+      video: '/hilfe/anfrage-beantworten.mp4',
       schritte: [
         'Die Anfrage öffnen – dort stehen Name, Kontakt und gewünschtes Angebot. Oben „🙋 Ich kümmere mich“ klicken.',
         'Die Person mit „📞 Anrufen“ oder „✉️ Antworten“ kontaktieren und kurz notieren, was ausgemacht ist.',
         'Status auf „Zugesagt“, „Anderer Termin vorgeschlagen“ oder „Erledigt“ setzen und speichern.',
+      ],
+    },
+  ],
+  kontaktanfragen: [
+    {
+      id: 'kontakt-beantworten',
+      titel: 'Eine Kontaktanfrage beantworten',
+      video: '/hilfe/kontakt-beantworten.mp4',
+      schritte: [
+        'Links unter „Posteingang“ auf „Kontaktanfragen“ und die Nachricht mit Status „Neu“ öffnen.',
+        'Oben „🙋 Ich kümmere mich“ klicken.',
+        '„✉️ Antworten“ öffnet dein E-Mail-Programm mit Adresse und Betreff – oder direkt auf die Benachrichtigungs-Mail antworten.',
+        'Kurz notieren, was du geantwortet hast, und „Notiz speichern“.',
+        'Status auf „Erledigt“ setzen und speichern.',
+      ],
+    },
+    {
+      id: 'papierkorb-zurueck',
+      titel: 'Etwas Gelöschtes zurückholen',
+      video: '/hilfe/papierkorb.mp4',
+      schritte: [
+        'Die Liste des Bereichs öffnen, z. B. „Kontaktanfragen“ oder „News“.',
+        'Oben rechts auf „Papierkorb“ klicken.',
+        'Den Eintrag öffnen und „Wiederherstellen“ klicken.',
+        'Das geht 30 Tage lang. Danach kann ein Web-Admin den Eintrag noch eine Zeit lang zurückholen.',
+      ],
+    },
+  ],
+  registrierungen: [
+    {
+      id: 'registrierung-freigeben',
+      titel: 'Eine Registrierung freigeben',
+      video: '/hilfe/registrierung-freigeben.mp4',
+      schritte: [
+        'Links unter „Posteingang“ auf „Registrierungen“ (die orange Zahl zeigt, wie viele warten).',
+        'Prüfen: Kennst du die Person? Ist die E-Mail-Adresse bestätigt (✓)? Der Hinweis „Mitgliedsantrag mit dieser E-Mail vorhanden“ hilft.',
+        'Die Teams anhaken, in denen die Person mitmacht – ihre Wünsche sind schon angehakt. „Alle Teams & Kurse zeigen“ klappt den Rest auf.',
+        '„Freigeben“ klicken: Die Person bekommt eine E-Mail und kann sich anmelden. Unbekannt oder Spam: „Ablehnen“.',
+        'Gibt es unter „Mitgliedschaften“ einen Eintrag mit derselben E-Mail, wird der Ausweis automatisch verknüpft.',
+      ],
+    },
+  ],
+  mitgliedschaften: [
+    {
+      id: 'ausweis-pflegen',
+      titel: 'Eine Mitgliedschaft (Ausweis) pflegen',
+      schritte: [
+        'Links unter „Mitglieder“ auf „Mitgliedschaften“.',
+        'Den Eintrag öffnen – nach „Aufnehmen“ eines Antrags entsteht er automatisch.',
+        '„Mitgliedsnummer“ eintragen.',
+        'Prüfen, ob bei „Benutzerkonto“ das richtige Konto steht (bei Kindern das der Eltern).',
+        'Speichern.',
+        'Austritt: „Gültig bis (Austritt)“ setzen – danach zeigt der Ausweis „nicht mehr gültig“.',
+      ],
+    },
+  ],
+  alben: [
+    {
+      id: 'album-anlegen',
+      titel: 'Ein Fotoalbum anlegen',
+      schritte: [
+        'Links unter „Inhalte“ auf „Fotoalben“, dann „Neu erstellen“.',
+        'Titel und Datum eintragen, optional „Team / Kurs (optional)“ wählen.',
+        'Bei „Bilder“ Fotos auswählen oder hochladen – bei jedem neuen Foto „Sind Personen zu erkennen?“ ausfüllen. Das erste Bild ist das Titelbild.',
+        'Speichern.',
+      ],
+    },
+  ],
+  sponsoren: [
+    {
+      id: 'sponsor-anlegen',
+      titel: 'Einen Sponsor eintragen',
+      schritte: [
+        'Links unter „Inhalte“ auf „Sponsoren“, dann „Neu erstellen“.',
+        'Name, Logo (PNG mit durchsichtigem Hintergrund, mindestens 600 px breit), Website und kurzen Text eintragen.',
+        'Rechts „Art“ wählen (Hauptsponsor, Premium-Partner, Partner, Förderer & Freunde) und „Im Laufband auf der Startseite“ prüfen.',
+        'Speichern.',
+      ],
+    },
+  ],
+  gesuche: [
+    {
+      id: 'gesuch-anlegen',
+      titel: 'Helfer oder Ehrenamtliche suchen',
+      schritte: [
+        'Oben eine Vorlage wählen (z. B. „Trainer/in“) – oder „Neu erstellen“.',
+        '„Wen suchen wir?“, „Beschreibung“, „Aufwand“ und „Symbol“ ausfüllen.',
+        'Speichern – das Gesuch erscheint auf der Seite /mitmachen.',
+        'Jemanden gefunden? Den Haken „Auf der Website zeigen“ entfernen.',
+      ],
+    },
+  ],
+  papierkorb: [
+    {
+      id: 'zurueckholen',
+      titel: 'Etwas aus dem Web-Admin-Papierkorb zurückholen',
+      schritte: [
+        'Links unter „Einstellungen“ auf „Papierkorb“.',
+        'Oben „🗑️ Im Papierkorb“ oder „🔒 Nur Web-Admin“ wählen, dazu nach Bereich, Person oder Titel filtern.',
+        '„↩ Wiederherstellen“ – der Eintrag ist wieder an seiner Stelle.',
+        'Wirklich weg haben: „Endgültig löschen“. Das lässt sich nicht rückgängig machen.',
+      ],
+    },
+  ],
+  datenschutz: [
+    {
+      id: 'auskunft',
+      titel: 'Jemand fragt, welche Daten wir gespeichert haben (Admin)',
+      schritte: [
+        'Links unter „Einstellungen“ auf „Datenschutz-Fristen“.',
+        'Unten bei „Auskunft für eine Person“ die E-Mail-Adresse eingeben.',
+        '„📄 Auskunft herunterladen“ – die Datei enthält alles von der Website, auch aus dem Papierkorb.',
+        'Die Datei der Person geben (nicht per unverschlüsselter Mail an Dritte). Soll alles gelöscht werden: die gefundenen Einträge löschen und im Web-Admin-Papierkorb endgültig entfernen lassen.',
+      ],
+    },
+  ],
+  account: [
+    {
+      id: 'zwei-faktor-einrichten',
+      titel: 'Die Zwei-Faktor-Anmeldung einrichten',
+      schritte: [
+        'Eine Authenticator-App aufs Handy laden (z. B. Google Authenticator oder Microsoft Authenticator).',
+        'Beim Anmelden – oder auf der Übersicht unter „Erste Schritte“ → „Zwei-Faktor-Anmeldung einrichten“ – den QR-Code mit der App scannen.',
+        'Den 6-stelligen Code aus der App eingeben und „Einrichtung abschließen“.',
+        'Die Wiederherstellungscodes kopieren oder ausdrucken und sicher aufbewahren, dann „Ich habe die Codes gesichert – weiter“.',
+      ],
+    },
+    {
+      id: 'benachrichtigungen-aus',
+      titel: 'Keine E-Mails zu neuen Anfragen mehr bekommen',
+      schritte: [
+        'Oben rechts auf dein Symbol → „Mein Konto“.',
+        'Den Haken „E-Mail-Benachrichtigungen“ entfernen.',
+        'Speichern.',
       ],
     },
   ],
@@ -375,7 +581,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Rechte mit Testkonten ausprobieren (nur lokal)',
       schritte: [
         '„Rollen & Rechte“ öffnen → Reiter „Testkonten“ → „Testkonten anlegen“.',
-        'Es entsteht je ein Konto pro Rolle (Admin, Redaktion, Kasse, Mitglied), pro Abteilung (Abteilungsleitung, Pressewart) und pro Team (Trainer). Alle mit demselben Passwort, das dort angezeigt wird.',
+        'Es entsteht je ein Konto pro Rolle (Admin, Redaktion, Kasse, Passwesen, Mitglied), pro Abteilung (Abteilungsleitung, Pressewart) und pro Team (Trainer). Alle mit demselben Passwort, das dort angezeigt wird.',
         'Abmelden oder ein privates Browserfenster öffnen und mit einem Testkonto anmelden – ohne Zwei-Faktor.',
         'Prüfen: Was sieht die Person? Was darf sie ändern? Welche Bilder kann sie auswählen?',
         'Fertig? „Alle Testkonten löschen“. Echte Konten bleiben unberührt.',
@@ -396,9 +602,9 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'rollen-aufraeumen',
       titel: 'Rechte aufräumen, wenn jemand aufhört',
       schritte: [
-        'In der „Rollen & Rechte“ die Person suchen.',
+        'Unter „Rollen & Rechte“ die Person suchen.',
         'Auf „Bearbeiten“ klicken.',
-        'Bei „Rollen“ alles außer „Mitglied“ entfernen (oder das Konto löschen) und speichern.',
+        'Bei „Rollen“ alle Kacheln außer „Mitglied“ abhaken (oder das Konto löschen) und speichern.',
         'Bei „Team-Berechtigungen“ alle Teams entfernen (oder beim Team unter „Verantwortliche“).',
       ],
     },
@@ -409,10 +615,11 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Ein Konto für einen neuen Trainer anlegen',
       video: '/hilfe/konto-anlegen.mp4',
       schritte: [
-        '„Neu erstellen“ klicken.',
+        'Links unter „Mitglieder“ auf „Benutzer“, dann „Neu erstellen“ klicken.',
         'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben (mindestens 10 Zeichen).',
-        'Bei „Rollen“ „Trainer“ (oder „Team-Redaktion“) wählen.',
-        'Darunter bei „Team-Berechtigungen“ die Teams auswählen und speichern.',
+        'Bei „Rollen“ die passende Kachel ankreuzen, z. B. „Trainer“ (mehrere möglich).',
+        'Direkt darunter bei „Team-Berechtigungen“ die Teams auswählen. Oben zeigt „Was darf diese Person?“ in Klartext, was die Rollen erlauben.',
+        'Speichern.',
         'Der Person E-Mail und Passwort persönlich mitteilen. Beim ersten Anmelden richtet sie die Zwei-Faktor-App ein.',
       ],
     },
@@ -421,9 +628,19 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Jemanden zum Admin oder Web-Admin machen (nur Web-Admin)',
       schritte: [
         'Unter „Benutzer“ das Konto öffnen.',
-        'Bei „Rollen“ „Admin“ oder „Web-Admin (Technik, oberste Rechte)“ hinzufügen.',
+        'Bei „Rollen“ die Kachel „Admin“ oder „Web-Admin“ ankreuzen.',
         'Speichern. Web-Admins bekommen „Admin“ automatisch mit dazu.',
         'Tipp: Es sollte immer mindestens zwei Web-Admins geben, damit niemand ausgesperrt wird. Den letzten Web-Admin kann man nicht entfernen.',
+      ],
+    },
+    {
+      id: 'zusatzrechte',
+      titel: 'Einer Person ein einzelnes Recht geben (nur Web-Admin)',
+      schritte: [
+        'Links unter „Mitglieder“ auf „Benutzer“ und die Person öffnen.',
+        'Unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen.',
+        'Die gewünschten Häkchen setzen, z. B. „Kontaktanfragen sehen und bearbeiten“.',
+        'Speichern. Die Person kommt damit in die Verwaltung, sieht nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung.',
       ],
     },
     {
@@ -444,9 +661,18 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Nach unten zu „Vorstand und Ansprechpersonen“ scrollen.',
         'Mit „Person hinzufügen“ jemanden ergänzen: Name und Funktion.',
-        'Hat die Person ein Konto auf der Website (selbst registriert und freigegeben)? Dann bei „Benutzerkonto“ auswählen: „Nachricht senden“ geht per E-Mail direkt an sie, und der Name bleibt automatisch aktuell (Feld „Name“ darf dann leer bleiben). Ihr Profilfoto erscheint nur mit Haken „Profilfoto aus dem Konto zeigen“ – und nur mit ihrem Einverständnis.',
+        'Hat die Person ein Konto auf der Website (selbst registriert und freigegeben)? Dann bei „Benutzerkonto“ auswählen: „Nachricht senden“ geht per E-Mail direkt an sie, und der Name bleibt automatisch aktuell (Feld „Name“ darf dann leer bleiben). Ihr Profilfoto erscheint nur mit Haken „Profilfoto aus dem Konto auf der Vereinsseite zeigen“ – und nur mit ihrem Einverständnis: dann bei „Einverständnis zum Foto erteilt am“ das Datum eintragen.',
         'Mit dem Griff links die Reihenfolge ändern, über die drei Punkte rechts jemanden entfernen.',
         'Oben rechts „Speichern“.',
+      ],
+    },
+    {
+      id: 'beitraege',
+      titel: 'Die Mitgliedsbeiträge ändern (Kasse)',
+      schritte: [
+        'Links unter „Einstellungen“ auf „Vereinsdaten“.',
+        'Bei „Mitgliedsbeiträge“ je Mitgliedsart den Betrag bei „€ pro Quartal“ eintragen.',
+        'Oben rechts „Speichern“ – gilt sofort für neue Anträge und die Vereinsseite. Bestehende Anträge behalten ihren Betrag.',
       ],
     },
     {
@@ -455,7 +681,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Bei „Satzung & Downloads“ auf „Download hinzufügen“ klicken.',
         'Titel eingeben, z. B. „Satzung (Stand 2026)“.',
-        'Bei „Datei“ das PDF hochladen und speichern.',
+        'Bei „Datei (öffentlich)“ das PDF hochladen und speichern.',
+        'Nur für Mitglieder? Haken „Nur für Mitglieder“ setzen und die Datei bei „Geschützte Datei (nur Mitglieder)“ hochladen.',
       ],
     },
   ],
@@ -502,7 +729,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Am schnellsten: oben in der Formular-Liste eine Vorlage anklicken (Anmeldung, Helferliste, Sammelbestellung) – das Formular ist sofort angelegt.',
         'Oder „Neu erstellen“ klicken und einen Titel vergeben.',
         'Mit „Feld hinzufügen“ Felder wie Name, E-Mail oder Anzahl Personen anlegen.',
-        'Bei „Bestätigungsnachricht“ eintragen, was nach dem Absenden erscheint.',
+        'Bei „Nach dem Absenden …“ die Danke-Nachricht wählen und bei „Danke-Nachricht“ den Text eintragen.',
         'Speichern. Auf einer Seite den Baustein „Formular“ einfügen und dieses Formular auswählen.',
       ],
     },
@@ -521,6 +748,9 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
     },
   ],
 }
+
+// Die Vorlagen-Anleitung auch auf der Seite „E-Mail-Vorlagen Mitgliedsanträge“ selbst zeigen
+ANLEITUNGEN.mailVorlagen = ANLEITUNGEN.mitgliedsantraege!.filter((a) => a.id === 'antrag-vorlagen')
 
 /* ------------------------------------------------------------------ */
 /* Was bedeuten die Felder?                                            */
@@ -541,19 +771,22 @@ export const FELDER: Record<string, Feld[]> = {
   ],
   angebote: [
     { name: 'Name', text: 'So heißt das Team oder der Kurs überall auf der Website.' },
-    { name: 'Bereich', text: 'Fußball, BSV Kids oder Erwachsene – bestimmt, in welchem Menü das Angebot erscheint.' },
-    { name: 'Gruppe (Fußball)', text: 'Junioren, Juniorinnen, Senioren oder Damen – Spalte im Fußball-Menü.' },
+    { name: 'Bereich', text: 'Fußball, BSV Kids oder Erwachsene & Senioren – bestimmt, in welchem Menü das Angebot erscheint.' },
+    { name: 'Gruppe (Fußball)', text: 'Junioren, Juniorinnen, Senioren oder Seniorinnen – Spalte im Fußball-Menü.' },
+    { name: 'Kategorie', text: 'Art des Angebots (z. B. Tanzen, Fitness, Ausdauer) – für Filter und Angebotsfinder.' },
+    { name: 'Titelbild', text: 'Großes Bild oben auf der Teamseite und auf den Karten.' },
+    { name: 'Hinweis-Banner auf der Teamseite', text: 'Kurzer Hinweis oben auf der Teamseite, z. B. „Training heute in Halle 2“. Art „ℹ️ Info“ oder „⚠️ Wichtig“, optional „Anzeigen bis einschließlich“ – danach verschwindet er von selbst.' },
     { name: 'Alter (Anzeige)', text: 'Kurzer Text wie „Herren ab 32“ oder „4–6 Jahre“. Erscheint im Menü und auf Karten.' },
     { name: 'Alter von / bis', text: 'Zahlen für den Angebotsfinder („Wie alt bist du?“).' },
     { name: 'Kurzbeschreibung', text: 'Ein Satz für Übersichtskarten.' },
     { name: 'Beschreibung', text: 'Ausführlicher Text auf der Seite des Teams.' },
     { name: 'Trainingszeiten', text: 'Tag, Uhrzeit und Ort. Erscheinen auf der Teamseite.' },
-    { name: 'Verantwortliche', text: 'Benutzerkonten, die dieses Team pflegen dürfen (News, Bilder, Ausfälle).' },
+    { name: 'Verantwortliche', text: 'Benutzerkonten, die dieses Team pflegen dürfen (News, Bilder, Ausfälle). Ändern dürfen das Admin und Redaktion; Admins auch beim Benutzer unter „Team-Berechtigungen“.' },
     { name: 'Trainer- und Betreuerteam', text: 'Nur zur Anzeige auf der Teamseite (Name, Rolle, optional Foto). Wer bearbeiten darf, steht bei „Verantwortliche“.' },
-    { name: 'Kursplätze', text: 'Eingeklappt: Wenn ein Kurs nur begrenzt Plätze hat, hier die Höchstzahl eintragen.' },
+    { name: 'Kursplätze', text: 'Eingeklappt: Haken „Plätze begrenzt (Reservierung im Mitgliederbereich)“ setzen und bei „Max. Plätze“ die Höchstzahl eintragen.' },
     { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse, FuPa-Widget und FUSSBALL.DE-Nummer (Spielplan/Tabelle). FuPa: im Widget-Builder auf fupa.net das Widget zusammenstellen (Kader, Tabelle, Spielplan), als „URL der Webseite“ die echte Vereinsadresse eintragen, „Speichern“ und den kompletten Code einfügen – die ID wird automatisch herausgelesen. Auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an, auf der Live-Website schon. Besucher sehen die Widgets erst nach einem Klick (Datenschutz): „Einmal laden“ oder „Immer laden“ – Letzteres merkt sich ihr Browser, dann erscheinen die Widgets künftig sofort.' },
     { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne in Listen und Menüs.' },
-    { name: 'Aktiv', text: 'Nur aktive Angebote sind auf der Website sichtbar.' },
+    { name: 'Aktiv (öffentlich sichtbar)', text: 'Nur aktive Angebote sind auf der Website sichtbar. Ändern dürfen das Admin und Redaktion.' },
   ],
   media: [
     { name: 'Bildbeschreibung', text: 'Beschreibt, was zu sehen ist. Wichtig für Menschen, die sich Seiten vorlesen lassen.' },
@@ -561,7 +794,9 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Ordner (Team / Kurs)', text: 'Der Ordner des Bildes. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.' },
     { name: 'Verein allgemein', text: 'Für Bilder ohne Team, z. B. Logo oder Sportplatz. Alle Trainer dürfen sie benutzen, aber nicht ändern. Setzen kann das nur die Redaktion.' },
     { name: 'Noch nicht zugeordnet', text: 'Bilder ohne Team und ohne „Verein allgemein“. Nur die Redaktion sieht sie – Trainer können sie nicht benutzen.' },
-    { name: 'In Galerie zeigen', text: 'Das Bild erscheint in der Fotogalerie auf der Seite des Teams.' },
+    { name: 'In der Bildergalerie des Teams zeigen', text: 'Das Bild erscheint in der Fotogalerie auf der Seite des Teams.' },
+    { name: 'Wo liegt die Einwilligung? (optional, empfohlen)', text: 'Z. B. „Foto-Einwilligung im Mitgliedsantrag“ oder „Formular vom 03.05., Ordner Vorstand“. Hilft, wenn jemand widerruft. Nicht öffentlich.' },
+    { name: 'Sponsoren-Logo', text: 'Legt das Bild in den Ordner „Sponsoren“ (nur Redaktion). Passiert automatisch, sobald es bei einem Sponsor als Logo gespeichert wird.' },
     { name: 'Bildunterschrift (optional)', text: 'Text, der unter dem Bild erscheinen kann, z. B. Fotograf oder Anlass.' },
     { name: 'Bild bearbeiten', text: 'Nach dem Hochladen: zuschneiden und den „wichtigsten Bildbereich“ setzen – dann bleibt z. B. ein Gesicht auch in kleinen Vorschaubildern sichtbar.' },
     { name: 'Bildgrößen', text: 'Die Website erzeugt automatisch kleinere Versionen für schnelle Ladezeiten. Darum musst du dich nicht kümmern.' },
@@ -586,20 +821,26 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Beginn / Ende', text: 'Datum und Uhrzeit. Ende ist optional.' },
     { name: 'Ort', text: 'Wo der Termin stattfindet.' },
     { name: 'Bereich', text: 'Bestimmt Farbe und Zuordnung im Kalender.' },
-    { name: 'Nur für Mitglieder', text: 'Nur nach dem Login sichtbar.' },
-    { name: 'Anmeldung im Mitgliederbereich', text: 'Mitglieder können sich nach dem Login für den Termin anmelden.' },
+    { name: 'Wiederholen', text: 'Für regelmäßige Termine: „Jede Woche“, „Alle 2 Wochen“ oder „Jeden Monat (gleicher Tag)“.' },
+    { name: 'Wiederholen bis einschließlich', text: 'Letzter Tag der Wiederholung (höchstens 2 Jahre).' },
+    { name: 'Einzelne Termine auslassen', text: 'Ferien oder Feiertage, an denen der Termin ausfällt – je ein Datum.' },
+    { name: 'Nur für Mitglieder sichtbar', text: 'Nur nach dem Login sichtbar.' },
+    { name: 'Anmeldung im Mitgliederbereich möglich', text: 'Mitglieder können sich nach dem Login für den Termin anmelden.' },
     { name: 'Beschreibung', text: 'Weitere Infos zum Termin. Zeilenumbrüche werden übernommen.' },
   ],
   ausfaelle: [
     { name: 'Angebot', text: 'Welches Team oder welcher Kurs ausfällt.' },
     { name: 'Datum', text: 'An welchem Tag. Danach verschwindet der Hinweis automatisch.' },
-    { name: 'Grund', text: 'Zur Auswahl: Krankheit, Halle belegt, Ferien, Wetter, Sonstiges.' },
-    { name: 'Hinweis', text: 'Optionaler Zusatz, z. B. ein Nachholtermin.' },
+    { name: 'Grund', text: 'Zur Auswahl: Krankheit, Halle belegt, Ferien / Feiertag, Wetter, Sonstiges.' },
+    { name: 'Hinweis an die Teilnehmenden', text: 'Optionaler Zusatz, z. B. ein Nachholtermin.' },
+    { name: 'Teilnehmende per E-Mail/Push benachrichtigen', text: 'Ist schon angehakt. Sobald der E-Mail-Versand eingerichtet ist, bekommen die Teilnehmenden Bescheid – bis dahin wird noch nichts verschickt.' },
   ],
   rollen: [
     { name: 'Verantwortlich für', text: 'Teams, die die Person pflegen darf. Ändern: beim Benutzer unter „Team-Berechtigungen“ oder beim Team unter „Verantwortliche“.' },
     { name: 'Zwei-Faktor', text: 'Ob die Handy-App für die Anmeldung eingerichtet ist. Pflicht für alle außer „Mitglied“.' },
     { name: '⚠️', text: 'Hier fehlt etwas: z. B. ein Trainer ohne Team oder ein Team ohne Verantwortliche.' },
+    { name: 'Verwaltung', text: 'Ob die Person überhaupt in die Verwaltung kommt (Rolle außer „Mitglied“ oder ein Zusatzrecht).' },
+    { name: 'Zuletzt da', text: 'Wann sich die Person zuletzt angemeldet hat. Lange nicht da? Rechte prüfen.' },
   ],
   users: [
     { name: 'Name', text: 'Erscheint in der Verwaltung und als Autor:in von News.' },
@@ -607,14 +848,16 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Rollen', text: 'Was die Person darf. Mehrere Rollen sind möglich.' },
     { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy).' },
     { name: 'Teams & Kurse', text: 'In welchen Angeboten die Person selbst mitmacht (als Mitglied). Gibt keine Bearbeitungsrechte.' },
+    { name: 'Freigegeben', text: 'Ohne Haken: selbst registriert und wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“. Nur Admins.' },
+    { name: 'E-Mail-Benachrichtigungen', text: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für die eigenen Teams und (Kasse) bei neuem Mitgliedsantrag. Haken entfernen = keine Mails.' },
     { name: 'Team-Berechtigungen', text: 'Welche Teams die Person betreut. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart; ohne eine der beiden wird automatisch „Trainer“ gesetzt. „Trainer“ enthält alle Rechte der Team-Redaktion – beide anzukreuzen ist nicht nötig. Steht gleichzeitig beim Team unter „Verantwortliche“.' },
   ],
   menue: [
     { name: 'Text im Menü', text: 'So heißt der Eintrag auf der Website.' },
-    { name: 'Was soll der Eintrag tun?', text: '„Seite öffnen“ (eine eurer Seiten), „Adresse öffnen“ (z. B. /news oder eine fremde Website) oder „Aufklappmenü zeigen“ (Fußball, Breitensport oder Verein).' },
+    { name: 'Was soll der Eintrag tun?', text: '„Seite aus „Seiten“ öffnen“ (eine eurer Seiten), „Adresse öffnen“ (z. B. /news oder eine fremde Website) oder „Aufklappmenü zeigen“ (Fußball, Breitensport oder Verein).' },
     { name: 'Adresse', text: 'Intern mit „/“: /news, /termine, /kontakt, /verein, /fussball, /breitensport, /mitglied-werden. Extern mit „https://“.' },
     { name: 'In neuem Tab öffnen', text: 'Sinnvoll für fremde Websites wie den Fan-Shop.' },
-    { name: 'Kontakt-Spalte', text: 'Die Spalte ganz rechts in der Fußzeile. Haken „anzeigen“ entfernen blendet sie aus. Die Adresse kommt aus den Vereinsdaten.' },
+    { name: 'Kontakt-Spalte', text: 'Die Spalte ganz rechts in der Fußzeile. Haken „Kontakt-Spalte anzeigen“ entfernen blendet sie aus. Die Adresse kommt aus Vereinsdaten → „Sportplatz“; ein- und ausblenden mit „Adresse des Sportplatzes anzeigen“.' },
     { name: 'Links unter der Adresse', text: 'Für Social Media und andere fremde Seiten: „Adresse öffnen“ wählen, komplette Adresse mit https:// einfügen, „In neuem Tab öffnen“ anhaken.' },
     { name: 'Griff (sechs Punkte)', text: 'Daran ziehst du einen Eintrag nach oben oder unten.' },
   ],
@@ -625,7 +868,10 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Vorstand', text: 'Name, Funktion, optional Foto. Erscheint auf der Vereinsseite.' },
     { name: 'Satzung & Downloads', text: 'Dateien zum Herunterladen auf der Vereinsseite.' },
     { name: 'Bilder und Aktions-Box', text: 'Stehen unter Website-Aufbau → „Texte & Bilder“.' },
-    { name: 'Social Media', text: 'Links zu Instagram und Facebook – erscheinen unten auf der Website.' },
+    { name: 'Social Media', text: 'Steht nicht mehr hier: Menü & Fußzeile → Reiter „Fußzeile unten“ → „Kontakt-Spalte“ → „Links unter der Adresse“.' },
+    { name: 'Kontaktformular: Worum geht es?', text: 'Die Auswahl im Kontaktformular. Pro Anliegen trägt ein Admin rechts ein, wer die Nachricht per E-Mail bekommt.' },
+    { name: 'Fußball: Passantrag – Link zum Formular', text: 'Link zum offiziellen WDFV-Formular – erscheint beim Passantrag im Mitgliederbereich.' },
+    { name: 'Informationspflichten (DSGVO)', text: 'Abschnitte mit Überschrift und Text für die Datenschutz-Hinweise auf der Vereinsseite.' },
   ],
   forms: [
     { name: 'Name des Formulars', text: 'Nur intern, damit ihr es wiederfindet.' },
@@ -650,8 +896,8 @@ export const FELDER: Record<string, Feld[]> = {
 /* ------------------------------------------------------------------ */
 export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> = {
   posts: {
-    uebungsleitung: 'Du kannst News für deine eigenen Teams schreiben. Ob sie auch auf die Startseite kommen, entscheidet die Redaktion.',
-    teamredaktion: 'Du kannst News für deine eigenen Teams schreiben. Ob sie auch auf die Startseite kommen, entscheidet die Redaktion.',
+    uebungsleitung: 'Du kannst News für deine eigenen Teams schreiben. Mit „Für die Startseite vorschlagen“ bittest du die Redaktion, sie auch auf die Startseite zu holen.',
+    teamredaktion: 'Du kannst News für deine eigenen Teams schreiben. Mit „Für die Startseite vorschlagen“ bittest du die Redaktion, sie auch auf die Startseite zu holen.',
     redaktion: 'Du kannst alle News bearbeiten und entscheidest mit „Auf Startseite“, was groß erscheint.',
     admin: 'Du kannst alle News bearbeiten und entscheidest mit „Auf Startseite“, was groß erscheint.',
   },
@@ -671,6 +917,13 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
     uebungsleitung: 'Du siehst nur Anfragen für deine eigenen Teams. Bitte zeitnah melden und danach den Status ändern.',
   },
   mitgliedsantraege: { kasse: 'Als Kasse bist du hier hauptverantwortlich. Bitte Anträge zeitnah bearbeiten.' },
+  passantraege: {
+    uebungsleitung: 'Du siehst nur die Passanträge deiner eigenen Teams.',
+  },
+  alben: {
+    uebungsleitung: 'Du kannst Fotoalben für deine eigenen Teams anlegen und bearbeiten.',
+    teamredaktion: 'Du kannst Fotoalben für deine eigenen Teams anlegen und bearbeiten.',
+  },
   users: {
     admin: 'Du kannst Konten anlegen und Rollen vergeben – außer Admin und Web-Admin. Konten von Web-Admins kannst du nicht ändern.',
     webadmin: 'Nur du kannst Admin- und Web-Admin-Rechte vergeben. Vergib sie so sparsam wie möglich.',
@@ -702,7 +955,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
-    antwort: 'Oben rechts auf dein Symbol (Foto oder Anfangsbuchstaben) klicken. Im Menü: „Mein Konto“ (Name, Passwort, Foto), „Zum Mitgliederbereich“ (Ausfälle, Ausweis, Downloads – so, wie Mitglieder die Website sehen), „Website ansehen“, „Hilfe-Center“ und „Abmelden“.',
+    antwort: 'Oben rechts auf dein Symbol (Foto oder Anfangsbuchstaben) klicken. Im Menü: „Mein Konto“ (Name, E-Mail, Passwort, Benachrichtigungen), „Zum Mitgliederbereich“ (Ausfälle, Ausweis, Downloads – so, wie Mitglieder die Website sehen), „Website ansehen“, „Hilfe-Center“ und „Abmelden“.',
   },
   {
     frage: 'Warum sieht ein Mitglied keinen Ausweis?',
@@ -752,7 +1005,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie kommen die neuen Seiten (Trainingszeiten, Galerie, Sponsoren, Mitmachen) ins Menü?',
-    antwort: 'Unter „Menü & Fußzeile“ zeigt der Kasten oben, welche Seiten noch nirgends verlinkt sind – ein Klick auf „In die Fußzeile“ oder „Ins Menü Verein“ trägt sie ein.',
+    antwort: 'Unter „Menü & Fußzeile“ zeigt der Kasten oben, welche Seiten noch nirgends verlinkt sind – ein Klick auf „+ In die Fußzeile“ oder „+ Ins Menü „Verein““ trägt sie ein.',
     bereich: 'menue',
   },
   {
@@ -762,7 +1015,9 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
-    antwort: 'Nein – fast alles landet zuerst im Papierkorb: in der jeweiligen Liste oben auf „Papierkorb“ klicken, den Eintrag öffnen und „Wiederherstellen“ wählen. Nach 30 Tagen wird der Papierkorb automatisch geleert. Benutzerkonten werden sofort gelöscht.',
+    antwort:
+      'Fast alles landet zuerst im Papierkorb des Bereichs (Liste → oben „Papierkorb“ → Eintrag öffnen → „Wiederherstellen“) und bleibt dort 30 Tage. Danach – oder wenn du es dort endgültig löschst – kann es nur noch ein Web-Admin zurückholen: Anträge, Anfragen und andere persönliche Daten 30 Tage lang, alles andere bis zu 1 Jahr. Sofort weg sind gelöschte Benutzerkonten, Passanträge, Pass-Unterlagen und Profilfotos. Bei News und Seiten gibt es außerdem „Versionen“ mit früheren Fassungen.',
+    bereich: 'dashboard',
   },
   {
     frage: 'Kann ich die Verwaltung auf dem Handy nutzen?',
@@ -808,7 +1063,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: alles, was Leute über die Website schicken – Mitgliedsanträge, Kontaktanfragen, Probetraining, Passanträge, Formular-Eingänge und Registrierungen. Inhalte: was Besucher lesen und sehen – News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt. Website-Aufbau: Seiten, Menü & Fußzeile, Website-Texte, Formulare. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen. Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz, Datensicherung, Hilfe-Texte. Jede Rolle sieht nur die Bereiche, die sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Kategorien (nur Admins), Formulare, Menü & Fußzeile, Texte & Bilder. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen. Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz-Fristen, E-Mail-Vorlagen Mitgliedsanträge, Hilfe-Texte, Hilfe-Rückmeldungen – Web-Admins zusätzlich Besucherstatistik, Papierkorb, Sicherheit und Datensicherung. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {
@@ -818,7 +1073,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
-    antwort: 'Ja. Benutzer öffnen → unten „Zusatzrechte nur für diese Person“ → Häkchen setzen → Speichern. Zur Wahl stehen: Kontaktanfragen, Probetraining-Anfragen aller Teams, Passanträge aller Teams, Registrierungen freigeben, Formular-Eingänge, Termine, Ehrenamt & Mitmachen, Trainingsausfälle für alle Teams und Mitgliedschaften (nur lesen). Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Alle Personen mit Zusatzrechten auf einen Blick: Einstellungen → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
+    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen: Kontaktanfragen, Probetraining-Anfragen aller Teams, Passanträge aller Teams, Registrierungen freigeben, Formular-Eingänge, Termine, Ehrenamt & Mitmachen, Trainingsausfälle für alle Teams und Mitgliedschaften (nur lesen). Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Alle Personen mit Zusatzrechten auf einen Blick: Einstellungen → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
     bereich: 'users',
   },
   {
@@ -878,23 +1133,18 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Warum gibt es bei Auswahlfeldern kein „+“ und manchmal kein „Duplizieren“?',
-    antwort: 'In Auswahlfeldern (z. B. Teams, Verantwortliche, Benutzerkonto) wählst du nur Vorhandenes aus. Früher legte das „+“ daneben unbemerkt einen NEUEN Eintrag an – etwa ein neues Team oder Konto. Neues legst du deshalb im jeweiligen Bereich links an und wählst es danach aus. Bilder kannst du weiterhin direkt im Feld hochladen. „Duplizieren“ fehlt bei Einträgen mit persönlichen Daten (Benutzer, Anträge, Mitgliedschaften, Anfragen, Passanträge, Profilfotos), damit z. B. keine IBAN doppelt gespeichert wird.',
-    bereich: 'dashboard',
-  },
-  {
-    frage: 'Ich habe etwas gelöscht – kann ich es zurückholen?',
-    antwort: 'Ja. Gelöschtes liegt erst im Papierkorb des Bereichs (Liste öffnen → oben „Papierkorb“) und lässt sich dort 30 Tage wiederherstellen. Hast du es dort endgültig gelöscht oder sind die 30 Tage um, kann es ein Web-Admin noch zurückholen (Standard: bis zu 1 Jahr) – sag einfach Bescheid.',
+    antwort: 'In Auswahlfeldern (z. B. Teams, Verantwortliche, Benutzerkonto) wählst du nur Vorhandenes aus. Früher legte das „+“ daneben unbemerkt einen NEUEN Eintrag an – etwa ein neues Team oder Konto. Neues legst du deshalb im jeweiligen Bereich links an und wählst es danach aus. Bilder kannst du weiterhin direkt im Feld hochladen. „Duplizieren“ fehlt bei Einträgen mit persönlichen Daten (Benutzer, Anträge, Mitgliedschaften, Anfragen, Passanträge, Pass-Unterlagen, Profilfotos, Formular-Eingänge, Hilfe-Rückmeldungen, Besucherstatistik), damit z. B. keine IBAN doppelt gespeichert wird.',
     bereich: 'dashboard',
   },
   {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
-    antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
+    antwort: 'Unter Einstellungen → „Rollen & Rechte“ (Admins und Web-Admins): Reiter „Nach Person“ und „Nach Team“. Web-Admins sehen zusätzlich „Nach Rolle“, „Rechte je Rolle“ und „Testkonten“.',
     bereich: 'users',
   },
   {
     frage: 'Warum sehe ich meine News nicht auf der Startseite?',
     antwort:
-      'Team-News erscheinen zuerst nur auf der Seite des Teams. Auf die Startseite kommen sie, wenn die Redaktion „Auf Startseite“ anhakt. Prüfe außerdem, ob die News veröffentlicht ist und nicht nur als Entwurf gespeichert.',
+      'Team-News erscheinen zuerst nur auf der Seite des Teams. Hak beim Schreiben rechts „Für die Startseite vorschlagen“ an – die Redaktion holt sie dann mit einem Klick auf die Startseite. Prüf außerdem, ob die News veröffentlicht ist und nicht nur als Entwurf gespeichert.',
     bereich: 'posts',
   },
   {
@@ -945,11 +1195,6 @@ export const FAQ: Faq[] = [
       'Das stellst du unter Einstellungen → Datenschutz-Fristen ein. Mit „Automatisch aufräumen“ (Standard) wandern fällige Einträge täglich in den Papierkorb, nach 30 Tagen in den Web-Admin-Papierkorb und werden dort nach der Frist für persönliche Daten (Standard 30 Tage) endgültig gelöscht. Die IBAN eines Mitgliedsantrags wird schon beim Wechsel in den Web-Admin-Papierkorb entfernt.',
   },
   {
-    frage: 'Ich habe aus Versehen etwas gelöscht.',
-    antwort:
-      'Gelöschtes liegt zuerst im Papierkorb des Bereichs (Liste → oben „Papierkorb“) – dort „Wiederherstellen“. Hast du es dort „dauerhaft gelöscht“, liegt es im Web-Admin-Papierkorb: Ein Web-Admin kann es zurückholen. Bei News und Seiten gibt es außerdem „Versionen“ mit früheren Fassungen.',
-  },
-  {
     frage: 'Wie lösche ich ein Bild?',
     antwort:
       'In der Mediathek das Bild anklicken, oben rechts die drei Punkte (⋮) und „Löschen“. Achtung: Wird das Bild noch in einer News benutzt, fehlt es dort danach.',
@@ -963,7 +1208,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Warum kann ich ein Team nicht bearbeiten?',
-    antwort: 'Du kannst nur Teams bearbeiten, bei denen du unter „Verantwortliche“ eingetragen bist. Ein Admin kann dich dort hinzufügen.',
+    antwort: 'Du kannst nur Teams bearbeiten, bei denen du unter „Verantwortliche“ eingetragen bist. Ein Admin trägt dich beim Benutzer unter „Team-Berechtigungen“ ein, oder die Redaktion beim Team unter „Verantwortliche“.',
     bereich: 'angebote',
   },
   {
@@ -1006,6 +1251,8 @@ export type RollenProfil = {
   darfNicht: string[]
   /** Anleitungen (Bereich + ID), die in der Kurzanleitung stehen */
   anleitungen: [string, string][]
+  /** Häufige Fragen (Fragetext aus FAQ), die in der Kurzanleitung stehen */
+  faq?: string[]
 }
 
 export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
@@ -1017,47 +1264,100 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Admin- und Web-Admin-Rechte vergeben und entziehen',
       'Konten anderer Admins und Web-Admins ändern',
       'Technik-Bereiche: Weiterleitungen und Suchindex',
+      'Datensicherung, Papierkorb aller Bereiche, Besucherstatistik und Sicherheit',
+      'Zusatzrechte für Rollen und einzelne Personen',
     ],
     darfNicht: [],
     anleitungen: [
-      ['users', 'konto-anlegen'],
+      ['sicherung', 'sicherung-erstellen'],
       ['users', 'admin-rechte'],
+      ['users', 'zusatzrechte'],
+      ['papierkorb', 'zurueckholen'],
+      ['rollen', 'testkonten'],
       ['users', 'handy-verloren'],
-      ['menue', 'menue-link'],
+    ],
+    faq: [
+      'Wie sichere ich alle Daten?',
+      'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
+      'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
+      'Ich habe mein Handy verloren / eine neue Handy-Nummer.',
+      'Wo sehe ich, wie viele Menschen die Website besuchen?',
     ],
   },
   admin: {
     label: 'Admin',
     kurz: 'Du darfst fast alles – inklusive Benutzer und Rollen.',
     darf: ['Alle Inhalte bearbeiten', 'Benutzer anlegen und Rollen vergeben (außer Admin/Web-Admin)', 'Zwei-Faktor zurücksetzen', 'Mitgliedsanträge und Vereinsdaten'],
-    darfNicht: ['Admin- oder Web-Admin-Rechte vergeben (macht der Web-Admin)', 'Konten von Web-Admins ändern', 'Technik-Bereiche (Weiterleitungen, Suchindex)'],
+    darfNicht: ['Admin- oder Web-Admin-Rechte vergeben (macht der Web-Admin)', 'Konten von Web-Admins ändern', 'Technik-Bereiche (Weiterleitungen, Suchindex)', 'Datensicherung, Web-Admin-Papierkorb, Besucherstatistik, Zusatzrechte vergeben'],
     anleitungen: [
       ['users', 'konto-anlegen'],
       ['angebote', 'team-verantwortliche'],
+      ['registrierungen', 'registrierung-freigeben'],
+      ['rollen', 'rollen-pruefen'],
+      ['rollen', 'rollen-aufraeumen'],
+      ['mitgliedsantraege', 'antrag-bearbeiten'],
       ['users', 'handy-verloren'],
-      ['menue', 'menue-link'],
+      ['datenschutz', 'auskunft'],
+    ],
+    faq: [
+      'Jemand hat sich auf der Website registriert – was muss ich tun?',
+      'Wo sehe ich, wer welche Rolle und welches Team hat?',
+      'Warum sieht jemand einen Bereich (nicht)?',
+      'Ich habe mein Handy verloren / eine neue Handy-Nummer.',
+      'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
     ],
   },
   redaktion: {
     label: 'Redaktion',
     kurz: 'Du kümmerst dich um News, Termine, Seiten und Texte der Website.',
-    darf: ['Alle News schreiben und auf die Startseite holen', 'Vorschläge der Trainer für die Startseite annehmen oder ablehnen', 'Termine, Seiten, Menü und Texte & Bilder pflegen', 'Bilder verwalten', 'Kontakt- und Probetraining-Anfragen bearbeiten'],
+    darf: [
+      'Alle News schreiben und auf die Startseite holen',
+      'Vorschläge der Trainer für die Startseite annehmen oder ablehnen',
+      'Termine, Seiten, Menü und Texte & Bilder pflegen',
+      'Bilder verwalten',
+      'Kontakt- und Probetraining-Anfragen bearbeiten',
+      'Sponsoren, Fotoalben, Ehrenamt & Mitmachen, Vorstand und Downloads in den Vereinsdaten, Mitglieder-Dokumente',
+    ],
     darfNicht: ['Mitgliedsanträge mit Bankdaten sehen', 'Benutzer und Rollen verwalten'],
     anleitungen: [
       ['posts', 'news-schreiben'],
+      ['posts', 'vorschlag-annehmen'],
+      ['termine', 'termin-anlegen'],
+      ['kontaktanfragen', 'kontakt-beantworten'],
+      ['posts', 'news-planen'],
+      ['media', 'auto-zuordnen'],
       ['pages', 'seite-erstellen'],
       ['pages', 'seite-ins-menue'],
+      ['forms', 'formular-bauen'],
       ['texte', 'text-aendern'],
+    ],
+    faq: [
+      'Was ist der Unterschied zwischen „Entwurf speichern“ und „Veröffentlichen“?',
+      'Wie bekomme ich eine neue Seite ins Menü?',
+      'Darf ich Fotos von Kindern hochladen?',
+      'Was bedeutet „Wer kümmert sich?“ und wer sieht die Notizen?',
+      'Ich habe etwas geändert, aber die Website zeigt noch das Alte.',
     ],
   },
   kasse: {
     label: 'Kasse',
     kurz: 'Du bearbeitest die Mitgliedsanträge und pflegst die Beiträge.',
-    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Anträge mit einem Klick aufnehmen, nachfragen oder ablehnen – mit fertiger E-Mail', 'Aufgenommene Anträge als Datei für das DFBnet exportieren (ohne Bankdaten)', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen'],
+    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Anträge mit einem Klick aufnehmen, nachfragen oder ablehnen – mit fertiger E-Mail', 'Aufgenommene Anträge als Datei für das DFBnet exportieren (ohne Bankdaten)', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen', 'Registrierungen freigeben', 'E-Mail-Vorlagen für Mitgliedsanträge'],
     darfNicht: ['News und Seiten veröffentlichen', 'Benutzer verwalten'],
     anleitungen: [
       ['mitgliedsantraege', 'antrag-bearbeiten'],
-      ['verein', 'vorstand'],
+      ['mitgliedsantraege', 'antraege-exportieren'],
+      ['mitgliedsantraege', 'antrag-vorlagen'],
+      ['mitgliedschaften', 'ausweis-pflegen'],
+      ['registrierungen', 'registrierung-freigeben'],
+      ['verein', 'beitraege'],
+    ],
+    faq: [
+      'Wie exportiere ich Mitgliedsanträge für das DFBnet?',
+      'Wer sieht die Mitgliedsanträge und Bankdaten?',
+      'Warum sieht ein Mitglied keinen Ausweis?',
+      'Jemand hat sich auf der Website registriert – was muss ich tun?',
+      'Wie lange bleiben Anträge und Anfragen gespeichert?',
     ],
   },
   passwesen: {
@@ -1065,29 +1365,64 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
     kurz: 'Du bearbeitest die Fußball-Passanträge aller Teams und gibst sie an den Verband weiter.',
     darf: ['Passanträge aller Fußball-Teams sehen und bearbeiten', 'Unterlagen prüfen und fehlende nachfordern', 'Status setzen (z. B. „beim Verband“, „Spielerlaubnis erteilt“)'],
     darfNicht: ['News und Seiten veröffentlichen', 'Mitgliedsanträge oder Bankdaten sehen', 'Benutzer verwalten'],
-    anleitungen: [['passantraege', 'passantrag-bearbeiten']],
+    anleitungen: [['passantraege', 'passantrag-bearbeiten'], ['account', 'zwei-faktor-einrichten']],
+    faq: [
+      'Wer sieht die Passanträge und Ausweiskopien?',
+      'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
+      'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
+      'Ich habe mein Passwort vergessen.',
+      'Ich habe mein Handy verloren / eine neue Handy-Nummer.',
+    ],
   },
   uebungsleitung: {
     label: 'Trainer',
     kurz: 'Du pflegst deine eigenen Teams oder Kurse.',
-    darf: ['News für deine Teams schreiben und für die Startseite vorschlagen', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern', 'Probetraining-Anfragen für deine Teams beantworten'],
+    darf: [
+      'News für deine Teams schreiben und für die Startseite vorschlagen',
+      'Fotos hochladen und deinen Teams zuordnen',
+      'Fotoalben deiner Teams',
+      'Trainingsausfälle melden und Hinweis-Banner auf der Teamseite setzen',
+      'Trainingszeiten und Beschreibung deiner Teams ändern',
+      'Probetraining-Anfragen und Passanträge für deine Teams bearbeiten',
+    ],
     darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen'],
     anleitungen: [
       ['ausfaelle', 'ausfall-melden'],
+      ['ausfaelle', 'ausfall-handy'],
       ['posts', 'news-schreiben'],
+      ['posts', 'startseite-vorschlagen'],
+      ['probetraining', 'probe-bearbeiten'],
+      ['passantraege', 'passantrag-bearbeiten'],
       ['media', 'bild-hochladen'],
       ['angebote', 'team-zeiten'],
+    ],
+    faq: [
+      'Wie melde ich als Trainer schnell einen Ausfall – auch vom Handy?',
+      'Wie bekommt meine Team-News einen Platz auf der Startseite?',
+      'Darf ich Fotos von Kindern hochladen?',
+      'Warum kann ich ein Team nicht bearbeiten?',
+      'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
     ],
   },
   teamredaktion: {
     label: 'Team-Redaktion',
     kurz: 'Du schreibst News und lädst Fotos für deine Teams hoch.',
-    darf: ['News für deine Teams schreiben und für die Startseite vorschlagen', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Beschreibung deiner Teams ändern'],
-    darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen'],
+    darf: ['News für deine Teams schreiben und für die Startseite vorschlagen', 'Fotos hochladen und deinen Teams zuordnen', 'Fotoalben deiner Teams', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern'],
+    darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen', 'Probetraining-Anfragen und Passanträge sehen'],
     anleitungen: [
       ['posts', 'news-schreiben'],
+      ['posts', 'startseite-vorschlagen'],
       ['media', 'bild-hochladen'],
+      ['alben', 'album-anlegen'],
       ['ausfaelle', 'ausfall-melden'],
+      ['angebote', 'team-zeiten'],
+    ],
+    faq: [
+      'Wie bekommt meine Team-News einen Platz auf der Startseite?',
+      'Darf ich Fotos von Kindern hochladen?',
+      'Wie setze ich einen kurzen Hinweis auf die Teamseite (z. B. „Heute in Halle 2“)?',
+      'Was ist der Unterschied zwischen „Entwurf speichern“ und „Veröffentlichen“?',
+      'Warum kann ich ein Team nicht bearbeiten?',
     ],
   },
   mitglied: {

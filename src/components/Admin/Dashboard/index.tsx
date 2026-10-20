@@ -46,6 +46,7 @@ const ROLLEN_LABEL: Record<string, string> = {
   admin: 'Admin',
   redaktion: 'Redaktion',
   kasse: 'Kasse',
+  passwesen: 'Passwesen',
   uebungsleitung: 'Trainer',
   teamredaktion: 'Team-Redaktion',
   mitglied: 'Mitglied',

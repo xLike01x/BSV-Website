@@ -59,8 +59,8 @@ export default function Einstieg() {
           <div>
             <h2>🗑️ Papierkorb</h2>
             <p>
-              Hier liegt, was in den letzten 30 Tagen gelöscht wurde. <strong>Zurückholen:</strong> Eintrag öffnen → „Wiederherstellen“. Nach 30 Tagen wird alles automatisch
-              endgültig gelöscht.
+              Hier liegt, was in den letzten 30 Tagen gelöscht wurde. <strong>Zurückholen:</strong> Eintrag öffnen → „Wiederherstellen“. Nach 30 Tagen kann es nur noch ein
+              Web-Admin zurückholen.
             </p>
           </div>
         </div>

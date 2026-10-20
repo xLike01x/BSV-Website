@@ -3,6 +3,7 @@ import * as migration_20261020_092133_datenschutz_fristen from './20261020_09213
 import * as migration_20261020_092628_einwilligungen from './20261020_092628_einwilligungen';
 import * as migration_20261020_094226_haertung from './20261020_094226_haertung';
 import * as migration_20261020_133629_posteingang from './20261020_133629_posteingang';
+import * as migration_20261020_151223_hilfe_bereiche from './20261020_151223_hilfe_bereiche';
 
 export const migrations = [
   {
@@ -28,6 +29,11 @@ export const migrations = [
   {
     up: migration_20261020_133629_posteingang.up,
     down: migration_20261020_133629_posteingang.down,
-    name: '20261020_133629_posteingang'
+    name: '20261020_133629_posteingang',
+  },
+  {
+    up: migration_20261020_151223_hilfe_bereiche.up,
+    down: migration_20261020_151223_hilfe_bereiche.down,
+    name: '20261020_151223_hilfe_bereiche'
   },
 ];

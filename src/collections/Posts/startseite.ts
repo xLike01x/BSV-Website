@@ -43,7 +43,7 @@ export const startseiteEndpunkt: Endpoint = {
       }
       return Response.json({ ok: true })
     } catch (e) {
-      return fehlerAntwort(e)
+      return fehlerAntwort(e, req)
     }
   },
 }

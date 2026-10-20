@@ -42,7 +42,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
   posts: {
     titel: 'Wozu sind News da?',
     text: 'News erzählen, was im Verein passiert: Spielberichte, Ankündigungen, Rückblicke. Vereins-News erscheinen im Newsroom und auf der Startseite.',
-    textTeam: 'Deine Team-News erscheinen auf der Seite deines Teams. Auf die Startseite kommen sie, wenn die Redaktion „Auch auf Startseite“ anhakt.',
+    textTeam: 'Deine Team-News erscheinen auf der Seite deines Teams. Soll eine auch auf die Startseite, hakst du rechts „Für die Startseite vorschlagen“ an – die Redaktion entscheidet.',
     ablauf: [
       { key: 'schreiben', titel: 'Schreiben', text: 'Titel und Text – kurz und konkret.', wo: 'News → Neu erstellen' },
       { key: 'bild', titel: 'Titelbild wählen', text: 'Ein Foto macht die News sichtbar.', href: L('media'), wo: 'aus der Mediathek' },
@@ -487,7 +487,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ablauf: [
       { key: 'anlegen', titel: 'Team anlegen', text: 'Name, Bereich, Altersgruppe.' },
       { key: 'zeiten', titel: 'Zeiten und Ort', text: 'Wann und wo trainiert wird.' },
-      { key: 'leute', titel: 'Verantwortliche', text: 'Wer das Team in der Verwaltung pflegen darf.', href: '/admin/rollen', wo: 'Einstellungen → Rollen & Rechte' },
+      { key: 'leute', titel: 'Verantwortliche', text: 'Wer das Team pflegen darf – hier beim Team unter „Verantwortliche“ oder (Admins) beim Benutzer unter „Team-Berechtigungen“.' },
       { key: 'bild', titel: 'Titelbild', text: 'Großes Bild oben auf der Teamseite.' },
       { key: 'website', titel: 'Teamseite ist da', text: 'Erscheint automatisch im Menü „Fußball“ bzw. „Breitensport“.', wo: 'Website' },
     ],
@@ -497,8 +497,9 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     titel: 'Was passiert mit Probetraining-Anfragen?',
     text: 'Interessierte melden sich auf der Website für ein Probetraining an. Hier siehst du die Anfragen – Trainer nur die für ihre eigenen Teams.',
     ablauf: [
-      { key: 'anfrage', titel: 'Anfrage kommt rein', text: 'Status „Neu“.', wo: 'Website → Probetraining' },
-      { key: 'melden', titel: 'Melden', text: 'Per E-Mail oder Telefon antworten.' },
+      { key: 'anfrage', titel: 'Anfrage kommt rein', text: 'Status „Neu“, Trainer bekommen eine E-Mail.', wo: 'Website → Probetraining' },
+      { key: 'kuemmern', titel: 'Ich kümmere mich', text: 'Oben im Eintrag – dann sehen alle, wer dran ist.' },
+      { key: 'melden', titel: 'Melden', text: '„✉️ Antworten“ oder „📞 Anrufen“, danach kurz notieren.' },
       { key: 'status', titel: 'Status setzen', text: '„Zugesagt“ oder „Anderer Termin vorgeschlagen“.' },
       { key: 'erledigt', titel: 'Erledigt', text: 'Nach dem Training auf „Erledigt“ – und später löschen.' },
     ],
@@ -508,10 +509,11 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     titel: 'Was passiert mit Mitgliedsanträgen?',
     text: 'Online-Anträge von „Mitglied werden“ – inklusive Bankdaten für das Lastschrift-Mandat. Nur Kasse und Admin sehen sie.',
     ablauf: [
-      { key: 'antrag', titel: 'Antrag kommt rein', text: 'Status „Neu“.', wo: 'Website → Mitglied werden' },
-      { key: 'pruefen', titel: 'Prüfen', text: 'Angaben vollständig? Sonst „Rückfrage“.' },
-      { key: 'aufnehmen', titel: 'Aufnehmen', text: 'In die Mitgliederverwaltung übernehmen, Status „Aufgenommen“.' },
-      { key: 'loeschen', titel: 'Aufräumen', text: 'Nach der Übernahme löschen – es sind Bankdaten.' },
+      { key: 'antrag', titel: 'Antrag kommt rein', text: 'Status „Neu“, die Kasse bekommt eine E-Mail.', wo: 'Website → Mitglied werden' },
+      { key: 'pruefen', titel: 'Prüfen', text: '„Ich kümmere mich“, dann den Kasten „Antrag prüfen“ lesen.' },
+      { key: 'aufnehmen', titel: 'Entscheiden', text: '„Aufnehmen“, „Rückfrage“ oder „Ablehnen“ – mit fertiger E-Mail. Ausweis entsteht automatisch.' },
+      { key: 'export', titel: 'Exportieren', text: 'Oben „📥 … neue exportieren“ für das DFBnet (ohne Bankdaten).' },
+      { key: 'loeschen', titel: 'Aufräumen', text: 'Nach der Übernahme löschen lassen – Datenschutz-Fristen räumen automatisch auf.' },
     ],
   },
 
@@ -541,18 +543,19 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     titel: 'Was sind Kontaktanfragen?',
     text: 'Nachrichten aus dem Kontaktformular der Website und Fragen aus der Hilfe („Frage an den Admin“).',
     ablauf: [
-      { key: 'neu', titel: 'Nachricht kommt rein', text: 'Status „Neu“. Im Feld „An“ steht, wen sie erreichen soll.' },
-      { key: 'antworten', titel: 'Antworten', text: 'Per E-Mail – Status „In Bearbeitung“.' },
+      { key: 'neu', titel: 'Nachricht kommt rein', text: 'Status „Neu“. Im Feld „Anliegen“ steht, worum es geht.' },
+      { key: 'kuemmern', titel: 'Ich kümmere mich', text: 'Oben im Eintrag – in der Liste steht dann dein Name.' },
+      { key: 'antworten', titel: 'Antworten', text: '„✉️ Antworten“ öffnet dein E-Mail-Programm. Kurz notieren, Status „In Bearbeitung“.' },
       { key: 'erledigt', titel: 'Erledigt', text: 'Status „Erledigt“ und regelmäßig löschen.' },
     ],
   },
 
   sponsoren: {
     titel: 'Wozu ist die Sponsoren-Liste da?',
-    text: 'Alle Sponsoren und Partner – auch der Hauptsponsor – erscheinen auf der Seite /sponsoren, nach Art gruppiert. Der Hauptsponsor steht zusätzlich unten in der Fußzeile jeder Seite. Mit Logo und Haken „Im Laufband“ laufen sie zusätzlich unten über die Startseite (ab drei Logos).',
+    text: 'Alle Sponsoren und Partner – auch der Hauptsponsor – erscheinen auf der Seite /sponsoren, nach Art gruppiert. Der Hauptsponsor steht zusätzlich unten in der Fußzeile jeder Seite. Mit Logo und Haken „Im Laufband auf der Startseite“ laufen sie zusätzlich unten über die Startseite (ab drei Logos).',
     ablauf: [
       { key: 'anlegen', titel: 'Sponsor anlegen', text: 'Name, Website und Logo (am besten PNG mit transparentem Hintergrund).' },
-      { key: 'art', titel: 'Art wählen', text: 'Hauptsponsor, Premium-Partner, Partner oder Förderer – bestimmt Gruppe und Größe.' },
+      { key: 'art', titel: 'Art wählen', text: 'Hauptsponsor, Premium-Partner, Partner oder Förderer & Freunde – bestimmt Gruppe und Größe.' },
       { key: 'website', titel: 'Erscheint auf der Website', text: 'Seite „Sponsoren“ und Logo-Laufband auf der Startseite.', href: '/sponsoren', wo: 'Website → Sponsoren' },
     ],
   },
@@ -594,7 +597,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ablauf: [
       { key: 'anlegen', titel: 'Konto anlegen', text: 'Name, E-Mail, vorläufiges Passwort.' },
       { key: 'rolle', titel: 'Rolle wählen', text: 'Z. B. Trainer oder Redaktion.' },
-      { key: 'team', titel: 'Team zuordnen', text: 'Beim Team unter „Verantwortliche“.', href: '/admin/rollen', wo: 'Einstellungen → Rollen & Rechte → Nach Team' },
+      { key: 'team', titel: 'Team zuordnen', text: 'Direkt unter den Rollen bei „Team-Berechtigungen“ – ohne Team-Rolle wird „Trainer“ gesetzt.', wo: 'Benutzer → Team-Berechtigungen' },
       { key: 'mitteilen', titel: 'Zugang mitteilen', text: 'Persönlich – nicht per Gruppenchat.' },
       { key: 'zfa', titel: 'Erster Login', text: 'Die Person richtet die Zwei-Faktor-App ein.' },
     ],

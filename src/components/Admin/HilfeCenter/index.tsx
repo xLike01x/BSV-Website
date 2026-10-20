@@ -7,6 +7,7 @@ import React from 'react'
 import { alleBereiche, alleFaq, type HilfeGlobal } from '../Hilfe/daten'
 import { hauptRolle, ROLLEN_PROFIL, ROLLEN_REIHENFOLGE } from '../Hilfe/extras'
 import HilfeCenterClient from './Client'
+import { EINTRAEGE, eintragSichtbar } from '../NavZusatz/eintraege'
 import '../Hilfe/hilfe.scss'
 import './hilfe-center.scss'
 
@@ -28,6 +29,8 @@ export default async function HilfeCenter({ initPageResult, params, searchParams
     ...IMMER,
     ...visibleEntities.collections.filter((c) => perms.collections?.[c]?.read),
     ...visibleEntities.globals.filter((g) => perms.globals?.[g]?.read),
+    // Sonderseiten (Registrierungen, Rollen & Rechte, Papierkorb, Datensicherung, Statistik) – wie in der Seitenleiste
+    ...EINTRAEGE.filter((e) => eintragSichtbar(e, user)).map((e) => e.key),
   ])
   const bereiche = alleBereiche(global, rolle).filter((b) => sichtbar.has(b.schluessel))
 

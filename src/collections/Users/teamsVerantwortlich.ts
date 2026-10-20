@@ -49,7 +49,7 @@ export const teamsVerantwortlichFeld: Field = {
     // Kein „+“: hier werden vorhandene Teams zugeordnet, keine neuen angelegt
     allowCreate: false,
     description:
-      'Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.',
+      'Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten, Ausfälle), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.',
   },
 }
 

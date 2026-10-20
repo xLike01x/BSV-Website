@@ -1,30 +1,29 @@
 /**
- * Nimmt die Hilfe-Videos (public/hilfe/*.mp4) neu auf – z. B. nach Design-Änderungen.
+ * Nimmt die Hilfe-Videos (public/hilfe/*.mp4 + Vorschaubild *.jpg) neu auf – z. B. nach Änderungen an der Verwaltung.
  * NUR LOKAL mit Testdaten ausführen! Alles, was beim Aufnehmen angelegt wird, wird danach wieder gelöscht
  * bzw. auf den alten Stand zurückgesetzt.
  *
- * Braucht zwei Testkonten (mit eingerichteter Zwei-Faktor-Anmeldung):
- *   - Admin
- *   - Team-Redaktion mit genau einem eigenen Team
+ * Konten: standardmäßig die lokalen Testkonten (Rollen & Rechte → Testkonten anlegen), z. B. admin@bsv.test.
+ * Andere Konten über BSV_<ROLLE>_EMAIL / _PASSWORT / _TOTP (Zwei-Faktor-Geheimnis, nur nötig, wenn 2FA aktiv ist).
+ * Rollen: ADMIN, REDAKTION, KASSE, TEAM (Trainer mit genau einem Team).
  *
- *   BSV_URL=http://localhost:3000 \
- *   BSV_ADMIN_EMAIL=… BSV_ADMIN_PASSWORT=… BSV_ADMIN_TOTP=<Geheimnis> \
- *   BSV_TEAM_EMAIL=…  BSV_TEAM_PASSWORT=…  BSV_TEAM_TOTP=<Geheimnis> \
- *   node scripts/hilfe-videos.mjs [name …]
+ *   BSV_URL=http://localhost:3000 node scripts/hilfe-videos.mjs [name …]
+ *   BSV_FERTIG=1 …   → wandelt danach mit ffmpeg nach public/hilfe/<name>.mp4 und .jpg um
  *
- * Ergebnis: hilfe-videos-roh/<name>.webm → mit ffmpeg nach public/hilfe/<name>.mp4 umwandeln (siehe README).
- * Voraussetzung: einmal `pnpm exec playwright install chromium` und ffmpeg.
+ * Voraussetzung: Chromium für Playwright (oder BSV_CHROMIUM=<Pfad>) und ffmpeg.
  */
 import crypto from 'crypto'
+import { execFileSync } from 'child_process'
 import fs from 'fs'
 import { chromium } from '@playwright/test'
 
 const OUT = process.env.BSV_VIDEO_OUT ?? 'hilfe-videos-roh'
 const base = process.env.BSV_URL ?? 'http://localhost:3000'
 const nur = process.argv.slice(2)
+const soll = (name) => !nur.length || nur.includes(name)
 fs.mkdirSync(OUT, { recursive: true })
 
-/* ---------- Anmeldung mit Zwei-Faktor ---------- */
+/* ---------- Anmeldung (optional mit Zwei-Faktor) ---------- */
 function decode(s) {
   const a = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567'
   let bits = ''
@@ -42,33 +41,47 @@ function totp(secret, step) {
 }
 
 const browser = await chromium.launch(process.env.BSV_CHROMIUM ? { executablePath: process.env.BSV_CHROMIUM } : {})
+const STANDARD = { ADMIN: 'admin@bsv.test', REDAKTION: 'redaktion@bsv.test', KASSE: 'kasse@bsv.test', TEAM: 'trainer-f1-jugend@bsv.test' }
 
 async function anmelden(prefix) {
   const ctx = await browser.newContext()
-  const email = process.env[`BSV_${prefix}_EMAIL`]
-  const password = process.env[`BSV_${prefix}_PASSWORT`]
-  const secret = process.env[`BSV_${prefix}_TOTP`] ?? ''
+  const email = process.env[`BSV_${prefix}_EMAIL`] ?? STANDARD[prefix]
+  const password = process.env[`BSV_${prefix}_PASSWORT`] ?? 'BSV-Test-2026!'
+  const secret = process.env[`BSV_${prefix}_TOTP`]
   const r = await ctx.request.post(base + '/api/users/login', { data: { email, password } })
-  if (!r.ok()) throw new Error(`Login ${prefix} fehlgeschlagen`)
-  for (let k = 0; k < 3; k++) {
-    const p = await ctx.request.post(base + '/api/users/zwei-faktor/pruefen', { data: { code: totp(secret, Math.floor(Date.now() / 30000)) } })
-    if (p.ok()) break
-    await new Promise((res) => setTimeout(res, 31000))
-  }
-  // Tour/Checkliste ausblenden, Seitenleiste offen
-  for (const [key, value] of [['bsv-tour', { erledigt: true }], ['bsv-erste-schritte', { ausgeblendet: true }], ['nav', { open: true }]])
+  if (!r.ok()) throw new Error(`Login ${prefix} (${email}) fehlgeschlagen`)
+  if (secret)
+    for (let k = 0; k < 3; k++) {
+      const p = await ctx.request.post(base + '/api/users/zwei-faktor/pruefen', { data: { code: totp(secret, Math.floor(Date.now() / 30000)) } })
+      if (p.ok()) break
+      await new Promise((res) => setTimeout(res, 31000))
+    }
+  // Tour/Checkliste ausblenden, Seitenleiste offen, Einstiegs-Kästen zugeklappt (ruhigeres Bild)
+  for (const [key, value] of [['bsv-tour', { erledigt: true }], ['bsv-erste-schritte', { ausgeblendet: true }], ['nav', { open: true }], ['bsv-hilfe-gesehen', { gesehen: true }]])
     await ctx.request.post(base + '/api/payload-preferences/' + key, { data: { value } })
-  const state = await ctx.storageState()
-  return { ctx, state }
+  const me = (await (await ctx.request.get(base + '/api/users/me')).json()).user
+  return { ctx, state: await ctx.storageState(), api: ctx.request, me }
 }
 
 const admin = await anmelden('ADMIN')
+const redaktion = await anmelden('REDAKTION')
+const kasse = await anmelden('KASSE')
 const team = await anmelden('TEAM')
-const api = admin.ctx.request
-const apiTeam = team.ctx.request
+const api = admin.api
+const json = async (r) => (await r).json()
+const anonym = async (pfad, data) => {
+  const c = await browser.newContext()
+  const r = await c.request.post(base + pfad, { data, headers: { 'X-Real-IP': `198.51.100.${Math.floor(Math.random() * 200) + 20}` } })
+  const j = await r.json().catch(() => ({}))
+  await c.close()
+  if (!r.ok()) console.log(`Testdaten ${pfad} fehlgeschlagen:`, r.status(), JSON.stringify(j).slice(0, 200))
+  return j.doc?.id ?? null
+}
+const teamId = (await json(api.get(`${base}/api/angebote?where[leitung][contains]=${team.me.id}&limit=1&depth=0`))).docs[0]?.id
 
 /* ---------- Mauszeiger + Untertitel ---------- */
 const OVERLAY = `(()=>{const add=()=>{if(document.getElementById('pw-cursor'))return;
+const st=document.createElement('style');st.textContent='nextjs-portal{display:none!important}';document.head.appendChild(st);
 const c=document.createElement('div');c.id='pw-cursor';c.style.cssText='position:fixed;z-index:2147483647;width:22px;height:22px;margin:-11px 0 0 -11px;border-radius:50%;background:rgba(21,122,67,.35);border:2px solid #157a43;pointer-events:none;transition:transform .12s;left:-50px;top:-50px';document.body.appendChild(c);
 document.addEventListener('mousemove',e=>{c.style.left=e.clientX+'px';c.style.top=e.clientY+'px'},true);
 document.addEventListener('mousedown',()=>{c.style.transform='scale(.6)'},true);document.addEventListener('mouseup',()=>{c.style.transform='scale(1)'},true);
@@ -77,27 +90,34 @@ const t=sessionStorage.getItem('pw-untertitel');if(t){u.textContent=t;u.style.op
 window.__untertitel=(text)=>{sessionStorage.setItem('pw-untertitel',text||'');u.textContent=text||'';u.style.opacity=text?'1':'0'}};
 document.readyState==='loading'?document.addEventListener('DOMContentLoaded',add):add()})()`
 
+const ergebnisse = []
+/** Beim Aufräumen nur löschen, was seit dem Start dieses Skripts entstanden ist */
+const START = new Date(Date.now() - 60000).toISOString()
+const seitStart = `where[createdAt][greater_than]=${encodeURIComponent(START)}`
 async function aufnahme(name, wer, fn, aufraeumen) {
-  if (nur.length && !nur.includes(name)) return
+  if (!soll(name)) return
   const ctx = await browser.newContext({ storageState: wer.state, viewport: { width: 1440, height: 860 }, recordVideo: { dir: `${OUT}/tmp-${name}`, size: { width: 1440, height: 860 } } })
   await ctx.addInitScript(OVERLAY)
   const page = await ctx.newPage()
-  const untertitel = async (text) => {
+  // Ab wann ist die erste Seite fertig geladen? Davor ist das Video leer – wird beim Umwandeln abgeschnitten
+  const beginn = Date.now()
+  let schnitt = null
+  const untertitel = async (text, ms = 1500) => {
     await page.evaluate((t) => window.__untertitel?.(t), text).catch(() => {})
-    await page.waitForTimeout(text ? 1400 : 200)
+    await page.waitForTimeout(text ? ms : 200)
   }
   const zeige = async (loc) => {
     if (process.env.BSV_DEBUG) console.log('   zeige', String(loc).slice(0, 110))
     await loc.scrollIntoViewIfNeeded({ timeout: 8000 }).catch(() => {})
     const b = await loc.boundingBox({ timeout: 8000 }).catch(() => null)
-    if (b) await page.mouse.move(b.x + b.width / 2, b.y + b.height / 2, { steps: 18 })
-    await page.waitForTimeout(300)
+    if (b) await page.mouse.move(b.x + b.width / 2, b.y + Math.min(b.height / 2, 20), { steps: 18 })
+    await page.waitForTimeout(350)
   }
   const klick = async (loc) => {
     if (process.env.BSV_DEBUG) console.log('   klick', String(loc).slice(0, 110))
     await zeige(loc)
-    await loc.click()
-    await page.waitForTimeout(600)
+    await loc.click({ timeout: 10000 })
+    await page.waitForTimeout(700)
   }
   const tippe = async (loc, text, leeren = false) => {
     await klick(loc)
@@ -105,135 +125,172 @@ async function aufnahme(name, wer, fn, aufraeumen) {
       await page.keyboard.press('Control+A')
       await page.keyboard.press('Delete')
     }
-    await page.keyboard.type(text, { delay: 50 })
+    await page.keyboard.type(text, { delay: 45 })
     await page.waitForTimeout(400)
   }
   const waehle = async (loc, suchtext) => {
     await klick(loc)
     if (suchtext) await page.keyboard.type(suchtext, { delay: 60 })
-    await page.waitForTimeout(700)
+    await page.waitForTimeout(800)
     await page.keyboard.press('Enter')
     await page.waitForTimeout(700)
   }
   const gehe = async (pfad) => {
-    await page.goto(base + pfad, { waitUntil: 'networkidle' })
+    await page.goto(base + pfad, { waitUntil: 'load', timeout: 60000 })
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
     await page.waitForTimeout(900)
-    // Seitenleiste sicher öffnen
     if (!(await page.locator('.nav--nav-open').count())) {
       await page.locator('.nav-toggler').first().click().catch(() => {})
       await page.waitForTimeout(500)
     }
+    if (schnitt === null) schnitt = Math.max(0.8, (Date.now() - beginn) / 1000 - 0.6)
   }
-  const h = { page, untertitel, zeige, klick, tippe, waehle, gehe }
+  const menue = async (text) => {
+    await klick(page.locator('.nav__link', { hasText: text }).first())
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+    await page.waitForTimeout(900)
+  }
+  /** „Neu erstellen“ in der Liste */
+  const neu = async () => {
+    await klick(page.locator('.list-create-new-doc__create-new-button, a.btn, button.btn').filter({ hasText: /^\s*Neu erstellen\s*$/ }).first())
+    await page.waitForURL(/\/create|\/\d+$/, { timeout: 30000 }).catch(() => {})
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+    await page.waitForTimeout(800)
+  }
+  /** Eintrag in der Liste öffnen (optional die Zeile mit diesem Text) */
+  const oeffne = async (text) => {
+    const zeilen = page.locator('.table tbody tr')
+    const zeile = text ? zeilen.filter({ hasText: text }).first() : zeilen.first()
+    await klick(zeile.locator('a').first())
+    await page.waitForURL(/\/collections\/[^/]+\/\d+/, { timeout: 30000 }).catch(() => {})
+    await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+    await page.waitForTimeout(1000)
+  }
+  /** Menüpunkt links nur zeigen (die Seite ist schon geöffnet – spart das langsame Dashboard) */
+  const menueZeigen = async (text) => {
+    await zeige(page.locator('.nav__link', { hasText: text }).first())
+    await page.waitForTimeout(400)
+  }
+  const h = { page, untertitel, zeige, klick, tippe, waehle, gehe, menue, neu, oeffne, menueZeigen }
   let ok = true
   try {
     await fn(h)
-    await page.waitForTimeout(1200)
+    await page.waitForTimeout(1300)
   } catch (e) {
     ok = false
     console.log(`${name}: FEHLER`, e.message.split('\n')[0])
+    await page.screenshot({ path: `${OUT}/${name}-fehler.png` }).catch(() => {})
   }
   const video = page.video()
   await ctx.close()
   fs.copyFileSync(await video.path(), `${OUT}/${name}.webm`)
   fs.rmSync(`${OUT}/tmp-${name}`, { recursive: true, force: true })
-  if (aufraeumen) await aufraeumen(page.url?.() ?? '').catch((e) => console.log(`${name}: Aufräumen fehlgeschlagen`, e.message))
+  if (aufraeumen) await aufraeumen().catch((e) => console.log(`${name}: Aufräumen fehlgeschlagen`, e.message))
   console.log(`${name}: ${ok ? 'ok' : 'mit Fehler'}`)
+  ergebnisse.push({ name, ok, schnitt: schnitt ?? 0.8 })
 }
 
-const neueId = { wert: null }
-const merkeId = (page) => {
-  const m = page.url().match(/collections\/[^/]+\/(\d+)/)
-  neueId.wert = m ? m[1] : null
-}
-const loesche = (coll, request = api) => async () => {
-  if (neueId.wert) await request.delete(`${base}/api/${coll}/${neueId.wert}`)
-  neueId.wert = null
-}
-const json = async (r) => (await r).json()
+/** Endgültig löschen: über die API (Papierkorb) und – nur als Web-Admin möglich – aus dem Web-Admin-Papierkorb */
+const weg = (coll, id, request = api) => (id ? request.delete(`${base}/api/${coll}/${id}`) : null)
+const neueIdAus = (page) => page.url().match(/collections\/[^/]+\/(\d+)/)?.[1] ?? null
 
 /* ================================================================== */
-/* Team-Redaktion                                                      */
+/* Trainer / Team-Redaktion                                            */
 /* ================================================================== */
 
-await aufnahme('news-schreiben', team, async ({ page, untertitel, klick, tippe, gehe }) => {
-  await gehe('/admin')
+let newsId = null
+await aufnahme('news-schreiben', team, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, gehe, menue }) => {
+  await gehe('/admin/collections/posts')
   await untertitel('Links auf „News“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'News' }).first())
-  await untertitel('Oben auf „Neu erstellen“')
-  await klick(page.locator('.list-create-new-doc__create-new-button, .list-header__create-new-button').first())
-  await page.waitForLoadState('networkidle')
+  await menueZeigen('News')
+  await untertitel('Oben eine Vorlage wählen – oder „Neu erstellen“ für eine leere News')
+  await zeige(page.locator('.bsv-einstieg').first())
+  await neu()
+  await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
   await untertitel('1. Eine kurze Überschrift eingeben')
-  await tippe(page.locator('#field-title'), 'Alte Herren gewinnen Freundschaftsspiel')
+  await tippe(page.locator('#field-title'), 'F1 gewinnt Hallenturnier in Neuss')
   await untertitel('2. Ein Titelbild auswählen')
   await klick(page.getByText('Aus vorhandenen auswählen').first())
   await page.waitForTimeout(1200)
   await klick(page.locator('.list-drawer tbody tr').first().locator('button, a').first())
-  await untertitel('3. Den Text schreiben')
-  await tippe(page.locator('[contenteditable="true"]').first(), 'Am Samstag haben die Alten Herren 3:1 gewonnen. Danke an alle Zuschauer!')
-  await untertitel('Rechts siehst du, wo die News erscheinen wird')
-  await page.mouse.move(1100, 330, { steps: 20 })
-  await page.waitForTimeout(1500)
-  await untertitel('4. „Entwurf speichern“ – oder gleich „Veröffentlichen“')
+  await untertitel('3. Den Text schreiben – wer, was, wann, wo')
+  await tippe(page.locator('[contenteditable="true"]').first(), 'Am Samstag hat unsere F1 das Hallenturnier in Neuss gewonnen. Im Finale stand es 2:1 gegen den TuS Grefrath. Danke an alle Eltern fürs Anfeuern!')
+  await untertitel('Rechts prüft der Kasten „Vor dem Veröffentlichen“, ob alles passt', 2200)
+  await zeige(page.locator('.bsv-hinweise').first())
+  await untertitel('Soll die News auch auf die Startseite? Hier vorschlagen', 1800)
+  await klick(page.locator('#field-startseiteVorschlag'))
+  await untertitel('4. „Veröffentlichen“ – oder erst „Entwurf speichern“')
+  await zeige(page.locator('#action-save'))
   await klick(page.locator('#action-save-draft'))
   await page.waitForTimeout(1500)
-  merkeId(page)
-  await untertitel('Fertig! Entwürfe sieht niemand außer euch.')
-}, loesche('posts', apiTeam))
+  newsId = neueIdAus(page)
+  await untertitel('Fertig! Die Redaktion sieht deinen Vorschlag auf ihrer Übersicht.', 2200)
+}, async () => {
+  const r = await json(api.get(`${base}/api/posts?where[title][equals]=${encodeURIComponent('F1 gewinnt Hallenturnier in Neuss')}&draft=true&depth=0`))
+  for (const d of r.docs ?? []) await weg('posts', d.id)
+  void newsId
+})
 
-await aufnahme('ausfall-melden', team, async ({ page, untertitel, klick, tippe, waehle, gehe }) => {
-  await gehe('/admin')
+/* Ausfall: der schnelle Weg direkt über der Liste */
+await aufnahme('ausfall-melden', team, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe, menue }) => {
+  await gehe('/admin/collections/ausfaelle')
   await untertitel('Links auf „Trainingsausfälle“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'Trainingsausfälle' }).first())
-  await klick(page.locator('.list-create-new-doc__create-new-button, .list-header__create-new-button').first())
-  await page.waitForLoadState('networkidle')
-  await untertitel('1. Dein Team auswählen')
-  await waehle(page.locator('#field-angebot'))
-  const d = new Date(Date.now() + 3 * 864e5)
-  await untertitel('2. Das Datum eintragen')
-  await tippe(page.locator('#field-datum input').first(), `${String(d.getDate()).padStart(2, '0')}.${String(d.getMonth() + 1).padStart(2, '0')}.${d.getFullYear()}`)
-  await page.keyboard.press('Escape')
-  await untertitel('3. Den Grund auswählen')
-  await waehle(page.locator('#field-grund'), 'Halle')
-  await untertitel('Optional: ein Hinweis, z. B. ein Nachholtermin')
-  await tippe(page.locator('#field-hinweis'), 'Nachholtermin am Freitag um 19 Uhr.')
-  await untertitel('4. Speichern – der Hinweis steht sofort auf der Teamseite')
-  await klick(page.locator('#action-save'))
-  await page.waitForTimeout(1500)
-  merkeId(page)
-}, loesche('ausfaelle', apiTeam))
+  await menueZeigen('Trainingsausfälle')
+  await untertitel('Oben im Kasten „Schnell melden“ ausfüllen')
+  const f = page.locator('.bsv-ausfall').first()
+  await zeige(f)
+  await untertitel('1. Team wählen (ist bei einem Team schon gewählt)')
+  await zeige(f.locator('select').first())
+  await untertitel('2. Tag antippen – Heute, Morgen oder ein Datum')
+  await klick(f.locator('.bsv-ausfall__tage button').nth(1))
+  await untertitel('3. Den Grund wählen')
+  await zeige(f.locator('select').nth(1))
+  await f.locator('select').nth(1).selectOption({ index: 1 }).catch(() => {})
+  await page.waitForTimeout(800)
+  await untertitel('4. „Ausfall melden“ – steht sofort auf der Teamseite und im Mitgliederbereich', 2200)
+  await klick(f.locator('.bsv-ausfall__senden'))
+  await page.waitForTimeout(1800)
+  await untertitel('Mehr Angaben (z. B. Nachholtermin)? Den Eintrag in der Liste öffnen.', 2200)
+}, async () => {
+  const heute = new Date(Date.now() - 864e5).toISOString()
+  const r = await json(api.get(`${base}/api/ausfaelle?where[and][0][angebot][equals]=${teamId}&where[and][1][createdAt][greater_than]=${encodeURIComponent(new Date(Date.now() - 10 * 60000).toISOString())}&depth=0&limit=5`))
+  for (const d of r.docs ?? []) await weg('ausfaelle', d.id)
+  void heute
+})
 
-await aufnahme('bilder-hochladen', team, async ({ page, untertitel, zeige, klick, tippe, waehle, gehe }) => {
-  await gehe('/admin')
+let bildId = null
+await aufnahme('bilder-hochladen', team, async ({ page, neu, oeffne, menueZeigen, untertitel, zeige, klick, tippe, waehle, gehe, menue }) => {
+  await gehe('/admin/collections/media')
   await untertitel('Links auf „Mediathek“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'Mediathek' }).first())
-  await klick(page.locator('.list-create-new-doc__create-new-button, .list-header__create-new-button').first())
-  await page.waitForLoadState('networkidle')
+  await menueZeigen('Mediathek')
+  await neu()
+  await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
   await untertitel('1. Foto auswählen oder hierher ziehen')
   await zeige(page.getByText('Datei auswählen').first())
   await page.locator('input[type=file]').first().setInputFiles('seed/bilder/hallenstadtmeister.jpg')
   await page.waitForTimeout(1500)
   await untertitel('2. Kurz beschreiben, was zu sehen ist')
-  await tippe(page.locator('#field-alt'), 'Die Alten Herren mit dem Pokal')
-  await untertitel('3. Optional: Team wählen und in die Galerie')
-  await waehle(page.locator('#field-team'))
-  await klick(page.locator('#field-inGalerie'))
-  await untertitel('4. Speichern')
+  await tippe(page.locator('#field-alt'), 'Die F1 jubelt mit dem Pokal')
+  await untertitel('3. Pflicht: Sind Personen zu erkennen? Kinderfotos nur mit Einwilligung der Eltern', 2400)
+  await klick(page.locator('#field-personen label, [id^="field-personen"] label').nth(1))
+  await untertitel('4. Rechts bei „Ordner (Team / Kurs)“ dein Team wählen', 2000)
+  await waehle(page.locator('#field-team'), 'F1')
+  await untertitel('5. Speichern')
   await klick(page.locator('#action-save'))
   await page.waitForTimeout(2000)
-  merkeId(page)
-  await untertitel('Fertig! Das Bild steht jetzt überall zur Auswahl.')
-}, loesche('media', apiTeam))
+  bildId = neueIdAus(page)
+  await untertitel('Fertig! Das Bild steht jetzt für News und Galerie zur Auswahl.', 2000)
+}, async () => {
+  const r = await json(api.get(`${base}/api/media?${seitStart}&where[filename][like]=hallenstadtmeister&depth=0&limit=20`))
+  for (const d of r.docs ?? []) await weg('media', d.id)
+  void bildId
+})
 
-/* Trainingszeiten: eigenes Team, danach alter Stand */
-const eigenesTeam = (await json(apiTeam.get(`${base}/api/users/me`))).user
-const teamId = (await json(api.get(`${base}/api/angebote?where[leitung][contains]=${eigenesTeam.id}&limit=1&depth=0`))).docs[0]?.id
 const zeitenVorher = teamId ? (await json(api.get(`${base}/api/angebote/${teamId}?depth=0`))).zeiten : []
-
-await aufnahme('trainingszeiten', team, async ({ page, untertitel, klick, tippe, waehle, gehe, zeige }) => {
-  await gehe('/admin')
+await aufnahme('trainingszeiten', team, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, waehle, gehe, zeige, menue }) => {
+  await gehe('/admin/collections/angebote')
   await untertitel('Links auf „Teams & Kurse“, dann dein Team öffnen')
-  await klick(page.locator('.nav__link', { hasText: 'Teams & Kurse' }).first())
+  await menueZeigen('Teams & Kurse')
   await gehe(`/admin/collections/angebote/${teamId}`)
   await untertitel('Nach unten zu „Trainingszeiten“')
   const knopf = page.getByRole('button', { name: /Termin hinzufügen/ }).first()
@@ -243,26 +300,115 @@ await aufnahme('trainingszeiten', team, async ({ page, untertitel, klick, tippe,
   const n = Array.isArray(zeitenVorher) ? zeitenVorher.length : 0
   await untertitel('Tag, Uhrzeit und Ort eintragen')
   await waehle(page.locator(`#field-zeiten__${n}__tag`), 'Mittwoch')
-  await tippe(page.locator(`#field-zeiten__${n}__von`), '19:00')
-  await tippe(page.locator(`#field-zeiten__${n}__bis`), '20:30')
-  await tippe(page.locator(`#field-zeiten__${n}__ort`), 'Kutscher-Remy-Sportpark')
+  await tippe(page.locator(`#field-zeiten__${n}__von`), '17:00')
+  await tippe(page.locator(`#field-zeiten__${n}__bis`), '18:30')
+  await tippe(page.locator(`#field-zeiten__${n}__ort`), 'Kunstrasen Büderich')
   await untertitel('Oben rechts „Speichern“')
   await klick(page.locator('#action-save'))
   await page.waitForTimeout(1500)
-  await untertitel('Die neue Zeit steht sofort auf der Teamseite.')
+  await untertitel('Die neue Zeit steht sofort auf der Teamseite und im Wochenplan.', 2000)
 }, async () => {
   if (teamId) await api.patch(`${base}/api/angebote/${teamId}`, { data: { zeiten: zeitenVorher } })
 })
 
+/* Probetraining-Anfrage beantworten (Trainer) */
+let probeId = null
+if (soll('anfrage-beantworten')) probeId = await anonym('/api/probetraining', { name: 'Sabine Beispiel', email: 'sabine@beispiel.test', teilnehmer: 'Leon', alter: 7, angebot: teamId, wunschtermin: 'Nächsten Dienstag', nachricht: 'Leon würde gern einmal mittrainieren. Was muss er mitbringen?', datenschutz: true })
+await aufnahme('anfrage-beantworten', team, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, gehe, waehle, menue }) => {
+  await gehe('/admin/collections/probetraining')
+  await untertitel('Neue Anfragen siehst du oben links an der orangen Zahl')
+  await menueZeigen('Probetraining')
+  await untertitel('Die neue Anfrage öffnen')
+  await oeffne()
+  await untertitel('1. „Ich kümmere mich“ – dann sehen alle, dass du dran bist', 2000)
+  await klick(page.getByRole('button', { name: /Ich kümmere mich/ }))
+  await untertitel('2. „Antworten“ öffnet dein E-Mail-Programm – oder „Anrufen“', 2200)
+  await zeige(page.getByRole('link', { name: /Antworten/ }))
+  await untertitel('3. Kurz notieren, was ausgemacht ist')
+  await tippe(page.locator('#bsv-notiz'), 'Zugesagt für Dienstag 17 Uhr, Schienbeinschoner mitbringen.')
+  await klick(page.getByRole('button', { name: /Notiz speichern/ }))
+  await untertitel('4. Status setzen, z. B. „Zugesagt“, und speichern')
+  await waehle(page.locator('#field-status'), 'Zuge')
+  await klick(page.locator('#action-save'))
+  await page.waitForTimeout(1500)
+  await untertitel('Notizen und Status stehen mit Name und Uhrzeit im Verlauf.', 2200)
+  await zeige(page.locator('.bsv-posteingang__verlauf'))
+}, async () => {
+  await weg('probetraining', probeId)
+})
+
 /* ================================================================== */
-/* Admin / Redaktion                                                   */
+/* Redaktion                                                           */
 /* ================================================================== */
 
-await aufnahme('seite-bausteine', admin, async ({ page, untertitel, klick, tippe, gehe }) => {
+let vorschlagId = null
+if (soll('vorschlag-annehmen')) {
+  const lex = { root: { type: 'root', format: '', indent: 0, version: 1, direction: 'ltr', children: [{ type: 'paragraph', format: '', indent: 0, version: 1, direction: 'ltr', textFormat: 0, children: [{ type: 'text', text: 'Unsere F1 hat das Hallenturnier gewonnen.', format: 0, mode: 'normal', style: '', detail: 0, version: 1 }] }] } }
+  const r = await team.api.post(`${base}/api/posts`, { data: { title: 'F1 gewinnt Hallenturnier', content: lex, team: teamId, _status: 'published', startseiteVorschlag: true } })
+  vorschlagId = (await r.json()).doc?.id ?? null
+}
+await aufnahme('vorschlag-annehmen', redaktion, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe }) => {
+  await gehe('/admin')
+  await untertitel('Trainer können ihre News für die Startseite vorschlagen', 2000)
+  await zeige(page.locator('.bsv-dash__vorschlaege'))
+  await untertitel('Ein Klick auf den Titel öffnet die News zum Lesen', 2000)
+  await zeige(page.locator('.bsv-dash__vorschlaege li a').first())
+  await untertitel('Passt sie? „Auf die Startseite“ – sonst „Nein, danke“', 2200)
+  await klick(page.locator('.bsv-dash__vorschlaege li').first().getByRole('button', { name: 'Auf die Startseite' }))
+  await page.waitForTimeout(1200)
+  await untertitel('Fertig – die News steht jetzt auch auf der Startseite.', 2200)
+}, async () => {
+  await weg('posts', vorschlagId)
+})
+
+await aufnahme('termin-anlegen', redaktion, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, gehe, menue }) => {
+  await gehe('/admin/collections/termine')
+  await untertitel('Links auf „Termine“ klicken')
+  await menueZeigen('Termine')
+  await untertitel('Oben eine Vorlage wählen, z. B. „Vereinsfest“', 2000)
+  const vorlage = page.locator('.bsv-einstieg button, .bsv-einstieg a').filter({ hasText: 'Vereinsfest' }).first()
+  await zeige(vorlage)
+  await klick(vorlage)
+  await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+  await page.waitForTimeout(1200)
+  await untertitel('Die Felder sind schon ausgefüllt – Titel und Datum anpassen', 2200)
+  await tippe(page.locator('#field-title'), 'Sommerfest 2027', true)
+  await zeige(page.locator('#field-beginn'))
+  await untertitel('Rechts siehst du, ob der Termin für alle oder nur für Mitglieder sichtbar ist', 2200)
+  await zeige(page.locator('.bsv-hinweise').first())
+  await untertitel('„Speichern“ – der Termin steht sofort im Kalender', 2000)
+  await zeige(page.locator('#action-save'))
+}, null)
+
+let kontaktId = null
+if (soll('kontakt-beantworten')) kontaktId = await anonym('/api/kontaktanfragen', { name: 'Peter Beispiel', email: 'peter@beispiel.test', betreff: 'Frage zum Mitgliedsbeitrag', nachricht: 'Hallo, gibt es einen Familienbeitrag, wenn zwei Kinder im Verein sind?', datenschutz: true })
+await aufnahme('kontakt-beantworten', redaktion, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, gehe, waehle, menue }) => {
+  await gehe('/admin/collections/kontaktanfragen')
+  await untertitel('Links unter „Posteingang“ auf „Kontaktanfragen“')
+  await menueZeigen('Kontaktanfragen')
+  await untertitel('Die neue Nachricht öffnen')
+  await oeffne()
+  await untertitel('1. „Ich kümmere mich“')
+  await klick(page.getByRole('button', { name: /Ich kümmere mich/ }))
+  await untertitel('2. „Antworten“ – Adresse und Betreff sind schon eingetragen', 2200)
+  await zeige(page.getByRole('link', { name: /Antworten/ }))
+  await untertitel('3. Kurz notieren, was du geantwortet hast')
+  await tippe(page.locator('#bsv-notiz'), 'Familienbeitrag erklärt, Link zum Antrag geschickt.')
+  await klick(page.getByRole('button', { name: /Notiz speichern/ }))
+  await untertitel('4. Status „Erledigt“ und speichern')
+  await waehle(page.locator('#field-status'), 'Erled')
+  await klick(page.locator('#action-save'))
+  await page.waitForTimeout(1500)
+}, async () => {
+  await weg('kontaktanfragen', kontaktId)
+})
+
+let seiteId = null
+await aufnahme('seite-bausteine', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, gehe }) => {
   await gehe('/admin/collections/pages/create')
   await page.waitForURL(/pages\/\d+/, { timeout: 15000 }).catch(() => {})
   await page.waitForTimeout(1500)
-  merkeId(page)
+  seiteId = neueIdAus(page)
   await untertitel('1. Einen Titel für die Seite eingeben')
   await tippe(page.locator('#field-title'), 'Sommerfest 2027')
   await untertitel('2. Reiter „Inhalt (Bausteine)“ öffnen')
@@ -276,47 +422,46 @@ await aufnahme('seite-bausteine', admin, async ({ page, untertitel, klick, tippe
   const zu = page.locator('.collapsible--collapsed > .collapsible__toggle-wrap .collapsible__toggle')
   if (await zu.count()) await klick(zu.last())
   await klick(page.getByRole('button', { name: /Spalte hinzufügen/ }).first())
-  await page.waitForTimeout(600)
-  if (await zu.count()) await klick(zu.last())
-  const editor = page.locator('[contenteditable="true"]').last()
-  await tippe(editor, 'Am 5. Juli feiern wir auf dem Sportplatz – mit Grill, Hüpfburg und Fußballturnier für Kinder!')
-  await untertitel('Weitere Bausteine genauso hinzufügen – am Griff links verschieben')
+  const spalte = page.locator('.array-field__row').filter({ hasText: 'Spalte 01' }).first()
+  await spalte.waitFor({ timeout: 10000 })
+  await page.waitForTimeout(800)
+  if (!(await spalte.locator('[contenteditable="true"]').isVisible().catch(() => false))) await klick(spalte.locator('.collapsible__toggle').first())
+  await tippe(spalte.locator('[contenteditable="true"]').first(), 'Am 5. Juli feiern wir auf dem Sportplatz – mit Grill, Hüpfburg und Fußballturnier für Kinder!')
+  await untertitel('Weitere Bausteine genauso hinzufügen – am Griff links verschieben', 2000)
   await page.mouse.move(380, 300, { steps: 20 })
-  await page.waitForTimeout(1500)
-  await untertitel('Mit dem Bildschirm-Symbol oben siehst du die Seite als Vorschau')
+  await untertitel('Mit dem Bildschirm-Symbol oben siehst du die Seite als Vorschau', 2000)
   await page.mouse.move(1000, 90, { steps: 20 })
-  await page.waitForTimeout(1500)
+  await page.waitForTimeout(1200)
 }, async () => {
-  if (neueId.wert) await api.delete(`${base}/api/pages/${neueId.wert}`)
-  neueId.wert = null
-  // Durch das automatische Zwischenspeichern entstandene leere Entwürfe entfernen
-  const leer = await json(api.get(`${base}/api/pages?where[title][exists]=false&draft=true&depth=0&limit=20`))
-  for (const d of leer.docs ?? []) await api.delete(`${base}/api/pages/${d.id}`)
-  const r = await json(api.get(`${base}/api/pages?where[title][equals]=Sommerfest 2027&draft=true&depth=0`))
-  for (const d of r.docs ?? []) await api.delete(`${base}/api/pages/${d.id}`)
+  if (seiteId) await api.delete(`${base}/api/pages/${seiteId}`)
+  // Auch leere Entwürfe, die beim Öffnen von „Neu“ automatisch entstehen – nur die aus diesem Lauf
+  for (const w of [`where[title][equals]=${encodeURIComponent('Sommerfest 2027')}`, 'where[title][exists]=false']) {
+    const r = await json(api.get(`${base}/api/pages?${w}&${seitStart}&draft=true&depth=0&limit=50`))
+    for (const d of r.docs ?? []) await api.delete(`${base}/api/pages/${d.id}`)
+  }
 })
 
 const menueVorher = await json(api.get(`${base}/api/globals/menue?depth=0`))
 const menueZurueck = async () => {
-  const ohneIds = (l) => (l ?? []).map(({ id, ...r }) => ({ ...r, eintraege: r.eintraege?.map(({ id: _i, ...e }) => e) }))
+  const ohneIds = (l) => (l ?? []).map(({ id: _id, ...r }) => ({ ...r, eintraege: r.eintraege?.map(({ id: _i, ...e }) => e) }))
   await api.post(`${base}/api/globals/menue`, {
     data: { links: ohneIds(menueVorher.links), vereinUeberUns: ohneIds(menueVorher.vereinUeberUns), vereinMehr: ohneIds(menueVorher.vereinMehr), fusszeile: ohneIds(menueVorher.fusszeile) },
   })
 }
-await aufnahme('menue-link', admin, async ({ page, untertitel, klick, tippe, waehle, gehe }) => {
-  await gehe('/admin')
-  await untertitel('Links auf „Menü & Fußzeile“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'Menü' }).first())
-  await page.waitForURL('**/globals/menue', { timeout: 15000 }).catch(() => gehe('/admin/globals/menue'))
-  await page.waitForTimeout(1200)
+await aufnahme('menue-link', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, waehle, gehe, menue }) => {
+  await gehe('/admin/globals/menue')
+  await untertitel('Links unter „Website-Aufbau“ auf „Menü & Fußzeile“')
+  await menueZeigen('Menü & Fußzeile')
+  await untertitel('Reiter „Hauptmenü oben“')
+  await klick(page.locator('.tabs-field__tab-button', { hasText: 'Hauptmenü oben' }))
   await untertitel('Ganz unten „Eintrag hinzufügen“ klicken')
   await klick(page.getByRole('button', { name: /Eintrag hinzufügen/ }).first())
   const n = (menueVorher.links ?? []).length
-  // Neue Zeile aufklappen
-  const neu = page.locator('#field-links .array-field__row').last()
-  if (await neu.locator('.collapsible--collapsed').count().then((c) => c > 0).catch(() => false) || (await neu.getAttribute('class'))?.includes('collapsed'))
-    await klick(neu.locator('.collapsible__toggle').first())
-  await untertitel('Text eingeben, so heißt der Link auf der Website')
+  const zeileNeu = page.locator('#field-links .array-field__row').filter({ hasText: `Eintrag ${n + 1}` }).first()
+  await zeileNeu.waitFor({ timeout: 10000 })
+  await page.waitForTimeout(800)
+  if (!(await page.locator(`#field-links__${n}__label`).isVisible().catch(() => false))) await klick(zeileNeu.locator('.collapsible__toggle').first())
+  await untertitel('Text eingeben – so heißt der Link auf der Website')
   await tippe(page.locator(`#field-links__${n}__label`), 'Kunstrasen')
   await untertitel('Die Seite auswählen')
   await waehle(page.locator(`#field-links__${n}__seite`), 'Kunst')
@@ -325,12 +470,11 @@ await aufnahme('menue-link', admin, async ({ page, untertitel, klick, tippe, wae
   await page.waitForTimeout(1500)
 }, menueZurueck)
 
-await aufnahme('menue-reihenfolge', admin, async ({ page, untertitel, klick, zeige, gehe }) => {
-  await gehe('/admin')
-  await untertitel('Links auf „Menü & Fußzeile“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'Menü' }).first())
-  await page.waitForURL('**/globals/menue', { timeout: 15000 }).catch(() => gehe('/admin/globals/menue'))
-  await page.waitForTimeout(1200)
+await aufnahme('menue-reihenfolge', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe, menue }) => {
+  await gehe('/admin/globals/menue')
+  await untertitel('Links auf „Menü & Fußzeile“')
+  await menueZeigen('Menü & Fußzeile')
+  await klick(page.locator('.tabs-field__tab-button', { hasText: 'Hauptmenü oben' }))
   await untertitel('Oben in der Liste = links auf der Website')
   const zeile = (text) => page.locator('#field-links .array-field__row').filter({ has: page.locator('.array-field__row-header', { hasText: new RegExp('^' + text + '$') }) }).first()
   await zeige(zeile('News'))
@@ -347,177 +491,52 @@ await aufnahme('menue-reihenfolge', admin, async ({ page, untertitel, klick, zei
     await page.mouse.up()
   }
   await page.waitForTimeout(800)
-  await untertitel('Entfernen: drei Punkte rechts am Eintrag → „Entfernen“')
-  await zeige(zeile('Kunstrasen').locator('.array-actions__button').first())
-  await page.waitForTimeout(800)
+  await untertitel('Entfernen: drei Punkte rechts am Eintrag → „Entfernen“', 2000)
+  await zeige(zeile('News').locator('.array-actions__button').first())
   await untertitel('Oben rechts „Speichern“')
   await klick(page.locator('#action-save'))
   await page.waitForTimeout(1500)
 }, menueZurueck)
 
-/* Verantwortliche: an einem anderen Angebot zeigen, danach alter Stand */
-const anderes = (await json(api.get(`${base}/api/angebote?where[slug][equals]=yoga&limit=1&depth=0`))).docs[0]
-await aufnahme('team-verantwortliche', admin, async ({ page, untertitel, klick, zeige, waehle, gehe }) => {
-  await gehe('/admin')
-  await untertitel('Links auf „Teams & Kurse“ und das Team öffnen')
-  await klick(page.locator('.nav__link', { hasText: 'Teams & Kurse' }).first())
-  await gehe(`/admin/collections/angebote/${anderes.id}`)
-  await untertitel('Nach unten zu „Verantwortliche“')
-  await zeige(page.locator('#field-leitung'))
-  await untertitel('Die Person auswählen (sie braucht ein Konto mit Rolle Übungsleitung)')
-  await waehle(page.locator('#field-leitung'), 'Tom')
-  await untertitel('Speichern – ab jetzt darf die Person dieses Team pflegen')
-  await klick(page.locator('#action-save'))
-  await page.waitForTimeout(1500)
-}, async () => {
-  await api.patch(`${base}/api/angebote/${anderes.id}`, { data: { leitung: (anderes.leitung ?? []).map((l) => (typeof l === 'object' ? l.id : l)) } })
-})
-
-const vereinVorher = await json(api.get(`${base}/api/globals/verein?depth=0`))
-await aufnahme('vorstand', admin, async ({ page, untertitel, klick, tippe, zeige, gehe }) => {
-  await gehe('/admin')
-  await untertitel('Links auf „Vereinsdaten“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'Vereinsdaten' }).first())
-  const knopf = page.getByRole('button', { name: /Person hinzufügen/ }).first()
-  await untertitel('Nach unten zu „Vorstand und Ansprechpersonen“')
-  await zeige(knopf)
-  await untertitel('„Person hinzufügen“ klicken')
-  await klick(knopf)
-  const n = (vereinVorher.vorstand ?? []).length
-  await untertitel('Name und Funktion eintragen')
-  await tippe(page.locator(`#field-vorstand__${n}__name`), 'Erika Musterfrau')
-  await tippe(page.locator(`#field-vorstand__${n}__rolle`), 'Jugendwartin')
-  await untertitel('Reihenfolge: am Griff links ziehen')
-  await page.mouse.move(80, 380, { steps: 10 })
-  await untertitel('Oben rechts „Speichern“')
-  await klick(page.locator('#action-save'))
-  await page.waitForTimeout(1500)
-}, async () => {
-  await api.post(`${base}/api/globals/verein`, { data: { vorstand: vereinVorher.vorstand ?? [] } })
-})
-
-await aufnahme('startseite-bilder', admin, async ({ page, untertitel, klick, zeige, gehe }) => {
-  await gehe('/admin/globals/verein')
-  await untertitel('In den Vereinsdaten nach unten zu „Startseite“')
-  // Zum Feld scrollen und Positionen direkt im Browser bestimmen
-  // Payload zeichnet Felder erst, wenn sie ins Bild kommen – darum schrittweise nach unten scrollen
-  await page.mouse.move(700, 450)
-  for (let i = 0; i < 40 && !(await page.getByText('Bilder oben').first().isVisible().catch(() => false)); i++) {
-    await page.mouse.wheel(0, 260)
-    await page.waitForTimeout(140)
-  }
-  const hin = async (text, teil = 'label') =>
-    page.evaluate(
-      ([t, art]) => {
-        const el = [...document.querySelectorAll('*')].find((e) => e.childElementCount <= 1 && e.textContent?.trim().startsWith(t) && e.getBoundingClientRect().height > 0)
-        if (!el) return null
-        el.scrollIntoView({ block: 'center', behavior: 'instant' })
-        const feld = el.closest('.field-type') ?? el.parentElement
-        const ziel = art === 'x' ? [...(feld?.querySelectorAll('button') ?? [])].pop() ?? el : el
-        const r = ziel.getBoundingClientRect()
-        return { x: r.x + r.width / 2, y: r.y + r.height / 2 }
-      },
-      [text, teil],
-    )
-  const fahre = async (p) => {
-    if (p) await page.mouse.move(p.x, p.y, { steps: 20 })
-    await page.waitForTimeout(600)
-  }
-  await fahre(await hin('Bilder oben (4 Stück)'))
-  await untertitel('Ganz oben auf der Startseite: bis zu 4 große Bilder')
-  await page.waitForTimeout(1200)
-  await fahre(await hin('Kachel Fußball'))
-  await untertitel('Darunter die Bilder der Kacheln Fußball, Kids und Fitness')
-  await page.waitForTimeout(1000)
-  await fahre(await hin('Kachel Fußball', 'x'))
-  await untertitel('Austauschen: mit dem × das alte Bild entfernen …')
-  await page.waitForTimeout(1500)
-  await untertitel('… dann „Aus vorhandenen auswählen“ und ein neues Bild wählen')
-  await page.waitForTimeout(1800)
-  await fahre(await hin('Aktion auf der Startseite (grüne Box)'))
-  await untertitel('Weiter unten: die grüne Aktions-Box der Startseite')
-  await page.waitForTimeout(1500)
-  await untertitel('Zum Schluss oben rechts „Speichern“')
-  await zeige(page.locator('#action-save'))
-  await page.waitForTimeout(1500)
-}, async () => {
-  await api.post(`${base}/api/globals/verein`, { data: { startseite: vereinVorher.startseite } })
-})
-
 const texteVorher = await json(api.get(`${base}/api/globals/texte?depth=0`))
-await aufnahme('website-texte', admin, async ({ page, untertitel, klick, tippe, zeige, gehe }) => {
-  await gehe('/admin')
-  await untertitel('Links auf „Website-Texte“ klicken')
-  await klick(page.locator('.nav__link', { hasText: 'Website-Texte' }).first())
-  await untertitel('Oben den Reiter wählen – hier „Startseite“')
-  await zeige(page.locator('.tabs-field__tabs, [class*="tabs-field"]').first())
+await aufnahme('startseite-bilder', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, zeige, gehe, menue }) => {
+  await gehe('/admin/globals/texte')
+  await untertitel('Links unter „Website-Aufbau“ auf „Texte & Bilder“')
+  await menueZeigen('Texte & Bilder')
+  await untertitel('Reiter „Startseite“ – ganz oben „Bilder oben und Kachel-Bilder“', 2200)
+  await zeige(page.locator('#field-heroBilder').first())
+  await untertitel('Bis zu 4 große Bilder ganz oben auf der Startseite', 2000)
+  await untertitel('Austauschen: mit dem × das alte Bild entfernen …', 2000)
+  await zeige(page.locator('#field-heroBilder button').filter({ hasText: '' }).first())
+  await untertitel('… dann „Aus vorhandenen auswählen“ und ein neues Bild wählen', 2200)
+  await zeige(page.locator('#field-heroBilder').getByText('Aus vorhandenen auswählen').first())
+  await untertitel('Darunter die Bilder der Kacheln Fußball, Kids und Fitness', 2000)
+  await zeige(page.locator('#field-bildFussball').first())
+  await untertitel('Zum Schluss oben rechts „Speichern“', 2000)
+  await zeige(page.locator('#action-save'))
+}, null)
+
+await aufnahme('website-texte', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, gehe, menue }) => {
+  await gehe('/admin/globals/texte')
+  await untertitel('Links auf „Texte & Bilder“ klicken')
+  await menueZeigen('Texte & Bilder')
+  await untertitel('Oben den Reiter wählen – Startseite, Fußball, Verein …', 2000)
+  await zeige(page.locator('.tabs-field__tabs').first())
   await untertitel('Den Text im Feld ändern')
-  await tippe(page.locator('#field-heroText'), 'Fußball, Tanz, Turnen und Fitness – für alle Generationen.', true)
-  await untertitel('Platzhalter wie {mitglieder} bitte stehen lassen')
-  await page.waitForTimeout(800)
+  await tippe(page.locator('#field-heroText'), 'Fußball, Tanz, Turnen und Fitness am Rhein – mit über {mitglieder} Mitgliedern.', true)
+  await untertitel('Platzhalter in {geschweiften Klammern} bitte stehen lassen – dort setzt die Website Zahlen ein', 2400)
   await untertitel('Oben rechts „Speichern“')
   await klick(page.locator('#action-save'))
   await page.waitForTimeout(1500)
 }, async () => {
-  await api.post(`${base}/api/globals/texte`, { data: texteVorher })
+  const { id: _i, updatedAt: _u, createdAt: _c, globalType: _g, ...daten } = texteVorher
+  await api.post(`${base}/api/globals/texte`, { data: daten })
 })
 
-await aufnahme('konto-anlegen', admin, async ({ page, untertitel, klick, tippe, waehle, gehe }) => {
-  await gehe('/admin')
-  await untertitel('Links auf „Benutzer“, dann „Neu erstellen“')
-  await klick(page.locator('.nav__link', { hasText: 'Benutzer' }).first())
-  await klick(page.locator('.list-create-new-doc__create-new-button, .list-header__create-new-button').first())
-  await page.waitForLoadState('networkidle')
-  await untertitel('E-Mail und ein vorläufiges Passwort eintragen')
-  await tippe(page.locator('#field-email'), 'neue.uebungsleitung@beispiel.test')
-  await tippe(page.locator('#field-password'), 'Vorlaeufig-2026!')
-  await tippe(page.locator('#field-confirm-password'), 'Vorlaeufig-2026!')
-  await untertitel('Name eintragen und die Rolle wählen')
-  await tippe(page.locator('#field-name'), 'Erika Beispiel')
-  await waehle(page.locator('#field-roles'), 'Übungs')
-  await untertitel('Speichern – danach beim Team als „Verantwortliche“ eintragen')
-  await klick(page.locator('#action-save'))
-  await page.waitForTimeout(1500)
-  merkeId(page)
-}, async () => {
-  const r = await json(api.get(`${base}/api/users?where[email][equals]=neue.uebungsleitung@beispiel.test&depth=0`))
-  for (const d of r.docs ?? []) await api.delete(`${base}/api/users/${d.id}`)
-})
-
-/* Mitgliedsantrag: Testantrag (nur Testdaten, Beispiel-IBAN) anlegen, danach löschen */
-if (!nur.length || nur.includes('antrag-bearbeiten')) {
-  const anonym = await browser.newContext()
-  const r = await anonym.request.post(`${base}/api/mitgliedsantraege`, {
-    data: {
-      vorname: 'Max', nachname: 'Beispiel-Video', geburtsdatum: '1990-05-01', email: 'max@beispiel.test', strasse: 'Musterweg 1', plz: '46487', ort: 'Wesel',
-      mitgliedsart: 'aktiv', kontoinhaber: 'Max Beispiel', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true, website: '',
-    },
-  })
-  if (!r.ok()) console.log('Testantrag konnte nicht angelegt werden:', r.status(), (await r.text()).slice(0, 200))
-  await anonym.close()
-}
-await aufnahme('antrag-bearbeiten', admin, async ({ page, untertitel, klick, waehle, gehe, zeige }) => {
-  await gehe('/admin')
-  await untertitel('Auf der Übersicht siehst du offene Anträge – oder links „Mitgliedsanträge“')
-  await zeige(page.locator('.bsv-dash__karte', { hasText: 'Mitgliedsanträge' }).first())
-  await klick(page.locator('.nav__link', { hasText: 'Mitgliedsanträge' }).first())
-  await untertitel('Den Antrag mit Status „Neu“ öffnen')
-  await klick(page.locator('.table tbody tr').first().locator('a').first())
-  await untertitel('Angaben prüfen: Personen, Angebote, Beitrag, Bankverbindung')
-  await page.mouse.wheel(0, 500)
-  await page.waitForTimeout(1500)
-  await page.mouse.wheel(0, -500)
-  await untertitel('Nach der Übernahme den Status auf „Aufgenommen“ setzen')
-  await waehle(page.locator('#field-status'), 'Aufgen')
-  await untertitel('Speichern')
-  await klick(page.locator('#action-save'))
-  await page.waitForTimeout(1500)
-}, async () => {
-  const r = await json(api.get(`${base}/api/mitgliedsantraege?where[nachname][equals]=Beispiel-Video&depth=0`))
-  for (const d of r.docs ?? []) await api.delete(`${base}/api/mitgliedsantraege/${d.id}`)
-})
-
-await aufnahme('formular-bauen', admin, async ({ page, untertitel, klick, tippe, gehe }) => {
+let formId = null
+await aufnahme('formular-bauen', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, gehe }) => {
+  await gehe('/admin/collections/forms')
+  await untertitel('Am einfachsten: oben eine Vorlage wählen, z. B. „Anmeldung zu einer Veranstaltung“', 2400)
   await gehe('/admin/collections/forms/create')
   await untertitel('1. Einen Namen vergeben (nur intern)')
   await tippe(page.locator('#field-title'), 'Anmeldung Sommerfest')
@@ -533,10 +552,212 @@ await aufnahme('formular-bauen', admin, async ({ page, untertitel, klick, tippe,
   await tippe(page.locator('#field-submitButtonLabel'), 'Anmelden')
   await untertitel('4. Die Danke-Nachricht nach dem Absenden')
   await tippe(page.locator('[contenteditable="true"]').last(), 'Danke! Wir haben deine Anmeldung erhalten.')
-  await untertitel('5. Speichern – dann auf einer Seite den Baustein „Formular“ einfügen')
+  await untertitel('5. Speichern – danach „Neue Seite mit diesem Formular erstellen“', 2200)
   await klick(page.locator('#action-save'))
   await page.waitForTimeout(1500)
-  merkeId(page)
-}, loesche('forms'))
+  formId = neueIdAus(page)
+  await page.locator('.bsv-hinweise').first().scrollIntoViewIfNeeded().catch(() => {})
+  await page.waitForTimeout(1500)
+}, async () => {
+  const r = await json(api.get(`${base}/api/forms?${seitStart}&where[title][equals]=${encodeURIComponent('Anmeldung Sommerfest')}&depth=0&limit=20`))
+  for (const d of r.docs ?? []) await weg('forms', d.id)
+  void formId
+})
+
+/* ================================================================== */
+/* Kasse                                                               */
+/* ================================================================== */
+
+let antragId = null
+if (soll('antrag-bearbeiten'))
+  antragId = await anonym('/api/mitgliedsantraege', {
+    vorname: 'Max', nachname: 'Beispiel', geburtsdatum: '1990-05-01', email: 'max@beispiel.test', telefon: '02131 123456', strasse: 'Musterweg 1', plz: '41460', ort: 'Neuss',
+    mitgliedsart: 'aktiv', angebote: teamId ? [teamId] : [], kontoinhaber: 'Max Beispiel', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true, fotoEinwilligung: true, website: '',
+  })
+await aufnahme('antrag-bearbeiten', kasse, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe, menue }) => {
+  await gehe('/admin/collections/mitgliedsantraege')
+  await untertitel('Neue Anträge siehst du oben auf der Übersicht – oder links „Mitgliedsanträge“', 2200)
+  await menueZeigen('Mitgliedsanträge')
+  await untertitel('Den Antrag mit Status „Neu“ öffnen')
+  await oeffne()
+  await untertitel('1. „Ich kümmere mich“ – so bearbeitet niemand denselben Antrag doppelt', 2200)
+  await klick(page.getByRole('button', { name: /Ich kümmere mich/ }))
+  await untertitel('2. Der Kasten „Antrag prüfen“ zeigt Alter, Beitrag, IBAN und doppelte Anträge', 2600)
+  await zeige(page.locator('.bsv-pruefung'))
+  await page.mouse.wheel(0, 260)
+  await page.waitForTimeout(1200)
+  await untertitel('3. Passt alles? „Aufnehmen“ klicken')
+  await klick(page.getByRole('button', { name: /Aufnehmen/ }).first())
+  await untertitel('Die Willkommens-Mail ist schon geschrieben – hier kannst du sie noch anpassen', 2600)
+  await zeige(page.locator('.bsv-pruefung__dialog textarea'))
+  await untertitel('4. Bestätigen – die Mitgliedschaft für den Ausweis wird automatisch angelegt', 2400)
+  await klick(page.locator('.bsv-pruefung__dialog button').first())
+  await page.waitForTimeout(3500)
+  await untertitel('Im Verlauf steht, wer was wann gemacht hat.', 2200)
+  await zeige(page.locator('.bsv-posteingang__verlauf'))
+}, async () => {
+  if (antragId) {
+    const m = await json(api.get(`${base}/api/mitgliedschaften?where[antrag][equals]=${antragId}&depth=0`))
+    for (const d of m.docs ?? []) await weg('mitgliedschaften', d.id)
+  }
+  await weg('mitgliedsantraege', antragId)
+})
+
+let exportIds = []
+if (soll('antraege-exportieren')) {
+  for (const [vorname, nachname] of [['Lisa', 'Beispiel'], ['Tom', 'Muster']]) {
+    const id = await anonym('/api/mitgliedsantraege', { vorname, nachname, geburtsdatum: '1985-02-02', email: `${vorname.toLowerCase()}@beispiel.test`, strasse: 'Musterweg 2', plz: '41460', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: `${vorname} ${nachname}`, iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true, website: '' })
+    if (id) {
+      exportIds.push(id)
+      await kasse.api.post(`${base}/api/mitgliedsantraege/${id}/entscheidung`, { data: { status: 'aufgenommen' } })
+    }
+  }
+}
+await aufnahme('antraege-exportieren', kasse, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe, menue }) => {
+  await gehe('/admin/collections/mitgliedsantraege')
+  await menueZeigen('Mitgliedsanträge')
+  await untertitel('Oben in der Liste: „Für die Kasse“', 2000)
+  await zeige(page.locator('.bsv-export'))
+  await untertitel('„… neue exportieren“ lädt alle aufgenommenen, noch nicht exportierten Anträge', 2600)
+  await klick(page.locator('.bsv-export button').first())
+  await page.waitForTimeout(1800)
+  await untertitel('Die Datei öffnet sich in Excel – ohne Bankdaten, eine Zeile pro Person', 2600)
+  await zeige(page.locator('.bsv-export [role=status]'))
+  await untertitel('Beim nächsten Mal kommen nur neue Anträge dazu. Datei nach dem Übertragen löschen!', 2800)
+}, async () => {
+  for (const id of exportIds) {
+    const m = await json(api.get(`${base}/api/mitgliedschaften?where[antrag][equals]=${id}&depth=0`))
+    for (const d of m.docs ?? []) await weg('mitgliedschaften', d.id)
+    await weg('mitgliedsantraege', id)
+  }
+})
+
+/* ================================================================== */
+/* Admin                                                               */
+/* ================================================================== */
+
+await aufnahme('konto-anlegen', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, waehle, gehe, menue }) => {
+  await gehe('/admin/collections/users')
+  await untertitel('Links unter „Mitglieder“ auf „Benutzer“, dann „Neu erstellen“', 2000)
+  await menueZeigen('Benutzer')
+  await neu()
+  await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+  await untertitel('1. Name und E-Mail eintragen')
+  await tippe(page.locator('#field-name'), 'Erika Beispiel')
+  await tippe(page.locator('#field-email'), 'erika.beispiel@beispiel.test')
+  await untertitel('2. Ein vorläufiges Passwort vergeben')
+  await tippe(page.locator('#field-password'), 'Vorlaeufig-2027!')
+  await tippe(page.locator('#field-confirm-password'), 'Vorlaeufig-2027!')
+  await untertitel('3. Rollen ankreuzen – hier „Trainer“', 2000)
+  await klick(page.locator('.bsv-rollen-kacheln label', { hasText: 'Trainer' }).first())
+  await untertitel('4. Direkt darunter: für welche Teams? („Team-Berechtigungen“)', 2400)
+  await waehle(page.locator('#field-teamsVerantwortlich'), 'F1')
+  await untertitel('Oben zeigt „Was darf diese Person?“ in Klartext, was die Rollen erlauben', 2600)
+  await zeige(page.locator('.bsv-wasdarf, [class*="wasdarf"]').first())
+  await untertitel('5. Speichern – die Person richtet beim ersten Login die Zwei-Faktor-Anmeldung ein', 2600)
+  await klick(page.locator('#action-save'))
+  await page.waitForTimeout(1500)
+}, async () => {
+  const r = await json(api.get(`${base}/api/users?where[email][equals]=erika.beispiel@beispiel.test&depth=0`))
+  for (const d of r.docs ?? []) await api.delete(`${base}/api/users/${d.id}`)
+})
+
+/* Bestehendem Konto Team-Rechte geben (statt früher „Verantwortliche“ beim Team) */
+const passwesenKonto = (await json(api.get(`${base}/api/users?where[email][equals]=passwesen@bsv.test&depth=0`))).docs[0]
+await aufnahme('team-verantwortliche', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, waehle, gehe, menue }) => {
+  await gehe('/admin/collections/users')
+  await untertitel('Links auf „Benutzer“ und die Person öffnen')
+  await menueZeigen('Benutzer')
+  await gehe(`/admin/collections/users/${passwesenKonto.id}`)
+  await untertitel('Unter „Rollen“: „Trainer“ (oder „Team-Redaktion“) ankreuzen', 2200)
+  await klick(page.locator('.bsv-rollen-kacheln label', { hasText: 'Trainer' }).first())
+  await untertitel('Direkt darunter bei „Team-Berechtigungen“ das Team wählen', 2200)
+  await waehle(page.locator('#field-teamsVerantwortlich'), 'F1')
+  await untertitel('„Teams & Kurse“ weiter unten ist nur, wo die Person selbst mitspielt – gibt keine Rechte', 2800)
+  await zeige(page.locator('#field-angebote'))
+  await untertitel('Speichern – ab jetzt darf die Person dieses Team pflegen', 2000)
+  await zeige(page.locator('#action-save'))
+}, null)
+
+const vereinVorher = await json(api.get(`${base}/api/globals/verein?depth=0`))
+await aufnahme('vorstand', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, tippe, zeige, gehe, menue }) => {
+  await gehe('/admin/globals/verein')
+  await untertitel('Links unter „Einstellungen“ auf „Vereinsdaten“')
+  await menueZeigen('Vereinsdaten')
+  const knopf = page.getByRole('button', { name: /Person hinzufügen/ }).first()
+  await untertitel('Nach unten zu „Vorstand und Ansprechpersonen“')
+  await zeige(knopf)
+  await untertitel('„Person hinzufügen“ klicken')
+  await klick(knopf)
+  const n = (vereinVorher.vorstand ?? []).length
+  await untertitel('Name und Funktion eintragen')
+  await tippe(page.locator(`#field-vorstand__${n}__name`), 'Erika Musterfrau')
+  await tippe(page.locator(`#field-vorstand__${n}__rolle`), 'Jugendwartin')
+  await untertitel('Reihenfolge: am Griff links ziehen', 1800)
+  await untertitel('Oben rechts „Speichern“')
+  await zeige(page.locator('#action-save'))
+}, null)
+
+let regId = null
+if (soll('registrierung-freigeben')) {
+  const r = await api.post(`${base}/api/users`, { data: { email: 'jan.beispiel@beispiel.test', name: 'Jan Beispiel', password: 'Beispiel-2027!', roles: ['mitglied'], freigegeben: false, registriertUeber: 'website', emailBestaetigt: true } })
+  regId = (await r.json()).doc?.id ?? null
+  if (!regId) console.log('Testregistrierung konnte nicht angelegt werden')
+}
+await aufnahme('registrierung-freigeben', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe, menue }) => {
+  await gehe('/admin/registrierungen')
+  await untertitel('Neue Registrierungen: links unter „Posteingang“', 2000)
+  await menueZeigen('Registrierungen')
+  await untertitel('Prüfen: Kennst du die Person? Ist die E-Mail bestätigt?', 2400)
+  await zeige(page.locator('.bsv-reg__kopf').first())
+  await untertitel('Teams anhaken, in denen die Person mitmacht – Wünsche sind markiert', 2400)
+  await zeige(page.locator('.bsv-reg__teams').first())
+  await untertitel('„Freigeben“ – die Person bekommt eine E-Mail und kann sich anmelden', 2400)
+  await klick(page.locator('.bsv-reg__ja').first())
+  await page.waitForTimeout(1500)
+  await untertitel('Den Ausweis bekommt sie über „Mitgliedschaften“ (gleiche E-Mail wird automatisch verknüpft).', 2800)
+}, async () => {
+  if (regId) await api.delete(`${base}/api/users/${regId}`)
+})
+
+let korbId = null
+if (soll('papierkorb')) {
+  korbId = await anonym('/api/kontaktanfragen', { name: 'Versehentlich Gelöscht', email: 'geloescht@beispiel.test', betreff: 'Bitte zurückholen', nachricht: 'Diese Nachricht wurde aus Versehen gelöscht.', datenschutz: true })
+  // So wie „Löschen“ in der Liste: in den Papierkorb des Bereichs (nicht endgültig)
+  if (korbId) await api.patch(`${base}/api/kontaktanfragen/${korbId}`, { data: { deletedAt: new Date().toISOString() } })
+}
+await aufnahme('papierkorb', admin, async ({ page, neu, oeffne, menueZeigen, untertitel, klick, zeige, gehe, menue }) => {
+  await gehe('/admin/collections/kontaktanfragen')
+  await untertitel('Etwas aus Versehen gelöscht? Die Liste des Bereichs öffnen', 2200)
+  await menueZeigen('Kontaktanfragen')
+  await untertitel('Oben rechts auf „Papierkorb“')
+  await klick(page.getByRole('link', { name: 'Papierkorb' }).or(page.getByRole('button', { name: 'Papierkorb' })).first())
+  await page.waitForLoadState('networkidle', { timeout: 8000 }).catch(() => {})
+  await untertitel('Den Eintrag öffnen …')
+  await oeffne('Bitte zurückholen')
+  await untertitel('… und „Wiederherstellen“ klicken. 30 Tage lang geht das.', 2400)
+  const w = page.getByRole('button', { name: /Wiederherstellen/ }).first()
+  await klick(w)
+  await page.waitForTimeout(800)
+  const best = page.locator('.confirmation-modal button, [role=dialog] button').filter({ hasText: /Wiederherstellen|Bestätigen/ }).first()
+  if (await best.count()) await klick(best)
+  await page.waitForTimeout(1500)
+  await untertitel('Fertig – der Eintrag ist wieder da.', 2000)
+}, async () => {
+  // So wie „Löschen“ in der Liste: in den Papierkorb des Bereichs (nicht endgültig)
+  if (korbId) await api.patch(`${base}/api/kontaktanfragen/${korbId}`, { data: { deletedAt: new Date().toISOString() } })
+})
 
 await browser.close()
+
+/* ---------- Umwandeln (optional) ---------- */
+if (process.env.BSV_FERTIG) {
+  for (const { name, ok, schnitt } of ergebnisse) {
+    if (!ok) continue
+    const roh = `${OUT}/${name}.webm`
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', String(schnitt.toFixed(2)), '-i', roh, '-vf', 'scale=1152:-2', '-c:v', 'libx264', '-crf', '28', '-pix_fmt', 'yuv420p', '-movflags', '+faststart', '-an', `public/hilfe/${name}.mp4`])
+    execFileSync('ffmpeg', ['-y', '-loglevel', 'error', '-ss', String((schnitt + 2.5).toFixed(2)), '-i', roh, '-frames:v', '1', '-vf', 'scale=960:-2', '-q:v', '4', `public/hilfe/${name}.jpg`])
+    console.log(`→ public/hilfe/${name}.mp4`)
+  }
+}
+console.log(ergebnisse.map((e) => `${e.ok ? '✓' : '✗'} ${e.name}`).join('\n'))

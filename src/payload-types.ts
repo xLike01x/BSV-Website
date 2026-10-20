@@ -284,7 +284,7 @@ export interface User {
     'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
   )[];
   /**
-   * Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.
+   * Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten, Ausfälle), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.
    */
   teamsVerantwortlich?: (number | Angebote)[] | null;
   /**
@@ -3790,6 +3790,7 @@ export interface Hilfe {
           | 'users'
           | 'menue'
           | 'verein'
+          | 'registrierungen'
           | 'papierkorb'
           | 'statistik'
           | 'sicherheit'
@@ -3807,6 +3808,8 @@ export interface Hilfe {
           | 'sponsoren'
           | 'alben'
           | 'gesuche'
+          | 'profilbilder'
+          | 'passdokumente'
           | 'hilfe-center'
           | 'hilfe'
           | 'hilfe-feedback'
@@ -3861,6 +3864,7 @@ export interface Hilfe {
               | 'users'
               | 'menue'
               | 'verein'
+              | 'registrierungen'
               | 'papierkorb'
               | 'statistik'
               | 'sicherheit'
@@ -3878,6 +3882,8 @@ export interface Hilfe {
               | 'sponsoren'
               | 'alben'
               | 'gesuche'
+              | 'profilbilder'
+              | 'passdokumente'
               | 'hilfe-center'
               | 'hilfe'
               | 'hilfe-feedback'

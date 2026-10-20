@@ -22,7 +22,10 @@ export default async function Kurzanleitung({ initPageResult, params, searchPara
   const profil = ROLLEN_PROFIL[rolle]
   const anleitungen = profil.anleitungen.map(([b, id]) => anleitungFinden(b, id)).filter(Boolean)
   const global = (await req.payload.findGlobal({ slug: 'hilfe', depth: 0, user, overrideAccess: false }).catch(() => null)) as HilfeGlobal | null
-  const fragen = FAQ.filter((f) => !f.bereich || ['posts', 'media', 'ausfaelle', 'users'].includes(f.bereich)).slice(0, 5)
+  // Je Rolle eigene Fragen (z. B. Kasse: Export und Bankdaten, Trainer: Ausfall vom Handy)
+  const fragen = profil.faq?.length
+    ? profil.faq.map((t) => FAQ.find((f) => f.frage === t)).filter((f): f is (typeof FAQ)[number] => Boolean(f))
+    : FAQ.filter((f) => !f.bereich || ['posts', 'media', 'ausfaelle', 'users'].includes(f.bereich)).slice(0, 5)
   const stand = new Intl.DateTimeFormat('de-DE', { month: 'long', year: 'numeric' }).format(new Date())
 
   return (

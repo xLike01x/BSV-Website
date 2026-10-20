@@ -22,9 +22,12 @@ export const HILFE: Record<string, HilfeText> = {
     titel: 'Übersicht',
     kurz: 'Deine Startseite in der Verwaltung. Hier siehst du auf einen Blick, was im Verein gerade los ist.',
     tun: [
-      'Oben siehst du Zahlen, z. B. neue Mitgliedsanträge. Ein Klick darauf öffnet direkt die passende Liste.',
-      'Unter „Schnellzugriff“ startest du die häufigsten Aufgaben, z. B. eine News schreiben.',
-      '„Letzte Aktivitäten“ zeigt, was zuletzt geändert wurde.',
+      'Ganz oben: „Du bist …“ – aufklappen zeigt, was deine Rolle darf, mit Knopf „Kurzanleitung“ zum Ausdrucken.',
+      'Darunter Hinweise, was gerade zu tun ist (z. B. neue Anträge, fehlende Trainingszeiten) – „Prüfen ›“ öffnet die Stelle.',
+      '„Erste Schritte“: eine kleine Checkliste für den Start.',
+      'Redaktion: „⭐ Für die Startseite vorgeschlagen“ – mit „Auf die Startseite“ oder „Nein, danke“ entscheiden.',
+      'Trainer und Team-Redaktion: „Mein Team“ mit Zeiten, Ausfällen, offenen Anfragen und News – Knöpfe „+ News“, „Ausfall melden“, „Zeiten & Infos“.',
+      'Die Zahlen-Karten öffnen per Klick die passende Liste. Dazu „Schnellzugriff“ für die häufigsten Aufgaben, „Letzte Aktivitäten“ und ganz unten „Alle Bereiche“.',
       'Links in der Seitenleiste findest du alle Bereiche, die du bearbeiten darfst – sortiert nach Posteingang, Inhalte, Website-Aufbau, Sport, Mitglieder und Einstellungen.',
       'Eine orange Zahl im „Posteingang“ zeigt, wie viele neue Anträge und Anfragen auf dich warten.',
     ],
@@ -93,7 +96,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Bilder oder PDFs hochladen – einfach per Drag & Drop oder über „Neu erstellen“.',
       'Eine kurze Bildbeschreibung eingeben: Was ist auf dem Bild zu sehen?',
       'Pflicht beim Hochladen: angeben, ob Personen zu erkennen sind – und wenn ja, dass die Einwilligung vorliegt (bei Kindern von den Eltern).',
-      'Ein Team zuordnen und „In Galerie zeigen“ anhaken, damit das Bild in der Galerie des Teams erscheint.',
+      'Ein Team zuordnen und „In der Bildergalerie des Teams zeigen“ anhaken, damit das Bild in der Galerie des Teams erscheint.',
       'Oben im Kasten „Ordner“ ein Team anklicken, um nur dessen Bilder zu sehen.',
       'Verschieben: ein Bild unten in der Liste mit der Maus auf einen Ordner ziehen. Angehakte Bilder wandern zusammen. Danach kannst du es mit „Rückgängig“ zurücknehmen.',
       'Oder: Bild öffnen → rechts „Ordner (Team / Kurs)“. Bilder ohne Team für alle Trainer freigeben: Haken „Verein allgemein“.',
@@ -103,7 +106,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Hochgeladene Bilder kannst du überall auswählen – in News, Seiten, bei Teams und Kursen.',
-      'Bilder mit „In Galerie zeigen“ erscheinen auf der Seite des Teams.',
+      'Bilder mit „In der Bildergalerie des Teams zeigen“ erscheinen auf der Seite des Teams.',
       'Trainer können nur Bilder ihrer Teams und aus „Verein allgemein“ auswählen. „Verein allgemein“ dürfen sie benutzen, aber nicht ändern.',
       'Verschieben ändert nichts auf der Website: Ein Bild bleibt in jeder News, auf jeder Seite und bei jedem Team, wo es schon eingebaut ist.',
       'Einzige Ausnahme: Hat das Bild den Haken „In der Bildergalerie des Teams zeigen“, erscheint es danach in der Galerie des neuen Teams.',
@@ -154,7 +157,7 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: ['Neue Kategorie anlegen oder vorhandene umbenennen.', 'In einer News kannst du dann eine oder mehrere Kategorien auswählen.'],
     wirkung: ['Auf der News-Seite können Besucher nach diesen Kategorien filtern.'],
-    tipps: ['Lieber wenige, klare Kategorien als viele ähnliche.'],
+    tipps: ['Lieber wenige, klare Kategorien als viele ähnliche.', 'In der Seitenleiste sehen Kategorien nur Admins (unter „Website-Aufbau“); die Redaktion wählt sie in der News aus.'],
   },
 
   angebote: {
@@ -167,8 +170,9 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       'Name, Altersangabe, Beschreibung und Titelbild pflegen.',
       'Unter „Trainingszeiten“ Tag, Uhrzeit und Ort eintragen.',
-      'Unter „Verantwortliche“ die Benutzerkonten auswählen, die dieses Team pflegen dürfen.',
-      'Mit „Aktiv“ blendest du ein Angebot ein oder aus.',
+      'Unter „Verantwortliche“ die Benutzerkonten auswählen, die dieses Team pflegen dürfen (Admin und Redaktion; Admins auch beim Benutzer unter „Team-Berechtigungen“).',
+      'Kurzer Hinweis oben auf der Teamseite (z. B. „Heute in Halle 2“): „Hinweis-Banner auf der Teamseite“.',
+      'Mit „Aktiv (öffentlich sichtbar)“ blendest du ein Angebot ein oder aus (Admin und Redaktion).',
     ],
     wirkung: [
       'Jedes aktive Angebot hat eine eigene Seite und erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.',
@@ -188,7 +192,12 @@ export const HILFE: Record<string, HilfeText> = {
       text: 'Damit niemand umsonst zum Training kommt. Der Ausfall erscheint sofort auf der Teamseite.',
       beispiele: ['„Training fällt aus – Halle belegt“', 'Ferienpause', 'Platz gesperrt nach Unwetter'],
     },
-    tun: ['Team oder Kurs wählen, Datum eintragen und den Grund auswählen.', 'Ist der Ausfall vorbei, verschwindet er von selbst.'],
+    tun: [
+      'Am schnellsten: oben im Kasten „Schnell melden“ Team, Tag (Heute, Morgen oder Übermorgen) und Grund wählen und „Ausfall melden“ klicken.',
+      'Oder „Neu erstellen“: Team oder Kurs wählen, Datum eintragen und den Grund auswählen – optional mit „Hinweis an die Teilnehmenden“.',
+      'Vom Handy geht es auch im Mitgliederbereich: beim Team „Ausfall melden“.',
+      'Ist der Ausfall vorbei, verschwindet er von selbst.',
+    ],
     wirkung: [
       'Der Ausfall erscheint sofort gut sichtbar auf der Seite des Teams und im Mitgliederbereich.',
       'Eltern und Mitglieder sehen so schnell, dass sie nicht kommen müssen.',
@@ -204,7 +213,6 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Eltern melden ihr Kind zum Schnuppertraining an', 'Erwachsene fragen nach einer Probestunde'],
     },
     tun: [
-      'Am schnellsten: oben „Schnell melden“ – Team, Tag (Heute/Morgen) und Grund wählen, fertig.',
       'Neue Anfragen öffnen und lesen. Oben im Kasten „Wer kümmert sich?“ auf „🙋 Ich kümmere mich“ klicken – dann sehen alle, dass du dran bist.',
       'Mit „✉️ Antworten“ öffnet sich dein E-Mail-Programm mit Adresse und Betreff. Danach kurz eine Notiz schreiben („Zugesagt für Dienstag“).',
       'Den Status ändern, z. B. auf „Zugesagt“ oder „Erledigt“.',
@@ -278,10 +286,10 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Wird ein Mitgliedsantrag auf „Aufgenommen“ gesetzt, entsteht der Eintrag automatisch (auch für Familienmitglieder). Du ergänzt nur noch die Mitgliedsnummer.',
-      'Für Mitglieder ohne Online-Antrag: „Neu erstellen“, Name, Nummer, „Mitglied seit“, Art und die E-Mail eintragen.',
+      'Für Mitglieder ohne Online-Antrag: „Neu erstellen“, Name, Nummer, „Mitglied seit“, Art („Mitgliedschaft“) und die E-Mail eintragen.',
       'Sichtbar wird der Ausweis im verknüpften Benutzerkonto. Das passiert automatisch, wenn du eine Registrierung mit gleicher E-Mail freigibst – oder du wählst das Konto bei „Benutzerkonto“ selbst aus.',
       'Bei Kindern das Konto der Eltern verknüpfen – dann erscheinen alle Ausweise der Familie dort.',
-      'Austritt: „Gültig bis“ setzen oder den Haken „Mitgliedschaft gültig“ entfernen.',
+      'Austritt: „Gültig bis (Austritt)“ setzen oder den Haken „Mitgliedschaft gültig“ entfernen.',
     ],
     wirkung: [
       'Der Ausweis aktualisiert sich sofort – Kurse, Gültigkeit und Daten kommen immer frisch aus diesen Einträgen.',
@@ -318,12 +326,12 @@ export const HILFE: Record<string, HilfeText> = {
       'Rollen wählst du per Kachel mit Häkchen. Jede Kachel erklärt in einer Zeile, wofür die Rolle gedacht ist.',
       'Neue Konten anlegen und Rollen vergeben.',
       'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Einstellungen“ → „Rollen & Rechte“.',
-      'Einzelne Rechte nur für diese Person: beim Benutzer unten „Zusatzrechte nur für diese Person“ – Häkchen setzen, speichern (nur Web-Admin). Für Ausnahmen, wenn eine ganze Rolle zu viel wäre.',
+      'Einzelne Rechte nur für diese Person: beim Benutzer unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen – Häkchen setzen, speichern. Vergeben kann das nur ein Web-Admin; Admins sehen den Abschnitt nur, wenn die Person schon Zusatzrechte hat.',
       'Über die Rolle legst du fest, was jemand darf:',
-      '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
-      '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
+      '• Web-Admin: Technik, Admin-Konten, Datensicherung · Admin: alles im Verein außer Admin-Rechte',
+      '• Redaktion: alle News, Termine, Seiten, Menü, Texte & Bilder, Sponsoren, Kontaktanfragen · Kasse: Mitgliedsanträge, Mitgliedschaften, Registrierungen · Passwesen: Passanträge aller Teams',
       '• Trainer / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
-      'Welche Teams jemand pflegt, wählst du direkt beim Benutzer unter „Team-Berechtigungen“ (oder beim Team unter „Verantwortliche“).',
+      'Welche Teams jemand pflegt, wählst du direkt unter den Rollen bei „Team-Berechtigungen“ (nur Admins) – oder beim Team unter „Verantwortliche“.',
       'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Posteingang → Registrierungen“ auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
     ],
     wirkung: [
@@ -345,14 +353,15 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Seite „Sommerfest“ oben ins Menü', '„Fan-Shop“ als Link auf eine fremde Website', 'YouTube-Kanal in der Fußzeile'],
     },
     tun: [
-      'Oben prüft ein Kasten automatisch: Sind alle verlinkten Seiten veröffentlicht? Sind es zu viele Einträge?',
+      'Oben prüft ein Kasten automatisch: Sind alle verlinkten Seiten veröffentlicht? Sind es zu viele Einträge? Er zeigt auch Seiten, die noch nirgends verlinkt sind – „+ In die Fußzeile“ oder „+ Ins Menü „Verein““ trägt sie mit einem Klick ein.',
       'Reiter „Hauptmenü oben“: alle Einträge der Menüleiste, von links nach rechts.',
       'Reihenfolge ändern: einen Eintrag am Griff links (sechs Punkte) nach oben oder unten ziehen. Oben = weiter links auf der Website.',
       'Entfernen: rechts am Eintrag auf die drei Punkte (⋯) → „Entfernen“.',
-      'Hinzufügen: unten „Eintrag hinzufügen“, Text eingeben und wählen, was er tun soll: Seite öffnen, Adresse öffnen oder Aufklappmenü zeigen.',
+      'Hinzufügen: unten „Eintrag hinzufügen“, Text eingeben und wählen, was er tun soll: „Seite aus „Seiten“ öffnen“, „Adresse öffnen“ oder „Aufklappmenü zeigen“.',
+      'Reiter „Aufklappmenü „Fußball““ und „Aufklappmenü „Breitensport““: Die Teams kommen automatisch aus „Teams & Kurse“. Am Griff ziehen ändert die Reihenfolge sofort, dazu der Text links im Aufklappmenü.',
       'Reiter „Aufklappmenü Verein“: die beiden Spalten, die beim Darüberfahren über „Verein“ erscheinen.',
       'Reiter „Fußzeile unten“: die Spalten mit Links ganz unten auf jeder Seite.',
-      'Darunter „Kontakt-Spalte“: Überschrift, Adresse ein/aus und beliebig viele Links – z. B. Instagram, Facebook, YouTube oder WhatsApp-Kanal.',
+      'Darunter „Kontakt-Spalte (ganz rechts)“: „Kontakt-Spalte anzeigen“, Überschrift, „Adresse des Sportplatzes anzeigen“ und beliebig viele „Links unter der Adresse“ – z. B. Instagram, Facebook, YouTube oder WhatsApp-Kanal.',
     ],
     wirkung: [
       'Nach dem Speichern ist das neue Menü nach kurzer Zeit auf der ganzen Website sichtbar.',
@@ -386,6 +395,26 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: ['Fotos vom Vorstand nur mit Einverständnis.', 'Keine privaten Telefonnummern eintragen – Kontakt läuft über das Formular.'],
   },
 
+  registrierungen: {
+    titel: 'Registrierungen',
+    kurz: 'Hier gibst du Personen frei, die sich selbst auf der Website registriert haben.',
+    wozu: {
+      text: 'Wer sich auf der Website registriert, kommt erst nach deiner Freigabe in den Mitgliederbereich – so bleiben Ausfälle, Termine und Ausweise unter Mitgliedern.',
+      beispiele: ['Ein Elternteil möchte die Ausfälle der F1 sehen', 'Ein neues Mitglied will seinen digitalen Ausweis'],
+    },
+    tun: [
+      'Prüfen, ob du die Person kennst und ob die E-Mail-Adresse bestätigt ist (✓). Der Hinweis „Mitgliedsantrag mit dieser E-Mail vorhanden“ hilft.',
+      'Die Teams anhaken, in denen sie mitmacht – ihre Wünsche sind schon angehakt („Wunsch“). „Alle Teams & Kurse zeigen“ klappt den Rest auf.',
+      '„Freigeben“ oder „Ablehnen“ klicken.',
+    ],
+    wirkung: [
+      'Nach der Freigabe bekommt die Person eine E-Mail und kann sich anmelden – mit der Rolle „Mitglied“.',
+      'Gibt es eine Mitgliedschaft mit derselben E-Mail, erscheint der Ausweis automatisch in ihrem Konto.',
+      'Abgelehnte Registrierungen werden gelöscht.',
+    ],
+    tipps: ['Nicht freigegebene Registrierungen verschwinden nach 60 Tagen, unbestätigte nach 7 Tagen von selbst.', 'Unbekannte Namen oder seltsame Adressen lieber ablehnen – die Person kann sich jederzeit über das Kontaktformular melden.', 'Teams lassen sich später unter „Benutzer“ bei „Teams & Kurse“ ändern.'],
+  },
+
   papierkorb: {
     titel: 'Papierkorb (Web-Admin)',
     kurz: 'Alles Gelöschte aus allen Bereichen an einer Stelle – filtern, ansehen, wiederherstellen oder endgültig löschen. Nur für Web-Admins.',
@@ -402,7 +431,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Was jemand außer dir endgültig löscht oder 30 Tage im normalen Papierkorb lag, landet hier – für alle anderen ist es weg.',
-      'Nach der Frist unter Einstellungen → „Sicherheit“ (Standard 1 Jahr) wird es automatisch endgültig gelöscht.',
+      'Endgültig gelöscht wird automatisch: persönliche Daten nach der Frist unter Einstellungen → „Datenschutz-Fristen“ (Standard 30 Tage), alles andere nach der Frist unter „Sicherheit“ (Standard 1 Jahr).',
     ],
     tipps: ['Was du selbst endgültig löschst, ist sofort weg.', 'Anträge und Anfragen enthalten persönliche Daten – nicht unnötig lange aufheben.'],
   },
@@ -436,9 +465,13 @@ export const HILFE: Record<string, HilfeText> = {
       text: 'Schützt, wenn jemand vergisst, sich abzumelden – z. B. am Computer im Vereinsheim.',
       beispiele: ['Nach 30 Minuten abmelden', '5 Minuten vorher warnen'],
     },
-    tun: ['Minuten eintragen, Warnzeit eintragen, oben rechts „Speichern“.'],
+    tun: [
+      'Minuten bis zum Abmelden und die Warnzeit eintragen.',
+      'Bei „Web-Admin-Papierkorb: endgültig löschen nach … Tagen“ festlegen, wie lange Gelöschtes (außer persönlichen Daten) zurückholbar bleibt.',
+      'Oben rechts „Speichern“.',
+    ],
     wirkung: ['Gilt für alle in der Verwaltung, ab dem nächsten Seitenaufruf.', 'Vor der Abmeldung erscheint „Bist du noch da?“ mit „Angemeldet bleiben“.', 'Unabhängig davon endet jede Anmeldung spätestens nach 8 Stunden.'],
-    tipps: ['30 Minuten sind ein guter Kompromiss zwischen Sicherheit und Bequemlichkeit.'],
+    tipps: ['30 Minuten sind ein guter Kompromiss zwischen Sicherheit und Bequemlichkeit.', '„Automatisches Abmelden ausschalten“ ist nicht empfohlen.'],
   },
 
   texte: {
@@ -565,7 +598,8 @@ export const HILFE: Record<string, HilfeText> = {
       'Nur Web-Admins sehen die Datensicherung – die Datei enthält alle Daten, auch die Zugänge.',
       'Die Datei enthält persönliche Daten – nicht per E-Mail verschicken.',
       'Nur selbst erstellte Sicherungen einspielen – nie eine Datei, die dir jemand schickt.',
-      'IBANs lassen sich nur mit dem ENCRYPTION_KEY aus der .env lesen. Den Schlüssel getrennt aufbewahren.',
+      'Die ganze Sicherungsdatei (Endung .tar.gz.enc) ist verschlüsselt und lässt sich nur mit dem ENCRYPTION_KEY aus der .env öffnen. Den Schlüssel getrennt aufbewahren.',
+      'Auf der Live-Website wird jeden Tag automatisch gesichert.',
     ],
   },
 
@@ -589,11 +623,12 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Erledigte Kontaktanfragen nach 6 Monaten', 'Mitgliedsanträge nach der Übernahme in die Mitgliederverwaltung', 'Anmeldungen zum Sommerfest nach einem Jahr'],
     },
     tun: [
-      'Oben siehst du, was gerade über der Frist ist – „Jetzt in den Papierkorb verschieben“ räumt auf.',
+      'Oben siehst du, was gerade über der Frist ist – „🧹 Jetzt aufräumen“ verschiebt es in den Papierkorb.',
       'Fristen in Monaten anpassen und speichern.',
       'Optional „Automatisch aufräumen“ anhaken – dann passiert das einmal täglich von selbst.',
+      'Unten „Auskunft für eine Person“ (Admins): E-Mail eingeben, „📄 Auskunft herunterladen“.',
     ],
-    wirkung: ['Aufgeräumtes landet zuerst im Papierkorb und lässt sich 30 Tage zurückholen. Danach ist es endgültig weg.'],
+    wirkung: ['Aufgeräumtes landet zuerst im Papierkorb und lässt sich 30 Tage zurückholen. Danach liegt es im Web-Admin-Papierkorb und wird nach der Frist „Web-Admin-Papierkorb – persönliche Daten“ (Standard 30 Tage) endgültig gelöscht.'],
     tipps: ['Mitgliedsanträge erst aufräumen, wenn die Daten in die Mitgliederverwaltung übernommen sind.'],
   },
 
@@ -631,7 +666,7 @@ export const HILFE: Record<string, HilfeText> = {
     titel: 'Sponsoren',
     kurz: 'Alle Sponsoren und Partner des Vereins – für die Seite „Sponsoren“ und das Logo-Laufband auf der Startseite.',
     wozu: { text: 'Sponsoren freuen sich über Sichtbarkeit. Hier pflegst du sie an einer Stelle.', beispiele: ['Neuer Trikotsponsor', 'Bandenwerbung', 'Förderer der Jugend'] },
-    tun: ['„Neu erstellen“: Name, Logo, Website, kurzer Text.', 'Rechts die Art wählen (Premium, Partner, Förderer) und die Reihenfolge.', '„Im Laufband“ anhaken, damit das Logo auf der Startseite mitläuft.'],
+    tun: ['„Neu erstellen“: Name, Logo, Website, kurzer Text.', 'Rechts die Art wählen (Hauptsponsor, Premium-Partner, Partner, Förderer & Freunde) und die Reihenfolge.', '„Im Laufband auf der Startseite“ anhaken, damit das Logo auf der Startseite mitläuft.'],
     wirkung: [
       'Ein Sponsor mit der Art „Hauptsponsor“ steht groß ganz oben auf /sponsoren und zusätzlich unten in der Fußzeile jeder Seite.',
       'Darunter alle anderen als Kacheln (Logo, Art, Name, Text, Link): erst Premium, dann Partner, dann Förderer.',
@@ -663,6 +698,22 @@ export const HILFE: Record<string, HilfeText> = {
     wirkung: ['Erscheint unter /mitmachen mit Knopf „Ich bin dabei“ – Meldungen landen bei den Kontaktanfragen.'],
   },
 
+  profilbilder: {
+    titel: 'Profilfotos',
+    kurz: 'Fotos, die Mitglieder im Mitgliederbereich von sich hochladen – nie öffentlich.',
+    tun: ['Nur ansehen oder bei Bedarf löschen. Hochladen und ändern macht das Mitglied selbst.'],
+    wirkung: ['Sichtbar für das Mitglied, Admin und Kasse sowie die Trainer seiner Kurse (im Team unter „Mitglieder in diesem Team / Kurs“).'],
+    tipps: ['Auf der Vereinsseite erscheint ein Profilfoto nur, wenn beim Vorstand „Profilfoto aus dem Konto auf der Vereinsseite zeigen“ angehakt ist – und nur mit Einverständnis.', 'Gelöschte Profilfotos sind sofort weg (kein Papierkorb).'],
+  },
+
+  passdokumente: {
+    titel: 'Pass-Unterlagen',
+    kurz: 'Die einzelnen Dateien zu den Passanträgen (Ausweis, Passfoto, Erklärungen).',
+    tun: ['Normalerweise öffnest du sie direkt im Passantrag unter „Unterlagen“.'],
+    wirkung: ['Ausweis, Foto und Erklärungen werden nach Abschluss automatisch gelöscht (Standard 30 Tage), der unterschriebene Antrag nach 2 Jahren.'],
+    tipps: ['Nichts herunterladen oder weiterleiten, was nicht für das DFBnet nötig ist.'],
+  },
+
   'hilfe-center': {
     titel: 'Hilfe-Center',
     kurz: 'Alle Anleitungen und häufigen Fragen an einem Ort – mit Suche.',
@@ -686,7 +737,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Eure Ergänzungen erscheinen sofort im „? Hilfe“-Fenster und im Hilfe-Center.',
       'Die eingebauten Texte bleiben immer erhalten.',
     ],
-    tipps: ['Schaut unter „Hilfe-Rückmeldungen“, welche Hilfen als nicht hilfreich markiert wurden.'],
+    tipps: ['Schaut unter „Hilfe-Rückmeldungen“ (nur Admins), welche Hilfen als nicht hilfreich markiert wurden.'],
   },
   'hilfe-feedback': {
     titel: 'Hilfe-Rückmeldungen',
@@ -698,7 +749,12 @@ export const HILFE: Record<string, HilfeText> = {
   account: {
     titel: 'Mein Konto',
     kurz: 'Deine eigenen Kontodaten.',
-    tun: ['Namen und E-Mail-Adresse ändern.', 'Ein neues Passwort setzen.'],
+    tun: [
+      'Namen und E-Mail-Adresse ändern.',
+      '„Passwort ändern“: neues Passwort zweimal und dein aktuelles Passwort eingeben.',
+      '„E-Mail-Benachrichtigungen“: Haken entfernen, wenn du keine Mails zu neuen Anfragen willst.',
+      'Dein Profilfoto lädst du im Mitgliederbereich hoch („Zum Mitgliederbereich“ im Menü oben rechts).',
+    ],
     wirkung: ['Der Name erscheint unten links in der Seitenleiste.'],
     tipps: ['Ein gutes Passwort ist lang – z. B. ein Satz mit mehreren Wörtern.'],
   },
@@ -708,7 +764,7 @@ export const HILFE: Record<string, HilfeText> = {
 export const HILFE_BEARBEITEN = [
   'Pflichtfelder sind mit einem roten Sternchen markiert.',
   'Erst mit „Speichern“ bzw. „Veröffentlichen“ oben rechts wird etwas übernommen.',
-  'Über das Drei-Punkte-Menü oben rechts kannst du einen Eintrag duplizieren oder löschen.',
+  'Über das Drei-Punkte-Menü oben rechts kannst du einen Eintrag löschen und – außer bei Einträgen mit persönlichen Daten – duplizieren.',
 ]
 
 /** Zusatzhinweis in Listen */
@@ -716,4 +772,6 @@ export const HILFE_LISTE = [
   'Mit „Neu erstellen“ legst du einen Eintrag an, mit einem Klick auf den Titel bearbeitest du ihn.',
   'Über das Suchfeld und „Filter“ findest du Einträge schneller.',
   'Mehrere Einträge auf einmal: links die Kästchen anhaken.',
+  'Im Posteingang filtern die Reiter oben nach Status: Neu, In Arbeit, Erledigt, Alle.',
+  'Oben rechts „Papierkorb“ zeigt Gelöschtes der letzten 30 Tage – dort lässt es sich wiederherstellen.',
 ]
