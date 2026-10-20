@@ -851,6 +851,16 @@ export const FAQ: Faq[] = [
     bereich: 'pages',
   },
   {
+    frage: 'Wo sehe ich, wie viele Menschen die Website besuchen?',
+    antwort: 'Einstellungen → „Besucherstatistik“ (nur Web-Admins). Dort: Besuche und Seitenaufrufe mit Vergleich zum Zeitraum davor, Verlauf pro Tag/Woche/Monat, beliebteste Seiten, Herkunft (Google, Instagram, direkt …), Handy oder Computer, meistgesehene Teams & Kurse, wie weit Interessierte im Mitgliedsantrag kommen und was gesucht wurde – auch ohne Treffer. Gezählt wird ohne Cookies und ohne Google; angemeldete Mitarbeitende zählen nicht mit.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Was muss wegen der Besucherstatistik in die Datenschutzerklärung?',
+    antwort: 'Ein kurzer Absatz, z. B.: „Reichweitenmessung: Wir zählen Seitenaufrufe auf unserem eigenen Server, um die Website zu verbessern (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Dabei werden keine Cookies gesetzt und keine IP-Adressen gespeichert. Aus IP-Adresse und Browserkennung wird ein täglich wechselndes, nicht rückverfolgbares Kürzel gebildet, damit wir Besuche eines Tages zählen können. Gespeichert werden aufgerufene Seite, Herkunftsseite (nur der Name, z. B. „Google“), Gerätetyp und Suchbegriffe der Website-Suche. Die Daten werden nicht weitergegeben und nach 14 Monaten automatisch gelöscht. Browser mit aktivierter „Do Not Track“- bzw. „Global Privacy Control“-Einstellung werden nicht erfasst.“ Die Datenschutzerklärung bearbeitest du unter Website-Aufbau → Seiten → „Datenschutz“. Im Zweifel bitte rechtlich prüfen lassen.',
+    bereich: 'dashboard',
+  },
+  {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'Unter Einstellungen → „Rollen & Rechte“ (nur für Admins). Dort gibt es Reiter nach Person, nach Team, nach Rolle und „Rechte je Rolle“.',
     bereich: 'users',

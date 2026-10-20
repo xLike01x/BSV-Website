@@ -87,6 +87,7 @@ export interface Config {
     profilbilder: Profilbilder;
     dokumente: Dokumente;
     'hilfe-feedback': HilfeFeedback;
+    statistik: Statistik;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -127,6 +128,7 @@ export interface Config {
     profilbilder: ProfilbilderSelect<false> | ProfilbilderSelect<true>;
     dokumente: DokumenteSelect<false> | DokumenteSelect<true>;
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
+    statistik: StatistikSelect<false> | StatistikSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1625,6 +1627,24 @@ export interface HilfeFeedback {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "statistik".
+ */
+export interface Statistik {
+  id: number;
+  tag: string;
+  art: 'aufruf' | 'schritt' | 'suche';
+  pfad?: string | null;
+  quelle?: string | null;
+  geraet?: ('handy' | 'tablet' | 'computer') | null;
+  besucher?: string | null;
+  schritt?: number | null;
+  suchbegriff?: string | null;
+  treffer?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -1893,6 +1913,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'hilfe-feedback';
         value: number | HilfeFeedback;
+      } | null)
+    | ({
+        relationTo: 'statistik';
+        value: number | Statistik;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2657,6 +2681,23 @@ export interface HilfeFeedbackSelect<T extends boolean = true> {
   hilfreich?: T;
   kommentar?: T;
   benutzer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "statistik_select".
+ */
+export interface StatistikSelect<T extends boolean = true> {
+  tag?: T;
+  art?: T;
+  pfad?: T;
+  quelle?: T;
+  geraet?: T;
+  besucher?: T;
+  schritt?: T;
+  suchbegriff?: T;
+  treffer?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3479,6 +3520,10 @@ export interface Datenschutz {
   antraegeMonate?: number | null;
   eingaengeMonate?: number | null;
   /**
+   * Wird immer automatisch gelöscht (enthält keine persönlichen Daten). 14 Monate = Vergleich mit dem Vorjahr möglich.
+   */
+  statistikMonate?: number | null;
+  /**
    * Läuft immer automatisch. Der unterschriebene Passantrag bleibt (siehe rechts).
    */
   passUnterlagenTage?: number | null;
@@ -3524,6 +3569,7 @@ export interface Hilfe {
           | 'users'
           | 'menue'
           | 'verein'
+          | 'statistik'
           | 'sicherheit'
           | 'texte'
           | 'forms'
@@ -3592,6 +3638,7 @@ export interface Hilfe {
               | 'users'
               | 'menue'
               | 'verein'
+              | 'statistik'
               | 'sicherheit'
               | 'texte'
               | 'forms'
@@ -4107,6 +4154,7 @@ export interface DatenschutzSelect<T extends boolean = true> {
   kontaktMonate?: T;
   antraegeMonate?: T;
   eingaengeMonate?: T;
+  statistikMonate?: T;
   passUnterlagenTage?: T;
   passAntragMonate?: T;
   automatisch?: T;

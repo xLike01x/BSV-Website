@@ -3,6 +3,7 @@ import type { Payload } from 'payload'
 import { papierkorbAufraeumen } from './papierkorb'
 import { passUnterlagenAufraeumen } from '@/passantraege/aufraeumen'
 import { datenschutzAutomatisch } from '@/datenschutz/aufraeumen'
+import { statistikAufraeumen } from '@/statistik/aufraeumen'
 
 const g = globalThis as unknown as { __bsvTaeglich?: NodeJS.Timeout }
 
@@ -27,6 +28,7 @@ export function taeglicheAufgaben(payload: Payload) {
       .catch((e) => payload.logger.warn({ err: e }, 'Unbestätigte Registrierungen aufräumen fehlgeschlagen'))
     await passUnterlagenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Pass-Unterlagen aufräumen fehlgeschlagen'))
     await datenschutzAutomatisch(payload).catch((e) => payload.logger.warn({ err: e }, 'Datenschutz-Aufräumen fehlgeschlagen'))
+    await statistikAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Statistik aufräumen fehlgeschlagen'))
   }
   setTimeout(lauf, 60_000)
   g.__bsvTaeglich = setInterval(lauf, 24 * 60 * 60 * 1000)

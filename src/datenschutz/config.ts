@@ -37,6 +37,7 @@ export const Datenschutz: GlobalConfig = {
           admin: { width: '50%', description: 'Erst löschen, wenn die Daten in die Mitgliederverwaltung übernommen sind.' },
         },
         { name: 'eingaengeMonate', label: 'Formular-Eingänge – nach Monaten', type: 'number', min: 1, defaultValue: 12, admin: { width: '50%' } },
+        { name: 'statistikMonate', label: 'Besucherstatistik – nach Monaten', type: 'number', min: 1, max: 36, defaultValue: 14, admin: { width: '50%', description: 'Wird immer automatisch gelöscht (enthält keine persönlichen Daten). 14 Monate = Vergleich mit dem Vorjahr möglich.' } },
       ],
     },
     {

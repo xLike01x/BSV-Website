@@ -1,4 +1,6 @@
 import { rechteVorschauEndpunkt } from '@/components/Admin/WasDarf/endpunkt'
+import { Statistik } from './statistik/Statistik'
+import { statistikEndpunkt } from './statistik/endpunkt'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
@@ -80,7 +82,7 @@ const email = process.env.SMTP_HOST
 
 export default buildConfig({
   email,
-  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt],
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
@@ -107,6 +109,8 @@ export default buildConfig({
         sicherung: { Component: '@/components/Admin/Sicherung', path: '/sicherung', exact: true },
         // Selbst registrierte Konten freigeben (Admin & Kasse)
         registrierungen: { Component: '@/components/Admin/Registrierungen', path: '/registrierungen', exact: true },
+        // Besucherstatistik ohne Cookies (nur Web-Admin)
+        statistik: { Component: '@/components/Admin/Statistik', path: '/statistik', exact: true },
         // Druckbare Kurzanleitung je Rolle
         kurzanleitung: { Component: '@/components/Admin/HilfeCenter/Kurzanleitung', path: '/hilfe/kurzanleitung', exact: true },
       },
@@ -183,6 +187,8 @@ export default buildConfig({
     Users, Mitgliedschaften, Profilbilder, Dokumente,
     // Einstellungen
     HilfeFeedback,
+    // Besucherstatistik (ohne Cookies) – nur intern, Auswertung unter /admin/statistik
+    Statistik,
   ].map((c) =>
     PAPIERKORB.includes(c.slug)
       ? (() => {

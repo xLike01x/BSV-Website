@@ -5,6 +5,8 @@ import type { Where } from 'payload'
 import React from 'react'
 
 import { aktuellerBenutzer, payload } from '@/bsv/data'
+import { erfassen } from '@/statistik/erfassen'
+import { headers } from 'next/headers'
 import { datum, KATEGORIE_FARBE } from '@/bsv/lib'
 
 export const dynamic = 'force-dynamic'
@@ -49,6 +51,8 @@ export default async function Suche({ searchParams }: { searchParams: Promise<{ 
     )
   }
   const anzahl = gruppen.reduce((s, g) => s + g.treffer.length, 0)
+  // Suchbegriff für die Statistik (ohne Cookies, Mitarbeitende zählen nicht) – blockiert die Seite nicht
+  if (q.length >= 2) void (async () => erfassen(await payload(), await headers(), await aktuellerBenutzer(), { art: 'suche', suchbegriff: q, treffer: anzahl }))().catch(() => {})
 
   return (
     <>

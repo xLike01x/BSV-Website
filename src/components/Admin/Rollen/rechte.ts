@@ -6,7 +6,7 @@ export type Stufe = 'ja' | 'eigene' | 'nein' | 'website'
 export type RechteZeile = { slug: string; art: 'bereich' | 'einstellung' | 'seite'; titel: string; gruppe: string; ansehen: Stufe; anlegen: Stufe; bearbeiten: Stufe; loeschen: Stufe }
 export type RechteMatrix = Record<string, RechteZeile[]>
 
-const AUSLASSEN = new Set(['hilfe-feedback', 'search', 'payload-folders', 'passdokumente', 'profilbilder'])
+const AUSLASSEN = new Set(['hilfe-feedback', 'search', 'payload-folders', 'passdokumente', 'profilbilder', 'statistik'])
 const TEAM_ROLLEN = ['uebungsleitung', 'teamredaktion']
 /** Einschränkungen, die zusätzlich beim Speichern bzw. in der Liste greifen (Hooks, Filter) */
 const ZUSATZ_TEAM: Record<string, Partial<Record<'ansehen' | 'anlegen', Stufe>>> = {
@@ -22,6 +22,7 @@ const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeit
   { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true },
   { slug: 'rollen', titel: 'Rollen & Rechte', rollen: ['admin'], bearbeiten: false },
   { slug: 'sicherung', titel: 'Datensicherung', rollen: ['webadmin'], bearbeiten: true },
+  { slug: 'statistik', titel: 'Besucherstatistik', rollen: ['webadmin'], bearbeiten: false },
 ]
 /** Diese Einträge legen Mitglieder selbst im Mitgliederbereich an (nicht in der Verwaltung) */
 const UEBER_MITGLIEDERBEREICH = new Set(['passantraege'])

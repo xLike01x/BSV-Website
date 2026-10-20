@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { useSearchParams } from 'next/navigation'
 import { proMonat } from '@/bsv/beitrag'
+import { statistikSenden } from '@/bsv/statistik/Zaehler'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
 
 import { sendeFormular } from './sendeFormular'
@@ -37,6 +38,10 @@ const alterAm = (geb: string) => {
 export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebote: AntragAngebot[]; beitraege: AntragBeitrag[]; glaeubigerId?: string | null }) {
   const sp = useSearchParams()
   const [schritt, setSchritt] = useState(1)
+  // Statistik: Wie weit kommen Interessierte im Antrag? (Schritt 2 und 3; Absenden zählt der Antrag selbst)
+  useEffect(() => {
+    if (schritt === 2 || schritt === 3) statistikSenden({ t: 'schritt', p: '/mitglied-werden', s: schritt })
+  }, [schritt])
   const [auswahl, setAuswahl] = useState<number[]>([])
   const [art, setArt] = useState(beitraege[0]?.key ?? 'jugend')
   const [p, setP] = useState({ ...leer, email: '', telefon: '', strasse: '', plz: '', ort: '' })

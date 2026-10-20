@@ -369,6 +369,28 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: ['Fotos vom Vorstand nur mit Einverständnis.', 'Keine privaten Telefonnummern eintragen – Kontakt läuft über das Formular.'],
   },
 
+  statistik: {
+    titel: 'Besucherstatistik',
+    kurz: 'Wie viele Menschen die Website besuchen, was sie anschauen und woher sie kommen – ohne Cookies, nur für Web-Admins.',
+    wozu: {
+      text: 'Damit ihr seht, was auf der Website ankommt: welche Seiten beliebt sind, welche Teams gesucht werden und ob der Mitgliedsantrag gut funktioniert.',
+      beispiele: ['Kommen nach einem Instagram-Post mehr Besucher?', 'Wird die neue Kursseite angeschaut?', 'Wonach suchen Leute vergeblich?'],
+    },
+    tun: [
+      'Oben den Zeitraum wählen: 7 Tage, 30 Tage, 3 Monate oder 12 Monate.',
+      'Die Kacheln zeigen Besuche, Seitenaufrufe, Seiten pro Besuch und den Handy-Anteil – mit Vergleich zum Zeitraum davor.',
+      'Im Diagramm über einen Balken fahren (am Handy antippen) zeigt die genaue Zahl. „Als Tabelle anzeigen“ listet alle Werte.',
+      'Darunter: beliebteste Seiten, Herkunft, Teams & Kurse, Geräte, der Weg durch den Mitgliedsantrag und die Suchbegriffe (auch die ohne Treffer).',
+    ],
+    wirkung: ['Die Seite zeigt nur an – sie verändert nichts.', 'Neue Besuche erscheinen sofort.'],
+    tipps: [
+      'Ein „Besuch“ ist eine Person an einem Tag. Wer an drei Tagen kommt, zählt dreimal.',
+      'Angemeldete Mitarbeitende, Suchmaschinen-Roboter und Browser mit „Nicht verfolgen“ werden nicht gezählt.',
+      'Suchbegriffe ohne Treffer sind gute Ideen für neue Inhalte.',
+      'Links in Instagram oder Flyern mit ?utm_source=flyer am Ende zeigen, woher Besucher kommen – z. B. https://…/mitglied-werden?utm_source=flyer.',
+    ],
+  },
+
   sicherheit: {
     titel: 'Automatisch abmelden',
     kurz: 'Nach wie vielen Minuten ohne Aktivität die Verwaltung automatisch abmeldet – nur für Web-Admins.',

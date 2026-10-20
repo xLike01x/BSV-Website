@@ -1,3 +1,4 @@
+import { StatistikZaehler } from '@/bsv/statistik/Zaehler'
 import type { Metadata, Viewport } from 'next'
 
 import { cn } from '@/utilities/ui'
@@ -28,6 +29,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       </head>
       <body className="bsv" suppressHydrationWarning>
         <Providers>
+          {/* Besucherstatistik ohne Cookies (siehe /admin/statistik) */}
+          <StatistikZaehler />
           <a href="#inhalt" className="sr-only">
             Zum Inhalt springen
           </a>
