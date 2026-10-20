@@ -94,3 +94,33 @@
 #nav-forms {
   order: -8;
 }
+
+// Gruppen-Überschriften (Posteingang, Inhalte, Website-Aufbau …) in Vereinsgrün, damit sie sich klar von den Einträgen abheben
+.nav-group__toggle {
+  .nav-group__label {
+    color: #157a43;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+  }
+  .nav-group__indicator,
+  svg {
+    color: #157a43;
+    stroke: currentColor;
+  }
+}
+.nav-group:not(:first-child) {
+  margin-top: 6px;
+}
+html[data-theme='dark'] .nav-group__toggle {
+  .nav-group__label,
+  .nav-group__indicator,
+  svg {
+    color: #5fd39a;
+  }
+}
+.nav-group__toggle svg path {
+  stroke: #157a43;
+}
+html[data-theme='dark'] .nav-group__toggle svg path {
+  stroke: #5fd39a;
+}

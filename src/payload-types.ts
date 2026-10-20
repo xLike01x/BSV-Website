@@ -100,9 +100,6 @@ export interface Config {
     'payload-migrations': PayloadMigration;
   };
   collectionsJoins: {
-    users: {
-      verantwortlichFuer: 'angebote';
-    };
     'payload-folders': {
       documentsAndFolders: 'payload-folders' | 'media';
     };
@@ -545,17 +542,13 @@ export interface User {
     'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
   )[];
   /**
-   * Angebote, an denen diese Person als Mitglied teilnimmt.
+   * Welche Teams betreut die Person? Z. B. „F1-Jugend“ oder „Alte Herren“. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart – ohne eine der beiden wird beim Speichern automatisch „Trainer“ gesetzt. Dasselbe steht beim Team unter „Verantwortliche“.
+   */
+  teamsVerantwortlich?: (number | Angebote)[] | null;
+  /**
+   * Wo die Person selbst mitspielt bzw. teilnimmt (steht auf dem Ausweis). Gibt keine Rechte – dafür das Feld darüber.
    */
   angebote?: (number | Angebote)[] | null;
-  /**
-   * Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Trainer oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.
-   */
-  verantwortlichFuer?: {
-    docs?: (number | Angebote)[];
-    hasNextPage?: boolean;
-    totalDocs?: number;
-  };
   /**
    * Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.
    */
@@ -2620,8 +2613,8 @@ export interface UsersSelect<T extends boolean = true> {
   aktuellesPasswort?: T;
   name?: T;
   roles?: T;
+  teamsVerantwortlich?: T;
   angebote?: T;
-  verantwortlichFuer?: T;
   zusatzrechte?:
     | T
     | {

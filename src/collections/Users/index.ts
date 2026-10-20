@@ -10,6 +10,7 @@ import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWeb
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
 import { aktuellesPasswortFeld, passwortUndLogin } from '../../auth/passwort'
+import { teamsNachher, teamsVerantwortlichFeld, teamsVorher } from './teamsVerantwortlich'
 import { meHerabgestuft, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
 export const Users: CollectionConfig = {
@@ -81,6 +82,7 @@ export const Users: CollectionConfig = {
       // Kacheln mit Häkchen und einer Zeile Erklärung je Rolle (statt Auswahlliste)
       admin: { components: { Field: '@/components/Admin/RollenKacheln' } },
     },
+    teamsVerantwortlichFeld,
     {
       name: 'angebote',
       label: 'Teams & Kurse',
@@ -90,18 +92,8 @@ export const Users: CollectionConfig = {
       // Ordnet die Verwaltung zu (steht auf dem Ausweis und gibt Trainern Einblick ins Profilfoto)
       access: { update: isAdminField },
       admin: {
-        description: 'Angebote, an denen diese Person als Mitglied teilnimmt.',
-      },
-    },
-    {
-      name: 'verantwortlichFuer',
-      label: 'Verantwortlich für (Team-Rechte)',
-      type: 'join',
-      collection: 'angebote',
-      on: 'leitung',
-      admin: {
-        description: 'Zuordnung im jeweiligen Team/Kurs unter „Verantwortliche“. Mit Rolle Trainer oder Team-Redaktion darf die Person dort News, Bilder, Zeiten und Ausfälle pflegen.',
-        defaultColumns: ['title', 'bereich'],
+        allowCreate: false,
+        description: 'Wo die Person selbst mitspielt bzw. teilnimmt (steht auf dem Ausweis). Gibt keine Rechte – dafür das Feld darüber.',
       },
     },
     {
@@ -243,8 +235,9 @@ export const Users: CollectionConfig = {
           .catch(() => {})
       },
     ],
-    afterChange: [zweiFaktorZuruecksetzen as never],
+    afterChange: [zweiFaktorZuruecksetzen as never, teamsNachher],
     beforeChange: [
+      teamsVorher,
       // Eigene E-Mail nur über die Verwaltung ändern (sonst könnte man sich z. B. fremde Mitgliedsausweise „holen“).
       // Selbst registrierte Konten können bis zur Freigabe auch den Namen nicht mehr ändern.
       ({ req, operation, data, originalDoc }) => {

@@ -29,6 +29,26 @@ export default async function rechte(d) {
   pruefe('Redaktion speichert Reihenfolge in einem Schritt', r1.s === 200 && neu[0].id === vorher[2].id, [r1.s, neu])
   for (const a of vorher) await d.q('update angebote set reihenfolge=$1 where id=$2', [a.reihenfolge, a.id])
 
+  // Team-Zuordnung direkt beim Benutzer (nur Admin), gespeichert beim Team
+  {
+    const ad = await login('admin@bsv.test')
+    const [u] = await d.q(`select id from users where email='trainer-yoga@bsv.test'`)
+    const alt = (await d.q(`select parent_id from angebote_rels where path='leitung' and users_id=$1`, [u.id])).map((r) => r.parent_id)
+    const [neu] = await d.q(`select id from angebote where id <> all($1) and bereich='erwachsene' limit 1`, [alt])
+    const g = await api(ad, 'GET', `/api/users/${u.id}?depth=0`)
+    pruefe('Benutzer zeigt seine Teams', JSON.stringify([...(g.j?.teamsVerantwortlich ?? [])].sort()) === JSON.stringify([...alt].sort()), [g.j?.teamsVerantwortlich, alt])
+    const p = await api(ad, 'PATCH', `/api/users/${u.id}`, { teamsVerantwortlich: [...alt, neu.id] })
+    const jetzt = (await d.q(`select parent_id from angebote_rels where path='leitung' and users_id=$1`, [u.id])).map((r) => r.parent_id)
+    pruefe('Admin ordnet beim Benutzer ein Team zu → steht beim Team', p.s === 200 && jetzt.includes(neu.id), [p.s, jetzt])
+    await api(ad, 'PATCH', `/api/users/${u.id}`, { teamsVerantwortlich: alt })
+    const zurueck = (await d.q(`select parent_id from angebote_rels where path='leitung' and users_id=$1`, [u.id])).map((r) => r.parent_id)
+    pruefe('… und wieder entfernen', !zurueck.includes(neu.id) && alt.every((x) => zurueck.includes(x)), zurueck)
+    const tr2 = await login('trainer-yoga@bsv.test')
+    await api(tr2, 'PATCH', `/api/users/${u.id}`, { teamsVerantwortlich: [...alt, neu.id] })
+    const selbst = (await d.q(`select parent_id from angebote_rels where path='leitung' and users_id=$1`, [u.id])).map((r) => r.parent_id)
+    pruefe('Trainer kann sich nicht selbst Teams zuordnen', !selbst.includes(neu.id), selbst)
+  }
+
   // F-25: Bearbeitungssperren nur für die Verwaltung
   const mi = await login('mitglied@bsv.test')
   const r = await api(mi, 'GET', '/api/payload-locked-documents')
