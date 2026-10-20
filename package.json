@@ -29,7 +29,8 @@
     "live:pruefen": "tsx --env-file=.env scripts/live-pruefen.ts",
     "medien:exif": "tsx scripts/exif-entfernen.ts",
     "sicherung:entschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/entschluesseln.ts",
-    "sicherung:alte-verschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/altVerschluesseln.ts"
+    "sicherung:alte-verschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/altVerschluesseln.ts",
+    "dateien:aufraeumen": "tsx --env-file=.env scripts/dateien-aufraeumen.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",

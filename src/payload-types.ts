@@ -235,7 +235,7 @@ export interface Mitgliedsantraege {
   angebote?: (number | Angebote)[] | null;
   kontoinhaber: string;
   /**
-   * Wird verschlüsselt gespeichert.
+   * Wird verschlüsselt gespeichert. Leer = aus Datenschutzgründen entfernt (Antrag lag im Web-Admin-Papierkorb).
    */
   iban: string;
   sepaMandat: boolean;
@@ -385,6 +385,10 @@ export interface Media {
    * Pflicht beim Hochladen. Fotos, auf denen Personen erkennbar sind, nur mit Einwilligung – bei Kindern unter 16 Jahren der Eltern.
    */
   personen?: ('keine' | 'einwilligung') | null;
+  /**
+   * Z. B. „Foto-Einwilligung im Mitgliedsantrag“ oder „Formular vom 03.05.2026, Ordner Vorstand“. Hilft, wenn jemand widerruft oder nachfragt. Nicht öffentlich sichtbar.
+   */
+  einwilligungNachweis?: string | null;
   /**
    * Der Ordner, in dem das Bild liegt. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.
    */
@@ -2212,6 +2216,7 @@ export interface AlbenSelect<T extends boolean = true> {
 export interface MediaSelect<T extends boolean = true> {
   alt?: T;
   personen?: T;
+  einwilligungNachweis?: T;
   team?: T;
   allgemein?: T;
   sponsoren?: T;
@@ -3506,6 +3511,10 @@ export interface Verein {
          * Nur mit Einverständnis der Person – Profilfotos sind sonst nie öffentlich. Ein Foto im Feld darunter hat Vorrang.
          */
         fotoAusKonto?: boolean | null;
+        /**
+         * Nachweis für den Fall, dass jemand nachfragt oder widerruft. Bei Widerruf: Haken oben entfernen.
+         */
+        fotoEinwilligungAm?: string | null;
         foto?: (number | null) | Media;
         id?: string | null;
       }[]
@@ -3590,9 +3599,21 @@ export interface Datenschutz {
   antraegeMonate?: number | null;
   eingaengeMonate?: number | null;
   /**
-   * Wird immer automatisch gelöscht (enthält keine persönlichen Daten). 14 Monate = Vergleich mit dem Vorjahr möglich.
+   * Probetraining, Kontakt und Mitgliedsanträge, die nie auf „erledigt“ bzw. „aufgenommen/abgelehnt“ gesetzt wurden (letzte Änderung zählt).
+   */
+  offeneMonate?: number | null;
+  /**
+   * Gilt für Einträge mit „Gültig bis (Austritt)“. Die Mitgliederverwaltung des Vereins (z. B. DFBnet) ist davon nicht betroffen.
+   */
+  austrittMonate?: number | null;
+  /**
+   * Wird immer automatisch gelöscht. Enthält keine Namen und keine IP-Adressen, nur eine täglich wechselnde Kennung. 14 Monate = Vergleich mit dem Vorjahr.
    */
   statistikMonate?: number | null;
+  /**
+   * Freitext kann Namen enthalten – deshalb kürzer als die übrige Statistik. Läuft immer automatisch.
+   */
+  suchbegriffMonate?: number | null;
   /**
    * Läuft immer automatisch. Der unterschriebene Passantrag bleibt (siehe rechts).
    */
@@ -3602,9 +3623,22 @@ export interface Datenschutz {
    */
   passAntragMonate?: number | null;
   /**
-   * Ohne Haken erinnert nur das Dashboard. Aus dem Papierkorb lässt sich alles noch 30 Tage zurückholen, danach wird es endgültig gelöscht.
+   * Status „eingereicht“ oder „Unterlagen fehlen“ ohne Änderung. Wird samt Ausweiskopie direkt gelöscht (kein Papierkorb).
+   */
+  passOffenMonate?: number | null;
+  /**
+   * Wird nur angezeigt, nie automatisch gelöscht: Bitte selbst prüfen, ob die Person noch Mitglied ist.
+   */
+  kontenMonate?: number | null;
+  /**
+   * Für Mitgliedsanträge, Mitgliedschaften, Kontakt- und Probetraining-Anfragen und Formular-Eingänge. Andere Inhalte (News, Seiten, Bilder …) bleiben so lange, wie unter Einstellungen → Sicherheit eingestellt.
+   */
+  personenPapierkorbTage?: number | null;
+  /**
+   * Empfohlen. Ohne Haken erinnert nur das Dashboard. Ablauf: Papierkorb (30 Tage zurückholbar) → Web-Admin-Papierkorb (Frist oben) → endgültig gelöscht. Liegengebliebene Passanträge werden direkt gelöscht.
    */
   automatisch?: boolean | null;
+  standardsOktober2026?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4159,6 +4193,7 @@ export interface VereinSelect<T extends boolean = true> {
         rolle?: T;
         konto?: T;
         fotoAusKonto?: T;
+        fotoEinwilligungAm?: T;
         foto?: T;
         id?: T;
       };
@@ -4230,10 +4265,17 @@ export interface DatenschutzSelect<T extends boolean = true> {
   kontaktMonate?: T;
   antraegeMonate?: T;
   eingaengeMonate?: T;
+  offeneMonate?: T;
+  austrittMonate?: T;
   statistikMonate?: T;
+  suchbegriffMonate?: T;
   passUnterlagenTage?: T;
   passAntragMonate?: T;
+  passOffenMonate?: T;
+  kontenMonate?: T;
+  personenPapierkorbTage?: T;
   automatisch?: T;
+  standardsOktober2026?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

@@ -2,7 +2,7 @@ import type { CollectionBeforeChangeHook, CollectionBeforeDeleteHook, Collection
 import { APIError } from 'payload'
 import { sql } from '@payloadcms/db-postgres'
 
-import { ausfuehren, tabelle } from '@/papierkorb/plugin'
+import { ausfuehren, PERSONEN_BEREICHE, tabelle, zusatzBeimEntfernen } from '@/papierkorb/plugin'
 
 /** Bereiche mit Papierkorb (dazu Formulare und Formular-Eingänge über das Plugin) */
 export const PAPIERKORB: string[] = ['posts', 'termine', 'media', 'pages', 'categories', 'angebote', 'ausfaelle', 'probetraining', 'mitgliedsantraege', 'kontaktanfragen', 'dokumente', 'alben', 'sponsoren', 'gesuche', 'mitgliedschaften']
@@ -18,13 +18,17 @@ export async function papierkorbAufraeumen(payload: Payload) {
   const s = (await payload.findGlobal({ slug: 'sicherheit' as never, depth: 0, overrideAccess: true }).catch(() => null)) as { papierkorbTage?: number | null } | null
   const tage = Math.max(30, Math.min(3650, s?.papierkorbTage ?? 365))
   const wegGrenze = new Date(Date.now() - tage * 86400000).toISOString()
+  const ds = (await payload.findGlobal({ slug: 'datenschutz' as never, depth: 0, overrideAccess: true }).catch(() => null)) as { personenPapierkorbTage?: number | null } | null
+  const personenTage = Math.max(1, Math.min(90, ds?.personenPapierkorbTage ?? 30))
+  const personenGrenze = new Date(Date.now() - personenTage * 86400000).toISOString()
   let weiter = 0
   let gesamt = 0
   for (const slug of [...PAPIERKORB, 'forms', 'form-submissions']) {
     try {
-      const r = await ausfuehren({ payload }, sql`update ${sql.identifier(tabelle(slug))} set endgueltig_am = now(), endgueltig_von = ${'automatisch nach ' + PAPIERKORB_TAGE + ' Tagen'} where deleted_at < ${grenze} and endgueltig_am is null`)
+      const r = await ausfuehren({ payload }, sql`update ${sql.identifier(tabelle(slug))} set endgueltig_am = now(), endgueltig_von = ${'automatisch nach ' + PAPIERKORB_TAGE + ' Tagen'}${zusatzBeimEntfernen(slug)} where deleted_at < ${grenze} and endgueltig_am is null`)
       weiter += r.rowCount ?? 0
-      const weg = await payload.delete({ collection: slug as CollectionSlug, where: { endgueltigAm: { less_than: wegGrenze } }, trash: true, overrideAccess: true })
+      const grenzeHier = PERSONEN_BEREICHE.includes(slug) ? personenGrenze : wegGrenze
+      const weg = await payload.delete({ collection: slug as CollectionSlug, where: { endgueltigAm: { less_than: grenzeHier } }, trash: true, overrideAccess: true })
       gesamt += weg.docs.length
     } catch (e) {
       payload.logger.warn({ err: e }, `Papierkorb ${slug} konnte nicht aufgeräumt werden`)

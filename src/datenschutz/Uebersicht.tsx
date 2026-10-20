@@ -21,9 +21,14 @@ export default function Uebersicht() {
   const los = async () => {
     setLaeuft(true)
     try {
-      const r = await fetch('/api/datenschutz/aufraeumen', { method: 'POST', credentials: 'include' })
+      const r = await fetch('/api/datenschutz/aufraeumen', {
+        method: 'POST',
+        credentials: 'include',
+      })
       const d = await r.json()
-      setMeldung(`${d.verschoben} Einträge in den Papierkorb verschoben. Dort lassen sie sich noch 30 Tage zurückholen.`)
+      setMeldung(
+        `${d.verschoben} Einträge aufgeräumt. Aus dem Papierkorb lassen sie sich noch 30 Tage zurückholen (liegengebliebene Passanträge werden direkt gelöscht).`,
+      )
       await laden()
     } catch {
       setMeldung('Hat nicht geklappt.')
@@ -37,25 +42,39 @@ export default function Uebersicht() {
       {faellig === null ? (
         <p>Wird geprüft …</p>
       ) : faellig.length === 0 ? (
-        <p className="bsv-datenschutz__ok">✅ Nichts zu tun – alle Einträge sind innerhalb der Fristen.</p>
+        <p className="bsv-datenschutz__ok">
+          ✅ Nichts zu tun – alle Einträge sind innerhalb der Fristen.
+        </p>
       ) : (
         <>
           <ul>
             {faellig.map((f) => (
-              <li key={f.slug}>
-                <strong>{f.anzahl}</strong> {f.label} älter als {f.monate} Monate –{' '}
-                <a href={`/admin/collections/${f.slug}`}>ansehen ›</a>
+              <li key={f.id}>
+                <strong>{f.anzahl}</strong> {f.label} – älter als {f.monate} Monate –{' '}
+                <a href={f.link ?? `/admin/collections/${f.slug}`}>ansehen ›</a>
+                {f.hinweis && (
+                  <em>
+                    {' '}
+                    (nur Hinweis: bitte selbst prüfen und ggf. löschen – wird nie automatisch
+                    entfernt)
+                  </em>
+                )}
               </li>
             ))}
           </ul>
-          <button type="button" onClick={los} disabled={laeuft}>
-            {laeuft ? 'Wird aufgeräumt …' : '🧹 Jetzt in den Papierkorb verschieben'}
-          </button>
+          {faellig.some((f) => !f.hinweis) && (
+            <button type="button" onClick={los} disabled={laeuft}>
+              {laeuft ? 'Wird aufgeräumt …' : '🧹 Jetzt aufräumen'}
+            </button>
+          )}
         </>
       )}
       {meldung && <p className="bsv-datenschutz__ok">{meldung}</p>}
       <p className="bsv-datenschutz__klein">
-        Gelöschtes landet zuerst im <strong>Papierkorb</strong> (in jeder Liste oben „Papierkorb“) und wird nach 30 Tagen endgültig entfernt.
+        Ablauf: Fällige Einträge kommen in den <strong>Papierkorb</strong> (30 Tage zurückholbar),
+        danach in den Web-Admin-Papierkorb und werden dort nach der Frist unten
+        („Web-Admin-Papierkorb – persönliche Daten“) endgültig gelöscht. Bei Mitgliedsanträgen wird
+        die IBAN schon beim Wechsel in den Web-Admin-Papierkorb entfernt.
       </p>
     </section>
   )

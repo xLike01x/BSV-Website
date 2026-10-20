@@ -1,3 +1,5 @@
+import fs from 'fs'
+import path from 'path'
 import type { Payload } from 'payload'
 
 /**
@@ -46,6 +48,13 @@ export async function startpruefung(payload: Payload) {
     if (process.env.NODE_ENV === 'production') throw new Error(text)
   }
   if (process.env.NODE_ENV === 'production') {
+    // Ordner mit persönlichen Dateien nur für den Server-Nutzer lesbar
+    for (const o of ['medien', 'profilbilder', 'passantraege', 'dokumente', 'backups']) {
+      const p = path.join(process.cwd(), o)
+      try {
+        if (fs.existsSync(p)) fs.chmodSync(p, 0o700)
+      } catch {}
+    }
     const test = await payload.count({ collection: 'users', where: { testkonto: { equals: true } }, overrideAccess: true }).catch(() => null)
     if (test?.totalDocs) payload.logger.warn(`Startprüfung: ${test.totalDocs} Testkonten in der Live-Datenbank – bitte löschen (Rollen & Rechte → „Alle Testkonten löschen“). Anmelden können sie sich hier nicht.`)
   }

@@ -48,6 +48,7 @@ import { default as default_46234c6f88ae2e73ec168e941d39add2 } from '@/Menue/Spa
 import { default as default_d0d2d8ba323ca751d647155bafea5b5d } from '@/Texte/WoSteht'
 import { default as default_dcec8d0f4a86291f22ff050ef8209c59 } from '@/Verein/DownloadsSchutz'
 import { default as default_ee61798dbac84d4559f918344d524ea7 } from '@/datenschutz/Uebersicht'
+import { default as default_b53cfac6c89f90ae49c091341d2f0ac2 } from '@/datenschutz/Auskunft'
 import { default as default_131c4bce84432ab9c48ee70453daef26 } from '@/components/Admin/Rollen/Reiter'
 import { default as default_e26d2ce2fb829c050970d592e6488485 } from '@/components/Admin/Icon'
 import { default as default_1519062be06c6f010a03d3cd4e40f8fb } from '@/components/Admin/Logo'
@@ -121,6 +122,7 @@ export const importMap = {
   "@/Texte/WoSteht#default": default_d0d2d8ba323ca751d647155bafea5b5d,
   "@/Verein/DownloadsSchutz#default": default_dcec8d0f4a86291f22ff050ef8209c59,
   "@/datenschutz/Uebersicht#default": default_ee61798dbac84d4559f918344d524ea7,
+  "@/datenschutz/Auskunft#default": default_b53cfac6c89f90ae49c091341d2f0ac2,
   "@/components/Admin/Rollen/Reiter#default": default_131c4bce84432ab9c48ee70453daef26,
   "@/components/Admin/Icon#default": default_e26d2ce2fb829c050970d592e6488485,
   "@/components/Admin/Logo#default": default_1519062be06c6f010a03d3cd4e40f8fb,

@@ -2,8 +2,22 @@ import type { CollectionSlug, Endpoint, Payload, Where } from 'payload'
 
 import { hasRole } from '@/access/roles'
 
-type Fristen = { probetrainingMonate?: number | null; kontaktMonate?: number | null; antraegeMonate?: number | null; eingaengeMonate?: number | null; automatisch?: boolean | null }
-export type Faellig = { slug: string; label: string; anzahl: number; monate: number; rollen: string[] }
+import { auskunftEndpunkt } from './auskunft'
+
+type Fristen = {
+  probetrainingMonate?: number | null
+  kontaktMonate?: number | null
+  antraegeMonate?: number | null
+  eingaengeMonate?: number | null
+  offeneMonate?: number | null
+  austrittMonate?: number | null
+  passOffenMonate?: number | null
+  kontenMonate?: number | null
+  automatisch?: boolean | null
+}
+/** hinweis = wird nur angezeigt, nie automatisch gelöscht (z. B. alte Benutzerkonten – Entscheidung der Verwaltung) */
+export type Faellig = { id: string; slug: string; label: string; anzahl: number; monate: number; rollen: string[]; hinweis?: boolean; link?: string }
+type Regel = { id: string; slug: string; label: string; monate: number; rollen: string[]; where: (g: string) => Where; hart?: boolean; hinweis?: boolean; link?: string }
 
 const vor = (monate: number) => {
   const d = new Date()
@@ -11,12 +25,37 @@ const vor = (monate: number) => {
   return d.toISOString()
 }
 
-const regeln = (f: Fristen) => [
-  { slug: 'probetraining', label: 'erledigte Probetraining-Anfragen', monate: f.probetrainingMonate ?? 6, rollen: ['admin'], where: (g: string): Where => ({ and: [{ status: { equals: 'erledigt' } }, { updatedAt: { less_than: g } }] }) },
-  { slug: 'kontaktanfragen', label: 'erledigte Kontaktanfragen', monate: f.kontaktMonate ?? 6, rollen: ['admin'], where: (g: string): Where => ({ and: [{ status: { equals: 'erledigt' } }, { updatedAt: { less_than: g } }] }) },
-  { slug: 'mitgliedsantraege', label: 'bearbeitete Mitgliedsanträge', monate: f.antraegeMonate ?? 3, rollen: ['admin', 'kasse'], where: (g: string): Where => ({ and: [{ status: { in: ['aufgenommen', 'abgelehnt'] } }, { updatedAt: { less_than: g } }] }) },
-  { slug: 'form-submissions', label: 'Formular-Eingänge', monate: f.eingaengeMonate ?? 12, rollen: ['admin'], where: (g: string): Where => ({ createdAt: { less_than: g } }) },
-]
+const regeln = (f: Fristen): Regel[] => {
+  const offen = f.offeneMonate ?? 12
+  return [
+    { id: 'probetraining', slug: 'probetraining', label: 'erledigte Probetraining-Anfragen', monate: f.probetrainingMonate ?? 6, rollen: ['admin'], where: (g): Where => ({ and: [{ status: { equals: 'erledigt' } }, { updatedAt: { less_than: g } }] }) },
+    { id: 'probetraining-offen', slug: 'probetraining', label: 'nie erledigte Probetraining-Anfragen', monate: offen, rollen: ['admin'], where: (g): Where => ({ and: [{ status: { not_equals: 'erledigt' } }, { updatedAt: { less_than: g } }] }) },
+    { id: 'kontaktanfragen', slug: 'kontaktanfragen', label: 'erledigte Kontaktanfragen', monate: f.kontaktMonate ?? 6, rollen: ['admin'], where: (g): Where => ({ and: [{ status: { equals: 'erledigt' } }, { updatedAt: { less_than: g } }] }) },
+    { id: 'kontaktanfragen-offen', slug: 'kontaktanfragen', label: 'nie erledigte Kontaktanfragen', monate: offen, rollen: ['admin'], where: (g): Where => ({ and: [{ status: { not_equals: 'erledigt' } }, { updatedAt: { less_than: g } }] }) },
+    { id: 'mitgliedsantraege', slug: 'mitgliedsantraege', label: 'bearbeitete Mitgliedsanträge', monate: f.antraegeMonate ?? 3, rollen: ['admin', 'kasse'], where: (g): Where => ({ and: [{ status: { in: ['aufgenommen', 'abgelehnt'] } }, { updatedAt: { less_than: g } }] }) },
+    { id: 'mitgliedsantraege-offen', slug: 'mitgliedsantraege', label: 'nie bearbeitete Mitgliedsanträge', monate: offen, rollen: ['admin', 'kasse'], where: (g): Where => ({ and: [{ status: { in: ['neu', 'rueckfrage'] } }, { updatedAt: { less_than: g } }] }) },
+    { id: 'form-submissions', slug: 'form-submissions', label: 'Formular-Eingänge', monate: f.eingaengeMonate ?? 12, rollen: ['admin'], where: (g): Where => ({ createdAt: { less_than: g } }) },
+    { id: 'mitgliedschaften', slug: 'mitgliedschaften', label: 'Mitgliedschaften (digitaler Ausweis) nach Austritt', monate: f.austrittMonate ?? 12, rollen: ['admin', 'kasse'], where: (g): Where => ({ austritt: { less_than: g } }) },
+    // Passanträge haben keinen Papierkorb – liegengebliebene werden samt Ausweiskopie direkt gelöscht
+    { id: 'passantraege-offen', slug: 'passantraege', label: 'nie abgeschlossene Passanträge (samt Ausweiskopie)', monate: f.passOffenMonate ?? 6, rollen: ['admin'], hart: true, where: (g): Where => ({ and: [{ status: { in: ['eingereicht', 'unterlagen_fehlen'] } }, { updatedAt: { less_than: g } }] }) },
+    {
+      id: 'konten',
+      slug: 'users',
+      label: 'Mitgliedskonten ohne Anmeldung',
+      monate: f.kontenMonate ?? 24,
+      rollen: ['admin'],
+      hinweis: true,
+      link: '/admin/rollen',
+      where: (g): Where => ({
+        and: [
+          { roles: { not_in: ['admin', 'webadmin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion'] } },
+          { testkonto: { not_equals: true } },
+          { or: [{ letzteAnmeldung: { less_than: g } }, { and: [{ letzteAnmeldung: { exists: false } }, { createdAt: { less_than: g } }] }] },
+        ],
+      }),
+    },
+  ]
+}
 
 const fristen = (payload: Payload) => payload.findGlobal({ slug: 'datenschutz' as never, overrideAccess: true }).catch(() => ({})) as Promise<Fristen>
 
@@ -26,18 +65,23 @@ export async function faellige(payload: Payload, rollen?: string[]): Promise<Fae
   const raus: Faellig[] = []
   for (const r of regeln(f)) {
     if (rollen && !r.rollen.some((x) => rollen.includes(x))) continue
-    const { totalDocs } = await payload.count({ collection: r.slug as CollectionSlug, where: r.where(vor(r.monate)), overrideAccess: true })
-    if (totalDocs) raus.push({ slug: r.slug, label: r.label, anzahl: totalDocs, monate: r.monate, rollen: r.rollen })
+    const { totalDocs } = await payload.count({ collection: r.slug as CollectionSlug, where: r.where(vor(r.monate)), overrideAccess: true }).catch(() => ({ totalDocs: 0 }))
+    if (totalDocs) raus.push({ id: r.id, slug: r.slug, label: r.label, anzahl: totalDocs, monate: r.monate, rollen: r.rollen, hinweis: r.hinweis, link: r.link })
   }
   return raus
 }
 
-/** Fällige Einträge in den Papierkorb verschieben */
+/** Fällige Einträge in den Papierkorb verschieben (Passanträge: direkt löschen; Hinweise: nie automatisch) */
 export async function aufraeumen(payload: Payload, nur?: string[]) {
   const f = await fristen(payload)
   let gesamt = 0
   for (const r of regeln(f)) {
-    if (nur && !nur.includes(r.slug)) continue
+    if (r.hinweis || (nur && !nur.includes(r.slug))) continue
+    if (r.hart) {
+      const weg = await payload.delete({ collection: r.slug as CollectionSlug, where: r.where(vor(r.monate)), overrideAccess: true })
+      gesamt += weg.docs.length
+      continue
+    }
     const res = await payload.update({
       collection: r.slug as CollectionSlug,
       where: r.where(vor(r.monate)),
@@ -59,6 +103,7 @@ export async function datenschutzAutomatisch(payload: Payload) {
 }
 
 export const datenschutzEndpunkte: Endpoint[] = [
+  auskunftEndpunkt,
   {
     path: '/datenschutz/faellig',
     method: 'get',

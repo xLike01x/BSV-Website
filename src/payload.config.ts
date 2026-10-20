@@ -4,6 +4,7 @@ import { statistikEndpunkt } from './statistik/endpunkt'
 import { papierkorbEndpunkte } from './papierkorb/endpunkt'
 import { startpruefung } from './utilities/startpruefung'
 import { gesundEndpunkt } from './utilities/gesund'
+import { datenschutzStandards } from './datenschutz/standards'
 import { cspBerichtEndpunkt } from './utilities/cspBericht'
 import { migrations } from './migrations'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
@@ -100,6 +101,7 @@ const konfiguration = buildConfig({
     await trainerUmbenennen(payload).catch((e) => payload.logger.warn({ err: e }, 'Trainer-Umbenennung fehlgeschlagen'))
     await startseiteUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme „Startseite & Bilder“ fehlgeschlagen'))
     await texteBilderUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme nach „Texte & Bilder“ fehlgeschlagen'))
+    await datenschutzStandards(payload).catch((e) => payload.logger.warn({ err: e }, 'Datenschutz-Standards setzen fehlgeschlagen'))
     taeglicheAufgaben(payload)
   },
   admin: {

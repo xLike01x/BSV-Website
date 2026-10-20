@@ -92,6 +92,17 @@ export const Media: CollectionConfig = {
         return 'Bitte angeben, ob Personen zu erkennen sind.'
       },
     },
+    {
+      name: 'einwilligungNachweis',
+      label: 'Wo liegt die Einwilligung? (optional, empfohlen)',
+      type: 'text',
+      maxLength: 200,
+      access: { read: ({ req }) => Boolean(req.user) },
+      admin: {
+        condition: (d) => d?.personen === 'einwilligung',
+        description: 'Z. B. „Foto-Einwilligung im Mitgliedsantrag“ oder „Formular vom 03.05.2026, Ordner Vorstand“. Hilft, wenn jemand widerruft oder nachfragt. Nicht öffentlich sichtbar.',
+      },
+    },
     hinweisFeld('MedienHinweise'),
     {
       name: 'team',

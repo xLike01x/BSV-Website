@@ -170,6 +170,18 @@ export const Verein: GlobalConfig = {
                 description: 'Nur mit Einverständnis der Person – Profilfotos sind sonst nie öffentlich. Ein Foto im Feld darunter hat Vorrang.',
               },
             },
+            {
+              name: 'fotoEinwilligungAm',
+              label: 'Einverständnis zum Foto erteilt am',
+              type: 'date',
+              access: { read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
+              admin: {
+                width: '50%',
+                condition: (_, s) => Boolean(s?.fotoAusKonto),
+                date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' },
+                description: 'Nachweis für den Fall, dass jemand nachfragt oder widerruft. Bei Widerruf: Haken oben entfernen.',
+              },
+            },
           ],
         },
         { name: 'foto', label: 'Foto (optional)', type: 'upload', relationTo: 'media' },

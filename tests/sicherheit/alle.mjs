@@ -4,13 +4,14 @@
  */
 import { db, ergebnis } from './lib.mjs'
 import anmeldung from './anmeldung.mjs'
+import datenschutz from './datenschutz.mjs'
 import formulare from './formulare.mjs'
 import papierkorb from './papierkorb.mjs'
 import rechte from './rechte.mjs'
 import statistik from './statistik.mjs'
 import uploads from './uploads.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz }
 
 const d = await db()
 try {

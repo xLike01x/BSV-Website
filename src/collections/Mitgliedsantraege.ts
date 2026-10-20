@@ -150,7 +150,10 @@ export const Mitgliedsantraege: CollectionConfig = {
           label: 'IBAN',
           type: 'text',
           required: true,
-          admin: { description: 'Wird verschlüsselt gespeichert.' },
+          // Beim Absenden Pflicht. Später darf sie leer sein: Beim Wechsel in den Web-Admin-Papierkorb wird sie
+          // aus Datenschutzgründen entfernt – ein wiederhergestellter Antrag soll trotzdem speicherbar bleiben.
+          validate: (v: unknown, { operation }: { operation?: string }) => operation !== 'create' || (typeof v === 'string' && v.trim() !== '') || 'Bitte die IBAN angeben.',
+          admin: { description: 'Wird verschlüsselt gespeichert. Leer = aus Datenschutzgründen entfernt (Antrag lag im Web-Admin-Papierkorb).' },
           hooks: {
             // Hinweis: In Payload laufen Feld-Hooks vor der Validierung. Deshalb
             // prüfen wir die IBAN hier im Klartext und verschlüsseln erst danach.

@@ -27,6 +27,13 @@ export const tabelle = (slug: string) => slug.replace(/-/g, '_')
 type Db = { drizzle: { execute: (q: unknown) => Promise<{ rows: Record<string, unknown>[]; rowCount?: number | null }> } }
 export const ausfuehren = (req: { payload: { db: unknown } }, q: unknown) => (req.payload.db as unknown as Db).drizzle.execute(q)
 
+/**
+ * Bereiche mit persönlichen Daten: Im Web-Admin-Papierkorb nur kurz (Datenschutz-Fristen → „persönliche Daten“, Standard 30 Tage).
+ * Beim Wechsel dorthin wird die IBAN sofort entfernt (Audit F-04).
+ */
+export const PERSONEN_BEREICHE = ['mitgliedsantraege', 'mitgliedschaften', 'kontaktanfragen', 'probetraining', 'form-submissions']
+export const zusatzBeimEntfernen = (slug: string) => (slug === 'mitgliedsantraege' ? sql`, iban = ''` : sql.raw(''))
+
 const NICHT_ENTFERNT: Where = { endgueltigAm: { exists: false } }
 const NICHT_GELOESCHT: Where = { deletedAt: { exists: false } }
 
@@ -97,7 +104,7 @@ async function verschieben(c: CollectionConfig, req: PayloadRequest, ziel: Where
   const ids = docs.map((d) => Number(d.id)).filter((n) => Number.isInteger(n) && n > 0)
   const von = name(req)
   // Eine einzige Anweisung – entweder alle oder keiner. Danach passiert in dieser Anfrage nichts mehr.
-  await ausfuehren(req, sql`update ${sql.identifier(tabelle(c.slug))} set endgueltig_am = now(), endgueltig_von = ${von}, deleted_at = coalesce(deleted_at, now()) where id in ${sql.raw(`(${ids.join(',')})`)} and endgueltig_am is null`)
+  await ausfuehren(req, sql`update ${sql.identifier(tabelle(c.slug))} set endgueltig_am = now(), endgueltig_von = ${von}, deleted_at = coalesce(deleted_at, now())${zusatzBeimEntfernen(c.slug)} where id in ${sql.raw(`(${ids.join(',')})`)} and endgueltig_am is null`)
   const jetzt = new Date().toISOString()
   // Nur das Nötigste zurückgeben (die Suche lief ohne Feldrechte)
   return { docs: docs.map((d) => ({ id: d.id, deletedAt: d.deletedAt ?? jetzt, endgueltigAm: jetzt, endgueltigVon: von })), abgelehnt: false }

@@ -908,6 +908,16 @@ export const FAQ: Faq[] = [
     bereich: 'users',
   },
   {
+    frage: 'Jemand will wissen, welche Daten wir über ihn gespeichert haben.',
+    antwort:
+      'Einstellungen → Datenschutz-Fristen → „Auskunft für eine Person“: E-Mail-Adresse eingeben, Datei herunterladen und der Person geben (nicht per unverschlüsselter Mail an Dritte). Enthalten ist alles von der Website – auch aus dem Papierkorb. Will die Person, dass alles gelöscht wird: die gefundenen Einträge löschen und im Web-Admin-Papierkorb endgültig entfernen lassen.',
+  },
+  {
+    frage: 'Wie lange bleiben Anträge und Anfragen gespeichert?',
+    antwort:
+      'Das stellst du unter Einstellungen → Datenschutz-Fristen ein. Mit „Automatisch aufräumen“ (Standard) wandern fällige Einträge täglich in den Papierkorb, nach 30 Tagen in den Web-Admin-Papierkorb und werden dort nach der Frist für persönliche Daten (Standard 30 Tage) endgültig gelöscht. Die IBAN eines Mitgliedsantrags wird schon beim Wechsel in den Web-Admin-Papierkorb entfernt.',
+  },
+  {
     frage: 'Ich habe aus Versehen etwas gelöscht.',
     antwort:
       'Gelöschtes liegt zuerst im Papierkorb des Bereichs (Liste → oben „Papierkorb“) – dort „Wiederherstellen“. Hast du es dort „dauerhaft gelöscht“, liegt es im Web-Admin-Papierkorb: Ein Web-Admin kann es zurückholen. Bei News und Seiten gibt es außerdem „Versionen“ mit früheren Fassungen.',

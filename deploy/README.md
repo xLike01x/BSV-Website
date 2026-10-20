@@ -157,7 +157,8 @@ und kurz durchklicken. Datum in der Go-Live-Checkliste notieren.
 ## 6. Überwachung
 
 - Uptime-Dienst (z. B. UptimeRobot, Better Stack, healthchecks.io) auf `https://www.buedericher-spielverein.de/api/gesund`, Alarm per E-Mail.
-- Protokoll: `journalctl -u bsv -f` · Caddy: `/var/log/caddy/bsv.log`
+- Protokoll: `journalctl -u bsv -f` · Caddy: `/var/log/caddy/bsv.log` (14 Tage, siehe Caddyfile)
+- Systemprotokoll auf 14 Tage begrenzen (enthält IP-Adressen): in `/etc/systemd/journald.conf` `MaxRetentionSec=14day` setzen, dann `sudo systemctl restart systemd-journald`.
 - Platz: `df -h /srv` – Warnung ab 80 % (Medien und Sicherungen wachsen).
 - Meldungen „CSP blockiert …“ im Protokoll: ein Widget (FuPa/FUSSBALL.DE) braucht eine weitere Adresse → in `next.config.ts` ergänzen.
 

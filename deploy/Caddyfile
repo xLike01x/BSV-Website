@@ -24,7 +24,8 @@ www.buedericher-spielverein.de {
 	log {
 		output file /var/log/caddy/bsv.log {
 			roll_size 20MiB
-			roll_keep 5
+			# Enthält IP-Adressen – nach 14 Tagen löschen (so steht es in der Datenschutzerklärung)
+			roll_keep_for 336h
 		}
 	}
 }
