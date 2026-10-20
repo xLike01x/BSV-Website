@@ -99,8 +99,9 @@
 .nav-group__toggle {
   .nav-group__label {
     color: #157a43;
-    font-weight: 700;
-    letter-spacing: 0.06em;
+    font-size: 15px;
+    font-weight: 800;
+    letter-spacing: 0.04em;
   }
   .nav-group__indicator,
   svg {
@@ -109,7 +110,9 @@
   }
 }
 .nav-group:not(:first-child) {
-  margin-top: 6px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--theme-elevation-100);
 }
 html[data-theme='dark'] .nav-group__toggle {
   .nav-group__label,
