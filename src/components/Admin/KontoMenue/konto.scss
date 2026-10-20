@@ -44,10 +44,17 @@
     padding: 8px;
     z-index: 100;
     display: grid;
+    // Einträge nie breiter als das Menü (sonst ragt der graue Hover-Hintergrund rechts heraus)
+    grid-template-columns: minmax(0, 1fr);
     a,
     button {
       display: grid;
-      grid-template-columns: 26px 1fr;
+      grid-template-columns: 26px minmax(0, 1fr);
+      min-width: 0;
+      box-sizing: border-box;
+      width: 100%;
+      // Payload setzt in der Kopfzeile „nowrap“ – lange Texte sollen hier umbrechen statt herauszuragen
+      white-space: normal;
       align-items: center;
       column-gap: 6px;
       padding: 10px 10px;
@@ -63,6 +70,7 @@
       cursor: pointer;
       small {
         grid-column: 2;
+        overflow-wrap: anywhere;
         font-weight: 400;
         font-size: 12px;
         color: #6e6e73;
