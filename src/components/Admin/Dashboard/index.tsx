@@ -10,6 +10,8 @@ import { EINTRAEGE, eintragSichtbar, REIHENFOLGE, VERSTECKT } from '../NavZusatz
 import Tour from '../Tour'
 import ErsteSchritte from './ErsteSchritte'
 import { aufgabenFuer } from './aufgaben'
+import MeinTeam, { type TeamUebersicht } from './MeinTeam'
+import Vorschlaege, { type Vorschlag } from './Vorschlaege'
 import './index.scss'
 
 const ADMIN = '/admin'
@@ -205,6 +207,61 @@ export default async function Dashboard(props: AdminViewServerProps) {
             erledigt: (await zaehle('posts', { authors: { contains: user.id } })) > 0,
           }
 
+  // Redaktion: von Trainern für die Startseite vorgeschlagene News
+  const redaktion = rollen.some((r) => r === 'admin' || r === 'redaktion')
+  const vorschlaege: Vorschlag[] = redaktion
+    ? await sicher(async () => {
+        const r = await payload.find({
+          collection: 'posts',
+          where: { and: [{ startseiteVorschlag: { equals: true } }, { aufStartseite: { not_equals: true } }] },
+          sort: '-updatedAt',
+          limit: 10,
+          depth: 1,
+          user,
+          overrideAccess: false,
+          req,
+          select: { title: true, team: true, _status: true, authors: true, populatedAuthors: true },
+        })
+        return r.docs.map((d) => ({
+          id: d.id as number,
+          titel: String(d.title ?? ''),
+          team: d.team && typeof d.team === 'object' ? String((d.team as { title?: string }).title ?? '') : null,
+          entwurf: d._status !== 'published',
+          von: ((d as { populatedAuthors?: { name?: string | null }[] }).populatedAuthors ?? []).map((a) => a.name).filter(Boolean).join(', ') || null,
+        }))
+      }, [] as Vorschlag[])
+    : []
+
+  // Mein Team: Zeiten, Ausfälle, offene Anfragen und News der eigenen Teams (gesammelt abgefragt, nicht je Team)
+  const teamUebersicht: TeamUebersicht[] = []
+  if (!nurZusatz && eigeneTeams.length) {
+    const ids = eigeneTeams.slice(0, 6).map((t) => t.id)
+    const [details, kommendeAusfaelle, offeneProbe, offenePaesse, teamNews] = await Promise.all([
+      sicher(async () => (await payload.find({ collection: 'angebote', where: { id: { in: ids } }, limit: 6, depth: 0, select: { zeiten: true } as never })).docs as unknown as { id: number; zeiten?: TeamUebersicht['zeiten'] }[], []),
+      sicher(async () => (await payload.find({ collection: 'ausfaelle', where: { and: [{ angebot: { in: ids } }, { datum: { greater_than_equal: heute.toISOString() } }] }, sort: 'datum', limit: 30, depth: 0, user, overrideAccess: false, req })).docs as unknown as { id: number; angebot: number; datum: string; grund?: string }[], []),
+      darf('probetraining')
+        ? sicher(async () => (await payload.find({ collection: 'probetraining', where: { and: [{ angebot: { in: ids } }, { status: { equals: 'neu' } }] }, limit: 200, depth: 0, user, overrideAccess: false, req, select: { angebot: true } })).docs as unknown as { angebot: number }[], null)
+        : Promise.resolve(null),
+      darf('passantraege')
+        ? sicher(async () => (await payload.find({ collection: 'passantraege', where: { and: [{ team: { in: ids } }, { status: { equals: 'eingereicht' } }] }, limit: 200, depth: 0, user, overrideAccess: false, req, select: { team: true } as never })).docs as unknown as { team: number }[], null)
+        : Promise.resolve(null),
+      sicher(async () => (await payload.find({ collection: 'posts', where: { team: { in: ids } }, sort: '-updatedAt', limit: 30, depth: 0, user, overrideAccess: false, req, draft: true, select: { title: true, team: true, _status: true } })).docs as unknown as { id: number; title?: string; team: number; _status?: string }[], []),
+    ])
+    const idVon = (v: unknown) => (v && typeof v === 'object' ? (v as { id: number }).id : (v as number))
+    for (const t of eigeneTeams.slice(0, 6)) {
+      teamUebersicht.push({
+        id: t.id,
+        titel: t.title,
+        slug: t.slug,
+        zeiten: details.find((d) => d.id === t.id)?.zeiten ?? [],
+        ausfaelle: kommendeAusfaelle.filter((a) => idVon(a.angebot) === t.id).map((a) => ({ id: a.id, datum: a.datum, grund: a.grund })),
+        probetraining: offeneProbe ? offeneProbe.filter((x) => idVon(x.angebot) === t.id).length : null,
+        passantraege: offenePaesse ? offenePaesse.filter((x) => idVon(x.team) === t.id).length : null,
+        news: teamNews.filter((n) => idVon(n.team) === t.id).slice(0, 3).map((n) => ({ id: n.id, titel: String(n.title ?? ''), entwurf: n._status !== 'published' })),
+      })
+    }
+  }
+
   // Wichtige Aufgaben (Datensicherung, Datenschutz, alte Zugänge) – je nach Rolle
   const aufgaben = await aufgabenFuer(req, rollen)
 
@@ -291,6 +348,10 @@ export default async function Dashboard(props: AdminViewServerProps) {
         ersteAufgabe={ersteAufgabe}
       />
 
+      <Vorschlaege liste={vorschlaege} />
+
+      <MeinTeam teams={teamUebersicht} darfAusfall={darf('ausfaelle', 'create')} darfNews={darf('posts', 'create')} />
+
       <section className="bsv-dash__karten" aria-label="Kennzahlen">
         {karten.slice(0, 4).map((k) => {
           const inhalt = (
@@ -323,27 +384,6 @@ export default async function Dashboard(props: AdminViewServerProps) {
             ))}
           </div>
 
-          {eigeneTeams.length > 0 && (
-            <>
-              <h3>{eigeneTeams.length === 1 ? 'Mein Team' : 'Meine Teams'}</h3>
-              <ul className="bsv-dash__teams">
-                {eigeneTeams.map((t) => (
-                  <li key={t.id}>
-                    <strong>{t.title}</strong>
-                    <span>
-                      <a href={`${ADMIN}/collections/posts/create`}>News</a>
-                      <a href={`${ADMIN}/collections/angebote/${t.id}`}>Bearbeiten</a>
-                      {t.slug && (
-                        <a href={`/angebote/${t.slug}`} target="_blank" rel="noopener">
-                          Seite ↗
-                        </a>
-                      )}
-                    </span>
-                  </li>
-                ))}
-              </ul>
-            </>
-          )}
         </section>
 
         <section className="bsv-dash__box bsv-dash__aktivitaeten">

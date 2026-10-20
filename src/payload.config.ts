@@ -7,6 +7,7 @@ import { gesundEndpunkt } from './utilities/gesund'
 import { datenschutzStandards } from './datenschutz/standards'
 import { cspBerichtEndpunkt } from './utilities/cspBericht'
 import { keineFalschenKnoepfe } from './utilities/keineFalschenKnoepfe'
+import { MailVorlagen } from './antraege/vorlagen'
 import { migrations } from './migrations'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
@@ -233,7 +234,7 @@ const konfiguration = buildConfig({
   graphQL: { disable: true },
   // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
   upload: { limits: { fileSize: 25 * 1024 * 1024 } },
-  globals: [Header, Footer, Menue, Texte, Startseite, Verein, Datenschutz, HilfeInhalte, RollenRechte, Sicherheit],
+  globals: [Header, Footer, Menue, Texte, Startseite, Verein, Datenschutz, MailVorlagen, HilfeInhalte, RollenRechte, Sicherheit],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

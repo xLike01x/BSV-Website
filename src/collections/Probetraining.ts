@@ -8,6 +8,8 @@ import { spamSchutz } from '../hooks/spamSchutz'
 import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 import { teamBenachrichtigen } from '@/sport/teamMail'
 import { pflichtHaken } from '@/hooks/formularPruefung'
+import { posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
+import { posteingangEndpunkte } from '@/posteingang/endpunkte'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
 const readAnfragen: Access = async ({ req }) => {
@@ -52,10 +54,11 @@ export const Probetraining: CollectionConfig = {
     description: 'Anfragen für ein Probetraining von der Website. Bitte zeitnah melden und danach den Status ändern.',
     group: 'Posteingang',
     useAsTitle: 'name',
-    defaultColumns: ['name', 'angebot', 'status', 'createdAt'],
+    defaultColumns: ['name', 'angebot', 'status', 'zustaendig', 'createdAt'],
   },
   defaultSort: '-createdAt',
   hooks: {
+    beforeChange: [zustaendigNameSetzen, statusImVerlauf({ neu: 'Neu', zugesagt: 'Zugesagt', alternativ: 'Anderer Termin vorgeschlagen', erledigt: 'Erledigt' })],
     beforeValidate: [spamSchutz('probetraining')],
     // Neue Anfrage → kurze Mail an die Trainer des Teams (ohne Kontaktdaten im Text – die stehen in der Verwaltung)
     afterChange: [
@@ -76,7 +79,9 @@ export const Probetraining: CollectionConfig = {
       },
     ],
   },
+  endpoints: posteingangEndpunkte('probetraining'),
   fields: [
+    ...posteingangFelder(),
     // Nachträglich umhängen nur Admin/Redaktion (sonst könnten Trainer Anfragen samt Daten anderen Teams zuschieben)
     { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true, access: { update: isEditorField } },
     {

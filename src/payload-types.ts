@@ -149,6 +149,7 @@ export interface Config {
     startseite: Startseite;
     verein: Verein;
     datenschutz: Datenschutz;
+    mailVorlagen: MailVorlagen;
     hilfe: Hilfe;
     rollenRechte: RollenRechte;
     sicherheit: Sicherheit;
@@ -161,6 +162,7 @@ export interface Config {
     startseite: StartseiteSelect<false> | StartseiteSelect<true>;
     verein: VereinSelect<false> | VereinSelect<true>;
     datenschutz: DatenschutzSelect<false> | DatenschutzSelect<true>;
+    mailVorlagen: MailVorlagenSelect<false> | MailVorlagenSelect<true>;
     hilfe: HilfeSelect<false> | HilfeSelect<true>;
     rollenRechte: RollenRechteSelect<false> | RollenRechteSelect<true>;
     sicherheit: SicherheitSelect<false> | SicherheitSelect<true>;
@@ -207,6 +209,23 @@ export interface UserAuthOperations {
  */
 export interface Mitgliedsantraege {
   id: number;
+  /**
+   * Wer sich um diesen Eintrag kümmert. Jede/r kann sich oben mit „Ich kümmere mich“ selbst eintragen.
+   */
+  zustaendig?: (number | null) | User;
+  zustaendigName?: string | null;
+  verlauf?:
+    | {
+        text: string;
+        von?: (number | null) | User;
+        vonName?: string | null;
+        am: string;
+        art?: ('notiz' | 'status') | null;
+        id?: string | null;
+      }[]
+    | null;
+  aufgenommenAm?: string | null;
+  exportiertAm?: string | null;
   status?: ('neu' | 'rueckfrage' | 'aufgenommen' | 'abgelehnt') | null;
   vorname: string;
   nachname: string;
@@ -238,12 +257,159 @@ export interface Mitgliedsantraege {
   sepaMandat: boolean;
   satzungAkzeptiert: boolean;
   fotoEinwilligung?: boolean | null;
+  /**
+   * Aus der Zeit vor dem Notizen-Verlauf. Neue Notizen bitte oben im Kasten schreiben.
+   */
   notizen?: string | null;
   endgueltigAm?: string | null;
   endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
+}
+/**
+ * Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "users".
+ */
+export interface User {
+  id: number;
+  aktuellesPasswort?: string | null;
+  /**
+   * Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.
+   */
+  name: string;
+  roles: (
+    'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
+  )[];
+  /**
+   * Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.
+   */
+  teamsVerantwortlich?: (number | Angebote)[] | null;
+  /**
+   * Wo die Person selbst mitspielt bzw. teilnimmt (steht auf dem Ausweis). Gibt keine Rechte – dafür das Feld darüber.
+   */
+  angebote?: (number | Angebote)[] | null;
+  /**
+   * Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.
+   */
+  zusatzrechte?: {
+    /**
+     * Posteingang · Alle Nachrichten aus dem Kontaktformular.
+     */
+    kontaktanfragen?: boolean | null;
+    /**
+     * Posteingang · Nicht nur die der eigenen Teams.
+     */
+    probetraining?: boolean | null;
+    /**
+     * Posteingang · Wie die Rolle Passwesen, inkl. Pass-Unterlagen.
+     */
+    passantraege?: boolean | null;
+    /**
+     * Posteingang · Selbst registrierte Mitglieder freischalten oder ablehnen.
+     */
+    registrierungen?: boolean | null;
+    /**
+     * Posteingang · Einsendungen aus Formularen, die auf Seiten eingebaut sind.
+     */
+    formulare?: boolean | null;
+    /**
+     * Inhalte · Der Vereinskalender auf der Seite „Termine“.
+     */
+    termine?: boolean | null;
+    /**
+     * Inhalte · Gesuche für Helfer und Ehrenamt.
+     */
+    gesuche?: boolean | null;
+    /**
+     * Sport · Nicht nur für die eigenen Teams.
+     */
+    ausfaelle?: boolean | null;
+    /**
+     * Mitglieder · Mitgliedsnummer, Eintritt, Abteilungen (ohne Bankdaten).
+     */
+    mitgliedschaften?: boolean | null;
+  };
+  /**
+   * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
+   */
+  profilbild?: (number | null) | Profilbilder;
+  /**
+   * Ohne Haken: selbst registriert, wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“.
+   */
+  freigegeben?: boolean | null;
+  registriertUeber?: ('verwaltung' | 'email' | 'google') | null;
+  /**
+   * Die Person hat auf den Link in der Bestätigungs-E-Mail geklickt. Erst dann kann sie sich anmelden und erscheint unter „Registrierungen“.
+   */
+  emailBestaetigt?: boolean | null;
+  /**
+   * Diese Teams & Kurse hat die Person bei der Registrierung angekreuzt (dazu gehört sie oder da möchte sie hin). Unter „Registrierungen“ sind sie bei der Freigabe schon vorausgewählt.
+   */
+  wunschAngebote?: (number | Angebote)[] | null;
+  bestaetigungHash?: string | null;
+  bestaetigungBis?: string | null;
+  googleId?: string | null;
+  /**
+   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams und (Kasse) bei neuem Mitgliedsantrag. Haken entfernen = keine Mails.
+   */
+  mailBenachrichtigung?: boolean | null;
+  /**
+   * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
+   */
+  zweiFaktorAktiv?: boolean | null;
+  zweiFaktorGeheimnis?: string | null;
+  zweiFaktorCodes?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  zweiFaktorSitzungen?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  zweiFaktorLetzterSchritt?: number | null;
+  zweiFaktorFehler?: number | null;
+  zweiFaktorFehlerSeit?: string | null;
+  zweiFaktorEinrichtungSeit?: string | null;
+  /**
+   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Einstellungen → Rollen & Rechte → „Alle Testkonten löschen“.
+   */
+  testkonto?: boolean | null;
+  /**
+   * Wird bei jeder Anmeldung automatisch gesetzt.
+   */
+  letzteAnmeldung?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  email: string;
+  resetPasswordToken?: string | null;
+  resetPasswordExpiration?: string | null;
+  salt?: string | null;
+  hash?: string | null;
+  resetPasswordRequestedAt?: string | null;
+  loginAttempts?: number | null;
+  lockUntil?: string | null;
+  sessions?:
+    | {
+        id: string;
+        createdAt?: string | null;
+        expiresAt: string;
+      }[]
+    | null;
+  password?: string | null;
+  collection: 'users';
 }
 /**
  * Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.
@@ -526,150 +692,6 @@ export interface FolderInterface {
   createdAt: string;
 }
 /**
- * Wer sich anmelden darf und mit welcher Rolle. Die Rolle bestimmt, was jemand bearbeiten kann.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "users".
- */
-export interface User {
-  id: number;
-  aktuellesPasswort?: string | null;
-  /**
-   * Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.
-   */
-  name: string;
-  roles: (
-    'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
-  )[];
-  /**
-   * Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.
-   */
-  teamsVerantwortlich?: (number | Angebote)[] | null;
-  /**
-   * Wo die Person selbst mitspielt bzw. teilnimmt (steht auf dem Ausweis). Gibt keine Rechte – dafür das Feld darüber.
-   */
-  angebote?: (number | Angebote)[] | null;
-  /**
-   * Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.
-   */
-  zusatzrechte?: {
-    /**
-     * Posteingang · Alle Nachrichten aus dem Kontaktformular.
-     */
-    kontaktanfragen?: boolean | null;
-    /**
-     * Posteingang · Nicht nur die der eigenen Teams.
-     */
-    probetraining?: boolean | null;
-    /**
-     * Posteingang · Wie die Rolle Passwesen, inkl. Pass-Unterlagen.
-     */
-    passantraege?: boolean | null;
-    /**
-     * Posteingang · Selbst registrierte Mitglieder freischalten oder ablehnen.
-     */
-    registrierungen?: boolean | null;
-    /**
-     * Posteingang · Einsendungen aus Formularen, die auf Seiten eingebaut sind.
-     */
-    formulare?: boolean | null;
-    /**
-     * Inhalte · Der Vereinskalender auf der Seite „Termine“.
-     */
-    termine?: boolean | null;
-    /**
-     * Inhalte · Gesuche für Helfer und Ehrenamt.
-     */
-    gesuche?: boolean | null;
-    /**
-     * Sport · Nicht nur für die eigenen Teams.
-     */
-    ausfaelle?: boolean | null;
-    /**
-     * Mitglieder · Mitgliedsnummer, Eintritt, Abteilungen (ohne Bankdaten).
-     */
-    mitgliedschaften?: boolean | null;
-  };
-  /**
-   * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
-   */
-  profilbild?: (number | null) | Profilbilder;
-  /**
-   * Ohne Haken: selbst registriert, wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“.
-   */
-  freigegeben?: boolean | null;
-  registriertUeber?: ('verwaltung' | 'email' | 'google') | null;
-  /**
-   * Die Person hat auf den Link in der Bestätigungs-E-Mail geklickt. Erst dann kann sie sich anmelden und erscheint unter „Registrierungen“.
-   */
-  emailBestaetigt?: boolean | null;
-  /**
-   * Diese Teams & Kurse hat die Person bei der Registrierung angekreuzt (dazu gehört sie oder da möchte sie hin). Unter „Registrierungen“ sind sie bei der Freigabe schon vorausgewählt.
-   */
-  wunschAngebote?: (number | Angebote)[] | null;
-  bestaetigungHash?: string | null;
-  bestaetigungBis?: string | null;
-  googleId?: string | null;
-  /**
-   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams. Haken entfernen = keine Mails.
-   */
-  mailBenachrichtigung?: boolean | null;
-  /**
-   * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
-   */
-  zweiFaktorAktiv?: boolean | null;
-  zweiFaktorGeheimnis?: string | null;
-  zweiFaktorCodes?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  zweiFaktorSitzungen?:
-    | {
-        [k: string]: unknown;
-      }
-    | unknown[]
-    | string
-    | number
-    | boolean
-    | null;
-  zweiFaktorLetzterSchritt?: number | null;
-  zweiFaktorFehler?: number | null;
-  zweiFaktorFehlerSeit?: string | null;
-  zweiFaktorEinrichtungSeit?: string | null;
-  /**
-   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Einstellungen → Rollen & Rechte → „Alle Testkonten löschen“.
-   */
-  testkonto?: boolean | null;
-  /**
-   * Wird bei jeder Anmeldung automatisch gesetzt.
-   */
-  letzteAnmeldung?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  email: string;
-  resetPasswordToken?: string | null;
-  resetPasswordExpiration?: string | null;
-  salt?: string | null;
-  hash?: string | null;
-  resetPasswordRequestedAt?: string | null;
-  loginAttempts?: number | null;
-  lockUntil?: string | null;
-  sessions?:
-    | {
-        id: string;
-        createdAt?: string | null;
-        expiresAt: string;
-      }[]
-    | null;
-  password?: string | null;
-  collection: 'users';
-}
-/**
  * Fotos, die Mitglieder im Mitgliederbereich von sich hochladen. Sichtbar nur für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -708,6 +730,21 @@ export interface Profilbilder {
  */
 export interface Kontaktanfragen {
   id: number;
+  /**
+   * Wer sich um diesen Eintrag kümmert. Jede/r kann sich oben mit „Ich kümmere mich“ selbst eintragen.
+   */
+  zustaendig?: (number | null) | User;
+  zustaendigName?: string | null;
+  verlauf?:
+    | {
+        text: string;
+        von?: (number | null) | User;
+        vonName?: string | null;
+        am: string;
+        art?: ('notiz' | 'status') | null;
+        id?: string | null;
+      }[]
+    | null;
   status?: ('neu' | 'bearbeitung' | 'erledigt') | null;
   /**
    * Was im Formular bei „Worum geht es?“ gewählt wurde. Die Auswahl pflegst du unter Vereinsdaten → „Kontaktformular: Worum geht es?“.
@@ -732,6 +769,21 @@ export interface Kontaktanfragen {
  */
 export interface Probetraining {
   id: number;
+  /**
+   * Wer sich um diesen Eintrag kümmert. Jede/r kann sich oben mit „Ich kümmere mich“ selbst eintragen.
+   */
+  zustaendig?: (number | null) | User;
+  zustaendigName?: string | null;
+  verlauf?:
+    | {
+        text: string;
+        von?: (number | null) | User;
+        vonName?: string | null;
+        am: string;
+        art?: ('notiz' | 'status') | null;
+        id?: string | null;
+      }[]
+    | null;
   angebot: number | Angebote;
   name: string;
   email: string;
@@ -896,6 +948,10 @@ export interface Post {
    * Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.
    */
   aufStartseite?: boolean | null;
+  /**
+   * Die Redaktion sieht deinen Vorschlag auf ihrer Startseite und holt die News mit einem Klick auf die Startseite der Website.
+   */
+  startseiteVorschlag?: boolean | null;
   /**
    * Leer = Zeitpunkt der Veröffentlichung.
    */
@@ -2020,6 +2076,20 @@ export interface PayloadMigration {
  * via the `definition` "mitgliedsantraege_select".
  */
 export interface MitgliedsantraegeSelect<T extends boolean = true> {
+  zustaendig?: T;
+  zustaendigName?: T;
+  verlauf?:
+    | T
+    | {
+        text?: T;
+        von?: T;
+        vonName?: T;
+        am?: T;
+        art?: T;
+        id?: T;
+      };
+  aufgenommenAm?: T;
+  exportiertAm?: T;
   status?: T;
   vorname?: T;
   nachname?: T;
@@ -2057,6 +2127,18 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
  * via the `definition` "kontaktanfragen_select".
  */
 export interface KontaktanfragenSelect<T extends boolean = true> {
+  zustaendig?: T;
+  zustaendigName?: T;
+  verlauf?:
+    | T
+    | {
+        text?: T;
+        von?: T;
+        vonName?: T;
+        am?: T;
+        art?: T;
+        id?: T;
+      };
   status?: T;
   an?: T;
   name?: T;
@@ -2075,6 +2157,18 @@ export interface KontaktanfragenSelect<T extends boolean = true> {
  * via the `definition` "probetraining_select".
  */
 export interface ProbetrainingSelect<T extends boolean = true> {
+  zustaendig?: T;
+  zustaendigName?: T;
+  verlauf?:
+    | T
+    | {
+        text?: T;
+        von?: T;
+        vonName?: T;
+        am?: T;
+        art?: T;
+        id?: T;
+      };
   angebot?: T;
   name?: T;
   email?: T;
@@ -2142,6 +2236,7 @@ export interface PostsSelect<T extends boolean = true> {
   team?: T;
   categories?: T;
   aufStartseite?: T;
+  startseiteVorschlag?: T;
   publishedAt?: T;
   authors?: T;
   populatedAuthors?:
@@ -3642,6 +3737,29 @@ export interface Datenschutz {
   createdAt?: string | null;
 }
 /**
+ * Texte für die Antwort an Antragsteller/innen. Platzhalter werden automatisch ersetzt: {vorname} {nachname} {mitgliedsart} {meinName}. Vor dem Senden kannst du den Text im Antrag noch anpassen. Stellen in [ECKIGEN KLAMMERN] musst du vor dem Senden ausfüllen.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mailVorlagen".
+ */
+export interface MailVorlagen {
+  id: number;
+  aufgenommen: {
+    betreff: string;
+    text: string;
+  };
+  rueckfrage: {
+    betreff: string;
+    text: string;
+  };
+  abgelehnt: {
+    betreff: string;
+    text: string;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
  * Eigene Ergänzungen für den „? Hilfe“-Knopf und das Hilfe-Center. Die eingebauten Texte bleiben erhalten – was du hier einträgst, kommt dazu.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3684,6 +3802,7 @@ export interface Hilfe {
           | 'sicherung'
           | 'rollenRechte'
           | 'datenschutz'
+          | 'mailVorlagen'
           | 'dokumente'
           | 'sponsoren'
           | 'alben'
@@ -3754,6 +3873,7 @@ export interface Hilfe {
               | 'sicherung'
               | 'rollenRechte'
               | 'datenschutz'
+              | 'mailVorlagen'
               | 'dokumente'
               | 'sponsoren'
               | 'alben'
@@ -4275,6 +4395,33 @@ export interface DatenschutzSelect<T extends boolean = true> {
   personenPapierkorbTage?: T;
   automatisch?: T;
   standardsOktober2026?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mailVorlagen_select".
+ */
+export interface MailVorlagenSelect<T extends boolean = true> {
+  aufgenommen?:
+    | T
+    | {
+        betreff?: T;
+        text?: T;
+      };
+  rueckfrage?:
+    | T
+    | {
+        betreff?: T;
+        text?: T;
+      };
+  abgelehnt?:
+    | T
+    | {
+        betreff?: T;
+        text?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

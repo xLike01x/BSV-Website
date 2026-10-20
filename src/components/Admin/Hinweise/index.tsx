@@ -55,6 +55,36 @@ function useAngebotTitel(id: number | string | null) {
 const TEAM_ROLLEN = ['uebungsleitung', 'teamredaktion']
 
 /* ------------------------------------------------------------------ */
+/** Wörter im Text zählen (Lexical-Inhalt) */
+function woerter(inhalt: unknown): number {
+  let n = 0
+  const gehen = (k: unknown) => {
+    if (!k || typeof k !== 'object') return
+    const x = k as { text?: unknown; children?: unknown[] }
+    if (typeof x.text === 'string') n += x.text.split(/\s+/).filter(Boolean).length
+    if (Array.isArray(x.children)) x.children.forEach(gehen)
+  }
+  gehen((inhalt as { root?: unknown } | null)?.root)
+  return n
+}
+
+/** Angaben zum Titelbild nachladen (Personen erkennbar? Bildbeschreibung?) */
+function useBildAngaben(id: number | string | null) {
+  const [b, setB] = useState<{ personen?: string | null; alt?: string | null } | null>(null)
+  useEffect(() => {
+    if (!id) return setB(null)
+    let ab = false
+    fetch(`/api/media/${id}?depth=0&select[personen]=true&select[alt]=true`, { credentials: 'include' })
+      .then((r) => (r.ok ? r.json() : null))
+      .then((d) => !ab && setB(d))
+      .catch(() => null)
+    return () => {
+      ab = true
+    }
+  }, [id])
+  return b
+}
+
 export function NewsHinweise() {
   const { user } = useAuth<{ roles?: string[] }>()
   const { hasPublishedDoc, id } = useDocumentInfo()
@@ -62,7 +92,10 @@ export function NewsHinweise() {
   const bild = useFormFields(([f]) => f.heroImage?.value)
   const team = useFormFields(([f]) => f.team?.value)
   const startseite = useFormFields(([f]) => f.aufStartseite?.value as boolean | undefined)
+  const vorschlag = useFormFields(([f]) => f.startseiteVorschlag?.value as boolean | undefined)
+  const inhalt = useFormFields(([f]) => f.content?.value)
   const angebot = useAngebotTitel(idVon(team))
+  const bildAngaben = useBildAngaben(idVon(bild))
 
   const istTeamRolle = !user?.roles?.some((r) => ['admin', 'redaktion'].includes(r)) && user?.roles?.some((r) => TEAM_ROLLEN.includes(r))
   // Team-Rollen: neue News kommen nie direkt auf die Startseite
@@ -83,9 +116,28 @@ export function NewsHinweise() {
             : 'Diese News erscheint nirgends: Team wählen oder „Auf Startseite“ anhaken.',
         },
   )
-  if (istTeamRolle && !id) h.push({ art: 'info', text: 'Ob die News zusätzlich auf die Startseite kommt, entscheidet die Redaktion.' })
-  if (!bild) h.push({ art: 'warn', text: 'Kein Titelbild – in Übersichten sieht die News leer aus.' })
+  if (istTeamRolle && !aufStart)
+    h.push(
+      vorschlag
+        ? { art: 'ok', text: 'Für die Startseite vorgeschlagen – die Redaktion entscheidet und bekommt den Vorschlag angezeigt.' }
+        : { art: 'info', text: 'Soll die News auch auf die Startseite? Rechts „Für die Startseite vorschlagen“ anhaken.' },
+    )
+
+  // Vollständigkeit
+  const anzahl = woerter(inhalt)
+  if (!titel?.trim()) h.push({ art: 'warn', text: 'Noch kein Titel.' })
   if (titel && titel.length > 70) h.push({ art: 'warn', text: `Der Titel ist recht lang (${titel.length} Zeichen). Kürzer liest sich besser – ideal unter 70.` })
+  const buchstaben = (titel ?? '').replace(/[^A-Za-zÄÖÜäöüß]/g, '')
+  if (buchstaben.length >= 8 && buchstaben.replace(/[^A-ZÄÖÜ]/g, '').length / buchstaben.length > 0.7) h.push({ art: 'warn', text: 'Der Titel ist fast nur in GROSSBUCHSTABEN – das wirkt wie Schreien und ist schwerer zu lesen.' })
+  if (/[!?]{2,}/.test(titel ?? '')) h.push({ art: 'info', text: 'Mehrere Ausrufe- oder Fragezeichen im Titel – eins reicht.' })
+  if (anzahl === 0) h.push({ art: 'warn', text: 'Noch kein Text geschrieben.' })
+  else if (anzahl < 25) h.push({ art: 'info', text: `Der Text ist sehr kurz (${anzahl} Wörter). Zwei, drei Sätze mehr – wer, was, wann, wo – machen die News lesenswert.` })
+  if (!bild) h.push({ art: 'warn', text: 'Kein Titelbild – in Übersichten sieht die News leer aus.' })
+  else if (bildAngaben) {
+    if (!bildAngaben.personen) h.push({ art: 'warn', text: 'Beim Titelbild fehlt die Angabe, ob Personen zu erkennen sind. Bitte in der Mediathek nachtragen – bei Kindern nur mit Einwilligung der Eltern.' })
+    if (!bildAngaben.alt?.trim()) h.push({ art: 'info', text: 'Das Titelbild hat keine Bildbeschreibung (für Menschen, die sich Seiten vorlesen lassen). In der Mediathek ergänzen.' })
+  }
+  h.push({ art: 'info', text: 'Rechtschreibung: Rot unterstrichene Wörter mit der rechten Maustaste anklicken – dein Browser schlägt die richtige Schreibweise vor.' })
   if (!hasPublishedDoc) h.push({ art: 'info', text: 'Noch nicht veröffentlicht – sichtbar erst nach „Veröffentlichen“.' })
   else h.push({ art: 'ok', text: 'Ist veröffentlicht. Änderungen werden erst mit „Veröffentlichen“ übernommen.' })
 

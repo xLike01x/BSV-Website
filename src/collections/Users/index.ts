@@ -183,13 +183,13 @@ export const Users: CollectionConfig = {
     { name: 'googleId', type: 'text', index: true, access: { read: () => false, create: () => false, update: () => false }, admin: { hidden: true } },
     {
       name: 'mailBenachrichtigung',
-      label: 'E-Mail-Benachrichtigungen zu meinen Teams',
+      label: 'E-Mail-Benachrichtigungen',
       type: 'checkbox',
       defaultValue: true,
       admin: {
         position: 'sidebar',
         condition: (d) => (d?.roles ?? []).some((r: string) => r !== 'mitglied'),
-        description: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams. Haken entfernen = keine Mails.',
+        description: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams und (Kasse) bei neuem Mitgliedsantrag. Haken entfernen = keine Mails.',
       },
     },
     ...zweiFaktorFelder,

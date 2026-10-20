@@ -7,6 +7,12 @@ import { decrypt, encrypt, isValidIBAN } from '../utilities/crypto'
 import { antragRegeln, geburtsdatumPruefen, plzPruefen, telefonPruefen } from '@/hooks/formularPruefung'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { mitgliedschaftAusAntrag } from '@/mitgliedschaften/ausAntrag'
+import { antragEndpunkte } from '@/antraege/endpunkte'
+import { neuerAntragMelden } from '@/antraege/melden'
+import { nurUeberEndpunkt, posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
+import { posteingangEndpunkte } from '@/posteingang/endpunkte'
+
+const STATUS_LABEL: Record<string, string> = { neu: 'Neu', rueckfrage: 'Rückfrage', aufgenommen: 'Aufgenommen', abgelehnt: 'Abgelehnt' }
 
 /**
  * Online-Mitgliedsantrag. Anlegen darf jeder (öffentliches Formular),
@@ -25,6 +31,8 @@ export const Mitgliedsantraege: CollectionConfig = {
     components: {
       beforeList: [
         '@/components/Admin/Einstieg',
+        // „Für die Kasse exportieren“ (ohne Bankdaten)
+        '@/antraege/Export',
         // Reiter „Neu · Rückfrage · Erledigt · Alle“ mit Anzahl – neue Anträge leuchten orange
         {
           path: '@/components/Admin/StatusReiter',
@@ -43,10 +51,29 @@ export const Mitgliedsantraege: CollectionConfig = {
     description: 'Online gestellte Mitgliedsanträge mit Bankdaten – vertraulich behandeln. Oben: „Neu“ leuchtet orange, sobald ein neuer Antrag da ist. Erledigt = aufgenommen oder abgelehnt.',
     group: 'Posteingang',
     useAsTitle: 'nachname',
-    defaultColumns: ['nachname', 'vorname', 'mitgliedsart', 'status', 'createdAt'],
+    defaultColumns: ['nachname', 'vorname', 'mitgliedsart', 'status', 'zustaendig', 'createdAt'],
   },
   defaultSort: '-createdAt',
+  endpoints: [...antragEndpunkte, ...posteingangEndpunkte('mitgliedsantraege')],
   fields: [
+    ...posteingangFelder(),
+    // Prüfhilfe mit Knöpfen „Aufnehmen · Rückfrage · Ablehnen“
+    { name: 'pruefung', type: 'ui', admin: { components: { Field: '@/antraege/Pruefung' } } },
+    {
+      name: 'aufgenommenAm',
+      label: 'Aufgenommen am',
+      type: 'date',
+      access: { create: () => false, update: () => false },
+      admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.aufgenommenAm), date: { displayFormat: 'dd.MM.yyyy HH:mm' } },
+    },
+    {
+      name: 'exportiertAm',
+      label: 'Für die Kasse exportiert am',
+      type: 'date',
+      index: true,
+      access: { create: () => false, update: nurUeberEndpunkt },
+      admin: { position: 'sidebar', readOnly: true, condition: (d) => Boolean(d?.exportiertAm), date: { displayFormat: 'dd.MM.yyyy HH:mm' } },
+    },
     {
       name: 'status',
       label: 'Status',
@@ -199,7 +226,14 @@ export const Mitgliedsantraege: CollectionConfig = {
         { name: 'fotoEinwilligung', label: 'Einwilligung Fotos (freiwillig)', type: 'checkbox' },
       ],
     },
-    { name: 'notizen', label: 'Interne Notizen', type: 'textarea', access: { create: () => false } },
+    // Früheres Notizfeld – nur noch sichtbar, wenn dort etwas steht (neue Notizen oben im Kasten „Wer kümmert sich?“)
+    {
+      name: 'notizen',
+      label: 'Frühere Notizen',
+      type: 'textarea',
+      access: { create: () => false },
+      admin: { condition: (d) => Boolean(d?.notizen), description: 'Aus der Zeit vor dem Notizen-Verlauf. Neue Notizen bitte oben im Kasten schreiben.' },
+    },
   ],
   hooks: {
     beforeValidate: [
@@ -217,6 +251,13 @@ export const Mitgliedsantraege: CollectionConfig = {
       },
     ],
     beforeChange: [
+      zustaendigNameSetzen,
+      statusImVerlauf(STATUS_LABEL),
+      // Zeitpunkt der Aufnahme festhalten (für den Export)
+      ({ data, originalDoc, operation }) => {
+        if (operation === 'update' && data?.status === 'aufgenommen' && originalDoc?.status !== 'aufgenommen' && !originalDoc?.aufgenommenAm) data.aufgenommenAm = new Date().toISOString()
+        return data
+      },
       // Betrag zum Zeitpunkt des Antrags festhalten (aus Vereinsdaten → Mitgliedsbeiträge)
       async ({ data, req, operation }) => {
         if (operation !== 'create' || !data) return data
@@ -227,7 +268,7 @@ export const Mitgliedsantraege: CollectionConfig = {
       },
     ],
     // Aufgenommen → automatisch Mitgliedschaft(en) für den digitalen Ausweis
-    afterChange: [mitgliedschaftAusAntrag],
+    afterChange: [mitgliedschaftAusAntrag, neuerAntragMelden],
   },
   timestamps: true,
 }

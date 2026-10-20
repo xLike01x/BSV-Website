@@ -24,6 +24,7 @@ import { slugFromTitle } from '../../hooks/slugFromTitle'
 import { seoAutomatisch } from '../../hooks/seoAutomatisch'
 import { populateAuthors } from './hooks/populateAuthors'
 import { revalidateDelete, revalidatePost } from './hooks/revalidatePost'
+import { startseiteEndpunkt } from './startseite'
 
 import {
   MetaDescriptionField,
@@ -64,6 +65,8 @@ const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operatio
   if (!ids.includes(ziel)) throw new APIError('Bitte wähle eines deiner Teams aus. Du kannst nur News für eigene Teams schreiben.', 403)
   if (operation === 'create') data.aufStartseite = false
   else if (originalDoc) data.aufStartseite = originalDoc.aufStartseite
+  // Schon auf der Startseite → kein Vorschlag nötig
+  if (data.aufStartseite) data.startseiteVorschlag = false
   // Diese Felder entscheidet die Redaktion – Team-Rollen können sie auch über die Schnittstelle nicht setzen
   const ids2 = (v: unknown) => (Array.isArray(v) ? v.map((x) => (x && typeof x === 'object' ? (x as { id: number }).id : x)) : [])
   const uid = (user as { id?: number }).id
@@ -81,6 +84,12 @@ const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operatio
   return data
 }
 
+/** Holt die Redaktion eine News auf die Startseite, ist der Vorschlag erledigt */
+const vorschlagErledigt: CollectionBeforeChangeHook = ({ data }) => {
+  if (data?.aufStartseite) data.startseiteVorschlag = false
+  return data
+}
+
 /** Versionen/Entwürfe: Redaktion alle, Team-Rollen nur die ihrer Teams, sonst niemand */
 const versionenLesen: Access = async ({ req }) => {
   const user = req.user as { roles?: string[] } | null
@@ -95,6 +104,7 @@ const versionenLesen: Access = async ({ req }) => {
 export const Posts: CollectionConfig<'posts'> = {
   slug: 'posts',
   labels: { singular: 'News', plural: 'News' },
+  endpoints: [startseiteEndpunkt],
   access: {
     create: newsAnlegen,
     delete: redaktionOderEigeneTeams('team'),
@@ -249,6 +259,18 @@ export const Posts: CollectionConfig<'posts'> = {
       },
     },
     {
+      // Trainer/Team-Redaktion bitten die Redaktion, die News auf die Startseite zu holen
+      name: 'startseiteVorschlag',
+      label: 'Für die Startseite vorschlagen',
+      type: 'checkbox',
+      index: true,
+      admin: {
+        position: 'sidebar',
+        condition: (data, _sibling, { user }) => !istRedaktion(user) || Boolean(data?.startseiteVorschlag && !data?.aufStartseite),
+        description: 'Die Redaktion sieht deinen Vorschlag auf ihrer Startseite und holt die News mit einem Klick auf die Startseite der Website.',
+      },
+    },
+    {
       name: 'publishedAt',
       label: 'Veröffentlicht am',
       type: 'date',
@@ -321,7 +343,7 @@ export const Posts: CollectionConfig<'posts'> = {
   ],
   hooks: {
     beforeValidate: [slugFromTitle],
-    beforeChange: [teamNewsPruefen, medienPruefen, seoAutomatisch({ text: (d) => d.content, bild: (d) => d.heroImage })],
+    beforeChange: [teamNewsPruefen, vorschlagErledigt, medienPruefen, seoAutomatisch({ text: (d) => d.content, bild: (d) => d.heroImage })],
     afterChange: [revalidatePost],
     afterRead: [populateAuthors],
     afterDelete: [revalidateDelete],

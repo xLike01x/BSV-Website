@@ -33,7 +33,8 @@ export const anzeigeMail: EmailAdapter = ({ payload }) => ({
 })
 
 /** Verschickt eine E-Mail (live über SMTP; ohne SMTP auf der Live-Website passiert nichts) */
-export async function mailSenden(payload: Payload, m: { an: string; betreff: string; text: string; html: string }) {
-  if (!emailAktiv() && process.env.NODE_ENV === 'production') return
-  await payload.sendEmail({ to: m.an, subject: m.betreff, text: m.text, html: m.html })
+export async function mailSenden(payload: Payload, m: { an: string; betreff: string; text: string; html: string; antwortAn?: string }): Promise<boolean> {
+  if (!emailAktiv() && process.env.NODE_ENV === 'production') return false
+  await payload.sendEmail({ to: m.an, subject: m.betreff, text: m.text, html: m.html, ...(m.antwortAn ? { replyTo: m.antwortAn } : {}) })
+  return true
 }

@@ -1,5 +1,9 @@
+import { default as default_8e8d4048c1eaa2b66e9242f87fad9512 } from '@/posteingang/Kopf'
+import { default as default_d0ef3004d028864405004937b54bca25 } from '@/posteingang/ZustaendigZelle'
+import { default as default_bf383bf8a38b3110431e06df348a7084 } from '@/antraege/Pruefung'
 import { default as default_a9afc1bc5ee6748910d9e48427111396 } from '@/components/Admin/StatusReiter/Pille'
 import { default as default_d0d19d9db7a4a6fd2771bbabbf3e87c6 } from '@/components/Admin/Einstieg'
+import { default as default_4e0fa61599039b8cd73b3f116b0bb6a4 } from '@/antraege/Export'
 import { default as default_2d7565a102af17e54aaa8173ce7a5f12 } from '@/components/Admin/StatusReiter'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -72,8 +76,12 @@ import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } f
 
 /** @type import('payload').ImportMap */
 export const importMap = {
+  "@/posteingang/Kopf#default": default_8e8d4048c1eaa2b66e9242f87fad9512,
+  "@/posteingang/ZustaendigZelle#default": default_d0ef3004d028864405004937b54bca25,
+  "@/antraege/Pruefung#default": default_bf383bf8a38b3110431e06df348a7084,
   "@/components/Admin/StatusReiter/Pille#default": default_a9afc1bc5ee6748910d9e48427111396,
   "@/components/Admin/Einstieg#default": default_d0d19d9db7a4a6fd2771bbabbf3e87c6,
+  "@/antraege/Export#default": default_4e0fa61599039b8cd73b3f116b0bb6a4,
   "@/components/Admin/StatusReiter#default": default_2d7565a102af17e54aaa8173ce7a5f12,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,

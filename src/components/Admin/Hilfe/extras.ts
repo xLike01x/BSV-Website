@@ -327,10 +327,11 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Einen Mitgliedsantrag bearbeiten',
       video: '/hilfe/antrag-bearbeiten.mp4',
       schritte: [
-        'In der Liste auf den Antrag mit Status „Neu“ klicken.',
-        'Angaben prüfen: Personen, gewählte Angebote, Beitrag, Bankverbindung.',
-        'Bei Unklarheiten Status „Rückfrage“ setzen und die Person kontaktieren.',
-        'Nach der Übernahme in die Mitgliederverwaltung Status „Aufgenommen“ setzen und speichern.',
+        'In der Liste auf den Antrag mit Status „Neu“ klicken und oben „🙋 Ich kümmere mich“ wählen.',
+        'Den Kasten „Antrag prüfen“ lesen: Alter, Beitrag, IBAN, doppelte Anträge oder bestehende Mitgliedschaft.',
+        'Unklar? „❓ Rückfrage“ klicken, in der vorbereiteten E-Mail [HIER DEINE FRAGE] ersetzen und bestätigen.',
+        'Passt alles: „✓ Aufnehmen“ klicken, Willkommens-Mail prüfen und bestätigen – die Mitgliedschaft für den Ausweis wird automatisch angelegt.',
+        'Später in der Liste „📥 … neue exportieren“ für die Übernahme ins DFBnet.',
       ],
     },
   ],
@@ -339,8 +340,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'probe-bearbeiten',
       titel: 'Eine Probetraining-Anfrage beantworten',
       schritte: [
-        'Die Anfrage öffnen – dort stehen Name, Kontakt und gewünschtes Angebot.',
-        'Die Person anrufen oder anschreiben.',
+        'Die Anfrage öffnen – dort stehen Name, Kontakt und gewünschtes Angebot. Oben „🙋 Ich kümmere mich“ klicken.',
+        'Die Person mit „📞 Anrufen“ oder „✉️ Antworten“ kontaktieren und kurz notieren, was ausgemacht ist.',
         'Status auf „Zugesagt“, „Anderer Termin vorgeschlagen“ oder „Erledigt“ setzen und speichern.',
       ],
     },
@@ -697,7 +698,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
-    antwort: 'Ja, als Trainer für deine Teams (Passanträge zusätzlich an die Rolle „Passwesen“) – sobald der E-Mail-Versand eingerichtet ist. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen zu meinen Teams“ entfernen und speichern.',
+    antwort: 'Ja, als Trainer für deine Teams (Passanträge zusätzlich an die Rolle „Passwesen“) – sobald der E-Mail-Versand eingerichtet ist. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“ entfernen und speichern.',
   },
   {
     frage: 'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
@@ -858,6 +859,21 @@ export const FAQ: Faq[] = [
   {
     frage: 'Was muss wegen der Besucherstatistik in die Datenschutzerklärung?',
     antwort: 'Ein kurzer Absatz, z. B.: „Reichweitenmessung: Wir zählen Seitenaufrufe auf unserem eigenen Server, um die Website zu verbessern (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Dabei werden keine Cookies gesetzt und keine IP-Adressen gespeichert. Aus IP-Adresse und Browserkennung wird ein täglich wechselndes, nicht rückverfolgbares Kürzel gebildet, damit wir Besuche eines Tages zählen können. Gespeichert werden aufgerufene Seite, Herkunftsseite (nur der Name, z. B. „Google“), Gerätetyp und Suchbegriffe der Website-Suche. Die Daten werden nicht weitergegeben und nach 14 Monaten automatisch gelöscht. Browser mit aktivierter „Do Not Track“- bzw. „Global Privacy Control“-Einstellung werden nicht erfasst.“ Die Datenschutzerklärung bearbeitest du unter Website-Aufbau → Seiten → „Datenschutz“. Im Zweifel bitte rechtlich prüfen lassen.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Wie bekommt meine Team-News einen Platz auf der Startseite?',
+    antwort: 'Beim Schreiben rechts „Für die Startseite vorschlagen“ anhaken und veröffentlichen. Die Redaktion sieht den Vorschlag oben auf ihrer Übersicht und holt die News mit einem Klick auf die Startseite. Bis dahin erscheint sie auf der Seite deines Teams.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Was bedeutet „Wer kümmert sich?“ und wer sieht die Notizen?',
+    antwort: 'Bei Mitgliedsanträgen, Kontakt- und Probetraining-Anfragen trägst du dich oben mit „🙋 Ich kümmere mich“ ein – in der Liste steht dann dein Name in der Spalte „Zuständig“. Notizen sind nur in der Verwaltung sichtbar, für alle, die diesen Eintrag öffnen dürfen. Sie werden mit Name und Uhrzeit gespeichert und lassen sich nicht ändern oder löschen – so bleibt nachvollziehbar, wer was gemacht hat. Wird der Eintrag gelöscht, verschwinden auch die Notizen. Wichtig: Fragt eine Person nach ihren Daten (DSGVO-Auskunft), sind die Notizen dabei – also sachlich schreiben.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Wie exportiere ich Mitgliedsanträge für das DFBnet?',
+    antwort: 'Posteingang → Mitgliedsanträge → oben „📥 … neue exportieren“. Du bekommst eine Excel-Datei (CSV) mit allen aufgenommenen Anträgen, die noch nicht exportiert wurden – eine Zeile pro Person, Familienmitglieder einzeln, ohne Bankdaten. Danach sind sie als „exportiert“ markiert. Brauchst du alle noch einmal: „alle aufgenommenen“. Die Datei nach dem Übertragen löschen. Exportieren dürfen Kasse und Admins.',
     bereich: 'dashboard',
   },
   {
@@ -1025,7 +1041,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   redaktion: {
     label: 'Redaktion',
     kurz: 'Du kümmerst dich um News, Termine, Seiten und Texte der Website.',
-    darf: ['Alle News schreiben und auf die Startseite holen', 'Termine, Seiten, Menü und Texte & Bilder pflegen', 'Bilder verwalten', 'Kontakt- und Probetraining-Anfragen bearbeiten'],
+    darf: ['Alle News schreiben und auf die Startseite holen', 'Vorschläge der Trainer für die Startseite annehmen oder ablehnen', 'Termine, Seiten, Menü und Texte & Bilder pflegen', 'Bilder verwalten', 'Kontakt- und Probetraining-Anfragen bearbeiten'],
     darfNicht: ['Mitgliedsanträge mit Bankdaten sehen', 'Benutzer und Rollen verwalten'],
     anleitungen: [
       ['posts', 'news-schreiben'],
@@ -1037,7 +1053,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   kasse: {
     label: 'Kasse',
     kurz: 'Du bearbeitest die Mitgliedsanträge und pflegst die Beiträge.',
-    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen'],
+    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Anträge mit einem Klick aufnehmen, nachfragen oder ablehnen – mit fertiger E-Mail', 'Aufgenommene Anträge als Datei für das DFBnet exportieren (ohne Bankdaten)', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen'],
     darfNicht: ['News und Seiten veröffentlichen', 'Benutzer verwalten'],
     anleitungen: [
       ['mitgliedsantraege', 'antrag-bearbeiten'],
@@ -1054,7 +1070,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   uebungsleitung: {
     label: 'Trainer',
     kurz: 'Du pflegst deine eigenen Teams oder Kurse.',
-    darf: ['News für deine Teams schreiben', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern', 'Probetraining-Anfragen für deine Teams beantworten'],
+    darf: ['News für deine Teams schreiben und für die Startseite vorschlagen', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Trainingszeiten und Beschreibung deiner Teams ändern', 'Probetraining-Anfragen für deine Teams beantworten'],
     darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen'],
     anleitungen: [
       ['ausfaelle', 'ausfall-melden'],
@@ -1066,7 +1082,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   teamredaktion: {
     label: 'Team-Redaktion',
     kurz: 'Du schreibst News und lädst Fotos für deine Teams hoch.',
-    darf: ['News für deine Teams schreiben', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Beschreibung deiner Teams ändern'],
+    darf: ['News für deine Teams schreiben und für die Startseite vorschlagen', 'Fotos hochladen und deinen Teams zuordnen', 'Trainingsausfälle melden', 'Beschreibung deiner Teams ändern'],
     darfNicht: ['News auf die Startseite holen (macht die Redaktion)', 'Andere Teams bearbeiten', 'Mitgliedsanträge sehen'],
     anleitungen: [
       ['posts', 'news-schreiben'],

@@ -7,15 +7,18 @@ import anmeldung from './anmeldung.mjs'
 import datenschutz from './datenschutz.mjs'
 import formulare from './formulare.mjs'
 import papierkorb from './papierkorb.mjs'
+import posteingang from './posteingang.mjs'
 import rechte from './rechte.mjs'
 import statistik from './statistik.mjs'
 import uploads from './uploads.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang }
 
+// Einzelne Bereiche: pnpm test:sicherheit -- posteingang
+const nur = process.argv.slice(2)
 const d = await db()
 try {
-  for (const [name, t] of Object.entries(TESTS)) {
+  for (const [name, t] of Object.entries(TESTS).filter(([n]) => !nur.length || nur.includes(n))) {
     console.log(`\n▶ ${name}`)
     await t(d)
   }

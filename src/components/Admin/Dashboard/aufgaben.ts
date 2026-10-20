@@ -40,6 +40,15 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     if (neu.totalDocs)
       a.push({ key: 'passantraege', art: 'warn', symbol: '⚽', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Passantrag wartet' : 'neue Passanträge warten'} auf Prüfung.`, href: '/admin/collections/passantraege?where[status][equals]=eingereicht', link: 'Prüfen' })
   }
+  if (admin || rollen.includes('kasse')) {
+    // Mitgliedsanträge: neue und aufgenommene, aber noch nicht für die Kasse exportierte
+    const zaehle = (where: object) => req.payload.count({ collection: 'mitgliedsantraege', where: where as never, user: req.user, overrideAccess: false, req }).catch(() => ({ totalDocs: 0 }))
+    const [neu, offenExport] = await Promise.all([zaehle({ status: { equals: 'neu' } }), zaehle({ and: [{ status: { equals: 'aufgenommen' } }, { exportiertAm: { exists: false } }] })])
+    if (neu.totalDocs)
+      a.push({ key: 'antraege', art: 'warn', symbol: '📝', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Mitgliedsantrag wartet' : 'neue Mitgliedsanträge warten'} auf Prüfung.`, href: '/admin/collections/mitgliedsantraege?where[status][equals]=neu', link: 'Prüfen' })
+    if (offenExport.totalDocs)
+      a.push({ key: 'export', art: 'info', symbol: '📥', text: `${offenExport.totalDocs} aufgenommene${offenExport.totalDocs === 1 ? 'r Antrag ist' : ' Anträge sind'} noch nicht für die Kasse exportiert.`, href: '/admin/collections/mitgliedsantraege', link: 'Exportieren' })
+  }
   if (darfRegistrierungen(req.user)) {
     const wartend = await req.payload.count({ collection: 'users', where: WARTEND, overrideAccess: true }).catch(() => ({ totalDocs: 0 }))
     if (wartend.totalDocs)

@@ -10,6 +10,8 @@ import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfi
 import { getServerSideURL } from '@/utilities/getURL'
 import { adressen, anliegenListe } from '@/Verein/anliegen'
 import { pflichtHaken } from '@/hooks/formularPruefung'
+import { posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
+import { posteingangEndpunkte } from '@/posteingang/endpunkte'
 
 const verein = async (req: PayloadRequest) => (await req.payload.findGlobal({ slug: 'verein', depth: 0, overrideAccess: true, req }).catch(() => null)) as never
 
@@ -39,10 +41,11 @@ export const Kontaktanfragen: CollectionConfig = {
     description: 'Nachrichten aus dem Kontaktformular. Nach dem Beantworten auf „Erledigt“ setzen.',
     group: 'Posteingang',
     useAsTitle: 'betreff',
-    defaultColumns: ['betreff', 'name', 'an', 'status', 'createdAt'],
+    defaultColumns: ['betreff', 'name', 'an', 'status', 'zustaendig', 'createdAt'],
   },
   defaultSort: '-createdAt',
   hooks: {
+    beforeChange: [zustaendigNameSetzen, statusImVerlauf({ neu: 'Neu', bearbeitung: 'In Bearbeitung', erledigt: 'Erledigt' })],
     beforeValidate: [
       spamSchutz('kontakt'),
       // Nur Anliegen aus der Liste (sonst „Allgemeine Frage“ bzw. das erste Anliegen)
@@ -96,7 +99,9 @@ export const Kontaktanfragen: CollectionConfig = {
       },
     ],
   },
+  endpoints: posteingangEndpunkte('kontaktanfragen'),
   fields: [
+    ...posteingangFelder(),
     {
       name: 'status',
       label: 'Status',

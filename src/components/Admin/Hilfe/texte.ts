@@ -43,12 +43,15 @@ export const HILFE: Record<string, HilfeText> = {
       'Oben in der Liste eine Vorlage wählen (Spielbericht, Ankündigung, Rückblick) – die News wird als Entwurf angelegt und geöffnet.',
       '„Neu erstellen“ anklicken. Alles steht auf einer Seite: Titel, Titelbild, Text.',
       'Rechts das Team oder den Kurs wählen – wer nur ein Team betreut, hat es schon vorausgewählt. Leer = Vereins-News.',
+      'Rechts im Kasten „Vor dem Veröffentlichen“ stehen Hinweise: fehlt ein Titelbild, ist der Text sehr kurz, steht der Titel in GROSSBUCHSTABEN? Rot unterstrichene Wörter mit der rechten Maustaste anklicken – der Browser schlägt die richtige Schreibweise vor.',
+      'Trainer und Team-Redaktion: Soll die News auch auf die Startseite, rechts „Für die Startseite vorschlagen“ anhaken.',
       '„Entwurf speichern“ sichert deine Arbeit, ohne dass sie jemand sieht.',
       '„Veröffentlichen“ stellt die News online.',
     ],
     wirkung: [
       'Veröffentlichte News erscheinen auf der Seite des gewählten Teams.',
       'Ist „Auf Startseite“ angehakt, erscheint sie zusätzlich auf der Startseite und unter „News“. Das entscheidet die Redaktion.',
+      'Vorgeschlagene News sieht die Redaktion oben auf ihrer Übersicht unter „Für die Startseite vorgeschlagen“ und holt sie mit „Auf die Startseite“ dorthin – oder lehnt mit „Nein, danke“ ab. Ein noch nicht veröffentlichter Entwurf bleibt dabei unveröffentlicht.',
       'Die Google-Vorschau (wie die News bei Google und beim Teilen aussieht) wird automatisch aus Titel, Text und Titelbild erzeugt.',
       'Entwürfe sieht niemand außer euch in der Verwaltung.',
     ],
@@ -202,10 +205,11 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Am schnellsten: oben „Schnell melden“ – Team, Tag (Heute/Morgen) und Grund wählen, fertig.',
-      'Neue Anfragen öffnen und lesen.',
-      'Die Person kontaktieren und danach den Status ändern, z. B. auf „Zugesagt“ oder „Erledigt“.',
+      'Neue Anfragen öffnen und lesen. Oben im Kasten „Wer kümmert sich?“ auf „🙋 Ich kümmere mich“ klicken – dann sehen alle, dass du dran bist.',
+      'Mit „✉️ Antworten“ öffnet sich dein E-Mail-Programm mit Adresse und Betreff. Danach kurz eine Notiz schreiben („Zugesagt für Dienstag“).',
+      'Den Status ändern, z. B. auf „Zugesagt“ oder „Erledigt“.',
     ],
-    wirkung: ['Der Status ist nur für euch intern – die anfragende Person sieht ihn nicht.'],
+    wirkung: ['Der Status ist nur für euch intern – die anfragende Person sieht ihn nicht.', 'Notizen und Statuswechsel werden mit Name und Uhrzeit gespeichert und lassen sich nicht nachträglich ändern.'],
     tipps: [
       'Bitte zeitnah antworten – das ist oft der erste Kontakt mit dem Verein.',
       'Die Daten sind persönlich. Nicht weitergeben und erledigte Anfragen regelmäßig löschen.',
@@ -220,14 +224,22 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Neues Mitglied über „Mitglied werden“'],
     },
     tun: [
-      'Neue Anträge prüfen.',
-      'Den Status setzen: „Rückfrage“, „Aufgenommen“ oder „Abgelehnt“.',
-      'Die Daten in die Mitgliederverwaltung übernehmen.',
+      'Neuen Antrag öffnen. Oben auf „🙋 Ich kümmere mich“ klicken – dann bearbeitet niemand denselben Antrag doppelt.',
+      'Der Kasten „Antrag prüfen“ zeigt Alter, Beitrag, ob die IBAN gültig ist und ob es schon einen Antrag oder eine Mitgliedschaft dieser Person gibt.',
+      'Unten im Kasten „✓ Aufnehmen“, „❓ Rückfrage“ oder „Ablehnen“ klicken. Es erscheint eine fertige E-Mail an die Person – Text anpassen (Stellen in [ECKIGEN KLAMMERN] ausfüllen) und bestätigen. Ohne Haken geht keine Mail raus.',
       'Bei „Aufgenommen“ entsteht automatisch der Eintrag für den digitalen Mitgliedsausweis (unter „Mitgliedschaften“) – dort nur noch die Mitgliedsnummer ergänzen.',
+      'Für DFBnet/Mitgliederliste: in der Liste oben „📥 … neue exportieren“ – du bekommst eine Excel-Datei (CSV) aller aufgenommenen, noch nicht exportierten Anträge, ohne Bankdaten.',
     ],
-    wirkung: ['Der Status ist intern. Die Zahl der offenen Anträge siehst du auch auf der Übersicht.'],
+    wirkung: [
+      'Neue Anträge melden sich per E-Mail bei der Kasse (nur ein Link, keine Daten in der Mail) und oben auf der Übersicht.',
+      'Notizen, Statuswechsel, gesendete E-Mails und Exporte stehen mit Name und Uhrzeit im Verlauf – nachträglich nicht änderbar.',
+      'Exportierte Anträge bekommen „Für die Kasse exportiert am …“ und landen beim nächsten Export nicht noch einmal in der Datei („alle aufgenommenen“ holt sie trotzdem).',
+      'Die Texte der E-Mails änderst du unter Einstellungen → „E-Mail-Vorlagen Mitgliedsanträge“.',
+    ],
     tipps: [
       'Hier stehen Bankdaten. Nur Kasse und Vorstand haben Zugriff – bitte nichts ausdrucken oder weiterleiten.',
+      'Die Export-Datei enthält Namen und Adressen: nach dem Übertragen löschen und nicht per E-Mail verschicken.',
+      'Solange der E-Mail-Versand noch nicht eingerichtet ist, bietet der Antrag nach dem Bestätigen „Im E-Mail-Programm öffnen“ an – mit fertigem Text.',
       'Übernommene Anträge nach der vorgeschriebenen Frist löschen.',
     ],
   },
@@ -284,7 +296,11 @@ export const HILFE: Record<string, HilfeText> = {
       text: 'Nachrichten aus dem Kontaktformular und Fragen aus der Hilfe.',
       beispiele: ['Frage zu Beiträgen', 'Sponsoring-Anfrage', 'Frage an den Admin'],
     },
-    tun: ['Nachricht lesen, beantworten und den Status auf „Erledigt“ setzen.', 'Im Feld „Anliegen“ steht, worum es geht (Auswahl „Worum geht es?“ im Formular).'],
+    tun: [
+      'Nachricht öffnen und oben „🙋 Ich kümmere mich“ klicken.',
+      'Mit „✉️ Antworten“ antworten (öffnet dein E-Mail-Programm), kurz notieren, was du geschrieben hast, und den Status auf „Erledigt“ setzen.',
+      'Im Feld „Anliegen“ steht, worum es geht (Auswahl „Worum geht es?“ im Formular).',
+    ],
     wirkung: ['Der Status ist nur intern sichtbar.', 'Neue Nachrichten gehen zusätzlich per E-Mail an die Empfänger des Anliegens (festgelegt unter Vereinsdaten). Auf die E-Mail antworten = Antwort direkt an den Absender.'],
     tipps: ['Erledigte Anfragen regelmäßig löschen – es sind persönliche Daten.'],
   },
@@ -578,6 +594,22 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: ['Aufgeräumtes landet zuerst im Papierkorb und lässt sich 30 Tage zurückholen. Danach ist es endgültig weg.'],
     tipps: ['Mitgliedsanträge erst aufräumen, wenn die Daten in die Mitgliederverwaltung übernommen sind.'],
+  },
+
+  mailVorlagen: {
+    titel: 'E-Mail-Vorlagen Mitgliedsanträge',
+    kurz: 'Die Texte, die beim Aufnehmen, Nachfragen oder Ablehnen eines Mitgliedsantrags vorgeschlagen werden.',
+    wozu: {
+      text: 'Damit die Kasse nicht jedes Mal neu formulieren muss – und alle Antworten gleich freundlich klingen.',
+      beispiele: ['Willkommens-Mail nach der Aufnahme', 'Rückfrage, wenn eine Unterschrift fehlt', 'Freundliche Absage'],
+    },
+    tun: [
+      'Betreff und Text je Fall anpassen und speichern.',
+      'Platzhalter werden automatisch ersetzt: {vorname}, {nachname}, {mitgliedsart} und {meinName} (Name der Person, die antwortet).',
+      'Stellen in [ECKIGEN KLAMMERN] muss man vor dem Senden ausfüllen – sonst lässt sich die Mail nicht abschicken.',
+    ],
+    wirkung: ['Beim Klick auf „Aufnehmen“, „Rückfrage“ oder „Ablehnen“ im Antrag steht der Text fertig da und kann vor dem Senden noch geändert werden.'],
+    tipps: ['Keine Bankdaten oder Beitragsnummern in die Vorlage schreiben – E-Mails sind nicht verschlüsselt.'],
   },
 
   dokumente: {

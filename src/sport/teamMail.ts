@@ -40,3 +40,32 @@ export async function teamBenachrichtigen(
   }
   return empfaenger.length
 }
+
+/**
+ * Kurze E-Mail an alle Konten mit einer der Rollen (z. B. Kasse bei einem neuen Mitgliedsantrag).
+ * Ohne persönliche Daten im Text – nur ein Link in die Verwaltung. Abbestellbar unter „Mein Konto“.
+ * Gibt es niemanden mit diesen Rollen, geht die Mail an die Admins.
+ */
+export async function rollenBenachrichtigen(req: PayloadRequest, opt: { rollen: string[]; betreff: string; titel: string; absaetze: string[]; pfad: string; grund: string }) {
+  const suchen = async (rollen: string[]) =>
+    (
+      (await req.payload.find({ collection: 'users', where: { roles: { in: rollen } }, limit: 50, depth: 0, overrideAccess: true, req })).docs as unknown as Konto[]
+    ).filter((u) => u.freigegeben !== false)
+  let empfaenger = await suchen(opt.rollen)
+  const ersatz = !empfaenger.length
+  if (ersatz) empfaenger = await suchen(['admin'])
+  empfaenger = empfaenger.filter((u) => u.mailBenachrichtigung !== false)
+  const link = `${getServerSideURL()}${opt.pfad}`
+  const grund = ersatz ? 'du Admin bist und es noch niemanden mit der zuständigen Rolle gibt' : opt.grund
+  const fuss = `Du bekommst diese E-Mail, weil ${grund}. Abbestellen: in der Verwaltung oben rechts → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“ entfernen.`
+  for (const u of empfaenger) {
+    const absaetze = [u.name ? `Hallo ${u.name.split(' ')[0]},` : 'Hallo,', ...opt.absaetze]
+    await mailSenden(req.payload, {
+      an: u.email,
+      betreff: opt.betreff,
+      text: `${absaetze.join('\n\n')}\n\n${link}\n\n${fuss}`,
+      html: mailHtml({ titel: opt.titel, absaetze, knopf: 'In der Verwaltung öffnen', link, fuss }),
+    }).catch((e) => req.payload.logger.error({ err: e }, 'Benachrichtigung fehlgeschlagen'))
+  }
+  return empfaenger.length
+}
