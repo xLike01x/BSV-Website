@@ -23,6 +23,7 @@ const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeit
   { slug: 'rollen', titel: 'Rollen & Rechte', rollen: ['admin'], bearbeiten: false },
   { slug: 'sicherung', titel: 'Datensicherung', rollen: ['webadmin'], bearbeiten: true },
   { slug: 'statistik', titel: 'Besucherstatistik', rollen: ['webadmin'], bearbeiten: false },
+  { slug: 'papierkorb', titel: 'Papierkorb (alle Bereiche)', rollen: ['webadmin'], bearbeiten: true },
 ]
 /** Diese Einträge legen Mitglieder selbst im Mitgliederbereich an (nicht in der Verwaltung) */
 const UEBER_MITGLIEDERBEREICH = new Set(['passantraege'])

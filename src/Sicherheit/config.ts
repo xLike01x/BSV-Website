@@ -2,10 +2,10 @@ import type { GlobalConfig } from 'payload'
 
 import { hasRole } from '@/access/roles'
 
-/** Automatische Abmeldung in der Verwaltung nach Inaktivität – einstellbar durch den Web-Admin */
+/** Sicherheit: automatische Abmeldung und Web-Admin-Papierkorb – einstellbar nur durch den Web-Admin */
 export const Sicherheit: GlobalConfig = {
   slug: 'sicherheit',
-  label: 'Automatisch abmelden',
+  label: 'Sicherheit',
   access: {
     // Jede Person mit Verwaltungs-Zugang muss die Zeiten lesen können (der Wächter läuft in ihrem Browser)
     read: ({ req }) => Boolean(req.user),
@@ -15,7 +15,7 @@ export const Sicherheit: GlobalConfig = {
     group: 'Einstellungen',
     hidden: ({ user }) => !hasRole(user as never, 'webadmin'),
     description:
-      'Wer in der Verwaltung eine Weile nichts tut (kein Klick, keine Taste, kein Scrollen), wird automatisch abgemeldet – wichtig an gemeinsam genutzten Computern, z. B. im Vereinsheim. Vorher erscheint eine Warnung mit „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren.',
+      'Automatisches Abmelden und Aufbewahrung im Web-Admin-Papierkorb. Wer in der Verwaltung eine Weile nichts tut (kein Klick, keine Taste, kein Scrollen), wird automatisch abgemeldet – wichtig an gemeinsam genutzten Computern, z. B. im Vereinsheim. Vorher erscheint eine Warnung mit „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren.',
   },
   fields: [
     {
@@ -26,5 +26,18 @@ export const Sicherheit: GlobalConfig = {
       ],
     },
     { name: 'aus', label: 'Automatisches Abmelden ausschalten', type: 'checkbox', defaultValue: false, admin: { description: 'Nicht empfohlen. Dann gilt nur die feste Höchstdauer von 8 Stunden.' } },
+    {
+      name: 'papierkorbTage',
+      label: 'Web-Admin-Papierkorb: endgültig löschen nach … Tagen',
+      type: 'number',
+      required: true,
+      defaultValue: 365,
+      min: 30,
+      max: 3650,
+      admin: {
+        description:
+          'Was jemand außer dem Web-Admin endgültig löscht – oder was 30 Tage im normalen Papierkorb lag –, landet im Web-Admin-Papierkorb und wird nach dieser Frist automatisch gelöscht. Standard: 365 (1 Jahr). Denk an den Datenschutz: Anträge und Anfragen enthalten persönliche Daten.',
+      },
+    },
   ],
 }

@@ -369,6 +369,27 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: ['Fotos vom Vorstand nur mit Einverständnis.', 'Keine privaten Telefonnummern eintragen – Kontakt läuft über das Formular.'],
   },
 
+  papierkorb: {
+    titel: 'Papierkorb (Web-Admin)',
+    kurz: 'Alles Gelöschte aus allen Bereichen an einer Stelle – filtern, ansehen, wiederherstellen oder endgültig löschen. Nur für Web-Admins.',
+    wozu: {
+      text: 'Ein Sicherheitsnetz: Was andere endgültig löschen, ist für sie weg – du kannst es aber noch zurückholen.',
+      beispiele: ['Eine versehentlich gelöschte News zurückholen', 'Sehen, wer was endgültig gelöscht hat', 'Alte Einträge wirklich entfernen'],
+    },
+    tun: [
+      'Oben filtern: „Im Papierkorb“ (gerade gelöscht, sehen auch andere), „Nur Web-Admin“ (von anderen endgültig gelöscht oder 30 Tage im Papierkorb), dazu Bereich, wer gelöscht hat und Titel.',
+      'Titel anklicken: Eintrag ansehen.',
+      '„↩ Wiederherstellen“: Der Eintrag ist wieder da, wo er war – mit Bildern, Dateien und Verknüpfungen.',
+      '🗑 bzw. „Endgültig löschen“: wirklich weg, auch Bilder und Dateien. Nicht rückgängig zu machen.',
+      'Mehrere Einträge: links ankreuzen, dann oben in der dunklen Leiste wiederherstellen oder löschen.',
+    ],
+    wirkung: [
+      'Was jemand außer dir endgültig löscht oder 30 Tage im normalen Papierkorb lag, landet hier – für alle anderen ist es weg.',
+      'Nach der Frist unter Einstellungen → „Sicherheit“ (Standard 1 Jahr) wird es automatisch endgültig gelöscht.',
+    ],
+    tipps: ['Was du selbst endgültig löschst, ist sofort weg.', 'Anträge und Anfragen enthalten persönliche Daten – nicht unnötig lange aufheben.'],
+  },
+
   statistik: {
     titel: 'Besucherstatistik',
     kurz: 'Wie viele Menschen die Website besuchen, was sie anschauen und woher sie kommen – ohne Cookies, nur für Web-Admins.',
@@ -392,8 +413,8 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   sicherheit: {
-    titel: 'Automatisch abmelden',
-    kurz: 'Nach wie vielen Minuten ohne Aktivität die Verwaltung automatisch abmeldet – nur für Web-Admins.',
+    titel: 'Sicherheit',
+    kurz: 'Automatisches Abmelden nach Inaktivität und wie lange der Web-Admin-Papierkorb Einträge aufhebt – nur für Web-Admins.',
     wozu: {
       text: 'Schützt, wenn jemand vergisst, sich abzumelden – z. B. am Computer im Vereinsheim.',
       beispiele: ['Nach 30 Minuten abmelden', '5 Minuten vorher warnen'],

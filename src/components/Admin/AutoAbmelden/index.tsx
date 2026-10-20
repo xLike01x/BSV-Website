@@ -26,7 +26,7 @@ const schreiben = (t: number) => {
 
 /**
  * Meldet nach X Minuten ohne Klick, Taste oder Scrollen automatisch ab – vorher Warnung mit Countdown.
- * Gilt für alle Tabs gemeinsam (letzte Aktivität im Browser-Speicher). Zeiten: Einstellungen → „Automatisch abmelden“.
+ * Gilt für alle Tabs gemeinsam (letzte Aktivität im Browser-Speicher). Zeiten: Einstellungen → „Sicherheit“.
  */
 export default function AutoAbmelden({ children }: { children?: React.ReactNode }) {
   const { user } = useAuth()

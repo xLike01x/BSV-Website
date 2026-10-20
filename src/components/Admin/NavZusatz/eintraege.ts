@@ -7,6 +7,7 @@ export const EINTRAEGE: Eintrag[] = [
   { key: 'registrierungen', gruppe: 'Posteingang', href: '/admin/registrierungen', label: 'Registrierungen', rollen: ['admin', 'kasse'], recht: 'registrierungen', zaehler: 'registrierungen' },
   { key: 'rollen', gruppe: 'Einstellungen', href: '/admin/rollen', label: 'Rollen & Rechte', rollen: ['admin'], auch: ['/admin/globals/rollenRechte'] },
   { key: 'statistik', gruppe: 'Einstellungen', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'] },
+  { key: 'papierkorb', gruppe: 'Einstellungen', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'] },
   { key: 'sicherung', gruppe: 'Einstellungen', href: '/admin/sicherung', label: 'Datensicherung', rollen: ['webadmin'] },
 ]
 
@@ -15,7 +16,7 @@ export const eintragSichtbar = (e: Eintrag, user: unknown) =>
   ((user as { roles?: string[] | null } | null)?.roles ?? []).some((r) => e.rollen.includes(r)) || (e.recht ? hatRecht(user, e.recht) : false)
 
 /** Feste Reihenfolge innerhalb der Gruppen (wie nav-zusatz.scss); alles andere folgt danach */
-export const REIHENFOLGE = ['statistik', 'verein', 'rollen', 'datenschutz', 'sicherung', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
+export const REIHENFOLGE = ['statistik', 'papierkorb', 'verein', 'rollen', 'datenschutz', 'sicherung', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
 
 /** Nicht als eigener Eintrag zeigen – erreichbar über „Rollen & Rechte“ */
 export const VERSTECKT = ['rollenRechte']

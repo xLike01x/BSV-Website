@@ -64,6 +64,7 @@ import { default as default_2471f1cac5bfd6793014555a88ab468a } from '@/component
 import { default as default_9b2c38652bcb00d3df4e65f581c624fd } from '@/components/Admin/Sicherung'
 import { default as default_4855f11a2eb75fd86caa7fbee0a882ef } from '@/components/Admin/Registrierungen'
 import { default as default_163d8894b8f3d3080bb6eb13f06fe3ed } from '@/components/Admin/Statistik'
+import { default as default_32d4beee507b1a255db0e6a9223e0d2d } from '@/components/Admin/Papierkorb'
 import { default as default_3b78fde88b8d7c81dfd3772908e6ca41 } from '@/components/Admin/HilfeCenter/Kurzanleitung'
 import { CollectionCards as CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 
@@ -135,6 +136,7 @@ export const importMap = {
   "@/components/Admin/Sicherung#default": default_9b2c38652bcb00d3df4e65f581c624fd,
   "@/components/Admin/Registrierungen#default": default_4855f11a2eb75fd86caa7fbee0a882ef,
   "@/components/Admin/Statistik#default": default_163d8894b8f3d3080bb6eb13f06fe3ed,
+  "@/components/Admin/Papierkorb#default": default_32d4beee507b1a255db0e6a9223e0d2d,
   "@/components/Admin/HilfeCenter/Kurzanleitung#default": default_3b78fde88b8d7c81dfd3772908e6ca41,
   "@payloadcms/next/rsc#CollectionCards": CollectionCards_f9c02e79a4aed9a3924487c0cd4cafb1
 }

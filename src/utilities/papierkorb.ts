@@ -1,28 +1,37 @@
 import type { CollectionBeforeChangeHook, CollectionBeforeDeleteHook, CollectionSlug, Payload } from 'payload'
 import { APIError } from 'payload'
+import { sql } from '@payloadcms/db-postgres'
+
+import { ausfuehren, tabelle } from '@/papierkorb/plugin'
 
 /** Bereiche mit Papierkorb (dazu Formulare und Formular-Eingänge über das Plugin) */
 export const PAPIERKORB: string[] = ['posts', 'termine', 'media', 'pages', 'categories', 'angebote', 'ausfaelle', 'probetraining', 'mitgliedsantraege', 'kontaktanfragen', 'dokumente', 'alben', 'sponsoren', 'gesuche', 'mitgliedschaften']
 export const PAPIERKORB_TAGE = 30
 
-/** Einträge, die länger als 30 Tage im Papierkorb liegen, endgültig löschen */
+/**
+ * Täglich:
+ * 1. Einträge, die länger als 30 Tage im normalen Papierkorb liegen → Web-Admin-Papierkorb (nichts geht sofort verloren)
+ * 2. Einträge, die länger als die eingestellte Frist im Web-Admin-Papierkorb liegen (Standard 1 Jahr) → endgültig löschen
+ */
 export async function papierkorbAufraeumen(payload: Payload) {
   const grenze = new Date(Date.now() - PAPIERKORB_TAGE * 86400000).toISOString()
+  const s = (await payload.findGlobal({ slug: 'sicherheit' as never, depth: 0, overrideAccess: true }).catch(() => null)) as { papierkorbTage?: number | null } | null
+  const tage = Math.max(30, Math.min(3650, s?.papierkorbTage ?? 365))
+  const wegGrenze = new Date(Date.now() - tage * 86400000).toISOString()
+  let weiter = 0
   let gesamt = 0
   for (const slug of [...PAPIERKORB, 'forms', 'form-submissions']) {
     try {
-      const r = await payload.delete({
-        collection: slug as CollectionSlug,
-        where: { deletedAt: { less_than: grenze } },
-        trash: true,
-        overrideAccess: true,
-      })
-      gesamt += r.docs.length
+      const r = await ausfuehren({ payload }, sql`update ${sql.identifier(tabelle(slug))} set endgueltig_am = now(), endgueltig_von = ${'automatisch nach ' + PAPIERKORB_TAGE + ' Tagen'} where deleted_at < ${grenze} and endgueltig_am is null`)
+      weiter += r.rowCount ?? 0
+      const weg = await payload.delete({ collection: slug as CollectionSlug, where: { endgueltigAm: { less_than: wegGrenze } }, trash: true, overrideAccess: true })
+      gesamt += weg.docs.length
     } catch (e) {
-      payload.logger.warn({ err: e }, `Papierkorb ${slug} konnte nicht geleert werden`)
+      payload.logger.warn({ err: e }, `Papierkorb ${slug} konnte nicht aufgeräumt werden`)
     }
   }
-  if (gesamt) payload.logger.info(`Papierkorb: ${gesamt} Einträge nach ${PAPIERKORB_TAGE} Tagen endgültig gelöscht`)
+  if (weiter) payload.logger.info(`Papierkorb: ${weiter} Einträge nach ${PAPIERKORB_TAGE} Tagen in den Web-Admin-Papierkorb verschoben`)
+  if (gesamt) payload.logger.info(`Web-Admin-Papierkorb: ${gesamt} Einträge nach ${tage} Tagen endgültig gelöscht`)
   return gesamt
 }
 

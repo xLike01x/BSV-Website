@@ -842,7 +842,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Warum wurde ich automatisch abgemeldet?',
-    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Einstellungen → „Automatisch abmelden“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
+    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Einstellungen → „Sicherheit“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
     bereich: 'dashboard',
   },
   {
@@ -858,6 +858,11 @@ export const FAQ: Faq[] = [
   {
     frage: 'Was muss wegen der Besucherstatistik in die Datenschutzerklärung?',
     antwort: 'Ein kurzer Absatz, z. B.: „Reichweitenmessung: Wir zählen Seitenaufrufe auf unserem eigenen Server, um die Website zu verbessern (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Dabei werden keine Cookies gesetzt und keine IP-Adressen gespeichert. Aus IP-Adresse und Browserkennung wird ein täglich wechselndes, nicht rückverfolgbares Kürzel gebildet, damit wir Besuche eines Tages zählen können. Gespeichert werden aufgerufene Seite, Herkunftsseite (nur der Name, z. B. „Google“), Gerätetyp und Suchbegriffe der Website-Suche. Die Daten werden nicht weitergegeben und nach 14 Monaten automatisch gelöscht. Browser mit aktivierter „Do Not Track“- bzw. „Global Privacy Control“-Einstellung werden nicht erfasst.“ Die Datenschutzerklärung bearbeitest du unter Website-Aufbau → Seiten → „Datenschutz“. Im Zweifel bitte rechtlich prüfen lassen.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Ich habe etwas gelöscht – kann ich es zurückholen?',
+    antwort: 'Ja. Gelöschtes liegt erst im Papierkorb des Bereichs (Liste öffnen → oben „Papierkorb“) und lässt sich dort 30 Tage wiederherstellen. Hast du es dort endgültig gelöscht oder sind die 30 Tage um, kann es ein Web-Admin noch zurückholen (Standard: bis zu 1 Jahr) – sag einfach Bescheid.',
     bereich: 'dashboard',
   },
   {

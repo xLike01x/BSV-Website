@@ -5,6 +5,7 @@ import { redirectsPlugin } from '@payloadcms/plugin-redirects'
 import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
+import { zweistufigerPapierkorb } from '@/papierkorb/plugin'
 import { anyone } from '@/access/anyone'
 import { ausblendenAusser, ausblendenAusserMit, isAdmin, isEditor, isEditorField, rolleOderRecht } from '@/access/roles'
 import { spamSchutz } from '@/hooks/spamSchutz'
@@ -139,4 +140,6 @@ export const plugins: Plugin[] = [
       },
     },
   }),
+  // Muss als Letztes laufen: hängt sich an alle Bereiche mit Papierkorb (auch die der Plugins)
+  zweistufigerPapierkorb,
 ]

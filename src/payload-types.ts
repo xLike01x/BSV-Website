@@ -242,6 +242,8 @@ export interface Mitgliedsantraege {
   satzungAkzeptiert: boolean;
   fotoEinwilligung?: boolean | null;
   notizen?: string | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -361,6 +363,8 @@ export interface Angebote {
    */
   generateSlug?: boolean | null;
   slug: string;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -412,6 +416,8 @@ export interface Media {
     };
     [k: string]: unknown;
   } | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   folder?: (number | null) | FolderInterface;
   updatedAt: string;
   createdAt: string;
@@ -711,6 +717,8 @@ export interface Kontaktanfragen {
   betreff: string;
   nachricht: string;
   datenschutz: boolean;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -732,6 +740,8 @@ export interface Probetraining {
   nachricht?: string | null;
   datenschutz: boolean;
   status?: ('neu' | 'zugesagt' | 'alternativ' | 'erledigt') | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -904,6 +914,8 @@ export interface Post {
    */
   generateSlug?: boolean | null;
   slug: string;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -938,6 +950,8 @@ export interface Category {
         id?: string | null;
       }[]
     | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -987,6 +1001,8 @@ export interface Termine {
    */
   nurMitglieder?: boolean | null;
   anmeldung?: boolean | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1016,6 +1032,8 @@ export interface Alben {
    */
   generateSlug?: boolean | null;
   slug: string;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1055,6 +1073,8 @@ export interface Sponsoren {
    */
   reihenfolge?: number | null;
   aktiv?: boolean | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1076,6 +1096,8 @@ export interface Gesuche {
   symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
   reihenfolge?: number | null;
   aktiv?: boolean | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1156,6 +1178,8 @@ export interface Page {
    */
   generateSlug?: boolean | null;
   slug: string;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1509,6 +1533,8 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1538,6 +1564,8 @@ export interface Ausfaelle {
    * Kommt mit dem E-Mail-Versand – aktuell wird noch nichts verschickt.
    */
   benachrichtigen?: boolean | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1581,6 +1609,8 @@ export interface Mitgliedschaften {
    */
   austritt?: string | null;
   antrag?: (number | null) | Mitgliedsantraege;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1597,6 +1627,8 @@ export interface Dokumente {
    * Nur intern, z. B. „Protokoll JHV 2026“.
    */
   titel?: string | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -1683,6 +1715,8 @@ export interface FormSubmission {
         id?: string | null;
       }[]
     | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
   updatedAt: string;
   createdAt: string;
   deletedAt?: string | null;
@@ -2011,6 +2045,8 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
   satzungAkzeptiert?: T;
   fotoEinwilligung?: T;
   notizen?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2027,6 +2063,8 @@ export interface KontaktanfragenSelect<T extends boolean = true> {
   betreff?: T;
   nachricht?: T;
   datenschutz?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2045,6 +2083,8 @@ export interface ProbetrainingSelect<T extends boolean = true> {
   nachricht?: T;
   datenschutz?: T;
   status?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2111,6 +2151,8 @@ export interface PostsSelect<T extends boolean = true> {
       };
   generateSlug?: T;
   slug?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2137,6 +2179,8 @@ export interface TermineSelect<T extends boolean = true> {
   beschreibung?: T;
   nurMitglieder?: T;
   anmeldung?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2154,6 +2198,8 @@ export interface AlbenSelect<T extends boolean = true> {
   aktiv?: T;
   generateSlug?: T;
   slug?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2170,6 +2216,8 @@ export interface MediaSelect<T extends boolean = true> {
   sponsoren?: T;
   inGalerie?: T;
   caption?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   folder?: T;
   updatedAt?: T;
   createdAt?: T;
@@ -2282,6 +2330,8 @@ export interface SponsorenSelect<T extends boolean = true> {
   imLaufband?: T;
   reihenfolge?: T;
   aktiv?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2297,6 +2347,8 @@ export interface GesucheSelect<T extends boolean = true> {
   symbol?: T;
   reihenfolge?: T;
   aktiv?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2348,6 +2400,8 @@ export interface PagesSelect<T extends boolean = true> {
   publishedAt?: T;
   generateSlug?: T;
   slug?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2454,6 +2508,8 @@ export interface CategoriesSelect<T extends boolean = true> {
         label?: T;
         id?: T;
       };
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2504,6 +2560,8 @@ export interface AngeboteSelect<T extends boolean = true> {
   aktiv?: T;
   generateSlug?: T;
   slug?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2518,6 +2576,8 @@ export interface AusfaelleSelect<T extends boolean = true> {
   grund?: T;
   hinweis?: T;
   benachrichtigen?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2617,6 +2677,8 @@ export interface MitgliedschaftenSelect<T extends boolean = true> {
   aktiv?: T;
   austritt?: T;
   antrag?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2659,6 +2721,8 @@ export interface ProfilbilderSelect<T extends boolean = true> {
  */
 export interface DokumenteSelect<T extends boolean = true> {
   titel?: T;
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2847,6 +2911,8 @@ export interface FormsSelect<T extends boolean = true> {
         message?: T;
         id?: T;
       };
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -2864,6 +2930,8 @@ export interface FormSubmissionsSelect<T extends boolean = true> {
         value?: T;
         id?: T;
       };
+  endgueltigAm?: T;
+  endgueltigVon?: T;
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
@@ -3569,6 +3637,7 @@ export interface Hilfe {
           | 'users'
           | 'menue'
           | 'verein'
+          | 'papierkorb'
           | 'statistik'
           | 'sicherheit'
           | 'texte'
@@ -3638,6 +3707,7 @@ export interface Hilfe {
               | 'users'
               | 'menue'
               | 'verein'
+              | 'papierkorb'
               | 'statistik'
               | 'sicherheit'
               | 'texte'
@@ -3696,7 +3766,7 @@ export interface RollenRechte {
   createdAt?: string | null;
 }
 /**
- * Wer in der Verwaltung eine Weile nichts tut (kein Klick, keine Taste, kein Scrollen), wird automatisch abgemeldet – wichtig an gemeinsam genutzten Computern, z. B. im Vereinsheim. Vorher erscheint eine Warnung mit „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren.
+ * Automatisches Abmelden und Aufbewahrung im Web-Admin-Papierkorb. Wer in der Verwaltung eine Weile nichts tut (kein Klick, keine Taste, kein Scrollen), wird automatisch abgemeldet – wichtig an gemeinsam genutzten Computern, z. B. im Vereinsheim. Vorher erscheint eine Warnung mit „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "sicherheit".
@@ -3715,6 +3785,10 @@ export interface Sicherheit {
    * Nicht empfohlen. Dann gilt nur die feste Höchstdauer von 8 Stunden.
    */
   aus?: boolean | null;
+  /**
+   * Was jemand außer dem Web-Admin endgültig löscht – oder was 30 Tage im normalen Papierkorb lag –, landet im Web-Admin-Papierkorb und wird nach dieser Frist automatisch gelöscht. Standard: 365 (1 Jahr). Denk an den Datenschutz: Anträge und Anfragen enthalten persönliche Daten.
+   */
+  papierkorbTage: number;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4242,6 +4316,7 @@ export interface SicherheitSelect<T extends boolean = true> {
   minuten?: T;
   warnenMinuten?: T;
   aus?: T;
+  papierkorbTage?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
