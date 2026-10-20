@@ -6,6 +6,7 @@ import { startpruefung } from './utilities/startpruefung'
 import { gesundEndpunkt } from './utilities/gesund'
 import { datenschutzStandards } from './datenschutz/standards'
 import { cspBerichtEndpunkt } from './utilities/cspBericht'
+import { keineFalschenKnoepfe } from './utilities/keineFalschenKnoepfe'
 import { migrations } from './migrations'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
@@ -308,5 +309,5 @@ export default konfiguration.then((c) => {
     const nurVerwaltung = ({ req }: { req: Parameters<typeof canUseAdminPanel>[0]['req'] }) => canUseAdminPanel({ req })
     sperren.access = { ...sperren.access, read: nurVerwaltung, create: nurVerwaltung, update: nurVerwaltung, delete: nurVerwaltung }
   }
-  return c
+  return keineFalschenKnoepfe(c)
 })

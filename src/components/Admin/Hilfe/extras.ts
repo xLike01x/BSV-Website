@@ -606,7 +606,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Rollen', text: 'Was die Person darf. Mehrere Rollen sind möglich.' },
     { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy).' },
     { name: 'Teams & Kurse', text: 'In welchen Angeboten die Person selbst mitmacht (als Mitglied). Gibt keine Bearbeitungsrechte.' },
-    { name: 'Team-Berechtigungen', text: 'Welche Teams die Person betreut. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart; ohne eine der beiden wird automatisch „Trainer“ gesetzt. Steht gleichzeitig beim Team unter „Verantwortliche“.' },
+    { name: 'Team-Berechtigungen', text: 'Welche Teams die Person betreut. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart; ohne eine der beiden wird automatisch „Trainer“ gesetzt. „Trainer“ enthält alle Rechte der Team-Redaktion – beide anzukreuzen ist nicht nötig. Steht gleichzeitig beim Team unter „Verantwortliche“.' },
   ],
   menue: [
     { name: 'Text im Menü', text: 'So heißt der Eintrag auf der Website.' },
@@ -858,6 +858,11 @@ export const FAQ: Faq[] = [
   {
     frage: 'Was muss wegen der Besucherstatistik in die Datenschutzerklärung?',
     antwort: 'Ein kurzer Absatz, z. B.: „Reichweitenmessung: Wir zählen Seitenaufrufe auf unserem eigenen Server, um die Website zu verbessern (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Dabei werden keine Cookies gesetzt und keine IP-Adressen gespeichert. Aus IP-Adresse und Browserkennung wird ein täglich wechselndes, nicht rückverfolgbares Kürzel gebildet, damit wir Besuche eines Tages zählen können. Gespeichert werden aufgerufene Seite, Herkunftsseite (nur der Name, z. B. „Google“), Gerätetyp und Suchbegriffe der Website-Suche. Die Daten werden nicht weitergegeben und nach 14 Monaten automatisch gelöscht. Browser mit aktivierter „Do Not Track“- bzw. „Global Privacy Control“-Einstellung werden nicht erfasst.“ Die Datenschutzerklärung bearbeitest du unter Website-Aufbau → Seiten → „Datenschutz“. Im Zweifel bitte rechtlich prüfen lassen.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Warum gibt es bei Auswahlfeldern kein „+“ und manchmal kein „Duplizieren“?',
+    antwort: 'In Auswahlfeldern (z. B. Teams, Verantwortliche, Benutzerkonto) wählst du nur Vorhandenes aus. Früher legte das „+“ daneben unbemerkt einen NEUEN Eintrag an – etwa ein neues Team oder Konto. Neues legst du deshalb im jeweiligen Bereich links an und wählst es danach aus. Bilder kannst du weiterhin direkt im Feld hochladen. „Duplizieren“ fehlt bei Einträgen mit persönlichen Daten (Benutzer, Anträge, Mitgliedschaften, Anfragen, Passanträge, Profilfotos), damit z. B. keine IBAN doppelt gespeichert wird.',
     bereich: 'dashboard',
   },
   {

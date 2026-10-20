@@ -67,6 +67,11 @@ export default function RollenKacheln({ path, readOnly }: { path: string; readOn
           👉 Für welche Teams? Direkt darunter bei „Team-Berechtigungen“ auswählen.
         </p>
       )}
+      {gewaehlt.includes('uebungsleitung') && gewaehlt.includes('teamredaktion') && (
+        <p className="bsv-rollen-kacheln__hinweis">
+          ℹ️ „Team-Redaktion“ ist in „Trainer“ schon enthalten – der Haken kann weg, es ändert nichts.
+        </p>
+      )}
     </div>
   )
 }
