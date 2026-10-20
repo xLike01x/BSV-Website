@@ -542,7 +542,7 @@ export interface User {
     'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
   )[];
   /**
-   * Welche Teams betreut die Person? Z. B. „F1-Jugend“ oder „Alte Herren“. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart – ohne eine der beiden wird beim Speichern automatisch „Trainer“ gesetzt. Dasselbe steht beim Team unter „Verantwortliche“.
+   * Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.
    */
   teamsVerantwortlich?: (number | Angebote)[] | null;
   /**

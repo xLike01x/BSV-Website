@@ -3,7 +3,7 @@ import type { CollectionAfterChangeHook, CollectionBeforeChangeHook, Field, Fiel
 import { hasRole, isAdminField } from '@/access/roles'
 
 /**
- * „Trainer bzw. Team-Redaktion für …“ direkt beim Benutzer zuordnen.
+ * „Team-Berechtigungen“: Teams direkt beim Benutzer zuordnen.
  * Gespeichert wird weiterhin beim Team im Feld „Verantwortliche“ (leitung) – dieses Feld ist nur eine
  * zweite, bequemere Tür dazu. So bleibt es egal, ob man die Zuordnung beim Benutzer oder beim Team macht.
  */
@@ -35,7 +35,7 @@ const lesen: FieldHook = async ({ data, req }) => {
 
 export const teamsVerantwortlichFeld: Field = {
   name: 'teamsVerantwortlich',
-  label: 'Trainer bzw. Team-Redaktion für diese Teams & Kurse',
+  label: 'Team-Berechtigungen',
   type: 'relationship',
   relationTo: 'angebote',
   hasMany: true,
@@ -49,7 +49,7 @@ export const teamsVerantwortlichFeld: Field = {
     // Kein „+“: hier werden vorhandene Teams zugeordnet, keine neuen angelegt
     allowCreate: false,
     description:
-      'Welche Teams betreut die Person? Z. B. „F1-Jugend“ oder „Alte Herren“. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart – ohne eine der beiden wird beim Speichern automatisch „Trainer“ gesetzt. Dasselbe steht beim Team unter „Verantwortliche“.',
+      'Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.',
   },
 }
 

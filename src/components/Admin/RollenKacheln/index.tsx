@@ -64,7 +64,7 @@ export default function RollenKacheln({ path, readOnly }: { path: string; readOn
       </div>
       {teamRolle && (
         <p className="bsv-rollen-kacheln__hinweis">
-          👉 Für welche Teams? Direkt darunter bei „Trainer bzw. Team-Redaktion für diese Teams & Kurse“ auswählen.
+          👉 Für welche Teams? Direkt darunter bei „Team-Berechtigungen“ auswählen.
         </p>
       )}
     </div>

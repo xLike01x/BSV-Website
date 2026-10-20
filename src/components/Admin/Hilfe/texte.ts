@@ -306,7 +306,7 @@ export const HILFE: Record<string, HilfeText> = {
       '• Web-Admin: alles inkl. Technik und Admin-Rechte vergeben · Admin: alles andere',
       '• Redaktion: News, Seiten, Menü, Texte · Kasse: Mitgliedsanträge',
       '• Trainer / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
-      'Welche Teams jemand pflegt, wählst du direkt beim Benutzer unter „Trainer bzw. Team-Redaktion für diese Teams & Kurse“ (oder beim Team unter „Verantwortliche“).',
+      'Welche Teams jemand pflegt, wählst du direkt beim Benutzer unter „Team-Berechtigungen“ (oder beim Team unter „Verantwortliche“).',
       'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Posteingang → Registrierungen“ auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
     ],
     wirkung: [
