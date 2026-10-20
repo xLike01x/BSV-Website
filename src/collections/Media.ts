@@ -154,6 +154,9 @@ export const Media: CollectionConfig = {
     // Nur Bilder und PDFs – keine HTML/XML/SVG-Dateien, die im Browser Skripte ausführen könnten
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'application/pdf'],
     adminThumbnail: 'thumbnail',
+    // Original über sharp neu schreiben: entfernt Standort (GPS), Kameradaten und andere Metadaten aus Fotos,
+    // dreht nach EXIF richtig herum und begrenzt riesige Handy-Fotos auf 2560 px (Audit F-11)
+    resizeOptions: { width: 2560, height: 2560, fit: 'inside', withoutEnlargement: true },
     focalPoint: true,
     imageSizes: [
       {

@@ -2,7 +2,7 @@ import path from 'path'
 import type { Access, CollectionConfig, Where } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { ausblendenAusser, eigeneAngebotIds, hasRole } from '@/access/roles'
+import { ausblendenAusser, eigeneAngebotIds, hasRole, istMitgliedOderMehr } from '@/access/roles'
 import { darf, rechteLaden } from '@/access/rollenRechte'
 import { privateDatei } from '@/utilities/privateDatei'
 
@@ -46,7 +46,8 @@ export const Profilbilder: CollectionConfig = {
   access: {
     read: fotoLesen,
     // Angemeldet – bei Verwaltungskonten erst nach bestätigtem Code
-    create: ({ req }) => Boolean(req.user) && !(req.user as { _zweiFaktorOffen?: boolean })._zweiFaktorOffen,
+    // Nur freigegebene Konten (selbst registrierte erst nach Freigabe) – bei Verwaltungskonten erst nach bestätigtem Code
+    create: ({ req }) => istMitgliedOderMehr(req.user) && !(req.user as { _zweiFaktorOffen?: boolean })._zweiFaktorOffen,
     update: eigenesOderAdmin,
     delete: eigenesOderAdmin,
   },

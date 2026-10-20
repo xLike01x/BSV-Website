@@ -7,6 +7,7 @@ import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 import { teamBenachrichtigen } from '@/sport/teamMail'
+import { pflichtHaken } from '@/hooks/formularPruefung'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
 const readAnfragen: Access = async ({ req }) => {
@@ -89,7 +90,7 @@ export const Probetraining: CollectionConfig = {
     { name: 'alter', label: 'Alter', type: 'number', min: 0, max: 120 },
     { name: 'wunschtermin', label: 'Wunschtermin', type: 'text', maxLength: 200 },
     { name: 'nachricht', label: 'Nachricht', type: 'textarea', maxLength: 3000 },
-    { name: 'datenschutz', label: 'Datenschutzhinweise gelesen', type: 'checkbox', required: true },
+    { name: 'datenschutz', label: 'Datenschutzhinweise gelesen', type: 'checkbox', required: true, validate: pflichtHaken('Bitte bestätige, dass du die Datenschutzhinweise gelesen hast.') },
     {
       name: 'status',
       label: 'Status',

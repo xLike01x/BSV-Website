@@ -256,6 +256,18 @@ export const Passantraege: CollectionConfig = {
           required: true,
           index: true,
           filterOptions: { bereich: { equals: 'fussball' } },
+          // Umhängen nur durch Passwesen/Admin oder die antragstellende Person, solange der Antrag noch bearbeitbar ist –
+          // sonst könnte ein Trainer Ausweis und Passfoto an ein fremdes Team (und dessen Trainer) weitergeben (Audit F-21)
+          access: {
+            update: ({ req, doc }) => {
+              const user = req.user as { id: number } | null
+              if (!user) return false
+              if (istPassVerwaltung(user)) return true
+              const d = doc as { antragsteller?: number | { id: number }; status?: string } | undefined
+              const von = typeof d?.antragsteller === 'object' ? d?.antragsteller?.id : d?.antragsteller
+              return von === user.id && BEARBEITBAR.includes(d?.status ?? '')
+            },
+          },
           admin: { width: '50%' },
         },
       ],

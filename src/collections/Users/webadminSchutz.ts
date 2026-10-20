@@ -3,7 +3,7 @@ import { APIError } from 'payload'
 
 import { istWebAdmin } from '@/access/roles'
 
-type MitRollen = { id?: number | string; roles?: string[] | null }
+type MitRollen = { id?: number | string; roles?: string[] | null; email?: string; zweiFaktorAktiv?: boolean | null }
 
 const hat = (doc: MitRollen | undefined | null, rolle: string) => Boolean(doc?.roles?.includes(rolle))
 
@@ -17,6 +17,8 @@ const anzahlWebAdmins = async (req: PayloadRequest, ohne?: number | string) => {
  * - Web-Admin hat immer auch „admin“.
  * - Nur Web-Admins vergeben oder entziehen „admin“/„webadmin“ (Ausnahme: solange es noch keinen Web-Admin gibt).
  * - Konten von Web-Admins kann nur ein Web-Admin ändern (oder die Person selbst).
+ * - Bei anderen Admins darf nur ein Web-Admin E-Mail und Passwort ändern, die Zwei-Faktor-Anmeldung zurücksetzen
+ *   oder das Konto löschen – sonst könnte ein Admin das Konto eines anderen Admins übernehmen (Audit I-03).
  * - Der letzte Web-Admin kann seine Rolle nicht verlieren.
  */
 export const webadminSchutz: CollectionBeforeChangeHook = async ({ req, data, originalDoc, operation }) => {
@@ -35,6 +37,15 @@ export const webadminSchutz: CollectionBeforeChangeHook = async ({ req, data, or
   if (operation === 'update' && hat(vorher, 'webadmin') && !binIchWebAdmin && !selbst)
     throw new APIError('Dieses Konto gehört einem Web-Admin und kann nur von einem Web-Admin geändert werden.', 403)
 
+  if (operation === 'update' && hat(vorher, 'admin') && !binIchWebAdmin && !selbst) {
+    const zugang =
+      (typeof data.email === 'string' && data.email.trim().toLowerCase() !== (vorher.email ?? '').toLowerCase()) ||
+      typeof data.password === 'string' ||
+      (data.zweiFaktorAktiv === false && vorher.zweiFaktorAktiv === true)
+    if (zugang && (await anzahlWebAdmins(req)) > 0)
+      throw new APIError('E-Mail, Passwort und Zwei-Faktor-Anmeldung eines anderen Admins kann nur ein Web-Admin ändern.', 403)
+  }
+
   if (neu) {
     const nachher = data.roles as string[]
     const geaendert = ['admin', 'webadmin'].some((r) => (vorher.roles ?? []).includes(r) !== nachher.includes(r))
@@ -52,6 +63,8 @@ export const webadminLoeschSchutz: CollectionBeforeDeleteHook = async ({ req, id
   const ich = req.user as MitRollen | null
   if (!ich) return
   const ziel = (await req.payload.findByID({ collection: 'users', id, depth: 0, overrideAccess: true, req })) as MitRollen
+  if (hat(ziel, 'admin') && !hat(ziel, 'webadmin') && !istWebAdmin(ich) && ziel.id !== ich.id && (await anzahlWebAdmins(req)) > 0)
+    throw new APIError('Konten von Admins kann nur ein Web-Admin löschen.', 403)
   if (!hat(ziel, 'webadmin')) return
   if (!istWebAdmin(ich)) throw new APIError('Konten von Web-Admins kann nur ein Web-Admin löschen.', 403)
   if ((await anzahlWebAdmins(req, id)) === 0) throw new APIError('Der letzte Web-Admin kann nicht gelöscht werden.', 400)

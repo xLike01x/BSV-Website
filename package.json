@@ -25,7 +25,9 @@
     "seed:beispiele": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/beispiele.ts",
     "sicherung:erstellen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/erstellen.ts",
     "sicherung:einspielen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/einspielen.ts",
-    "test:sicherheit": "node --env-file=.env tests/sicherheit/alle.mjs"
+    "test:sicherheit": "node --env-file=.env tests/sicherheit/alle.mjs",
+    "live:pruefen": "tsx --env-file=.env scripts/live-pruefen.ts",
+    "medien:exif": "tsx scripts/exif-entfernen.ts"
   },
   "dependencies": {
     "@fontsource/caveat": "^5.3.0",

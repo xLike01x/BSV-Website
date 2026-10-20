@@ -9,6 +9,7 @@ import { mailHtml } from '@/auth/mail'
 import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 import { getServerSideURL } from '@/utilities/getURL'
 import { adressen, anliegenListe } from '@/Verein/anliegen'
+import { pflichtHaken } from '@/hooks/formularPruefung'
 
 const verein = async (req: PayloadRequest) => (await req.payload.findGlobal({ slug: 'verein', depth: 0, overrideAccess: true, req }).catch(() => null)) as never
 
@@ -122,7 +123,7 @@ export const Kontaktanfragen: CollectionConfig = {
     },
     { name: 'betreff', label: 'Betreff', type: 'text', required: true, maxLength: 200 },
     { name: 'nachricht', label: 'Nachricht', type: 'textarea', required: true, maxLength: 5000 },
-    { name: 'datenschutz', label: 'Datenschutzhinweise gelesen', type: 'checkbox', required: true },
+    { name: 'datenschutz', label: 'Datenschutzhinweise gelesen', type: 'checkbox', required: true, validate: pflichtHaken('Bitte bestätige, dass du die Datenschutzhinweise gelesen hast.') },
   ],
   timestamps: true,
 }

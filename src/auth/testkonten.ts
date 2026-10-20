@@ -6,7 +6,7 @@ import { hasRole } from '@/access/roles'
  * Testkonten zum Ausprobieren der Rechte – je Rolle, je Abteilung und je Team.
  * Sie melden sich OHNE Zwei-Faktor an. Deshalb funktionieren sie nur auf dem
  * lokalen Entwicklungs-Server (pnpm dev). Auf der Live-Website (Produktion) ist
- * die Anmeldung gesperrt – außer jemand setzt bewusst BSV_TESTKONTEN=an.
+ * die Anmeldung immer gesperrt – auch BSV_TESTKONTEN=an wirkt dort nicht (die Website startet damit gar nicht).
  */
 export const TESTPASSWORT = 'BSV-Test-2026!'
 export const TESTDOMAIN = 'bsv.test'
@@ -17,8 +17,8 @@ const hostname = (h?: string | null) => (h ?? '').split(',')[0].trim().toLowerCa
  * Über einen Tunnel (z. B. Vorschau für Kollegen) oder auf der Live-Website sind sie gesperrt.
  */
 export const testkontenErlaubt = (headers?: Headers | null) => {
+  if (process.env.NODE_ENV === 'production' || process.env.BSV_TESTKONTEN === 'aus') return false
   if (process.env.BSV_TESTKONTEN === 'an') return true
-  if (process.env.BSV_TESTKONTEN === 'aus' || process.env.NODE_ENV === 'production') return false
   if (!headers) return true
   const weitergeleitet = headers.get('x-forwarded-host')
   if (weitergeleitet && !LOKAL.includes(hostname(weitergeleitet))) return false

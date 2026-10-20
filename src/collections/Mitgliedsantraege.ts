@@ -4,6 +4,7 @@ import { APIError, ValidationError } from 'payload'
 import { anyone } from '../access/anyone'
 import { isFinance } from '../access/roles'
 import { decrypt, encrypt, isValidIBAN } from '../utilities/crypto'
+import { antragRegeln, geburtsdatumPruefen, plzPruefen, telefonPruefen } from '@/hooks/formularPruefung'
 import { spamSchutz } from '../hooks/spamSchutz'
 import { mitgliedschaftAusAntrag } from '@/mitgliedschaften/ausAntrag'
 
@@ -78,24 +79,24 @@ export const Mitgliedsantraege: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'vorname', label: 'Vorname', type: 'text', required: true },
-        { name: 'nachname', label: 'Nachname', type: 'text', required: true },
-        { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date', required: true, admin: { date: { displayFormat: 'dd.MM.yyyy' } } },
+        { name: 'vorname', label: 'Vorname', type: 'text', required: true, maxLength: 80 },
+        { name: 'nachname', label: 'Nachname', type: 'text', required: true, maxLength: 80 },
+        { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date', required: true, validate: geburtsdatumPruefen(), admin: { date: { displayFormat: 'dd.MM.yyyy' } } },
       ],
     },
     {
       type: 'row',
       fields: [
         { name: 'email', label: 'E-Mail', type: 'email', required: true },
-        { name: 'telefon', label: 'Telefon (optional)', type: 'text' },
+        { name: 'telefon', label: 'Telefon (optional)', type: 'text', maxLength: 30, validate: telefonPruefen },
       ],
     },
     {
       type: 'row',
       fields: [
-        { name: 'strasse', label: 'Straße und Hausnummer', type: 'text', required: true },
-        { name: 'plz', label: 'PLZ', type: 'text', required: true },
-        { name: 'ort', label: 'Ort', type: 'text', required: true },
+        { name: 'strasse', label: 'Straße und Hausnummer', type: 'text', required: true, maxLength: 120 },
+        { name: 'plz', label: 'PLZ', type: 'text', required: true, maxLength: 5, validate: plzPruefen },
+        { name: 'ort', label: 'Ort', type: 'text', required: true, maxLength: 80 },
       ],
     },
     {
@@ -125,14 +126,15 @@ export const Mitgliedsantraege: CollectionConfig = {
       name: 'familienmitglieder',
       label: 'Weitere Familienmitglieder',
       type: 'array',
+      maxRows: 10,
       admin: { condition: (d) => d?.mitgliedsart === 'familie' },
       fields: [
         {
           type: 'row',
           fields: [
-            { name: 'vorname', label: 'Vorname', type: 'text', required: true },
-            { name: 'nachname', label: 'Nachname', type: 'text' },
-            { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date' },
+            { name: 'vorname', label: 'Vorname', type: 'text', required: true, maxLength: 80 },
+            { name: 'nachname', label: 'Nachname', type: 'text', maxLength: 80 },
+            { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date', validate: geburtsdatumPruefen(false) },
           ],
         },
       ],
@@ -142,7 +144,7 @@ export const Mitgliedsantraege: CollectionConfig = {
       type: 'collapsible',
       label: 'SEPA-Lastschriftmandat',
       fields: [
-        { name: 'kontoinhaber', label: 'Kontoinhaber/in', type: 'text', required: true },
+        { name: 'kontoinhaber', label: 'Kontoinhaber/in', type: 'text', required: true, maxLength: 120 },
         {
           name: 'iban',
           label: 'IBAN',
@@ -189,7 +191,7 @@ export const Mitgliedsantraege: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'satzungAkzeptiert', label: 'Satzung und Datenschutz akzeptiert', type: 'checkbox', required: true },
+        { name: 'satzungAkzeptiert', label: 'Satzung anerkannt, Datenschutzhinweise zur Kenntnis genommen', type: 'checkbox', required: true },
         { name: 'fotoEinwilligung', label: 'Einwilligung Fotos (freiwillig)', type: 'checkbox' },
       ],
     },
@@ -198,6 +200,7 @@ export const Mitgliedsantraege: CollectionConfig = {
   hooks: {
     beforeValidate: [
       spamSchutz('antrag'),
+      antragRegeln,
       ({ data }) => {
         if (data && typeof data.email === 'string') data.email = data.email.trim().toLowerCase()
         return data

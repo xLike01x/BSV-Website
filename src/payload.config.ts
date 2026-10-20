@@ -2,6 +2,7 @@ import { rechteVorschauEndpunkt } from '@/components/Admin/WasDarf/endpunkt'
 import { Statistik } from './statistik/Statistik'
 import { statistikEndpunkt } from './statistik/endpunkt'
 import { papierkorbEndpunkte } from './papierkorb/endpunkt'
+import { startpruefung } from './utilities/startpruefung'
 import { posteingangEndpunkt } from '@/components/Admin/NavZusatz/endpunkt'
 import { postgresAdapter } from '@payloadcms/db-postgres'
 import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
@@ -59,7 +60,7 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-import { canUpload, hasRole, isEditor } from './access/roles'
+import { canUpload, canUseAdminPanel, hasRole, isEditor } from './access/roles'
 
 // E-Mail-Versand (Bestätigung bei Registrierung, „Passwort vergessen“, Benachrichtigungen).
 // Nur aktiv mit SMTP_HOST in der .env – sonst stehen die Mails beim Entwickeln im Server-Fenster.
@@ -81,12 +82,13 @@ const email = process.env.SMTP_HOST
     ? anzeigeMail
     : undefined
 
-export default buildConfig({
+const konfiguration = buildConfig({
   email,
   endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt, ...papierkorbEndpunkte],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     if (process.env.NEXT_PHASE === 'phase-production-build') return
+    await startpruefung(payload)
     medienUmziehen(payload)
     await rechteLaden(payload, true)
     await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
@@ -289,4 +291,17 @@ export default buildConfig({
     },
     tasks: [],
   },
+})
+
+/**
+ * Bearbeitungssperren („wird gerade von … bearbeitet“): Payload erlaubt sie standardmäßig jedem angemeldeten Konto.
+ * Nur die Verwaltung braucht sie – Mitglieder sollen weder sehen, wer was bearbeitet, noch Sperren löschen (Audit F-25).
+ */
+export default konfiguration.then((c) => {
+  const sperren = c.collections.find((x) => x.slug === 'payload-locked-documents')
+  if (sperren) {
+    const nurVerwaltung = ({ req }: { req: Parameters<typeof canUseAdminPanel>[0]['req'] }) => canUseAdminPanel({ req })
+    sperren.access = { ...sperren.access, read: nurVerwaltung, create: nurVerwaltung, update: nurVerwaltung, delete: nurVerwaltung }
+  }
+  return c
 })

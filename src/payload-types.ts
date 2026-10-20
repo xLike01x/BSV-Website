@@ -532,6 +532,7 @@ export interface FolderInterface {
  */
 export interface User {
   id: number;
+  aktuellesPasswort?: string | null;
   /**
    * Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.
    */
@@ -2608,6 +2609,7 @@ export interface PassdokumenteSelect<T extends boolean = true> {
  * via the `definition` "users_select".
  */
 export interface UsersSelect<T extends boolean = true> {
+  aktuellesPasswort?: T;
   name?: T;
   roles?: T;
   angebote?: T;

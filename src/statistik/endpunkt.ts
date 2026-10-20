@@ -15,6 +15,7 @@ export const statistikEndpunkt: Endpoint = {
     } catch {
       return leer
     }
+    if (Number(req.headers.get('content-length') || 0) > 2000) return leer
     const text = await req.text?.().catch(() => '')
     if (!text || text.length > 2000) return leer
     let b: { t?: string; p?: string; r?: string; u?: string; s?: number } = {}

@@ -1,5 +1,7 @@
 import crypto from 'crypto'
 
+import { schluessel } from '@/utilities/schluessel'
+
 /**
  * Unsichtbarer Bot-Schutz für die Registrierung – ohne „Ich bin kein Roboter“, ohne Fremddienst, ohne Cookies.
  *
@@ -14,9 +16,8 @@ const GUELTIG_MS = 30 * 60 * 1000
 const MIN_MS = 3000
 const benutzt = new Map<string, number>()
 
-const schluessel = () => process.env.PAYLOAD_SECRET || process.env.ENCRYPTION_KEY || ''
 const sha = (s: string) => crypto.createHash('sha256').update(s).digest('hex')
-const sig = (s: string) => crypto.createHmac('sha256', schluessel()).update(s).digest('hex')
+const sig = (s: string) => crypto.createHmac('sha256', schluessel('botschutz')).update(s).digest('hex')
 
 export type Aufgabe = { salz: string; ziel: string; max: number; signatur: string }
 

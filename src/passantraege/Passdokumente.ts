@@ -1,9 +1,11 @@
 import path from 'path'
 import type { CollectionConfig, Where } from 'payload'
+import { APIError } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { ausblendenAusser, istMitgliedOderMehr } from '@/access/roles'
 
+import { ratenGrenze } from '@/hooks/spamSchutz'
 import { privateDatei } from '@/utilities/privateDatei'
 
 import { istPassVerwaltung, passLesen } from './zugriff'
@@ -41,9 +43,21 @@ export const Passdokumente: CollectionConfig = {
     staticDir: path.resolve(dirname, '../../passantraege'),
     // Ohne HEIC: das zeigen viele Browser nicht an. iPhones wandeln Fotos beim Hochladen automatisch in JPG um.
     mimeTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp'],
+    // Fotos ohne Standort- und Kameradaten speichern (bleiben gut lesbar bis 3000 px)
+    resizeOptions: { width: 3000, height: 3000, fit: 'inside', withoutEnlargement: true },
     modifyResponseHeaders: privateDatei,
   },
   hooks: {
+    // Platz auf dem Server schützen: höchstens 20 Uploads je Adresse in 10 Minuten und 30 noch nicht zugeordnete Unterlagen je Person
+    beforeValidate: [
+      async ({ req, operation, data }) => {
+        if (operation !== 'create' || !req.user || istPassVerwaltung(req.user) || req.payloadAPI === 'local') return data
+        ratenGrenze(req, 'passdokumente', 20, 200)
+        const offen = await req.payload.count({ collection: 'passdokumente', where: { and: [{ hochgeladenVon: { equals: req.user.id } }, { antrag: { exists: false } }] }, overrideAccess: true, req })
+        if (offen.totalDocs >= 30) throw new APIError('Zu viele hochgeladene Unterlagen ohne Antrag. Bitte zuerst den Passantrag absenden oder alte Dateien löschen.', 400)
+        return data
+      },
+    ],
     beforeChange: [
       ({ req, data, operation }) => {
         if (operation === 'create' && req.user && !istPassVerwaltung(req.user)) {

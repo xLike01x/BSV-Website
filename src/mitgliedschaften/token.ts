@@ -1,10 +1,10 @@
 import crypto from 'crypto'
 
-const schluessel = () => process.env.ENCRYPTION_KEY || process.env.PAYLOAD_SECRET || ''
+import { schluessel } from '@/utilities/schluessel'
 
 /** Prüf-Code für den QR-Code auf dem Ausweis: Nummer + Signatur (nicht fälschbar, nicht erratbar) */
 export const ausweisToken = (id: number) => {
-  const sig = crypto.createHmac('sha256', schluessel()).update(`ausweis:${id}`).digest('base64url').slice(0, 22)
+  const sig = crypto.createHmac('sha256', schluessel('ausweis')).update(`ausweis:${id}`).digest('base64url').slice(0, 22)
   return `${id.toString(36)}.${sig}`
 }
 

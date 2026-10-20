@@ -9,6 +9,7 @@ import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
+import { aktuellesPasswortFeld, passwortUndLogin } from '../../auth/passwort'
 import { zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
 export const Users: CollectionConfig = {
@@ -59,6 +60,8 @@ export const Users: CollectionConfig = {
   },
   endpoints: [...zweiFaktorEndpunkte, ...testkontenEndpunkte, ...registrierungEndpunkte],
   fields: [
+    // Direkt unter „Neues Passwort“ – erscheint nur beim Ändern des eigenen Passworts
+    aktuellesPasswortFeld,
     // „Was darf diese Person?“ – Klartext-Zusammenfassung, live aus Rollen + Zusatzrechten berechnet (nur Admins)
     { name: 'wasDarf', type: 'ui', admin: { components: { Field: '@/components/Admin/WasDarf' }, condition: (_d, _s, { user }) => hasRole(user as never, 'admin') } },
     { name: 'name', label: 'Name', type: 'text', required: true, admin: { description: 'Vor- und Nachname. Erscheint in der Verwaltung und als Autor:in von News.' } },
@@ -208,6 +211,7 @@ export const Users: CollectionConfig = {
     },
   ],
   hooks: {
+    beforeOperation: [passwortUndLogin],
     // „Passwort vergessen“ beweist ebenfalls, dass die E-Mail-Adresse der Person gehört → gilt als bestätigt.
     // (Payload ruft diesen Hook beim Zurücksetzen mit dem kompletten Konto samt neuem Passwort-Hash auf.)
     beforeValidate: [

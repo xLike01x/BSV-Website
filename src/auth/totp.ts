@@ -1,5 +1,7 @@
 import crypto from 'crypto'
 
+import { basisSchluessel, schluessel } from '@/utilities/schluessel'
+
 /**
  * TOTP nach RFC 6238 (30-Sekunden-Takt, 6 Stellen, SHA-1) – kompatibel mit
  * Google Authenticator, Microsoft Authenticator, Apple Passwörter, 1Password usw.
@@ -72,13 +74,14 @@ export const neueWiederherstellungscodes = (anzahl = 10): string[] => {
 
 const normal = (code: string) => code.replace(/[\s-]/g, '').toUpperCase()
 /** Wiederherstellungscode speichern: HMAC mit Server-Schlüssel (ein Datenbank-Auszug allein reicht nicht zum Durchprobieren) */
-export const hashCode = (code: string) => {
-  const schluessel = process.env.ENCRYPTION_KEY || process.env.PAYLOAD_SECRET || ''
-  return 'h1:' + crypto.createHmac('sha256', schluessel).update(normal(code)).digest('hex')
-}
-/** Prüft gegen neues (h1:) und altes Format (reines SHA-256) – zeitkonstant */
+export const hashCode = (code: string) => 'h2:' + crypto.createHmac('sha256', schluessel('wiederherstellung')).update(normal(code)).digest('hex')
+/** Prüft gegen aktuelles (h2:) und ältere Formate (h1: HMAC mit Rohschlüssel, ganz alt: reines SHA-256) – zeitkonstant */
 export const codePasst = (eingabe: string, gespeichert: string) => {
-  const soll = gespeichert.startsWith('h1:') ? hashCode(eingabe) : crypto.createHash('sha256').update(normal(eingabe)).digest('hex')
+  const soll = gespeichert.startsWith('h2:')
+    ? hashCode(eingabe)
+    : gespeichert.startsWith('h1:')
+      ? 'h1:' + crypto.createHmac('sha256', basisSchluessel()).update(normal(eingabe)).digest('hex')
+      : crypto.createHash('sha256').update(normal(eingabe)).digest('hex')
   const a = Buffer.from(soll)
   const b = Buffer.from(gespeichert)
   return a.length === b.length && crypto.timingSafeEqual(a, b)

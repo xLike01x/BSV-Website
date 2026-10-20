@@ -3,6 +3,8 @@ import type { Payload } from 'payload'
 
 import { hatEinzelrechte } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
+import { ratenGrenze } from '@/hooks/spamSchutz'
+import { clientIp } from '@/utilities/clientIp'
 
 export type Ereignis = { art: 'aufruf' | 'schritt' | 'suche'; pfad?: string; referrer?: string; utm?: string; schritt?: number; suchbegriff?: string; treffer?: number }
 
@@ -16,7 +18,6 @@ const salz = (tag: string) => {
   return g.__bsvSalz.wert
 }
 
-const ipVon = (h: Headers) => h.get('x-real-ip')?.trim() || h.get('x-forwarded-for')?.split(',').pop()?.trim() || 'unbekannt'
 
 const geraetVon = (ua: string) => (/ipad|tablet|kindle|silk/i.test(ua) || (/android/i.test(ua) && !/mobile/i.test(ua)) ? 'tablet' : /mobi|iphone|ipod|android/i.test(ua) ? 'handy' : 'computer')
 
@@ -36,10 +37,9 @@ const BEKANNT: [RegExp, string][] = [
 
 export const quelleVon = (referrer: string | undefined, utm: string | undefined, eigenerHost: string | null) => {
   // ?utm_source=instagram → „Instagram“ (gleiche Schreibweise wie über den Referrer)
-  if (utm) {
-    const u = utm.toLowerCase().trim().slice(0, 40)
-    return BEKANNT.find(([, name]) => name.toLowerCase() === u)?.[1] ?? u
-  }
+  const u = utm?.toLowerCase().trim()
+  // Nur einfache Namen (instagram, newsletter, plakat-2026) – kein beliebiger Text in der Herkunfts-Liste
+  if (u && /^[a-z0-9_-]{1,30}$/.test(u)) return BEKANNT.find(([, name]) => name.toLowerCase() === u)?.[1] ?? u
   if (!referrer) return 'direkt'
   let host = ''
   try {
@@ -47,15 +47,41 @@ export const quelleVon = (referrer: string | undefined, utm: string | undefined,
   } catch {
     return 'direkt'
   }
-  if (!host || (eigenerHost && host === eigenerHost.replace(/^www\./, ''))) return 'intern'
+  if (!host || !/^[a-z0-9.-]{1,60}$/.test(host)) return 'direkt'
+  if (eigenerHost && host === eigenerHost.replace(/^www\./, '')) return 'intern'
   return BEKANNT.find(([re]) => re.test(host))?.[1] ?? host.slice(0, 60)
 }
 
-/** Pfad säubern: nur der Pfad, ohne Parameter, ohne Verwaltung/Schnittstelle */
-const pfadSaeubern = (p?: string) => {
-  if (!p || !p.startsWith('/')) return null
-  const pfad = p.split(/[?#]/)[0]!.slice(0, 200).replace(/\/+$/, '') || '/'
-  if (/^\/(admin|api|_next|next)(\/|$)/.test(pfad)) return null
+/** Feste Seiten der Website, die gezählt werden (Login, Bestätigungs- und Ausweis-Links absichtlich nicht) */
+const FEST = new Set(['/', '/breitensport', '/fussball', '/galerie', '/kontakt', '/mitglied-werden', '/mitglieder', '/mitglieder/passantrag', '/mitmachen', '/news', '/registrieren', '/sponsoren', '/suche', '/termine', '/trainingszeiten', '/verein'])
+/** Seiten mit Adresse aus dem Inhalt: Vorsatz → Bereich */
+const AUS_INHALT: [string, string, boolean][] = [
+  ['', 'pages', true],
+  ['/news/', 'posts', true],
+  ['/angebote/', 'angebote', false],
+  ['/galerie/', 'alben', false],
+]
+const g2 = globalThis as unknown as { __bsvPfade?: { bis: number; pfade: Set<string> } }
+
+/** Alle Adressen, die es auf der Website wirklich gibt (10 Minuten zwischengespeichert) */
+async function gueltigePfade(payload: Payload): Promise<Set<string>> {
+  if (g2.__bsvPfade && g2.__bsvPfade.bis > Date.now()) return g2.__bsvPfade.pfade
+  const pfade = new Set(FEST)
+  for (const [vorsatz, slug, entwuerfe] of AUS_INHALT) {
+    const r = await payload
+      .find({ collection: slug as never, where: entwuerfe ? { _status: { equals: 'published' } } : undefined, select: { slug: true } as never, depth: 0, limit: 0, pagination: false, overrideAccess: true })
+      .catch(() => null)
+    for (const d of (r?.docs ?? []) as { slug?: string }[]) if (d.slug && d.slug !== 'home') pfade.add(`${vorsatz || '/'}${d.slug}`)
+  }
+  g2.__bsvPfade = { bis: Date.now() + 10 * 60 * 1000, pfade }
+  return pfade
+}
+
+/** Pfad säubern: nur Adressen, die es auf der Website gibt – ohne Parameter, ohne erfundene oder fremde Adressen */
+export const pfadSaeubern = (p?: string) => {
+  if (!p || !p.startsWith('/') || p.startsWith('//') || p.includes('\\')) return null
+  const pfad = (p.split(/[?#]/)[0]!.replace(/\/+$/, '') || '/').toLowerCase()
+  if (pfad.length > 120 || !/^\/[a-z0-9\-/]*$/.test(pfad) || pfad.includes('//')) return null
   return pfad
 }
 
@@ -67,10 +93,19 @@ export async function erfassen(payload: Payload, headers: Headers, user: unknown
   const ua = headers.get('user-agent') ?? ''
   if (!ua || BOT.test(ua)) return
   if (hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(user)) return
-  const pfad = pfadSaeubern(e.pfad)
+  let pfad = pfadSaeubern(e.pfad)
+  if (pfad && !(await gueltigePfade(payload)).has(pfad)) pfad = null
   if (e.art === 'aufruf' && !pfad) return
+  // Suchanfragen kommen ohne Beacon direkt von der Seite – eigene Grenze, damit niemand die Tabelle füllt
+  if (e.art === 'suche') {
+    try {
+      ratenGrenze({ headers }, 'statistik-suche', 30, 600)
+    } catch {
+      return
+    }
+  }
   const tag = heute()
-  const besucher = createHash('sha256').update(`${salz(tag)}|${ipVon(headers)}|${ua}`).digest('hex').slice(0, 16)
+  const besucher = createHash('sha256').update(`${salz(tag)}|${clientIp(headers)}|${ua}`).digest('hex').slice(0, 16)
   const eigenerHost = (() => {
     try {
       return new URL(process.env.NEXT_PUBLIC_SERVER_URL || '').hostname || headers.get('host')?.split(':')[0] || null

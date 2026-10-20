@@ -38,7 +38,7 @@ function Rangliste({ titel, hinweis, liste, einheit, leer }: { titel: string; hi
           {liste.map((l) => (
             <li key={l.name}>
               <span className="bsv-stat__balken" style={{ width: `${Math.max(2, (l.wert / max) * 100)}%` }} aria-hidden="true" />
-              <span className="bsv-stat__name">{l.href ? <a href={l.href} target="_blank" rel="noopener">{l.name}</a> : l.name}</span>
+              <span className="bsv-stat__name">{l.href && /^\/[a-z0-9\-/]*$/.test(l.href) ? <a href={l.href} target="_blank" rel="noopener">{l.name}</a> : l.name}</span>
               <span className="bsv-stat__wert">
                 {z(l.wert)} <small>{einheit}</small>
                 {l.zusatz && <em>{l.zusatz}</em>}

@@ -409,7 +409,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       video: '/hilfe/konto-anlegen.mp4',
       schritte: [
         '„Neu erstellen“ klicken.',
-        'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben.',
+        'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben (mindestens 10 Zeichen).',
         'Bei „Rollen“ „Trainer“ (oder „Team-Redaktion“) wählen und speichern.',
         'Unter „Teams & Kurse“ die Person beim Team als „Verantwortliche“ eintragen.',
         'Der Person E-Mail und Passwort persönlich mitteilen. Beim ersten Anmelden richtet sie die Zwei-Faktor-App ein.',
@@ -891,9 +891,26 @@ export const FAQ: Faq[] = [
     antwort: 'Auf der Anmeldeseite auf „Passwort vergessen?“ klicken. Kommt keine E-Mail an, hilft ein Admin weiter.',
   },
   {
+    frage: 'Wie ändere ich mein Passwort?',
+    antwort:
+      'Oben rechts auf dein Symbol → „Mein Konto“ → „Passwort ändern“. Neues Passwort zweimal eingeben (mindestens 10 Zeichen) und darunter zur Bestätigung dein aktuelles Passwort. Dann „Speichern“. Das aktuelle Passwort schützt dein Konto, falls jemand an deinem offenen Rechner sitzt.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Beim Anmelden steht „Zu viele Anfragen“.',
+    antwort:
+      'Von deinem Anschluss kamen in kurzer Zeit sehr viele Anmeldeversuche (Schutz gegen Passwort-Raten). 10 Minuten warten, dann geht es wieder. Nach 5 falschen Passwörtern ist zusätzlich das Konto 10 Minuten gesperrt – ein Admin kann es vorher entsperren.',
+  },
+  {
+    frage: 'Ich kann bei einem anderen Admin E-Mail oder Passwort nicht ändern.',
+    antwort:
+      'Absichtlich: Zugangsdaten anderer Admins (E-Mail, Passwort, Zwei-Faktor zurücksetzen, Löschen) ändert nur ein Web-Admin. So kann niemand das Konto eines anderen Admins übernehmen. Name, Teams und alles andere geht weiterhin.',
+    bereich: 'users',
+  },
+  {
     frage: 'Ich habe aus Versehen etwas gelöscht.',
     antwort:
-      'Bei News und Seiten gibt es „Versionen“ – solange der Eintrag noch da ist, kannst du frühere Fassungen wiederherstellen. Ganz gelöschte Einträge kann ein Admin unter Umständen aus einer Sicherung zurückholen – sag am besten sofort Bescheid.',
+      'Gelöschtes liegt zuerst im Papierkorb des Bereichs (Liste → oben „Papierkorb“) – dort „Wiederherstellen“. Hast du es dort „dauerhaft gelöscht“, liegt es im Web-Admin-Papierkorb: Ein Web-Admin kann es zurückholen. Bei News und Seiten gibt es außerdem „Versionen“ mit früheren Fassungen.',
   },
   {
     frage: 'Wie lösche ich ein Bild?',

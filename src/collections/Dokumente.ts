@@ -38,6 +38,9 @@ export const Dokumente: CollectionConfig = {
   upload: {
     staticDir: path.resolve(dirname, '../../dokumente'),
     modifyResponseHeaders: privateDatei,
-    mimeTypes: ['application/pdf', 'image/*', 'application/msword', 'application/vnd.openxmlformats-officedocument.*', 'application/vnd.ms-excel', 'text/plain'],
+    // Bildtypen ausdrücklich (kein SVG – könnte Skripte enthalten)
+    mimeTypes: ['application/pdf', 'image/jpeg', 'image/png', 'image/webp', 'image/gif', 'application/msword', 'application/vnd.openxmlformats-officedocument.*', 'application/vnd.ms-excel', 'text/plain'],
+    // Fotos ohne Standort- und Kameradaten speichern
+    resizeOptions: { width: 3000, height: 3000, fit: 'inside', withoutEnlargement: true },
   },
 }

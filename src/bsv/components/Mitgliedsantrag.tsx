@@ -14,7 +14,7 @@ export type AntragBeitrag = { key: string; label: string; zielgruppe: string; qu
 type Person = { vorname: string; nachname: string; geburtsdatum: string }
 const leer: Person = { vorname: '', nachname: '', geburtsdatum: '' }
 
-const euro = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2 }) + ' €'
+const euro = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
 
 /** Grobe Formatprüfung im Browser; die verbindliche Prüfsumme rechnet der Server. */
 const ibanOk = (iban: string) => {
@@ -43,7 +43,13 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
     if (schritt === 2 || schritt === 3) statistikSenden({ t: 'schritt', p: '/mitglied-werden', s: schritt })
   }, [schritt])
   const [auswahl, setAuswahl] = useState<number[]>([])
-  const [art, setArt] = useState(beitraege[0]?.key ?? 'jugend')
+  const [art, setArtRoh] = useState(beitraege[0]?.key ?? 'jugend')
+  // Selbst gewählte Mitgliedsart nicht mehr automatisch überschreiben
+  const artSelbst = useRef(false)
+  const setArt = (a: string) => {
+    artSelbst.current = true
+    setArtRoh(a)
+  }
   const [p, setP] = useState({ ...leer, email: '', telefon: '', strasse: '', plz: '', ort: '' })
   const [familie, setFamilie] = useState<Person[]>([])
   const [sepa, setSepa] = useState({ kontoinhaber: '', iban: '', mandat: false, satzung: false, fotos: false })
@@ -62,8 +68,8 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
   // Mitgliedsart aus dem Geburtsdatum vorschlagen
   useEffect(() => {
     const a = alterAm(p.geburtsdatum)
-    if (a === null || art === 'familie' || art === 'passiv') return
-    setArt(a < 18 ? 'jugend' : 'aktiv')
+    if (a === null || artSelbst.current || art === 'familie' || art === 'passiv') return
+    setArtRoh(a < 18 ? 'jugend' : 'aktiv')
   }, [p.geburtsdatum]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
@@ -81,12 +87,17 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
 
   const pruefe = (): string | null => {
     if (schritt === 1 && auswahl.length === 0 && art !== 'passiv') return 'Bitte wähle mindestens ein Team oder einen Kurs aus – oder werde passives Mitglied.'
+    if (schritt === 1 && auswahl.length > 0 && art === 'passiv') return 'Passive Mitglieder nehmen nicht am Training teil. Bitte die Teams abwählen – oder den Haken bei „passives Mitglied“ entfernen.'
     if (schritt === 2) {
       if (!p.vorname.trim() || !p.nachname.trim()) return 'Bitte gib Vor- und Nachnamen an.'
       if (!p.geburtsdatum || alterAm(p.geburtsdatum) === null) return 'Bitte gib das Geburtsdatum an.'
       if (!/^\S+@\S+\.\S+$/.test(p.email)) return 'Bitte gib eine gültige E-Mail-Adresse an.'
       if (!p.strasse.trim() || !/^\d{5}$/.test(p.plz.trim()) || !p.ort.trim()) return 'Bitte gib eine vollständige Anschrift mit fünfstelliger PLZ an.'
       if (art === 'familie' && familie.some((f) => !f.vorname.trim())) return 'Bitte gib für alle Familienmitglieder einen Vornamen an oder entferne leere Zeilen.'
+      if (art === 'familie' && !familie.some((f) => f.vorname.trim())) return 'Beim Familienbeitrag bitte mindestens ein weiteres Familienmitglied eintragen.'
+      const alter = alterAm(p.geburtsdatum)
+      if (alter !== null && alter < 0) return 'Das Geburtsdatum liegt in der Zukunft.'
+      if (alter !== null && alter >= 18 && art === 'jugend') return '„Jugendliche“ gilt bis 17 Jahre. Bitte eine andere Mitgliedsart wählen.'
     }
     if (schritt === 3) {
       if (!sepa.kontoinhaber.trim()) return 'Bitte gib den Namen des Kontoinhabers an.'
@@ -114,7 +125,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
       ort: p.ort.trim(),
       mitgliedsart: art,
       familienmitglieder: art === 'familie' ? familie.filter((x) => x.vorname.trim()).map((x) => ({ ...x, geburtsdatum: x.geburtsdatum || undefined })) : [],
-      angebote: auswahl,
+      angebote: art === 'passiv' ? [] : auswahl,
       kontoinhaber: sepa.kontoinhaber.trim(),
       iban: sepa.iban.replace(/\s+/g, '').toUpperCase(),
       sepaMandat: sepa.mandat,
@@ -145,7 +156,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
             {schritte.map((l, i) => {
               const n = i + 1
               return (
-                <li key={l} aria-current={n === schritt ? 'step' : undefined} style={{ textAlign: 'center', padding: 4, fontWeight: n === schritt ? 700 : 500, color: n <= schritt ? 'var(--bsv-ink)' : '#86868B' }}>
+                <li key={l} aria-current={n === schritt ? 'step' : undefined} style={{ textAlign: 'center', padding: 4, fontWeight: n === schritt ? 700 : 500, color: n <= schritt ? 'var(--bsv-ink)' : '#6E6E73' }}>
                   {n < schritt ? '✓' : n} {l}
                 </li>
               )
@@ -188,7 +199,12 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 </fieldset>
               ))}
               <label className="check" style={{ marginTop: 8 }}>
-                <input type="checkbox" checked={art === 'passiv'} onChange={(e) => setArt(e.target.checked ? 'passiv' : beitraege[0]?.key ?? 'jugend')} />
+                <input type="checkbox" checked={art === 'passiv'} onChange={(e) => {
+                    if (e.target.checked) return setArt('passiv')
+                    artSelbst.current = false
+                    const alter = alterAm(p.geburtsdatum)
+                    setArtRoh(alter !== null && alter >= 18 ? 'aktiv' : beitraege[0]?.key ?? 'jugend')
+                  }} />
                 <span>Ich möchte den Verein als passives Mitglied unterstützen, ohne an Training teilzunehmen.</span>
               </label>
             </div>
@@ -310,7 +326,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 <label className="check">
                   <input type="checkbox" checked={sepa.satzung} onChange={(e) => setSepa({ ...sepa, satzung: e.target.checked })} />
                   <span>
-                    Ich erkenne die <Link href="/verein#downloads">Satzung</Link> an und habe die <Link href="/verein#dsgvo">Informationen nach DSGVO</Link> gelesen.
+                    Ich erkenne die <Link href="/verein#downloads">Satzung</Link> an und habe die <Link href="/verein#dsgvo">Informationen nach DSGVO</Link> zur Kenntnis genommen.
                   </span>
                 </label>
                 <label className="check">

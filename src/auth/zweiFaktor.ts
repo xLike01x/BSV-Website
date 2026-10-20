@@ -14,9 +14,10 @@ import { codePasst, hashCode, neueWiederherstellungscodes, neuesGeheimnis, otpau
  * eingegeben wurde, gelten die echten Rollen. Dadurch greifen alle
  * bestehenden Zugriffsregeln automatisch – ohne Sonderfälle im Code.
  *
- * Lokal zum Entwickeln abschaltbar mit ZWEI_FAKTOR=aus in der .env.
+ * Lokal zum Entwickeln abschaltbar mit ZWEI_FAKTOR=aus in der .env – auf der Live-Website nie
+ * (dort startet die Website mit diesem Eintrag gar nicht, siehe utilities/startpruefung.ts).
  */
-const AUS = () => process.env.ZWEI_FAKTOR === 'aus'
+const AUS = () => process.env.ZWEI_FAKTOR === 'aus' && process.env.NODE_ENV !== 'production'
 const SITZUNG_MS = 8 * 60 * 60 * 1000 // entspricht der Token-Laufzeit
 
 type Sitzung = { sid: string; bis: string }
