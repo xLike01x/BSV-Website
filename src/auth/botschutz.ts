@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { schluessel } from '@/utilities/schluessel'
+import { gleich, schluessel } from '@/utilities/schluessel'
 
 /**
  * Unsichtbarer Bot-Schutz für die Registrierung – ohne „Ich bin kein Roboter“, ohne Fremddienst, ohne Cookies.
@@ -30,9 +30,9 @@ export function neueAufgabe(): Aufgabe {
 
 /** Gibt null zurück, wenn alles passt – sonst eine Fehlermeldung */
 export function loesungPruefen(l: { salz?: string; ziel?: string; signatur?: string; zahl?: number } | undefined): string | null {
-  if (!l?.salz || !l.ziel || !l.signatur || typeof l.zahl !== 'number') return 'Sicherheitsprüfung fehlt. Bitte die Seite neu laden.'
-  const erwartet = sig(l.salz + l.ziel)
-  if (l.signatur.length !== erwartet.length || !crypto.timingSafeEqual(Buffer.from(l.signatur), Buffer.from(erwartet))) return 'Sicherheitsprüfung ungültig. Bitte die Seite neu laden.'
+  if (typeof l?.salz !== 'string' || typeof l.ziel !== 'string' || typeof l.signatur !== 'string' || !l.salz || !l.ziel || !l.signatur || typeof l.zahl !== 'number') return 'Sicherheitsprüfung fehlt. Bitte die Seite neu laden.'
+  // Bewusst ohne Rückfall auf ENCRYPTION_KEY_ALT: Aufgaben gelten nur 30 Minuten, ein bekannt gewordener alter Schlüssel soll sofort nichts mehr taugen
+  if (!gleich(l.signatur, sig(l.salz + l.ziel))) return 'Sicherheitsprüfung ungültig. Bitte die Seite neu laden.'
   const seit = Date.now() - Number(l.salz.split('.')[0])
   if (!(seit >= 0) || seit > GUELTIG_MS) return 'Die Seite war zu lange offen. Bitte neu laden und erneut absenden.'
   if (seit < MIN_MS) return 'Das ging zu schnell. Bitte noch einmal versuchen.'

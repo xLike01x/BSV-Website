@@ -11,8 +11,9 @@ import posteingang from './posteingang.mjs'
 import rechte from './rechte.mjs'
 import statistik from './statistik.mjs'
 import uploads from './uploads.mjs'
+import wartung from './wartung.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung }
 
 // Einzelne Bereiche: pnpm test:sicherheit -- posteingang
 const nur = process.argv.slice(2)

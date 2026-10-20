@@ -574,6 +574,42 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Die Website wie gewohnt mit BSV-Website-Update.bat starten.',
       ],
     },
+    {
+      id: 'wiederherstellung-testen',
+      titel: 'Einmal im Jahr: Wiederherstellung testen',
+      schritte: [
+        'Auf der Live-Website unter „Datensicherung“ die neueste Sicherung herunterladen.',
+        'Am PC die Datei in den Ordner „backups“ im Projektordner legen.',
+        'Wie bei „Eine Sicherung zurückholen“ einspielen (am PC – nicht auf der Live-Website).',
+        'Website am PC starten und kurz durchklicken: Sind News, Teams und Bilder da? Lässt sich eine IBAN in einem Mitgliedsantrag anzeigen?',
+        'Auf der Live-Website unter „Datensicherung“ im Kasten „Wartung“ auf „✓ Heute erfolgreich getestet“ klicken.',
+      ],
+    },
+  ],
+  saisonwechsel: [
+    {
+      id: 'saisonwechsel',
+      titel: 'Den Saisonwechsel machen',
+      video: '/hilfe/saisonwechsel.mp4',
+      schritte: [
+        'Links unter „Sport“ auf „Saisonwechsel“.',
+        '„🔄 Neue Saison beginnen“ klicken und bestätigen.',
+        'Oben einen Bereich wählen (z. B. „Fußball“) und das erste Team öffnen (Klick auf den Namen).',
+        'Im Team Namen, Alter, Trainingszeiten und Verantwortliche anpassen, speichern, zurück zum Saisonwechsel.',
+        'Beim Team das Häkchen setzen. Mit „Nur noch nicht geprüfte“ siehst du, was fehlt.',
+        'Wenn alle abgehakt sind: „✓ Saisonwechsel abschließen“.',
+      ],
+    },
+    {
+      id: 'trainer-hoert-auf',
+      titel: 'Ein Trainer hört auf',
+      schritte: [
+        'Im Saisonwechsel (oder unter „Teams & Kurse“) das Team öffnen.',
+        'Unter „Verantwortliche“ die Person entfernen und speichern.',
+        'Betreut sie kein anderes Team mehr: Links unter „Mitglieder“ → „Benutzer“ die Person öffnen und bei „Rollen“ nur „Mitglied“ lassen. Speichern.',
+        'Ab sofort kommt sie nicht mehr in die Verwaltung. News und Bilder, die sie geschrieben hat, bleiben erhalten.',
+      ],
+    },
   ],
   rollen: [
     {
@@ -935,6 +971,36 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Ein Trainer hört auf – was muss ich tun?',
+    antwort: 'Team öffnen (am einfachsten über Sport → „Saisonwechsel“) → unter „Verantwortliche“ die Person entfernen → Speichern. Betreut sie kein anderes Team mehr: unter Mitglieder → „Benutzer“ bei der Person nur die Rolle „Mitglied“ lassen. Dann kommt sie nicht mehr in die Verwaltung; ihre News und Bilder bleiben.',
+    bereich: 'saisonwechsel',
+  },
+  {
+    frage: 'Was ist der Saisonwechsel und wann mache ich ihn?',
+    antwort: 'Einmal im Jahr – meist im Sommer – gehen Admin oder Redaktion unter Sport → „Saisonwechsel“ alle Teams und Kurse durch: Namen, Verantwortliche, Trainingszeiten, alte Fotos. Jedes Team wird abgehakt, am Ende „Saisonwechsel abschließen“. Vom 15. Juni bis 30. September erinnert das Dashboard daran.',
+    bereich: 'saisonwechsel',
+  },
+  {
+    frage: 'Das Dashboard sagt, Node.js oder PostgreSQL bekommt bald keine Sicherheits-Updates mehr. Was tun?',
+    antwort: 'Das ist die Technik unter der Website. Rechtzeitig (der Hinweis kommt 6 Monate vorher) auf die nächste Version wechseln – das macht der Web-Admin bzw. wer den Server betreut, am besten an einem Update-Tag nach einer frischen Sicherung. Die Daten bleiben dabei erhalten. Details stehen unter „Datensicherung“ im Kasten „Wartung“.',
+    bereich: 'sicherung',
+  },
+  {
+    frage: 'Der Speicherplatz wird knapp. Was tun?',
+    antwort: 'Ab 80 % belegt warnt das Dashboard. Möglichkeiten: in der Mediathek alte, nicht mehr genutzte Bilder löschen (Papierkorb leert sich nach 30 Tagen), alte Fotoalben aufräumen – oder beim Server-Anbieter mehr Speicher buchen. Auch die Sicherungen brauchen Platz; es bleiben automatisch nur die letzten 14 sowie je eine pro Woche und Monat.',
+    bereich: 'sicherung',
+  },
+  {
+    frage: 'Der ENCRYPTION_KEY ist vielleicht bekannt geworden (z. B. Laptop gestohlen). Was tun?',
+    antwort: 'Nicht einfach austauschen – sonst sind IBANs, Zwei-Faktor und alle Sicherungen unlesbar. Stattdessen mit „pnpm schluessel:wechseln“ auf einen neuen Schlüssel umstellen: Die Anleitung Schritt für Schritt steht in deploy/README.md unter „Schlüssel wechseln“. Erst ein Probelauf, dann „ausfuehren“. Lag auch die Datenbank offen, zusätzlich „zwei-faktor-neu“. Danach den alten Schlüssel (ENCRYPTION_KEY_ALT) aus der .env löschen. Steht die ganze .env offen: auch PAYLOAD_SECRET und das E-Mail-Passwort wechseln.',
+    bereich: 'sicherung',
+  },
+  {
+    frage: 'Was passiert, wenn der Web-Admin ausfällt? Wer kann übernehmen?',
+    antwort: 'Dafür gibt es das Notfall-Handbuch (Ordner „Notizen“ bzw. im Projekt: „Notfall-Handbuch“): wem Server, Domain und Konten gehören, wo die Zugangsdaten liegen (Passwortmanager des Vorstands) und was eine Nachfolge braucht. Die Website läuft ohne Zutun weiter; nur Updates und Notfälle brauchen jemanden mit Server-Zugang.',
+    bereich: 'sicherung',
+  },
+  {
     frage: 'Wie melde ich als Trainer schnell einen Ausfall – auch vom Handy?',
     antwort: 'Auf der Website anmelden → Mitgliederbereich → Kasten „Meine Teams & Kurse zum Pflegen“ → „Ausfall melden“. Tag antippen (die nächsten Trainingstage stehen schon da), Grund antippen, „Ausfall jetzt melden“. Er steht sofort auf der Teamseite. Versehentlich gemeldet? Daneben auf „zurücknehmen“ tippen.',
     bereich: 'ausfaelle',
@@ -1063,7 +1129,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Kategorien (nur Admins), Formulare, Menü & Fußzeile, Texte & Bilder. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen. Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz-Fristen, E-Mail-Vorlagen Mitgliedsanträge, Hilfe-Texte, Hilfe-Rückmeldungen – Web-Admins zusätzlich Besucherstatistik, Papierkorb, Sicherheit und Datensicherung. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Kategorien (nur Admins), Formulare, Menü & Fußzeile, Texte & Bilder. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen, Saisonwechsel (Admin und Redaktion). Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz-Fristen, E-Mail-Vorlagen Mitgliedsanträge, Hilfe-Texte, Hilfe-Rückmeldungen – Web-Admins zusätzlich Besucherstatistik, Papierkorb, Sicherheit und Datensicherung. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {
@@ -1270,6 +1336,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
     darfNicht: [],
     anleitungen: [
       ['sicherung', 'sicherung-erstellen'],
+      ['sicherung', 'wiederherstellung-testen'],
       ['users', 'admin-rechte'],
       ['users', 'zusatzrechte'],
       ['papierkorb', 'zurueckholen'],
@@ -1282,6 +1349,8 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
       'Ich habe mein Handy verloren / eine neue Handy-Nummer.',
       'Wo sehe ich, wie viele Menschen die Website besuchen?',
+      'Der ENCRYPTION_KEY ist vielleicht bekannt geworden (z. B. Laptop gestohlen). Was tun?',
+      'Was passiert, wenn der Web-Admin ausfällt? Wer kann übernehmen?',
     ],
   },
   admin: {
@@ -1292,6 +1361,8 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
     anleitungen: [
       ['users', 'konto-anlegen'],
       ['angebote', 'team-verantwortliche'],
+      ['saisonwechsel', 'saisonwechsel'],
+      ['saisonwechsel', 'trainer-hoert-auf'],
       ['registrierungen', 'registrierung-freigeben'],
       ['rollen', 'rollen-pruefen'],
       ['rollen', 'rollen-aufraeumen'],
@@ -1305,6 +1376,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Warum sieht jemand einen Bereich (nicht)?',
       'Ich habe mein Handy verloren / eine neue Handy-Nummer.',
       'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
+      'Ein Trainer hört auf – was muss ich tun?',
     ],
   },
   redaktion: {
@@ -1330,6 +1402,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       ['pages', 'seite-ins-menue'],
       ['forms', 'formular-bauen'],
       ['texte', 'text-aendern'],
+      ['saisonwechsel', 'saisonwechsel'],
     ],
     faq: [
       'Was ist der Unterschied zwischen „Entwurf speichern“ und „Veröffentlichen“?',
@@ -1337,6 +1410,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Darf ich Fotos von Kindern hochladen?',
       'Was bedeutet „Wer kümmert sich?“ und wer sieht die Notizen?',
       'Ich habe etwas geändert, aber die Website zeigt noch das Alte.',
+      'Was ist der Saisonwechsel und wann mache ich ihn?',
     ],
   },
   kasse: {

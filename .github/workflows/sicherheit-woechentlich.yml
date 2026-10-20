@@ -1,0 +1,25 @@
+# Wöchentliche Sicherheitsprüfung der Pakete – läuft auch, wenn monatelang niemand etwas ändert.
+# Schlägt fehl, sobald ein Paket, das live läuft, eine bekannte hohe oder kritische Lücke hat.
+# GitHub schickt dann eine E-Mail (Einstellungen → Notifications → Actions: „Only notify for failed workflows“).
+# Bewusst geprüfte Ausnahmen stehen in package.json unter pnpm.auditConfig.ignoreGhsas (Begründung: deploy/README.md).
+name: Sicherheitsprüfung (wöchentlich)
+on:
+  schedule:
+    - cron: '17 5 * * 1' # montags ca. 7:17 Uhr deutscher Zeit
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Bekannte Sicherheitslücken in Live-Paketen (hoch und kritisch)
+        run: pnpm audit --prod --audit-level high

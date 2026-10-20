@@ -1,4 +1,4 @@
-# Automatische Prüfung bei jedem Push: Typen, Code-Regeln, bekannte Sicherheitslücken in Live-Paketen
+# Automatische Prüfung bei jedem Push: Typen, Code-Regeln, bekannte Sicherheitslücken in Live-Paketen (Ausnahmen: package.json → pnpm.auditConfig)
 name: Prüfen
 on:
   push:
@@ -22,4 +22,4 @@ jobs:
       - run: npx tsc --noEmit -p .
       - run: npx eslint src --quiet
       - name: Sicherheitsmeldungen (nur Pakete, die live laufen; hohe und kritische)
-        run: pnpm audit --prod --audit-level high || echo "::warning::pnpm audit meldet Funde – bitte prüfen"
+        run: pnpm audit --prod --audit-level high

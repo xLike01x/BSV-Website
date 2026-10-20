@@ -748,6 +748,34 @@ await aufnahme('papierkorb', admin, async ({ page, neu, oeffne, menueZeigen, unt
   if (korbId) await api.patch(`${base}/api/kontaktanfragen/${korbId}`, { data: { deletedAt: new Date().toISOString() } })
 })
 
+let saisonTeam = null
+await aufnahme('saisonwechsel', admin, async ({ page, menueZeigen, untertitel, klick, zeige, gehe }) => {
+  await gehe('/admin/saisonwechsel')
+  await page.waitForSelector('.bsv-saison__liste', { timeout: 30000 })
+  await untertitel('Einmal im Jahr: links unter „Sport“ auf „Saisonwechsel“', 2200)
+  await menueZeigen('Saisonwechsel')
+  await untertitel('Zuerst „Neue Saison beginnen“ – das setzt die Häkchen vom letzten Jahr zurück', 2600)
+  await zeige(page.getByRole('button', { name: /Neue Saison beginnen/ }))
+  await untertitel('Jedes Team auf einen Blick: Verantwortliche, Trainingszeiten, Bilder', 2400)
+  const erste = page.locator('.bsv-saison__liste > li').first()
+  await zeige(erste)
+  await untertitel('⚠️ zeigt, was auffällt – z. B. keine Zeiten oder ein Trainer, der lange nicht da war', 2800)
+  await zeige(erste.locator('.bsv-saison__hinweise').or(erste.locator('.bsv-saison__name')).first())
+  await untertitel('Auf den Namen klicken, im Team anpassen, speichern – und zurück', 2600)
+  await zeige(erste.locator('.bsv-saison__name a'))
+  await untertitel('Passt alles? Links das Häkchen setzen', 2000)
+  saisonTeam = Number((await erste.locator('.bsv-saison__name a').getAttribute('href'))?.split('/').pop())
+  await klick(erste.locator('input[type=checkbox]'))
+  await page.waitForTimeout(1200)
+  await untertitel('„Nur noch nicht geprüfte“ zeigt, was noch fehlt', 2200)
+  await klick(page.getByLabel('Nur noch nicht geprüfte'))
+  await page.waitForTimeout(600)
+  await untertitel('Zum Schluss „Saisonwechsel abschließen“', 2200)
+  await zeige(page.getByRole('button', { name: /abschließen/ }))
+}, async () => {
+  if (saisonTeam) await api.post(`${base}/api/globals/wartung/saison`, { data: { aktion: 'pruefen', id: saisonTeam, geprueft: false } })
+})
+
 await browser.close()
 
 /* ---------- Umwandeln (optional) ---------- */

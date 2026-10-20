@@ -5,7 +5,7 @@ import path from 'path'
 import { pipeline } from 'stream/promises'
 import * as tar from 'tar'
 
-import { schluessel } from '@/utilities/schluessel'
+import { schluessel, schluesselAlt } from '@/utilities/schluessel'
 
 /**
  * Datensicherung: alle Tabellen der Datenbank (als JSON) + alle hochgeladenen Bilder/Dateien
@@ -45,9 +45,9 @@ async function tabellen(pool: Pick<Pool, 'query'>): Promise<string[]> {
 // Aufbau der verschlüsselten Datei: „BSVENC1\n“ + 12 Byte IV + Inhalt + 16 Byte Prüfsumme (GCM-Tag)
 const KENNUNG = Buffer.from('BSVENC1\n')
 
-export async function verschluesseln(quelle: string, ziel: string) {
+export async function verschluesseln(quelle: string, ziel: string, key: Buffer = schluessel('sicherung')) {
   const iv = crypto.randomBytes(12)
-  const c = crypto.createCipheriv('aes-256-gcm', schluessel('sicherung'), iv)
+  const c = crypto.createCipheriv('aes-256-gcm', key, iv)
   const fd = fs.openSync(ziel, 'w', 0o600)
   fs.writeSync(fd, KENNUNG)
   fs.writeSync(fd, iv)
@@ -67,22 +67,33 @@ export const istVerschluesselt = (datei: string) => {
   }
 }
 
-export async function entschluesseln(quelle: string, ziel: string) {
+/** Entschlüsselt mit genau diesem Schlüssel; true = Prüfsumme passt. Bei false gibt es keine Zieldatei. */
+export async function entschluesselnMit(quelle: string, ziel: string, key: Buffer): Promise<boolean> {
   const groesse = fs.statSync(quelle).size
+  if (groesse < KENNUNG.length + 12 + 16) return false
   const fd = fs.openSync(quelle, 'r')
   const iv = Buffer.alloc(12)
   const tag = Buffer.alloc(16)
   fs.readSync(fd, iv, 0, 12, KENNUNG.length)
   fs.readSync(fd, tag, 0, 16, groesse - 16)
   fs.closeSync(fd)
-  const d = crypto.createDecipheriv('aes-256-gcm', schluessel('sicherung'), iv)
+  const d = crypto.createDecipheriv('aes-256-gcm', key, iv)
   d.setAuthTag(tag)
   try {
     await pipeline(fs.createReadStream(quelle, { start: KENNUNG.length + 12, end: groesse - 17 }), d, fs.createWriteStream(ziel, { mode: 0o600 }))
+    return true
   } catch {
     fs.rmSync(ziel, { force: true })
-    throw new Error('Die Sicherung lässt sich nicht entschlüsseln – falscher ENCRYPTION_KEY oder beschädigte Datei.')
+    return false
   }
+}
+
+/** Entschlüsselt mit ENCRYPTION_KEY – während eines Schlüsselwechsels notfalls mit ENCRYPTION_KEY_ALT */
+export async function entschluesseln(quelle: string, ziel: string) {
+  if (await entschluesselnMit(quelle, ziel, schluessel('sicherung'))) return
+  const alt = schluesselAlt('sicherung')
+  if (alt && (await entschluesselnMit(quelle, ziel, alt))) return
+  throw new Error('Die Sicherung lässt sich nicht entschlüsseln – falscher ENCRYPTION_KEY oder beschädigte Datei.')
 }
 
 /** Alte Sicherungen entfernen: die neuesten 14 behalten, dazu die neueste je Woche (8 Wochen) und je Monat (12 Monate) */

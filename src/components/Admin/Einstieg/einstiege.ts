@@ -490,6 +490,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'leute', titel: 'Verantwortliche', text: 'Wer das Team pflegen darf – hier beim Team unter „Verantwortliche“ oder (Admins) beim Benutzer unter „Team-Berechtigungen“.' },
       { key: 'bild', titel: 'Titelbild', text: 'Großes Bild oben auf der Teamseite.' },
       { key: 'website', titel: 'Teamseite ist da', text: 'Erscheint automatisch im Menü „Fußball“ bzw. „Breitensport“.', wo: 'Website' },
+      { key: 'saison', titel: 'Jedes Jahr prüfen', text: 'Neue Saison: alle Teams auf einen Blick durchgehen und abhaken (Admin und Redaktion).', wo: 'Sport → Saisonwechsel' },
     ],
   },
 

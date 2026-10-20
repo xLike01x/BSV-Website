@@ -81,7 +81,7 @@ Unter **Eigene Formulare → Formulare** gibt es Vorlagen (Anmeldung, Helferlist
 - **Live-Hinweise** beim Bearbeiten (News, Teams, Termine, Ausfälle, Seiten, Bilder): warnen z. B. vor fehlendem Titelbild und zeigen, wo ein Eintrag erscheint.
 - **Tour** und **Erste Schritte** auf dem Dashboard für neue Nutzer.
 - Eingebaute Texte: `src/components/Admin/Hilfe/texte.ts` und `extras.ts`. Eigene Ergänzungen ohne Code unter **Einstellungen → Hilfe-Texte**; Rückmeldungen unter **Einstellungen → Hilfe-Rückmeldungen** (nur Admins).
-- **21 Hilfe-Videos** mit Untertiteln liegen in `public/hilfe/`. Neu aufnehmen (nach Änderungen an der Verwaltung, nur lokal mit Testkonten – alles Angelegte wird danach wieder entfernt). Zwei Durchläufe empfohlen: der erste lässt den Entwicklungsserver alle Seiten übersetzen, erst der zweite ist flüssig.
+- **22 Hilfe-Videos** mit Untertiteln liegen in `public/hilfe/`. Neu aufnehmen (nach Änderungen an der Verwaltung, nur lokal mit Testkonten – alles Angelegte wird danach wieder entfernt). Zwei Durchläufe empfohlen: der erste lässt den Entwicklungsserver alle Seiten übersetzen, erst der zweite ist flüssig.
   ```
   BSV_URL=http://localhost:3000 node scripts/hilfe-videos.mjs                  # alle, nur aufnehmen (hilfe-videos-roh/)
   BSV_URL=http://localhost:3000 BSV_FERTIG=1 node scripts/hilfe-videos.mjs     # aufnehmen + nach public/hilfe/*.mp4/.jpg
@@ -139,7 +139,7 @@ Dateien „Nur für Mitglieder“ liegen in `dokumente/` (nicht öffentlich) und
 ## Sicherheit
 
 - `.env` enthält Geheimnisse und wird **nie** eingecheckt (siehe `.env.example`).
-- IBANs werden mit AES-256-GCM verschlüsselt gespeichert. `ENCRYPTION_KEY` **nie ändern**, sonst sind gespeicherte IBANs nicht mehr lesbar – sicher aufbewahren (z. B. Passwortmanager des Vorstands).
+- IBANs werden mit AES-256-GCM verschlüsselt gespeichert. `ENCRYPTION_KEY` **nie einfach ändern**, sonst sind gespeicherte IBANs, Zwei-Faktor und Sicherungen nicht mehr lesbar – sicher aufbewahren (z. B. Passwortmanager des Vorstands). Muss er gewechselt werden (z. B. weil er bekannt geworden ist): nur mit `pnpm schluessel:wechseln`, Anleitung in `deploy/README.md` → „Schlüssel wechseln“. Test: `pnpm test:schluessel`.
 - Login-Sperre nach 5 Fehlversuchen für 10 Minuten.
 - Fotos: Beim Hochladen ist die Angabe „Sind Personen zu erkennen?“ Pflicht (Einwilligung).
 - Rollen-Übersicht zeigt die letzte Anmeldung; Zugänge mit Verwaltungsrechten, die seit 6 Monaten ungenutzt sind, werden markiert.

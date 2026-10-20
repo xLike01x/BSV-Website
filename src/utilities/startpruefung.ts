@@ -24,6 +24,14 @@ export function konfigurationPruefen(env: NodeJS.ProcessEnv = process.env, live 
   geheim('ENCRYPTION_KEY')
   if (env.PAYLOAD_SECRET && env.PAYLOAD_SECRET === env.ENCRYPTION_KEY) fehler.push('PAYLOAD_SECRET und ENCRYPTION_KEY müssen verschieden sein')
   if (!env.DATABASE_URL) fehler.push('DATABASE_URL fehlt in der .env')
+  if (env.ENCRYPTION_KEY_ALT) {
+    if (env.ENCRYPTION_KEY_ALT === env.ENCRYPTION_KEY) fehler.push('ENCRYPTION_KEY_ALT ist gleich ENCRYPTION_KEY – dort gehört der BISHERIGE Schlüssel hin (oder die Zeile löschen)')
+    else if (env.ENCRYPTION_KEY_ALT.length < 32) fehler.push('ENCRYPTION_KEY_ALT ist zu kurz (mindestens 32 Zeichen)')
+    else
+      warnungen.push(
+        'Schlüsselwechsel nicht abgeschlossen: ENCRYPTION_KEY_ALT ist noch gesetzt (alte Ausweis-QR-Codes und Wiederherstellungscodes gelten weiter). Wenn alles umgestellt ist, Zeile aus der .env löschen und neu starten.',
+      )
+  }
   if (!live) return { fehler, warnungen }
 
   if (env.ZWEI_FAKTOR === 'aus') fehler.push('ZWEI_FAKTOR=aus ist auf der Live-Website verboten – Zeile aus der .env löschen')

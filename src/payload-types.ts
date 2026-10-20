@@ -147,6 +147,7 @@ export interface Config {
     hilfe: Hilfe;
     rollenRechte: RollenRechte;
     sicherheit: Sicherheit;
+    wartung: Wartung;
   };
   globalsSelect: {
     header: HeaderSelect<false> | HeaderSelect<true>;
@@ -160,6 +161,7 @@ export interface Config {
     hilfe: HilfeSelect<false> | HilfeSelect<true>;
     rollenRechte: RollenRechteSelect<false> | RollenRechteSelect<true>;
     sicherheit: SicherheitSelect<false> | SicherheitSelect<true>;
+    wartung: WartungSelect<false> | WartungSelect<true>;
   };
   locale: null;
   widgets: {
@@ -3730,6 +3732,7 @@ export interface Hilfe {
           | 'media'
           | 'pages'
           | 'categories'
+          | 'saisonwechsel'
           | 'angebote'
           | 'ausfaelle'
           | 'probetraining'
@@ -3804,6 +3807,7 @@ export interface Hilfe {
               | 'media'
               | 'pages'
               | 'categories'
+              | 'saisonwechsel'
               | 'angebote'
               | 'ausfaelle'
               | 'probetraining'
@@ -3900,6 +3904,29 @@ export interface Sicherheit {
    * Was jemand außer dem Web-Admin endgültig löscht – oder was 30 Tage im normalen Papierkorb lag –, landet im Web-Admin-Papierkorb und wird nach dieser Frist automatisch gelöscht. Standard: 365 (1 Jahr). Denk an den Datenschutz: Anträge und Anfragen enthalten persönliche Daten.
    */
   papierkorbTage: number;
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wartung".
+ */
+export interface Wartung {
+  id: number;
+  wiederherstellungGetestetAm?: string | null;
+  wiederherstellungVon?: string | null;
+  saisonStart?: string | null;
+  saisonGeprueft?:
+    | {
+        [k: string]: unknown;
+      }
+    | unknown[]
+    | string
+    | number
+    | boolean
+    | null;
+  saisonwechselAm?: string | null;
+  saisonwechselVon?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4463,6 +4490,21 @@ export interface SicherheitSelect<T extends boolean = true> {
   warnenMinuten?: T;
   aus?: T;
   papierkorbTage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "wartung_select".
+ */
+export interface WartungSelect<T extends boolean = true> {
+  wiederherstellungGetestetAm?: T;
+  wiederherstellungVon?: T;
+  saisonStart?: T;
+  saisonGeprueft?: T;
+  saisonwechselAm?: T;
+  saisonwechselVon?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

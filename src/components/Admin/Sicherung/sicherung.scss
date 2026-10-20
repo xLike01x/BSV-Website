@@ -125,9 +125,10 @@
     line-height: 1.5;
   }
 
+  // Liste der Sicherungen: Dateiname auf dem Handy ausblenden (nicht in der Wartungs-Tabelle)
   @media (max-width: 700px) {
-    th:nth-child(3),
-    td:nth-child(3) {
+    table:not(.bsv-sicherung__technik) th:nth-child(3),
+    table:not(.bsv-sicherung__technik) td:nth-child(3) {
       display: none;
     }
   }
@@ -137,4 +138,75 @@
   color: #6e6e73;
   font-size: 13px;
   margin: 10px 0 0;
+}
+
+// Wartung: Wiederherstellungs-Test und Technik-Stand
+.bsv-sicherung__test {
+  @extend .bsv-sicherung__status;
+  background: #f5f5f7;
+  margin: 4px 0 14px;
+
+  &.is-warn {
+    background: #fff4e5;
+  }
+
+  span {
+    max-width: 640px;
+    font-size: 14px;
+  }
+}
+
+.bsv-sicherung__technik {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+
+  th,
+  td {
+    text-align: left;
+    vertical-align: top;
+    padding: 9px 10px 9px 0;
+    border-top: 1px solid #ececf0;
+  }
+
+  th {
+    width: 170px;
+    font-weight: 700;
+  }
+
+  td:nth-child(2) {
+    width: 150px;
+    white-space: nowrap;
+  }
+
+  tr.is-warn td,
+  tr.is-warn th {
+    color: #b54708;
+  }
+
+  @media (max-width: 640px) {
+    &,
+    tbody {
+      display: block;
+    }
+
+    tr {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      border-top: 1px solid #ececf0;
+      padding: 8px 0;
+    }
+
+    th,
+    td {
+      border: 0;
+      padding: 2px 0;
+      width: auto;
+    }
+
+    td:last-child {
+      grid-column: 1 / -1;
+      color: #6e6e73;
+    }
+  }
 }

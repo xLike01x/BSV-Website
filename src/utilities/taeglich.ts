@@ -5,6 +5,8 @@ import { passUnterlagenAufraeumen } from '@/passantraege/aufraeumen'
 import { datenschutzAutomatisch } from '@/datenschutz/aufraeumen'
 import { statistikAufraeumen } from '@/statistik/aufraeumen'
 import { sicherungErstellen, type Pool } from '@/sicherung/kern'
+import { restAufraeumen } from '@/sicherung/umschluesseln'
+import { wartungsHinweise } from '@/wartung/pruefen'
 
 const g = globalThis as unknown as { __bsvTaeglich?: NodeJS.Timeout }
 
@@ -93,6 +95,14 @@ export function taeglicheAufgaben(payload: Payload) {
         .then((i) => payload.logger.info(`Tägliche Sicherung erstellt: backups/${i.datei}`))
         .catch((e) => payload.logger.error({ err: e }, 'Tägliche Sicherung fehlgeschlagen'))
     }
+    // Reste eines abgebrochenen Schlüsselwechsels (entschlüsselte Zwischendateien) entfernen
+    try {
+      restAufraeumen()
+    } catch (e) {
+      payload.logger.warn({ err: e }, 'Zwischendateien des Schlüsselwechsels konnten nicht entfernt werden')
+    }
+    // Wartungs-Warnungen (Speicherplatz, auslaufende Versionen, offener Schlüsselwechsel) auch ins Protokoll
+    for (const h of await wartungsHinweise(payload).catch(() => [])) if (h.art === 'warn') payload.logger.warn(`Wartung: ${h.text}`)
   }
   setTimeout(lauf, 60_000)
   g.__bsvTaeglich = setInterval(lauf, 24 * 60 * 60 * 1000)

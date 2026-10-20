@@ -3,6 +3,7 @@ import type { PayloadRequest } from 'payload'
 
 import { faellige } from '@/datenschutz/aufraeumen'
 import { sicherungenAuflisten } from '@/sicherung/kern'
+import { wartungLesen, wartungsHinweise } from '@/wartung/pruefen'
 
 export type Aufgabe = { key: string; art: 'warn' | 'info'; symbol: string; text: string; href: string; link: string }
 
@@ -16,6 +17,12 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     const tage = letzte ? Math.floor((Date.now() - new Date(letzte.erstellt).getTime()) / 86400000) : null
     if (tage === null) a.push({ key: 'sicherung', art: 'warn', symbol: '💾', text: 'Es gibt noch keine Datensicherung.', href: '/admin/sicherung', link: 'Jetzt sichern' })
     else if (tage > 7) a.push({ key: 'sicherung', art: 'warn', symbol: '💾', text: `Die letzte Datensicherung ist ${tage} Tage alt.`, href: '/admin/sicherung', link: 'Jetzt sichern' })
+    // Wartung: Speicherplatz, Schlüsselwechsel, auslaufende Versionen, Update-Tag, Wiederherstellungs-Test
+    const ziel: Record<string, [string, string]> = { speicher: ['/admin/collections/media', 'Mediathek'], wiederherstellung: ['/admin/sicherung#wartung', 'Anleitung'] }
+    for (const w of await wartungsHinweise(req.payload).catch(() => [])) {
+      const [href, link] = ziel[w.key] ?? ['/admin/sicherung#wartung', 'Details']
+      a.push({ ...w, key: `wartung-${w.key}`, href, link })
+    }
   }
   if (admin) {
     const halbesJahr = new Date(Date.now() - 182 * 86400000).toISOString()
@@ -48,6 +55,17 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
       a.push({ key: 'antraege', art: 'warn', symbol: '📝', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Mitgliedsantrag wartet' : 'neue Mitgliedsanträge warten'} auf Prüfung.`, href: '/admin/collections/mitgliedsantraege?where[status][equals]=neu', link: 'Prüfen' })
     if (offenExport.totalDocs)
       a.push({ key: 'export', art: 'info', symbol: '📥', text: `${offenExport.totalDocs} aufgenommene${offenExport.totalDocs === 1 ? 'r Antrag ist' : ' Anträge sind'} noch nicht für die Kasse exportiert.`, href: '/admin/collections/mitgliedsantraege', link: 'Exportieren' })
+  }
+  // Saisonwechsel: im Sommer (15. Juni bis 30. September) erinnern, wenn er in diesem Jahr noch nicht abgeschlossen ist
+  if (admin || rollen.includes('redaktion')) {
+    const heute = new Date()
+    const tag = (heute.getMonth() + 1) * 100 + heute.getDate()
+    if (tag >= 615 && tag <= 930) {
+      const w = await wartungLesen(req.payload).catch(() => ({}) as Awaited<ReturnType<typeof wartungLesen>>)
+      const zuletzt = w.saisonwechselAm ? new Date(w.saisonwechselAm) : null
+      if (!zuletzt || zuletzt.getFullYear() < heute.getFullYear() || (zuletzt.getMonth() + 1) * 100 + zuletzt.getDate() < 515)
+        a.push({ key: 'saisonwechsel', art: 'info', symbol: '🔄', text: 'Neue Saison: Teams, Verantwortliche, Trainingszeiten und Fotos einmal durchgehen.', href: '/admin/saisonwechsel', link: 'Saisonwechsel' })
+    }
   }
   if (darfRegistrierungen(req.user)) {
     const wartend = await req.payload.count({ collection: 'users', where: WARTEND, overrideAccess: true }).catch(() => ({ totalDocs: 0 }))

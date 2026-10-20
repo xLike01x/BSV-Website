@@ -1,6 +1,6 @@
 import crypto from 'crypto'
 
-import { basisSchluessel, schluessel } from '@/utilities/schluessel'
+import { basisSchluessel, basisSchluesselAlt, gleich, schluessel, schluesselAlt } from '@/utilities/schluessel'
 
 /**
  * TOTP nach RFC 6238 (30-Sekunden-Takt, 6 Stellen, SHA-1) – kompatibel mit
@@ -74,15 +74,21 @@ export const neueWiederherstellungscodes = (anzahl = 10): string[] => {
 
 const normal = (code: string) => code.replace(/[\s-]/g, '').toUpperCase()
 /** Wiederherstellungscode speichern: HMAC mit Server-Schlüssel (ein Datenbank-Auszug allein reicht nicht zum Durchprobieren) */
-export const hashCode = (code: string) => 'h2:' + crypto.createHmac('sha256', schluessel('wiederherstellung')).update(normal(code)).digest('hex')
-/** Prüft gegen aktuelles (h2:) und ältere Formate (h1: HMAC mit Rohschlüssel, ganz alt: reines SHA-256) – zeitkonstant */
+const h2 = (code: string, k: Buffer) => 'h2:' + crypto.createHmac('sha256', k).update(normal(code)).digest('hex')
+const h1 = (code: string, basis: string) => 'h1:' + crypto.createHmac('sha256', basis).update(normal(code)).digest('hex')
+export const hashCode = (code: string) => h2(code, schluessel('wiederherstellung'))
+/**
+ * Prüft gegen aktuelles (h2:) und ältere Formate (h1: HMAC mit Rohschlüssel, ganz alt: reines SHA-256) – zeitkonstant.
+ * Während eines Schlüsselwechsels zählen auch Codes, die mit ENCRYPTION_KEY_ALT gespeichert wurden.
+ */
 export const codePasst = (eingabe: string, gespeichert: string) => {
-  const soll = gespeichert.startsWith('h2:')
-    ? hashCode(eingabe)
-    : gespeichert.startsWith('h1:')
-      ? 'h1:' + crypto.createHmac('sha256', basisSchluessel()).update(normal(eingabe)).digest('hex')
-      : crypto.createHash('sha256').update(normal(eingabe)).digest('hex')
-  const a = Buffer.from(soll)
-  const b = Buffer.from(gespeichert)
-  return a.length === b.length && crypto.timingSafeEqual(a, b)
+  if (gespeichert.startsWith('h2:')) {
+    const alt = schluesselAlt('wiederherstellung')
+    return gleich(hashCode(eingabe), gespeichert) || (!!alt && gleich(h2(eingabe, alt), gespeichert))
+  }
+  if (gespeichert.startsWith('h1:')) {
+    const alt = basisSchluesselAlt()
+    return gleich(h1(eingabe, basisSchluessel()), gespeichert) || (!!alt && gleich(h1(eingabe, alt), gespeichert))
+  }
+  return gleich(crypto.createHash('sha256').update(normal(eingabe)).digest('hex'), gespeichert)
 }

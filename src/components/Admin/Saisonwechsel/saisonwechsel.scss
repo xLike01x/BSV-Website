@@ -1,0 +1,290 @@
+.bsv-saison {
+  max-width: 1200px;
+  padding: 16px 0 80px;
+  color: #1d1d1f;
+
+  a {
+    color: #157a43;
+    font-weight: 600;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    white-space: nowrap;
+  }
+
+  .is-warn {
+    color: #b54708;
+  }
+}
+
+.bsv-saison__kopf {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 16px 32px;
+  flex-wrap: wrap;
+  margin-bottom: 18px;
+
+  h1 {
+    margin: 0;
+    font-size: clamp(28px, 4vw, 38px);
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.035em;
+  }
+
+  p {
+    margin: 6px 0 0;
+    max-width: 680px;
+    color: #6e6e73;
+  }
+}
+
+.bsv-saison__stand {
+  min-width: 240px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  small {
+    color: #6e6e73;
+  }
+}
+
+.bsv-saison__balken {
+  height: 8px;
+  border-radius: 999px;
+  background: #e5e5ea;
+  overflow: hidden;
+
+  span {
+    display: block;
+    height: 100%;
+    background: #157a43;
+    border-radius: 999px;
+    transition: width 0.3s;
+  }
+}
+
+.bsv-saison__box {
+  background: #fff;
+  border-radius: 18px;
+  padding: 14px 20px;
+  margin-bottom: 14px;
+
+  summary {
+    cursor: pointer;
+    font-weight: 700;
+  }
+
+  ol {
+    margin: 10px 0 4px;
+    padding-left: 20px;
+    line-height: 1.55;
+    max-width: 860px;
+  }
+}
+
+.bsv-saison__werkzeuge {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.bsv-saison__filter {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  background: #ececf0;
+
+  button {
+    border: 0;
+    background: transparent;
+    padding: 7px 14px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d1d1f;
+    cursor: pointer;
+
+    &.is-aktiv {
+      background: #fff;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12);
+    }
+  }
+}
+
+.bsv-saison__nur-offen {
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.bsv-saison__liste {
+  list-style: none;
+  margin: 0 0 16px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  > li {
+    display: grid;
+    grid-template-columns: 36px minmax(160px, 1.2fr) 1.2fr 1fr 1.2fr;
+    gap: 6px 16px;
+    align-items: start;
+    background: #fff;
+    border-radius: 16px;
+    padding: 14px 16px;
+    border-left: 4px solid transparent;
+
+    &.is-ok {
+      border-left-color: #157a43;
+      opacity: 0.75;
+    }
+
+    &.hat-hinweise {
+      border-left-color: #e8590c;
+    }
+  }
+
+  @media (max-width: 900px) {
+    > li {
+      grid-template-columns: 36px 1fr;
+
+      .bsv-saison__spalte {
+        grid-column: 2;
+      }
+    }
+  }
+}
+
+.bsv-saison__haken {
+  padding-top: 2px;
+
+  input {
+    width: 22px;
+    height: 22px;
+    accent-color: #157a43;
+    cursor: pointer;
+  }
+}
+
+.bsv-saison__name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+
+  > a {
+    font-size: 16px;
+  }
+
+  > span {
+    font-size: 13px;
+    color: #6e6e73;
+  }
+
+  .bsv-saison__hinweise {
+    color: #b54708;
+  }
+}
+
+.bsv-saison__spalte {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 14px;
+  min-width: 0;
+
+  small {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #8e8e93;
+  }
+
+  a {
+    font-weight: 500;
+  }
+
+  a.is-warn {
+    color: #b54708;
+  }
+
+  em {
+    font-style: normal;
+    color: #8e8e93;
+    font-size: 13px;
+  }
+}
+
+.bsv-saison__inaktiv {
+  margin: 10px 0 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.7;
+
+  span {
+    color: #6e6e73;
+  }
+}
+
+.bsv-saison__aktionen {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: flex-end;
+
+  button {
+    border: 1px solid #d2d2d7;
+    background: #fff;
+    border-radius: 999px;
+    padding: 11px 20px;
+    font: inherit;
+    font-weight: 700;
+    cursor: pointer;
+
+    &.is-primaer {
+      background: #157a43;
+      border-color: #157a43;
+      color: #fff;
+    }
+
+    &:disabled {
+      opacity: 0.6;
+      cursor: wait;
+    }
+  }
+}
+
+.bsv-saison__fehler {
+  background: #fdecea;
+  color: #8a1c12;
+  border-radius: 12px;
+  padding: 10px 14px;
+}
+
+.bsv-saison__leer {
+  background: #fff;
+  border-radius: 16px;
+  padding: 18px;
+  color: #6e6e73;
+}

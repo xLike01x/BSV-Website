@@ -34,7 +34,9 @@ ufw allow OpenSSH && ufw allow 80 && ufw allow 443 && ufw enable
 sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication no/; s/^#\?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config
 systemctl restart ssh
 
-# Node.js 22 LTS + pnpm
+# Node.js LTS + pnpm. Node.js 22 bekommt nur bis 30.04.2027 Sicherheits-Updates – für einen neuen Server
+# besser 24 (bis 04.2028): vorher einmal am PC mit Node.js 24 bauen und testen, dann hier setup_24.x.
+# Die Verwaltung (Datensicherung → „Wartung“) zeigt, bis wann die installierte Version Updates bekommt.
 curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
 apt -y install nodejs
 corepack enable && corepack prepare pnpm@10 --activate
@@ -174,6 +176,19 @@ Das Skript sichert, holt den neuen Stand, migriert die Datenbank, baut **neben**
 
 Vorher immer `pnpm audit --prod` im Blick haben (Sicherheitsmeldungen zu Paketen).
 
+### Sicherheitsmeldungen zu Paketen
+
+- GitHub prüft **jeden Montag** automatisch (`.github/workflows/sicherheit-woechentlich.yml`) und bei jedem Push. Bei einer hohen oder
+  kritischen Lücke in einem Live-Paket schlägt die Prüfung fehl und GitHub schickt eine E-Mail. Dann: Update einspielen
+  (`pnpm update <paket>` bzw. Payload/Next-Update), testen, `./deploy/update.sh`.
+- Zusätzlich empfohlen: im Repository unter *Settings → Code security* „Dependabot alerts“ einschalten.
+- **Bewusst geprüfte Ausnahmen** (`package.json` → `pnpm.auditConfig.ignoreGhsas`). Jede Ausnahme braucht eine Begründung und ein
+  Datum zum erneuten Prüfen:
+
+| Meldung | Paket | Warum unkritisch | Erneut prüfen |
+|---|---|---|---|
+| GHSA-vfj7-8cjw-p6xm | `braces` 3.0.3 (über `sass` → `chokidar`) | Nur beim Übersetzen der Stylesheets (Build/Dateiüberwachung) im Einsatz; Besucher können keine Muster an `braces` übergeben. Es gibt noch keine reparierte Version. | 01.2027 bzw. sobald `sass`/Next eine neue Version liefert |
+
 ### Zurück auf eine Sicherung
 
 ```bash
@@ -182,6 +197,45 @@ sudo -u bsv -H bash -c 'cd /srv/bsv && git checkout <alter-commit> && pnpm insta
 sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production BSV_DIST_DIR=$(sed -n "s/^BSV_DIST_DIR=//p" .build-env) pnpm build'
 sudo systemctl start bsv
 ```
+
+### Schlüssel wechseln (`ENCRYPTION_KEY`)
+
+Nur nötig, wenn der Schlüssel bekannt geworden sein könnte (z. B. Laptop mit der `.env` gestohlen, `.env` versehentlich
+verschickt) – oder vorsorglich, wenn jemand mit Server-Zugang ausscheidet. **Nie den Schlüssel einfach austauschen**: Dann sind
+IBANs, Zwei-Faktor und alle Sicherungen unlesbar.
+
+1. **Sicherung erstellen** (Verwaltung → Datensicherung → „Jetzt sichern“) – noch mit dem alten Schlüssel.
+2. **Website anhalten:** `sudo systemctl stop bsv` (am PC: Server-Fenster schließen).
+3. **Neuen Schlüssel erzeugen:** `openssl rand -hex 32`. In der `.env`:
+   ```
+   ENCRYPTION_KEY_ALT=<bisheriger Wert von ENCRYPTION_KEY>
+   ENCRYPTION_KEY=<neuer Schlüssel>
+   ```
+   Den neuen Schlüssel sofort im Passwortmanager des Vorstands speichern.
+4. **Probelauf:** `sudo -u bsv -H bash -c 'cd /srv/bsv && pnpm schluessel:wechseln'` – zeigt, wie viele Werte und Sicherungen
+   umgestellt werden. Ändert nichts.
+5. **Ausführen:** `… pnpm schluessel:wechseln ausfuehren`
+   - War auch die **Datenbank** betroffen (z. B. Server-Einbruch, Sicherung abhandengekommen)? Dann
+     `… pnpm schluessel:wechseln ausfuehren zwei-faktor-neu` – setzt die Zwei-Faktor-Anmeldung aller Konten zurück; jede Person
+     richtet sie beim nächsten Anmelden neu ein. (Ein neuer Schlüssel allein schützt nicht, wenn die Zwei-Faktor-Geheimnisse
+     schon mit dem alten Schlüssel ausgelesen wurden.)
+   - Die Datenbank wird in einem Schritt umgestellt und vorher geprüft – bei einem Fehler bleibt alles, wie es war.
+     Mehrfaches Ausführen schadet nicht.
+   - Jede Sicherung im Ordner `backups` wird umgeschlüsselt – außen und innen (IBANs darin), damit sie auch ohne den alten
+     Schlüssel vollständig eingespielt werden kann.
+6. **Website starten:** `sudo systemctl start bsv`. Im Protokoll steht die Warnung „Schlüsselwechsel nicht abgeschlossen“, im
+   Dashboard ein Hinweis für Web-Admins – solange `ENCRYPTION_KEY_ALT` gesetzt ist.
+7. **Aufräumen:**
+   - Externe Kopien (Storage Box) sind noch mit dem alten Schlüssel verschlüsselt → dort löschen, neue Sicherung hochladen.
+   - Gedruckte Mitgliedsausweise (QR-Code) und Wiederherstellungscodes gelten nur, solange `ENCRYPTION_KEY_ALT` gesetzt ist →
+     Ausweise neu drucken; wer Wiederherstellungscodes braucht, lässt die Zwei-Faktor-Anmeldung zurücksetzen und richtet sie neu ein.
+   - **Danach `ENCRYPTION_KEY_ALT` aus der `.env` löschen** und neu starten. Bei einem echten Leck: sofort, ohne auf Ausweise zu warten.
+8. War die **ganze `.env`** betroffen? Dann auch `PAYLOAD_SECRET` (meldet alle ab), `PREVIEW_SECRET` und das SMTP-Passwort wechseln.
+
+Eine **alte Sicherung** (z. B. von der Storage Box) einspielen, die noch mit dem alten Schlüssel gemacht wurde: `ENCRYPTION_KEY_ALT`
+vorübergehend wieder eintragen, einspielen, danach `pnpm schluessel:wechseln ausfuehren` und `ENCRYPTION_KEY_ALT` wieder löschen.
+
+Geprüft wird das Ganze mit `pnpm test:schluessel` (eigene Test-Datenbank, fasst nichts Echtes an).
 
 ## 8. Für Entwicklung: Feld-Änderungen und Migrationen
 

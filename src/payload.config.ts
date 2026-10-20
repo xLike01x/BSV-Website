@@ -32,6 +32,7 @@ import { Kontaktanfragen } from './collections/Kontaktanfragen'
 import { Verein } from './Verein/config'
 import { Startseite } from './Startseite/config'
 import { Sicherheit } from './Sicherheit/config'
+import { Wartung } from './wartung/config'
 import { startseiteUmziehen } from './Startseite/umziehen'
 import { texteBilderUmziehen } from './Texte/bilderUmziehen'
 import { Texte } from './Texte/config'
@@ -123,6 +124,8 @@ const konfiguration = buildConfig({
         statistik: { Component: '@/components/Admin/Statistik', path: '/statistik', exact: true },
         // Zentraler Papierkorb (beide Stufen, alle Bereiche) – nur Web-Admin
         papierkorb: { Component: '@/components/Admin/Papierkorb', path: '/papierkorb', exact: true },
+        // Einmal im Jahr alle Teams durchgehen (Admin und Redaktion)
+        saisonwechsel: { Component: '@/components/Admin/Saisonwechsel', path: '/saisonwechsel', exact: true },
         // Druckbare Kurzanleitung je Rolle
         kurzanleitung: { Component: '@/components/Admin/HilfeCenter/Kurzanleitung', path: '/hilfe/kurzanleitung', exact: true },
       },
@@ -229,7 +232,7 @@ const konfiguration = buildConfig({
   graphQL: { disable: true },
   // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
   upload: { limits: { fileSize: 25 * 1024 * 1024 } },
-  globals: [Header, Footer, Menue, Texte, Startseite, Verein, Datenschutz, MailVorlagen, HilfeInhalte, RollenRechte, Sicherheit],
+  globals: [Header, Footer, Menue, Texte, Startseite, Verein, Datenschutz, MailVorlagen, HilfeInhalte, RollenRechte, Sicherheit, Wartung],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

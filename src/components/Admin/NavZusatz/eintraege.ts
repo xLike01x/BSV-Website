@@ -5,6 +5,7 @@ export type Eintrag = { key: string; gruppe: string; href: string; label: string
 
 export const EINTRAEGE: Eintrag[] = [
   { key: 'registrierungen', gruppe: 'Posteingang', href: '/admin/registrierungen', label: 'Registrierungen', rollen: ['admin', 'kasse'], recht: 'registrierungen', zaehler: 'registrierungen' },
+  { key: 'saisonwechsel', gruppe: 'Sport', href: '/admin/saisonwechsel', label: 'Saisonwechsel', rollen: ['admin', 'redaktion'] },
   { key: 'rollen', gruppe: 'Einstellungen', href: '/admin/rollen', label: 'Rollen & Rechte', rollen: ['admin'], auch: ['/admin/globals/rollenRechte'] },
   { key: 'statistik', gruppe: 'Einstellungen', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'] },
   { key: 'papierkorb', gruppe: 'Einstellungen', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'] },

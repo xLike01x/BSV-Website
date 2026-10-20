@@ -6,6 +6,7 @@ import React from 'react'
 
 import { hasRole } from '@/access/roles'
 import { sicherungenAuflisten } from '@/sicherung/kern'
+import { codeStand, nodeLaufzeit, postgresLaufzeit, schluesselwechselOffen, speicherplatz, wartungLesen } from '@/wartung/pruefen'
 
 import SicherungClient from './Client'
 import './sicherung.scss'
@@ -15,6 +16,15 @@ export default async function Sicherung({ initPageResult, params, searchParams }
   const { req, permissions, visibleEntities, locale } = initPageResult
   if (!req.user) redirect('/login?weiter=/admin/sicherung')
   if (!hasRole(req.user as never, 'webadmin')) redirect('/admin')
+  const [w, pgL, code] = await Promise.all([wartungLesen(req.payload), postgresLaufzeit(req.payload), codeStand()])
+  const wartung = {
+    getestetAm: w.wiederherstellungGetestetAm ?? null,
+    getestetVon: w.wiederherstellungVon ?? null,
+    laufzeiten: [nodeLaufzeit(), ...(pgL ? [pgL] : [])],
+    speicher: speicherplatz(),
+    code,
+    schluesselwechsel: schluesselwechselOffen(),
+  }
   return (
     <DefaultTemplate
       i18n={req.i18n}
@@ -28,7 +38,7 @@ export default async function Sicherung({ initPageResult, params, searchParams }
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <SicherungClient sicherungen={sicherungenAuflisten()} />
+        <SicherungClient sicherungen={sicherungenAuflisten()} wartung={wartung} />
       </Gutter>
     </DefaultTemplate>
   )

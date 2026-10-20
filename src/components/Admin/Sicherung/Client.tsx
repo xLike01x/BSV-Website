@@ -3,16 +3,43 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import type { SicherungInfo } from '@/sicherung/kern'
+import type { Laufzeit, Speicher } from '@/wartung/pruefen'
+
+export type WartungDaten = {
+  getestetAm: string | null
+  getestetVon: string | null
+  laufzeiten: Laufzeit[]
+  speicher: Speicher | null
+  code: string | null
+  schluesselwechsel: boolean
+}
+const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
 
 const mb = (b: number) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`)
 const wann = (iso: string) => new Date(iso).toLocaleString('de-DE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
-export default function SicherungClient({ sicherungen }: { sicherungen: SicherungInfo[] }) {
+export default function SicherungClient({ sicherungen, wartung }: { sicherungen: SicherungInfo[]; wartung: WartungDaten }) {
   const router = useRouter()
   const [laeuft, setLaeuft] = useState(false)
   const [meldung, setMeldung] = useState<{ ok: boolean; text: string } | null>(null)
   const letzte = sicherungen[0]
   const tage = letzte ? Math.floor((Date.now() - new Date(letzte.erstellt).getTime()) / 86400000) : null
+
+  const [getestet, setGetestet] = useState({ am: wartung.getestetAm, von: wartung.getestetVon })
+  const [testLaeuft, setTestLaeuft] = useState(false)
+  const getestetTage = getestet.am ? Math.floor((Date.now() - new Date(getestet.am).getTime()) / 86400000) : null
+  const testVermerken = async () => {
+    setTestLaeuft(true)
+    try {
+      const r = await fetch('/api/globals/wartung/wiederherstellung-getestet', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: '{}' })
+      const d = await r.json().catch(() => ({}))
+      if (r.ok) setGetestet({ am: d.am, von: d.von })
+      else setMeldung({ ok: false, text: d.fehler ?? 'Konnte nicht gespeichert werden.' })
+    } catch {
+      setMeldung({ ok: false, text: 'Keine Verbindung. Bitte noch einmal versuchen.' })
+    }
+    setTestLaeuft(false)
+  }
 
   const erstellen = async () => {
     setLaeuft(true)
@@ -98,6 +125,62 @@ export default function SicherungClient({ sicherungen }: { sicherungen: Sicherun
             <strong>Wie oft?</strong> Auf der Live-Website automatisch jeden Tag (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Am eigenen PC mindestens einmal pro Woche und vor größeren Änderungen – nach 7 Tagen erinnert das Dashboard.
           </li>
         </ul>
+      </section>
+
+      <section className="bsv-sicherung__box" id="wartung">
+        <h2>Wartung</h2>
+        <div className={`bsv-sicherung__test${getestetTage === null || getestetTage > 365 ? ' is-warn' : ''}`}>
+          <div>
+            <strong>🧪 Wiederherstellung getestet: {getestet.am ? `${datum(getestet.am)}${getestet.von ? ` (${getestet.von})` : ''}` : 'noch nie'}</strong>
+            <span>
+              Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt – am besten auf einem PC, nicht auf der Live-Website: neueste
+              Sicherung herunterladen, wie unten beschrieben einspielen, kurz durchklicken. Danach hier bestätigen.
+            </span>
+          </div>
+          <button type="button" onClick={testVermerken} disabled={testLaeuft}>
+            {testLaeuft ? 'Wird gespeichert …' : '✓ Heute erfolgreich getestet'}
+          </button>
+        </div>
+        <table className="bsv-sicherung__technik">
+          <tbody>
+            {wartung.laufzeiten.map((l) => (
+              <tr key={l.name} className={l.tage !== null && l.tage <= 180 ? 'is-warn' : undefined}>
+                <th>{l.name}</th>
+                <td>{l.version}</td>
+                <td>
+                  {l.ende
+                    ? l.tage !== null && l.tage < 0
+                      ? `⚠️ keine Sicherheits-Updates mehr seit ${datum(l.ende)}`
+                      : `Sicherheits-Updates bis ${datum(l.ende)}${l.tage !== null && l.tage <= 180 ? ' – Wechsel einplanen' : ''}`
+                    : 'Ende der Updates unbekannt – bitte nachschlagen'}
+                </td>
+              </tr>
+            ))}
+            {wartung.speicher && (
+              <tr className={wartung.speicher.prozent >= 80 ? 'is-warn' : undefined}>
+                <th>Speicherplatz</th>
+                <td>{wartung.speicher.prozent} % belegt</td>
+                <td>
+                  noch {wartung.speicher.freiGB.toFixed(1)} GB von {wartung.speicher.gesamtGB.toFixed(0)} GB frei{wartung.speicher.prozent >= 80 ? ' – aufräumen oder mehr Speicher buchen' : ''}
+                </td>
+              </tr>
+            )}
+            <tr>
+              <th>Installierte Version</th>
+              <td>{wartung.code ? datum(wartung.code) : 'unbekannt'}</td>
+              <td>Spätestens alle 3 Monate aktualisieren (Update-Tag). Sicherheitsmeldungen prüft GitHub jeden Montag.</td>
+            </tr>
+            <tr className={wartung.schluesselwechsel ? 'is-warn' : undefined}>
+              <th>Schlüssel</th>
+              <td>{wartung.schluesselwechsel ? 'Wechsel läuft' : 'in Ordnung'}</td>
+              <td>
+                {wartung.schluesselwechsel
+                  ? 'ENCRYPTION_KEY_ALT steht noch in der .env. Wenn alles umgestellt ist: Zeile löschen und neu starten.'
+                  : 'Muss der ENCRYPTION_KEY gewechselt werden (z. B. weil er bekannt geworden ist): nie einfach austauschen – Anleitung in deploy/README.md, „Schlüssel wechseln“.'}
+              </td>
+            </tr>
+          </tbody>
+        </table>
       </section>
 
       <section className="bsv-sicherung__box">

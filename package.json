@@ -26,10 +26,12 @@
     "sicherung:erstellen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/erstellen.ts",
     "sicherung:einspielen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/einspielen.ts",
     "test:sicherheit": "node --env-file=.env tests/sicherheit/alle.mjs",
+    "test:schluessel": "tsx --env-file=.env --tsconfig tsconfig.json tests/schluessel/wechsel.ts",
     "live:pruefen": "tsx --env-file=.env scripts/live-pruefen.ts",
     "medien:exif": "tsx scripts/exif-entfernen.ts",
     "sicherung:entschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/entschluesseln.ts",
     "sicherung:alte-verschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/altVerschluesseln.ts",
+    "schluessel:wechseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/schluesselWechseln.ts",
     "dateien:aufraeumen": "tsx --env-file=.env scripts/dateien-aufraeumen.ts"
   },
   "dependencies": {
@@ -108,6 +110,11 @@
     ],
     "overrides": {
       "dompurify": ">=3.4.16"
+    },
+    "auditConfig": {
+      "ignoreGhsas": [
+        "GHSA-vfj7-8cjw-p6xm"
+      ]
     }
   }
 }

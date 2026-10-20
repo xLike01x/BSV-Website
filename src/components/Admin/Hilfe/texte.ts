@@ -160,6 +160,33 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: ['Lieber wenige, klare Kategorien als viele ähnliche.', 'In der Seitenleiste sehen Kategorien nur Admins (unter „Website-Aufbau“); die Redaktion wählt sie in der News aus.'],
   },
 
+  saisonwechsel: {
+    titel: 'Saisonwechsel',
+    kurz: 'Einmal im Jahr alle Teams und Kurse durchgehen – Verantwortliche, Trainingszeiten, Fotos – und jedes abhaken.',
+    wozu: {
+      text: 'Jede Saison wechseln Jahrgänge, Trainer und Zeiten. Ohne festen Durchgang behalten Ehemalige ihre Rechte, Teamseiten zeigen alte Zeiten und Kinderfotos bleiben jahrelang online.',
+      beispiele: ['Aus der D-Jugend wird die C-Jugend', 'Ein Trainer hört auf, eine neue Trainerin kommt', 'Neue Hallenzeiten nach den Sommerferien'],
+    },
+    tun: [
+      'Links unter „Sport“ auf „Saisonwechsel“.',
+      '„🔄 Neue Saison beginnen“ – setzt die Häkchen vom letzten Jahr zurück.',
+      'Team für Team: Namen und Alter anpassen, Verantwortliche aus- und eintragen, Trainingszeiten aktualisieren, alte Fotos ersetzen. Ein Klick auf den Namen öffnet das Team.',
+      'Passt alles, links das Häkchen setzen. „Nur noch nicht geprüfte“ zeigt, was fehlt.',
+      'Teams, die es nicht mehr gibt: im Team „Aktiv“ ausschalten.',
+      'Zum Schluss „✓ Saisonwechsel abschließen“.',
+    ],
+    wirkung: [
+      'Die Seite selbst ändert nichts an den Teams – sie zeigt nur an, was auffällt (⚠️), und merkt sich die Häkchen.',
+      'Orange markiert: keine Verantwortlichen, Verantwortliche seit über 6 Monaten nicht angemeldet oder ohne Trainer-Rolle, keine Trainingszeiten, kein Titelbild, Fotos mit Personen älter als 2 Jahre.',
+      'Vom 15. Juni bis 30. September erinnert das Dashboard, solange der Saisonwechsel in diesem Jahr nicht abgeschlossen ist.',
+    ],
+    tipps: [
+      'Admin und Redaktion sehen die Seite. Häkchen setzen geht auch zu zweit gleichzeitig.',
+      'Wer gar keinen Zugang mehr braucht: beim Benutzer die Rolle auf „Mitglied“ ändern – die Verwaltung ist dann gesperrt, das Konto bleibt für den Mitgliederbereich.',
+      'Neue Fotos mit Personen nur mit Einwilligung (bei Kindern der Eltern).',
+    ],
+  },
+
   angebote: {
     titel: 'Teams & Kurse',
     kurz: 'Alle Fußballteams und Breitensportkurse des Vereins – jedes mit eigener Seite.',
@@ -592,13 +619,20 @@ export const HILFE: Record<string, HilfeText> = {
       '„Sicherung jetzt erstellen“ klicken – nach etwa einer Minute ist sie fertig.',
       '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
       'Zurückholen: Anleitung unten auf der Seite (Befehl „pnpm sicherung:einspielen“).',
+      'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (am besten am PC), danach „✓ Heute erfolgreich getestet“ klicken.',
+      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln.',
     ],
-    wirkung: ['Die Sicherung ändert nichts an der Website.', 'Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.'],
+    wirkung: [
+      'Die Sicherung ändert nichts an der Website.',
+      'Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.',
+      'Das Dashboard erinnert außerdem, wenn der Speicher zu 80 % voll ist, Node.js oder PostgreSQL in den nächsten 6 Monaten keine Updates mehr bekommen, die Website seit 3 Monaten nicht aktualisiert wurde oder der Wiederherstellungs-Test über ein Jahr her ist.',
+    ],
     tipps: [
       'Nur Web-Admins sehen die Datensicherung – die Datei enthält alle Daten, auch die Zugänge.',
       'Die Datei enthält persönliche Daten – nicht per E-Mail verschicken.',
       'Nur selbst erstellte Sicherungen einspielen – nie eine Datei, die dir jemand schickt.',
       'Die ganze Sicherungsdatei (Endung .tar.gz.enc) ist verschlüsselt und lässt sich nur mit dem ENCRYPTION_KEY aus der .env öffnen. Den Schlüssel getrennt aufbewahren.',
+      'Den ENCRYPTION_KEY nie einfach austauschen – sonst sind IBANs, Zwei-Faktor und alle Sicherungen unlesbar. Muss er gewechselt werden (z. B. weil er bekannt geworden ist): Befehl „pnpm schluessel:wechseln“, Anleitung in deploy/README.md unter „Schlüssel wechseln“.',
       'Auf der Live-Website wird jeden Tag automatisch gesichert.',
     ],
   },
