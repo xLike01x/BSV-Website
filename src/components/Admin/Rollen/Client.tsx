@@ -5,7 +5,7 @@ import React, { useMemo, useState } from 'react'
 import type { RechteMatrix, Stufe } from './rechte'
 import RollenReiter from './Reiter'
 
-type Zugang = 'mit' | 'ohne' | 'zusatz' | 'alle'
+type Zugang = 'mit' | 'ohne' | 'zusatz' | 'ohne2fa' | 'alt' | 'alle'
 
 export type Person = {
   id: number
@@ -124,6 +124,24 @@ const zuletzt = (p: Person) =>
       })
     : 'noch nie'
 
+/** Welche Konten zeigt die Liste „Nach Person“? Dieselbe Regel zählt auch die Kacheln oben. */
+function passt(p: Person, z: Zugang): boolean {
+  switch (z) {
+    case 'alle':
+      return true
+    case 'mit':
+      return hatZugang(p)
+    case 'ohne':
+      return !hatZugang(p)
+    case 'zusatz':
+      return p.zusatzrechte.length > 0
+    case 'ohne2fa':
+      return !p.testkonto && hatZugang(p) && !p.zweiFaktor
+    case 'alt':
+      return istAlt(p)
+  }
+}
+
 type Tab = 'personen' | 'teams' | 'rollen' | 'rechte' | 'test'
 
 export default function RollenClient({
@@ -155,7 +173,7 @@ export default function RollenClient({
   const gefiltertePersonen = useMemo(
     () =>
       personen
-        .filter((p) => zugang === 'alle' || (zugang === 'zusatz' ? p.zusatzrechte.length > 0 : (zugang === 'mit') === hatZugang(p)))
+        .filter((p) => passt(p, zugang))
         .filter(
           (p) =>
             !q ||
@@ -180,8 +198,8 @@ export default function RollenClient({
     [teams, q],
   )
   const ohneVerantwortliche = teams.filter((t) => t.aktiv && t.verantwortliche.length === 0).length
-  const alteZugaenge = personen.filter(istAlt).length
-  const ohne2fa = personen.filter((p) => !p.testkonto && hatZugang(p) && !p.zweiFaktor).length
+  const alteZugaenge = personen.filter((p) => passt(p, 'alt')).length
+  const ohne2fa = personen.filter((p) => passt(p, 'ohne2fa')).length
 
   return (
     <div className="bsv-rollen">
@@ -229,16 +247,18 @@ export default function RollenClient({
             </button>
           )}
           {ohne2fa > 0 && (
-            <div className="is-warn">
+            <button type="button" className="is-warn" onClick={() => zeige('ohne2fa')} title="Liste anzeigen">
               <strong>{ohne2fa}</strong>
               <span>Zugänge noch ohne Zwei-Faktor</span>
-            </div>
+              <em>Anzeigen ›</em>
+            </button>
           )}
           {alteZugaenge > 0 && (
-            <div className="is-warn">
+            <button type="button" className="is-warn" onClick={() => zeige('alt')} title="Liste anzeigen">
               <strong>{alteZugaenge}</strong>
-              <span>Zugänge seit 6 Monaten ungenutzt (⚠️ in der Liste)</span>
-            </div>
+              <span>Zugänge seit 6 Monaten ungenutzt</span>
+              <em>Anzeigen ›</em>
+            </button>
           )}
         </div>
       )}
@@ -292,6 +312,8 @@ export default function RollenClient({
                   `Ohne Verwaltungs-Zugang – nur Mitgliederbereich (${personen.filter((p) => !hatZugang(p)).length})`,
                 ],
                 ...(webadmin ? ([['zusatz', `Mit Zusatzrechten (${personen.filter((p) => p.zusatzrechte.length > 0).length})`]] as [Zugang, string][]) : []),
+                ...(ohne2fa > 0 || zugang === 'ohne2fa' ? ([['ohne2fa', `⚠️ Ohne Zwei-Faktor (${ohne2fa})`]] as [Zugang, string][]) : []),
+                ...(alteZugaenge > 0 || zugang === 'alt' ? ([['alt', `⚠️ Seit 6 Monaten ungenutzt (${alteZugaenge})`]] as [Zugang, string][]) : []),
                 ['alle', `Alle (${personen.length})`],
               ] as [Zugang, string][]
             ).map(([k, l]) => (

@@ -567,7 +567,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Reiter „Nach Rolle“ (Web-Admin): alle Personen, gruppiert nach Rolle, mit Anzahl.',
       'Reiter „Rechte je Rolle“ (Web-Admin): Rolle anklicken und sehen, welche Bereiche sie sehen, anlegen, bearbeiten und löschen darf – berechnet aus den echten Regeln.',
       'Reiter „Testkonten“ (Web-Admin): Testkonten je Rolle, Abteilung und Team anlegen, um die Rechte auszuprobieren (nur lokal, ohne Zwei-Faktor).',
-      'Kennzahlen oben anklicken („Anzeigen ›“, Web-Admin): Die Liste zeigt sofort z. B. nur die Personen mit Zusatzrechten oder nur Konten ohne Verwaltungs-Zugang.',
+      'Kennzahlen oben anklicken („Anzeigen ›“): Die Liste zeigt sofort nur die passenden Konten – z. B. Zugänge noch ohne Zwei-Faktor, seit 6 Monaten ungenutzte Zugänge oder (Web-Admin) Personen mit Zusatzrechten und Konten ohne Verwaltungs-Zugang.',
       'Orange gestrichelte Kästchen „+ …“ unter den Rollen (Web-Admin): Zusatzrechte, die nur diese Person hat (vergeben beim Benutzer).',
       'Spalte „Zuletzt da“: Wer sich seit über 6 Monaten nicht angemeldet hat, ist mit ⚠️ markiert – Rechte noch nötig?',
       'Oben suchen: Name, Team oder Rolle eintippen.',
