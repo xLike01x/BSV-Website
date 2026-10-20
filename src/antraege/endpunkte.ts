@@ -3,7 +3,7 @@ import type { Endpoint, PayloadRequest, Where } from 'payload'
 import { hasRole } from '@/access/roles'
 import { emailAktiv, mailHtml, mailSenden } from '@/auth/mail'
 import { ratenGrenze } from '@/hooks/spamSchutz'
-import { fehlerAntwort, idAus, posteingangAendern } from '@/posteingang/endpunkte'
+import { fehlerAntwort, idAus, jsonVon, nurJson, posteingangAendern } from '@/posteingang/endpunkte'
 import { type Entscheidung, MITGLIEDSART_LABEL } from './texte'
 
 const ENTSCHEIDUNGEN: Entscheidung[] = ['aufgenommen', 'rueckfrage', 'abgelehnt']
@@ -18,8 +18,9 @@ const entscheidung: Endpoint = {
     if (!kasse(req)) return Response.json({ fehler: 'Diesen Eintrag darfst du nicht bearbeiten.' }, { status: 403 })
     const id = idAus(req)
     if (!id) return Response.json({ fehler: 'Antrag nicht gefunden.' }, { status: 404 })
-    const body = (await req.json?.().catch(() => ({}))) as { status?: unknown; mail?: { betreff?: unknown; text?: unknown } | null }
-    const status = ENTSCHEIDUNGEN.find((s) => s === body?.status)
+    const body = await jsonVon<{ status?: unknown; mail?: { betreff?: unknown; text?: unknown } | null }>(req)
+    if (!body) return nurJson()
+    const status = ENTSCHEIDUNGEN.find((s) => s === body.status)
     if (!status) return Response.json({ fehler: 'Unbekannter Status.' }, { status: 400 })
     const mail = body?.mail
       ? { betreff: typeof body.mail.betreff === 'string' ? body.mail.betreff.replace(/[\r\n]+/g, ' ').trim() : '', text: typeof body.mail.text === 'string' ? body.mail.text.trim() : '' }
@@ -27,9 +28,19 @@ const entscheidung: Endpoint = {
     if (mail && (!mail.betreff || !mail.text)) return Response.json({ fehler: 'Bitte Betreff und Text der E-Mail ausfüllen.' }, { status: 400 })
     if (mail && (mail.betreff.length > 200 || mail.text.length > 5000)) return Response.json({ fehler: 'Die E-Mail ist zu lang.' }, { status: 400 })
     try {
-      if (mail) ratenGrenze(req, `antragmail:${req.user.id}`, 30)
+      // Feste Grenze je Konto (unabhängig von der IP): 20 Antwort-Mails in 10 Minuten
+      if (mail) ratenGrenze(req, `antragmail:${req.user.id}`, 20, 20)
       // 1) Status ändern (Payload prüft die Rechte; „Aufgenommen“ legt die Mitgliedschaft an)
-      const doc = await posteingangAendern(req, 'mitgliedsantraege', id, () => ({ status }))
+      const doc = await posteingangAendern(req, 'mitgliedsantraege', id, (vorher) => {
+        // Aufgenommen ist endgültig: Der Ausweis existiert schon – ein Austritt gehört unter „Mitgliedschaften“
+        if (vorher.status === 'aufgenommen' && status !== 'aufgenommen')
+          throw Object.assign(new Error('Der Antrag ist schon aufgenommen, die Mitgliedschaft ist angelegt. Für einen Austritt bitte unter „Mitgliedschaften“ das Datum „Gültig bis“ setzen.'), { status: 400 })
+        // Antwort-Mails nur bei einer echten Entscheidung (oder einer weiteren Rückfrage) – sonst ließe sich der
+        // Verein als Absender für beliebige Mails nutzen
+        if (mail && vorher.status === status && status !== 'rueckfrage')
+          throw Object.assign(new Error(`Der Antrag steht schon auf „${status === 'aufgenommen' ? 'Aufgenommen' : 'Abgelehnt'}“. Weitere Nachrichten bitte über „Antworten“ aus deinem E-Mail-Programm.`), { status: 400 })
+        return { status }
+      })
       // 2) Mail – Empfänger ist immer die Adresse aus dem Antrag, nie eine mitgeschickte
       let versand: 'gesendet' | 'nicht-eingerichtet' | 'fehler' | null = null
       if (mail) {
@@ -134,9 +145,10 @@ const deDatum = (iso: unknown) => {
 
 /** Ein Feld für Excel: in Anführungszeichen, und nie als Formel ausführbar (CSV-Injection) */
 export const csvFeld = (v: unknown) => {
-  let s = v == null ? '' : String(v)
-  if (/^[=+\-@\t\r]/.test(s)) s = `'${s}`
-  return `"${s.replace(/"/g, '""').replace(/\r?\n/g, ' ')}"`
+  // Erst Zeilenumbrüche entfernen, dann prüfen – auch mit führenden Leerzeichen und Vollbreiten-Zeichen (＝＋－＠)
+  let s = (v == null ? '' : String(v)).replace(/[\r\n]+/g, ' ')
+  if (/^[\s\u00a0\u3000]*[=+\-@\uff1d\uff0b\uff0d\uff20]/.test(s)) s = `'${s}`
+  return `"${s.replace(/"/g, '""')}"`
 }
 
 type Antrag = {
@@ -182,10 +194,11 @@ const exportEndpunkt: Endpoint = {
   handler: async (req) => {
     if (!req.user) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
     if (!kasse(req)) return Response.json({ fehler: 'Nur Kasse und Admins dürfen exportieren.' }, { status: 403 })
-    const body = (await req.json?.().catch(() => ({}))) as { alle?: unknown }
-    const alle = body?.alle === true
+    const body = await jsonVon<{ alle?: unknown }>(req)
+    if (!body) return nurJson()
+    const alle = body.alle === true
     try {
-      ratenGrenze(req, `antragexport:${req.user.id}`, 20)
+      ratenGrenze(req, `antragexport:${req.user.id}`, 20, 20)
       const r = await req.payload.find({
         collection: 'mitgliedsantraege',
         where: { and: [{ status: { equals: 'aufgenommen' } }, ...(alle ? [] : [{ exportiertAm: { exists: false } }])] },
@@ -220,11 +233,16 @@ const exportEndpunkt: Endpoint = {
       const csv = csvZeilen(antraege)
       // Als exportiert markieren und im Verlauf vermerken (nur Anträge, die noch nicht markiert waren)
       const jetzt = new Date().toISOString()
-      for (const a of antraege.filter((x) => !x.exportiertAm)) {
-        await posteingangAendern(req, 'mitgliedsantraege', a.id, () => ({ exportiertAm: jetzt }), { text: 'Für die Kasse exportiert', art: 'status' })
+      // Ein einzelner Fehler darf weder den Download verhindern noch andere Anträge falsch markiert zurücklassen:
+      // Jeder Antrag wird für sich markiert, Fehler werden gezählt (nicht markierte erscheinen beim nächsten Export wieder).
+      let fehlgeschlagen = 0
+      for (const a of antraege) {
+        await posteingangAendern(req, 'mitgliedsantraege', a.id, () => (a.exportiertAm ? {} : { exportiertAm: jetzt }), { text: a.exportiertAm ? 'Erneut exportiert' : 'Für die Kasse exportiert', art: 'status' }).catch((e) => {
+          fehlgeschlagen++
+          req.payload.logger.error({ err: e }, `Export: Antrag ${a.id} konnte nicht als exportiert markiert werden`)
+        })
       }
-      if (alle) for (const a of antraege.filter((x) => x.exportiertAm)) await posteingangAendern(req, 'mitgliedsantraege', a.id, () => ({}), { text: 'Erneut exportiert', art: 'status' })
-      req.payload.logger.info(`Mitgliedsanträge exportiert: ${antraege.length} Anträge (Konto ${req.user.id})`)
+      req.payload.logger.info(`Mitgliedsanträge exportiert: ${antraege.length} Anträge (Konto ${req.user.id})${fehlgeschlagen ? `, ${fehlgeschlagen} nicht markiert` : ''}`)
       const datei = `mitgliedsantraege-${jetzt.slice(0, 10)}${alle ? '-alle' : ''}.csv`
       return new Response(csv, {
         status: 200,

@@ -2,7 +2,7 @@ import type { Endpoint } from 'payload'
 import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { hasRole } from '@/access/roles'
-import { fehlerAntwort, idAus } from '@/posteingang/endpunkte'
+import { fehlerAntwort, idAus, jsonVon, nurJson } from '@/posteingang/endpunkte'
 
 /**
  * Vorschlag für die Startseite annehmen oder ablehnen – nur Redaktion und Admins.
@@ -20,8 +20,9 @@ export const startseiteEndpunkt: Endpoint = {
     if (!hasRole(req.user as never, 'admin', 'redaktion')) return Response.json({ fehler: 'Das entscheidet die Redaktion.' }, { status: 403 })
     const id = idAus(req)
     if (!id) return Response.json({ fehler: 'News nicht gefunden.' }, { status: 404 })
-    const body = (await req.json?.().catch(() => ({}))) as { annehmen?: unknown }
-    const annehmen = body?.annehmen === true
+    const body = await jsonVon<{ annehmen?: unknown }>(req)
+    if (!body) return nurJson()
+    const annehmen = body.annehmen === true
     const data = annehmen ? { aufStartseite: true, startseiteVorschlag: false } : { startseiteVorschlag: false }
     const gemeinsam = { collection: 'posts' as const, id, overrideAccess: false, user: req.user, req, depth: 0 }
     try {

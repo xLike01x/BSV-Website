@@ -157,7 +157,8 @@ export default function AntragPruefung() {
     }
   }
 
-  const moeglich = (['aufgenommen', 'rueckfrage', 'abgelehnt'] as Entscheidung[]).filter((e) => e !== f.status)
+  // Aufgenommen ist endgültig (Ausweis existiert) – danach keine Knöpfe mehr
+  const moeglich = f.status === 'aufgenommen' ? [] : (['aufgenommen', 'rueckfrage', 'abgelehnt'] as Entscheidung[]).filter((e) => e !== f.status)
 
   return (
     <section className="bsv-pruefung" aria-label="Antrag prüfen">
@@ -178,6 +179,7 @@ export default function AntragPruefung() {
           </button>
         ))}
       </div>
+      {f.status === 'aufgenommen' && <p className="bsv-posteingang__klein">Aufgenommen – die Mitgliedschaft ist angelegt. Ein Austritt wird unter „Mitgliedschaften“ mit „Gültig bis“ eingetragen.</p>}
       {geaendert && <p className="bsv-posteingang__klein">Du hast etwas geändert – bitte erst oben rechts speichern, dann entscheiden.</p>}
 
       {offen && (

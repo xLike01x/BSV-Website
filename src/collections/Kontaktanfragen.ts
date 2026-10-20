@@ -10,7 +10,7 @@ import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfi
 import { getServerSideURL } from '@/utilities/getURL'
 import { adressen, anliegenListe } from '@/Verein/anliegen'
 import { pflichtHaken } from '@/hooks/formularPruefung'
-import { posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
+import { oeffentlichKnapp, posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
 import { posteingangEndpunkte } from '@/posteingang/endpunkte'
 
 const verein = async (req: PayloadRequest) => (await req.payload.findGlobal({ slug: 'verein', depth: 0, overrideAccess: true, req }).catch(() => null)) as never
@@ -45,6 +45,7 @@ export const Kontaktanfragen: CollectionConfig = {
   },
   defaultSort: '-createdAt',
   hooks: {
+    afterOperation: [oeffentlichKnapp],
     beforeChange: [zustaendigNameSetzen, statusImVerlauf({ neu: 'Neu', bearbeitung: 'In Bearbeitung', erledigt: 'Erledigt' })],
     beforeValidate: [
       spamSchutz('kontakt'),

@@ -39,6 +39,7 @@ export default async function posteingang(d) {
     const id = neu.j?.doc?.id
     const [roh] = await d.q(`select zustaendig_id, zustaendig_name, exportiert_am, aufgenommen_am, (select count(*)::int from mitgliedsantraege_verlauf v where v._parent_id=m.id) n from mitgliedsantraege m where id=$1`, [id])
     pruefe('Formular: Zuständig/Verlauf/Export-Datum werden ignoriert', roh && !roh.zustaendig_id && !roh.zustaendig_name && !roh.exportiert_am && !roh.aufgenommen_am && roh.n === 0, roh)
+    pruefe('Formular: Antwort enthält nur die ID (keine IBAN zurück an den Browser)', neu.j?.doc && Object.keys(neu.j.doc).join() === 'id', neu.j)
 
     // --- Notizen ----------------------------------------------------------
     const pfad = `/api/mitgliedsantraege/${id}`
@@ -48,6 +49,8 @@ export default async function posteingang(d) {
     pruefe('Notiz zu nicht vorhandenem Antrag → 403', (await post(kasse, `/api/mitgliedsantraege/999999/notiz`, { text: 'x' })).s === 403)
     pruefe('Leere Notiz → 400', (await post(kasse, `${pfad}/notiz`, { text: '   ' })).s === 400)
     pruefe('Zu lange Notiz → 400', (await post(kasse, `${pfad}/notiz`, { text: 'a'.repeat(2001) })).s === 400)
+    const tp = await fetch(B + `${pfad}/notiz`, { method: 'POST', headers: { 'Content-Type': 'text/plain', Cookie: kasse }, body: JSON.stringify({ text: 'x' }) })
+    pruefe('Notiz als text/plain (fremdes Formular) → 415', tp.status === 415, tp.status)
     const n1 = await post(kasse, `${pfad}/notiz`, { text: '<b>Angerufen</b>' })
     pruefe('Notiz als Kasse → 200 mit Name', n1.s === 200 && n1.j?.verlauf?.at(-1)?.vonName === 'Test Kasse' && n1.j?.verlauf?.at(-1)?.text === '<b>Angerufen</b>', n1.j)
 
@@ -55,6 +58,11 @@ export default async function posteingang(d) {
     await api(kasse, 'PATCH', pfad, { verlauf: [{ text: 'umgeschrieben', am: new Date().toISOString() }], zustaendig: null, zustaendigName: 'X', exportiertAm: new Date().toISOString() })
     const [nachPatch] = await d.q(`select (select string_agg(text, '|') from mitgliedsantraege_verlauf v where v._parent_id=m.id) t, zustaendig_name, exportiert_am from mitgliedsantraege m where id=$1`, [id])
     pruefe('PATCH: Verlauf/Name/Export-Datum bleiben unverändert', nachPatch.t === '<b>Angerufen</b>' && !nachPatch.zustaendig_name && !nachPatch.exportiert_am, nachPatch)
+
+    // Gleichzeitige Notizen gehen nicht verloren
+    await Promise.all([1, 2, 3, 4, 5, 6].map((i) => post(kasse, `${pfad}/notiz`, { text: `parallel ${i}` })))
+    const [par] = await d.q(`select count(*)::int n from mitgliedsantraege_verlauf where _parent_id=$1 and text like 'parallel %'`, [id])
+    pruefe('6 gleichzeitige Notizen → alle 6 gespeichert', par.n === 6, par)
 
     // --- Wer kümmert sich? -------------------------------------------------
     pruefe('Übernehmen als Redaktion → 403', (await post(redaktion, `${pfad}/zustaendig`, { uebernehmen: true })).s === 403)
@@ -64,6 +72,13 @@ export default async function posteingang(d) {
     await api(kasse, 'PATCH', pfad, { zustaendig: (await d.q(`select id from users where email='kasse@bsv.test'`))[0].id })
     const [z] = await d.q(`select zustaendig_name from mitgliedsantraege where id=$1`, [id])
     pruefe('Kasse kann Zuständigkeit nicht per PATCH umschreiben', z.zustaendig_name === 'Test Admin', z)
+    await api(admin, 'PATCH', pfad, { zustaendig: (await d.q(`select id from users where email='redaktion@bsv.test'`))[0].id })
+    const [zl] = await d.q(`select zustaendig_name, (select count(*)::int from mitgliedsantraege_verlauf v where v._parent_id=m.id and v.text like 'Zuständig: Test Redaktion%') n from mitgliedsantraege m where id=$1`, [id])
+    pruefe('Admin setzt Zuständig von Hand → steht im Verlauf', zl.zustaendig_name === 'Test Redaktion' && zl.n === 1, zl)
+    await api(kasse, 'PATCH', pfad, { email: 'sicherheitstest-posteingang+neu@bsv.test' })
+    const [em] = await d.q(`select count(*)::int n from mitgliedsantraege_verlauf where _parent_id=$1 and text like 'E-Mail-Adresse geändert:%'`, [id])
+    pruefe('Geänderte E-Mail-Adresse steht im Verlauf', em.n === 1, em)
+    await d.q(`update mitgliedsantraege set email=$1 where id=$2`, [MAIL, id])
     const ue2 = await post(kasse, `${pfad}/zustaendig`, { uebernehmen: true })
     pruefe('Übernehmen als Kasse → 200', ue2.s === 200 && ue2.j?.zustaendigName === 'Test Kasse', ue2.j)
 
@@ -81,6 +96,9 @@ export default async function posteingang(d) {
     pruefe('Aufnehmen mit Mail → 200', ent.s === 200 && ent.j?.status === 'aufgenommen', ent.j)
     const [nach] = await d.q(`select status, aufgenommen_am, (select count(*)::int from mitgliedschaften where antrag_id=$1) ausweise, (select string_agg(text, '|' order by _order) from mitgliedsantraege_verlauf v where v._parent_id=$1) verlauf from mitgliedsantraege where id=$1`, [id])
     pruefe('Aufnehmen: Status, Datum, Mitgliedschaft und Verlauf', nach.status === 'aufgenommen' && nach.aufgenommen_am && nach.ausweise === 1 && /Status: Neu → Aufgenommen/.test(nach.verlauf) && /E-Mail/.test(nach.verlauf), nach)
+
+    pruefe('Nach „Aufgenommen“ kein Wechsel auf „Abgelehnt“ → 400', (await post(kasse, `${pfad}/entscheidung`, { status: 'abgelehnt' })).s === 400)
+    pruefe('Keine weitere Mail bei unverändertem Status → 400', (await post(kasse, `${pfad}/entscheidung`, { status: 'aufgenommen', mail: { betreff: 'Spam', text: 'beliebig' } })).s === 400)
 
     // --- Export ---------------------------------------------------------------
     const exp = (cookie, body) => fetch(B + '/api/mitgliedsantraege/export', { method: 'POST', headers: { 'Content-Type': 'application/json', ...(cookie ? { Cookie: cookie } : {}) }, body: JSON.stringify(body ?? {}) })
@@ -101,11 +119,12 @@ export default async function posteingang(d) {
     pruefe('Export „alle“ enthält ihn wieder', e3.includes('"Posteingangtest"'))
 
     // CSV-Injection: Formeln werden entschärft
-    const boese = await api(null, 'POST', '/api/mitgliedsantraege', { ...basis, vorname: '=HYPERLINK("http://x")', email: MAIL }, ip())
+    const boese = await api(null, 'POST', '/api/mitgliedsantraege', { ...basis, vorname: '=HYPERLINK("http://x")', ort: '\n =cmd', email: MAIL }, ip())
     if (boese.s === 201) {
       await post(kasse, `/api/mitgliedsantraege/${boese.j.doc.id}/entscheidung`, { status: 'aufgenommen' })
       const e4 = await (await exp(kasse)).text()
       pruefe('CSV: Formel wird als Text exportiert', e4.includes(`"'=HYPERLINK(""http://x"")"`) && !e4.includes(';"=HYPERLINK'), e4.slice(0, 400))
+      pruefe('CSV: Formel nach Zeilenumbruch/Leerzeichen wird entschärft', !/;"\s*=cmd/.test(e4) && /"'\s*=cmd"/.test(e4), e4.slice(0, 600))
     } else pruefe('CSV-Injection: Formular lehnt Formel-Namen ab (ebenfalls sicher)', boese.s === 400, boese.j)
 
     // --- Kontakt- und Probetraining-Anfragen ---------------------------------

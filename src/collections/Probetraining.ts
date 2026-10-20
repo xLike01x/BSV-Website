@@ -8,7 +8,7 @@ import { spamSchutz } from '../hooks/spamSchutz'
 import { statusPille, statusReiter } from '@/components/Admin/StatusReiter/konfig'
 import { teamBenachrichtigen } from '@/sport/teamMail'
 import { pflichtHaken } from '@/hooks/formularPruefung'
-import { posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
+import { oeffentlichKnapp, posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
 import { posteingangEndpunkte } from '@/posteingang/endpunkte'
 
 /** Übungsleitungen sehen nur Anfragen zu ihren eigenen Angeboten. */
@@ -58,6 +58,7 @@ export const Probetraining: CollectionConfig = {
   },
   defaultSort: '-createdAt',
   hooks: {
+    afterOperation: [oeffentlichKnapp],
     beforeChange: [zustaendigNameSetzen, statusImVerlauf({ neu: 'Neu', zugesagt: 'Zugesagt', alternativ: 'Anderer Termin vorgeschlagen', erledigt: 'Erledigt' })],
     beforeValidate: [spamSchutz('probetraining')],
     // Neue Anfrage → kurze Mail an die Trainer des Teams (ohne Kontaktdaten im Text – die stehen in der Verwaltung)

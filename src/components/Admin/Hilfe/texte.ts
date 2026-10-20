@@ -239,6 +239,7 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: [
       'Hier stehen Bankdaten. Nur Kasse und Vorstand haben Zugriff – bitte nichts ausdrucken oder weiterleiten.',
       'Die Export-Datei enthält Namen und Adressen: nach dem Übertragen löschen und nicht per E-Mail verschicken.',
+      '„Aufgenommen“ ist endgültig – danach gibt es keine Knöpfe mehr. Ein Austritt wird unter „Mitgliedschaften“ mit „Gültig bis“ eingetragen. Weitere Nachrichten an die Person über „✉️ Antworten“.',
       'Solange der E-Mail-Versand noch nicht eingerichtet ist, bietet der Antrag nach dem Bestätigen „Im E-Mail-Programm öffnen“ an – mit fertigem Text.',
       'Übernommene Anträge nach der vorgeschriebenen Frist löschen.',
     ],

@@ -33,7 +33,28 @@ export const neuerEintrag = (req: PayloadRequest, text: string, art: 'notiz' | '
  * Die Rechte prüft Payload selbst (overrideAccess: false) – wer den Eintrag nicht bearbeiten darf, bekommt einen Fehler.
  * Nur dieser Weg darf Verlauf und Zuständigkeit schreiben (req.context.bsvPosteingang).
  */
-export async function posteingangAendern(req: PayloadRequest, slug: CollectionSlug, id: number, daten: (doc: Record<string, unknown>) => Record<string, unknown>, notiz?: { text: string; art?: 'notiz' | 'status' }) {
+/**
+ * Änderungen am selben Eintrag nacheinander ausführen: Der Verlauf wird gelesen und komplett neu geschrieben –
+ * ohne Reihenfolge würden gleichzeitige Notizen sich gegenseitig überschreiben. Die Website läuft als eine Instanz
+ * (deploy/bsv.service), daher reicht eine Warteschlange im Prozess.
+ */
+const schlangen = new Map<string, Promise<unknown>>()
+function nacheinander<T>(schluessel: string, fn: () => Promise<T>): Promise<T> {
+  const vorher = schlangen.get(schluessel) ?? Promise.resolve()
+  const jetzt = vorher.catch(() => undefined).then(fn)
+  const ende = jetzt.catch(() => undefined)
+  schlangen.set(schluessel, ende)
+  void ende.then(() => {
+    if (schlangen.get(schluessel) === ende) schlangen.delete(schluessel)
+  })
+  return jetzt
+}
+
+export function posteingangAendern(req: PayloadRequest, slug: CollectionSlug, id: number, daten: (doc: Record<string, unknown>) => Record<string, unknown>, notiz?: { text: string; art?: 'notiz' | 'status' }) {
+  return nacheinander(`${slug}:${id}`, () => aendern(req, slug, id, daten, notiz))
+}
+
+async function aendern(req: PayloadRequest, slug: CollectionSlug, id: number, daten: (doc: Record<string, unknown>) => Record<string, unknown>, notiz?: { text: string; art?: 'notiz' | 'status' }) {
   // Lesen mit den Rechten der Person: fremde oder nicht sichtbare Einträge → Fehler „nicht gefunden“
   const doc = (await req.payload.findByID({ collection: slug, id, depth: 0, overrideAccess: false, user: req.user, req })) as unknown as Record<string, unknown>
   const data = daten(doc)
@@ -54,6 +75,17 @@ export function fehlerAntwort(e: unknown) {
   return Response.json({ fehler: 'Das hat nicht geklappt. Bitte Seite neu laden und noch einmal versuchen.' }, { status: 500 })
 }
 
+/**
+ * Nur JSON annehmen: Formulare fremder Websites können kein application/json senden, ohne dass der Browser vorher
+ * nachfragt (CORS) – zusätzlicher Schutz neben SameSite-Cookies und der Herkunftsprüfung von Payload.
+ */
+export async function jsonVon<T>(req: PayloadRequest): Promise<T | null> {
+  if (!String(req.headers.get('content-type') ?? '').toLowerCase().startsWith('application/json')) return null
+  return ((await req.json?.().catch(() => ({}))) ?? {}) as T
+}
+
+export const nurJson = () => Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 415 })
+
 export const idAus = (req: PayloadRequest) => {
   const id = Number(req.routeParams?.id)
   return Number.isInteger(id) && id > 0 ? id : null
@@ -70,8 +102,9 @@ export function posteingangEndpunkte(slug: CollectionSlug): Endpoint[] {
         if (!req.user) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
         const id = idAus(req)
         if (!id) return Response.json({ fehler: 'Eintrag nicht gefunden.' }, { status: 404 })
-        const body = (await req.json?.().catch(() => ({}))) as { text?: unknown }
-        const text = typeof body?.text === 'string' ? body.text.trim() : ''
+        const body = await jsonVon<{ text?: unknown }>(req)
+        if (!body) return nurJson()
+        const text = typeof body.text === 'string' ? body.text.trim() : ''
         if (!text) return Response.json({ fehler: 'Bitte einen Text eingeben.' }, { status: 400 })
         if (text.length > 2000) return Response.json({ fehler: 'Die Notiz ist zu lang (höchstens 2.000 Zeichen).' }, { status: 400 })
         try {
@@ -90,8 +123,9 @@ export function posteingangEndpunkte(slug: CollectionSlug): Endpoint[] {
         if (!req.user) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
         const id = idAus(req)
         if (!id) return Response.json({ fehler: 'Eintrag nicht gefunden.' }, { status: 404 })
-        const body = (await req.json?.().catch(() => ({}))) as { uebernehmen?: unknown }
-        const uebernehmen = body?.uebernehmen === true
+        const body = await jsonVon<{ uebernehmen?: unknown }>(req)
+        if (!body) return nurJson()
+        const uebernehmen = body.uebernehmen === true
         try {
           const doc = await posteingangAendern(
             req,

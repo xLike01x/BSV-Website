@@ -9,7 +9,7 @@ import { spamSchutz } from '../hooks/spamSchutz'
 import { mitgliedschaftAusAntrag } from '@/mitgliedschaften/ausAntrag'
 import { antragEndpunkte } from '@/antraege/endpunkte'
 import { neuerAntragMelden } from '@/antraege/melden'
-import { nurUeberEndpunkt, posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
+import { emailImVerlauf, nurUeberEndpunkt, oeffentlichKnapp, posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
 import { posteingangEndpunkte } from '@/posteingang/endpunkte'
 
 const STATUS_LABEL: Record<string, string> = { neu: 'Neu', rueckfrage: 'Rückfrage', aufgenommen: 'Aufgenommen', abgelehnt: 'Abgelehnt' }
@@ -236,6 +236,7 @@ export const Mitgliedsantraege: CollectionConfig = {
     },
   ],
   hooks: {
+    afterOperation: [oeffentlichKnapp],
     beforeValidate: [
       spamSchutz('antrag'),
       antragRegeln,
@@ -253,6 +254,7 @@ export const Mitgliedsantraege: CollectionConfig = {
     beforeChange: [
       zustaendigNameSetzen,
       statusImVerlauf(STATUS_LABEL),
+      emailImVerlauf,
       // Zeitpunkt der Aufnahme festhalten (für den Export)
       ({ data, originalDoc, operation }) => {
         if (operation === 'update' && data?.status === 'aufgenommen' && originalDoc?.status !== 'aufgenommen' && !originalDoc?.aufgenommenAm) data.aufgenommenAm = new Date().toISOString()
