@@ -4,6 +4,7 @@ import * as migration_20261020_092628_einwilligungen from './20261020_092628_ein
 import * as migration_20261020_094226_haertung from './20261020_094226_haertung';
 import * as migration_20261020_133629_posteingang from './20261020_133629_posteingang';
 import * as migration_20261020_151223_hilfe_bereiche from './20261020_151223_hilfe_bereiche';
+import * as migration_20261020_173527_ohne_payload_ordner from './20261020_173527_ohne_payload_ordner';
 
 export const migrations = [
   {
@@ -34,6 +35,11 @@ export const migrations = [
   {
     up: migration_20261020_151223_hilfe_bereiche.up,
     down: migration_20261020_151223_hilfe_bereiche.down,
-    name: '20261020_151223_hilfe_bereiche'
+    name: '20261020_151223_hilfe_bereiche',
+  },
+  {
+    up: migration_20261020_173527_ohne_payload_ordner.up,
+    down: migration_20261020_173527_ohne_payload_ordner.down,
+    name: '20261020_173527_ohne_payload_ordner'
   },
 ];

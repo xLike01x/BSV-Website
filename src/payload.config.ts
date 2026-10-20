@@ -66,7 +66,7 @@ import { getServerSideURL } from './utilities/getURL'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-import { canUpload, canUseAdminPanel, hasRole, isEditor } from './access/roles'
+import { canUseAdminPanel, hasRole } from './access/roles'
 
 // E-Mail-Versand (Bestätigung bei Registrierung, „Passwort vergessen“, Benachrichtigungen).
 // Nur aktiv mit SMTP_HOST in der .env – sonst stehen die Mails beim Entwickeln im Server-Fenster.
@@ -171,12 +171,7 @@ const konfiguration = buildConfig({
       ],
     },
   },
-  // Ordner-Ansicht nicht als eigenen Menüpunkt zeigen (Ordner bleiben in der Mediathek nutzbar)
-  folders: {
-    browseByFolder: false,
-    // Payload-eigene Ordner (nicht genutzt) – ohne diese Zeile dürfte sie jeder Angemeldete bearbeiten
-    collectionOverrides: [({ collection }) => ({ ...collection, access: { read: canUpload, create: isEditor, update: isEditor, delete: isEditor } })],
-  },
+  // Payload-eigene Ordner sind abgeschaltet: Bilder werden über „Ordner (Team / Kurs)“ sortiert (eigene Ordner-Leiste in der Mediathek)
   // This config helps us configure global or default features that the other editors can inherit
   editor: defaultLexical,
   db: postgresAdapter({

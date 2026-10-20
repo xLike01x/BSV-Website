@@ -28,8 +28,6 @@ import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloa
 import { default as default_3c44ae4db322ab6667b5755c4caea543 } from '@/components/Admin/Einstieg/VorlageUebernehmen'
 import { TerminHinweise as TerminHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { MedienHinweise as MedienHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
-import { FolderTableCell as FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
-import { FolderField as FolderField_f9c02e79a4aed9a3924487c0cd4cafb1 } from '@payloadcms/next/rsc'
 import { default as default_32ec0822ebee3f70a808b72e6323c81c } from '@/components/Admin/MedienOrdner'
 import { default as default_3128b959b5f53a177f9b2fbbb89048a9 } from '@/components/Admin/Sponsoren'
 import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
@@ -42,7 +40,6 @@ import { default as default_64fa1c7a66262bbb2bad95580b41f4c2 } from '@/component
 import { FormularHinweise as FormularHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { LinkToDoc as LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
 import { ReindexButton as ReindexButton_aead06e4cbf6b2620c5c51c9ab283634 } from '@payloadcms/plugin-search/client'
-import { FolderTypeField as FolderTypeField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { RowLabel as RowLabel_ec255a65fa6fa8d1faeb09cf35284224 } from '@/Header/RowLabel'
 import { RowLabel as RowLabel_1f6ff6ff633e3695d348f4f3c58f1466 } from '@/Footer/RowLabel'
 import { default as default_1f04e621a7b43e47a2ae8cbbbc2da9b5 } from '@/Menue/Einstieg'
@@ -106,8 +103,6 @@ export const importMap = {
   "@/components/Admin/Einstieg/VorlageUebernehmen#default": default_3c44ae4db322ab6667b5755c4caea543,
   "@/components/Admin/Hinweise#TerminHinweise": TerminHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Hinweise#MedienHinweise": MedienHinweise_37fae30b24d1a12bf2667fda13922509,
-  "@payloadcms/next/rsc#FolderTableCell": FolderTableCell_f9c02e79a4aed9a3924487c0cd4cafb1,
-  "@payloadcms/next/rsc#FolderField": FolderField_f9c02e79a4aed9a3924487c0cd4cafb1,
   "@/components/Admin/MedienOrdner#default": default_32ec0822ebee3f70a808b72e6323c81c,
   "@/components/Admin/Sponsoren#default": default_3128b959b5f53a177f9b2fbbb89048a9,
   "@/components/Admin/Hinweise#SeitenHinweise": SeitenHinweise_37fae30b24d1a12bf2667fda13922509,
@@ -120,7 +115,6 @@ export const importMap = {
   "@/components/Admin/Hinweise#FormularHinweise": FormularHinweise_37fae30b24d1a12bf2667fda13922509,
   "@payloadcms/plugin-search/client#LinkToDoc": LinkToDoc_aead06e4cbf6b2620c5c51c9ab283634,
   "@payloadcms/plugin-search/client#ReindexButton": ReindexButton_aead06e4cbf6b2620c5c51c9ab283634,
-  "@payloadcms/next/client#FolderTypeField": FolderTypeField_2b8867833a34864a02ddf429b0728a40,
   "@/Header/RowLabel#RowLabel": RowLabel_ec255a65fa6fa8d1faeb09cf35284224,
   "@/Footer/RowLabel#RowLabel": RowLabel_1f6ff6ff633e3695d348f4f3c58f1466,
   "@/Menue/Einstieg#default": default_1f04e621a7b43e47a2ae8cbbbc2da9b5,

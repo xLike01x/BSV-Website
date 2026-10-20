@@ -50,8 +50,8 @@ export default function Hilfe() {
 
   return (
     <>
-      <button type="button" className="bsv-hilfe__knopf" onClick={() => setOffen(true)} aria-haspopup="dialog" aria-expanded={offen}>
-        <span aria-hidden="true">?</span> Hilfe
+      <button type="button" className="bsv-hilfe__knopf" onClick={() => setOffen(true)} aria-haspopup="dialog" aria-expanded={offen} aria-label="Hilfe">
+        <span aria-hidden="true">?</span> <span className="bsv-hilfe__knopf-text">Hilfe</span>
       </button>
 
       {offen &&

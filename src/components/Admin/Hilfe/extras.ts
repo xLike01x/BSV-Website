@@ -800,7 +800,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Bildunterschrift (optional)', text: 'Text, der unter dem Bild erscheinen kann, z. B. Fotograf oder Anlass.' },
     { name: 'Bild bearbeiten', text: 'Nach dem Hochladen: zuschneiden und den „wichtigsten Bildbereich“ setzen – dann bleibt z. B. ein Gesicht auch in kleinen Vorschaubildern sichtbar.' },
     { name: 'Bildgrößen', text: 'Die Website erzeugt automatisch kleinere Versionen für schnelle Ladezeiten. Darum musst du dich nicht kümmern.' },
-    { name: 'Ordner', text: 'Oben links „Kein Ordner“: Bilder lassen sich in Ordner sortieren, z. B. „Sommerfest 2026“. Optional – nur für die Übersicht in der Verwaltung.' },
+    { name: 'Ordner (Team / Kurs)', text: 'Der einzige Ordner, den es gibt: das Team, zu dem das Bild gehört. Oben in der Mediathek siehst du alle Ordner als Kacheln – Bilder in der Liste anhaken und auf eine Kachel ziehen sortiert sie um.' },
   ],
   pages: [
     { name: 'Titel', text: 'Name der Seite, steht auch im Browser-Tab. Daraus entsteht die Adresse.' },

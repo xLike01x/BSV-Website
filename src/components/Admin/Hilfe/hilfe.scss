@@ -14,7 +14,7 @@
   cursor: pointer;
   transition: background 0.15s;
 
-  span {
+  span:not(.bsv-hilfe__knopf-text) {
     width: 24px;
     height: 24px;
     border-radius: 50%;

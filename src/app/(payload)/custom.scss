@@ -467,3 +467,41 @@ body {
 .btn--withPopup.btn--disabled .popup-button {
   display: none !important;
 }
+
+/* Handy: Kopfzeile darf nicht breiter als der Bildschirm werden.
+   Lange Pfade („Termine / Sommerfest 2027 …“) werden gekürzt, Hilfe und Konto bleiben immer sichtbar. */
+@media (max-width: 768px) {
+  .app-header__content {
+    min-width: 0;
+  }
+  .app-header__step-nav-wrapper,
+  .step-nav {
+    min-width: 0;
+    overflow: hidden;
+  }
+  .step-nav {
+    flex-wrap: nowrap;
+    white-space: nowrap;
+  }
+  .step-nav > * {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .app-header__actions-wrapper,
+  .app-header__actions {
+    flex-shrink: 0;
+  }
+  /* Nur „?“ statt „? Hilfe“ – spart Platz, der Name steht für Vorlesehilfen im aria-label */
+  .bsv-hilfe__knopf {
+    padding-right: 6px;
+  }
+  .bsv-hilfe__knopf .bsv-hilfe__knopf-text {
+    display: none;
+  }
+  /* „Zuletzt geändert … Erstellt …“ umbrechen statt über den Rand laufen */
+  .doc-controls__meta {
+    flex-wrap: wrap;
+    row-gap: 2px;
+  }
+}
