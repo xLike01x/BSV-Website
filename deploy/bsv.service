@@ -14,6 +14,8 @@ Group=bsv
 WorkingDirectory=/srv/bsv
 Environment=NODE_ENV=production
 Environment=NEXT_TELEMETRY_DISABLED=1
+# „Heute“, Termine und Ausfälle in deutscher Zeit (sonst UTC: der Tag wechselt erst um 01:00/02:00 Uhr)
+Environment=TZ=Europe/Berlin
 # Welcher Build-Ordner gerade live ist (.next-a oder .next-b) – schreibt deploy/update.sh
 EnvironmentFile=-/srv/bsv/.build-env
 # Nur auf dem Server selbst erreichbar; von außen geht alles über Caddy/nginx (setzt X-Real-IP)

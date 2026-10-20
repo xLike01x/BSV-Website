@@ -1,5 +1,6 @@
 import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { teilnehmendeEndpunkt } from '@/components/Admin/Teilnehmende/endpunkt'
+import { reihenfolgeEndpunkt } from '@/Menue/reihenfolgeEndpunkt'
 import { medienPruefen } from '@/hooks/medienPruefen'
 import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
@@ -43,7 +44,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],
   },
-  endpoints: [teilnehmendeEndpunkt],
+  endpoints: [teilnehmendeEndpunkt, reihenfolgeEndpunkt],
   hooks: {
     beforeChange: [medienPruefen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [

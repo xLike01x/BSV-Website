@@ -16,7 +16,7 @@ const getPagesSitemap = unstable_cache(
       overrideAccess: false,
       draft: false,
       depth: 0,
-      limit: 1000,
+      limit: 0,
       pagination: false,
       where: {
         _status: {
@@ -31,15 +31,16 @@ const getPagesSitemap = unstable_cache(
 
     const dateFallback = new Date().toISOString()
 
-    const defaultSitemap = [
-      {
-        loc: `${SITE_URL}/search`,
-        lastmod: dateFallback,
-      },
-      {
-        loc: `${SITE_URL}/news`,
-        lastmod: dateFallback,
-      },
+    // Feste Seiten der Website (ohne /search: die ist „noindex“ und doppelt /suche)
+    const FEST = ['/', '/verein', '/fussball', '/breitensport', '/termine', '/trainingszeiten', '/news', '/galerie', '/sponsoren', '/kontakt', '/mitmachen', '/mitglied-werden']
+    const defaultSitemap = FEST.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '/' : p}`, lastmod: dateFallback }))
+
+    // Teams & Kurse sowie Galerie-Alben
+    const angebote = await payload.find({ collection: 'angebote', overrideAccess: false, depth: 0, limit: 0, pagination: false, where: { aktiv: { not_equals: false } }, select: { slug: true, updatedAt: true } })
+    const alben = await payload.find({ collection: 'alben', overrideAccess: false, depth: 0, limit: 0, pagination: false, select: { slug: true, updatedAt: true } }).catch(() => ({ docs: [] }))
+    const weitere = [
+      ...angebote.docs.filter((a) => a.slug).map((a) => ({ loc: `${SITE_URL}/angebote/${a.slug}`, lastmod: a.updatedAt || dateFallback })),
+      ...(alben.docs as { slug?: string; updatedAt?: string }[]).filter((a) => a.slug).map((a) => ({ loc: `${SITE_URL}/galerie/${a.slug}`, lastmod: a.updatedAt || dateFallback })),
     ]
 
     const sitemap = results.docs
@@ -53,7 +54,8 @@ const getPagesSitemap = unstable_cache(
           })
       : []
 
-    return [...defaultSitemap, ...sitemap]
+    const doppelt = new Set(defaultSitemap.map((x) => x.loc))
+    return [...defaultSitemap, ...weitere, ...sitemap.filter((x) => !doppelt.has(x.loc))]
   },
   ['pages-sitemap'],
   {

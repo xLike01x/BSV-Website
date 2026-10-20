@@ -101,6 +101,7 @@ export const Kontaktanfragen: CollectionConfig = {
       name: 'status',
       label: 'Status',
       type: 'select',
+      index: true,
       defaultValue: 'neu',
       options: [
         { label: 'Neu', value: 'neu' },

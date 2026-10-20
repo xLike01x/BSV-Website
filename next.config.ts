@@ -39,7 +39,9 @@ const nextConfig: NextConfig = {
   distDir: process.env.BSV_DIST_DIR || '.next',
   // Entwicklungsserver auch über einen Cloudflare-Quick-Tunnel (Vorschau für Kollegen) nutzbar machen.
   // Ohne diese Zeile blockiert Next.js die Skripte → Seite lädt, aber Login-Knopf u. Ä. reagieren nicht.
-  allowedDevOrigins: ['*.trycloudflare.com'],
+  // Nur beim Entwickeln wirksam; Testkonten sind über einen Tunnel ohnehin gesperrt.
+  // Statt aller Tunnel-Adressen lässt sich die konkrete per BSV_TUNNEL=xyz.trycloudflare.com festlegen.
+  allowedDevOrigins: [process.env.BSV_TUNNEL || '*.trycloudflare.com'],
   // Temporarily required on Windows until Next.js fixes Turbopack Sass resolution.
   // See: https://github.com/vercel/next.js/issues/86431
   sassOptions: {

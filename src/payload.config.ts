@@ -188,7 +188,8 @@ const konfiguration = buildConfig({
     // Nach jeder Feld-Änderung: `pnpm payload migrate:create <name>` und die neue Datei mit committen (siehe deploy/README.md).
     push: process.env.NODE_ENV === 'development',
     migrationDir: path.resolve(dirname, 'migrations'),
-    prodMigrations: migrations,
+    // Nicht beim Bauen (dort könnte eine Rückfrage den Build blockieren) – im Update-Skript laufen sie danach ausdrücklich
+    prodMigrations: process.env.NEXT_PHASE === 'phase-production-build' ? undefined : migrations,
   }),
   // Reihenfolge bestimmt die Reihenfolge in der Seitenleiste
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)

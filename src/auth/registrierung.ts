@@ -158,9 +158,12 @@ export const registrierungEndpunkte: Endpoint[] = [
         const nurMitglied = !(vorhanden.roles ?? []).some((r) => r !== 'mitglied')
         if (unbestaetigt(vorhanden) && vorhanden.freigegeben === false && nurMitglied) {
           if (!darfSenden(email)) return json({ fehler: 'Wir haben dir gerade schon eine E-Mail geschickt. Bitte schau in dein Postfach (auch im Spam-Ordner) oder versuche es in 5 Minuten erneut.' }, 429)
-          zuletztGesendet.delete(email)
-          // Nie bestätigte Registrierung (Tippfehler, zweiter Versuch – oder jemand Fremdes): durch die neue ersetzen
-          await req.payload.delete({ collection: 'users', id: vorhanden.id, overrideAccess: true, req })
+          // Nie bestätigte Registrierung: NICHT ersetzen (sonst könnte jemand Fremdes Name und Passwort des
+          // wartenden Kontos austauschen) – nur den Bestätigungslink an die Adresse erneut schicken.
+          // Wer sich beim Passwort vertippt hatte: nach der Bestätigung „Passwort vergessen?“ nutzen.
+          zuletztGesendet.set(email, Date.now())
+          await bestaetigungSenden(req, { id: vorhanden.id as number, name: (vorhanden as { name?: string }).name ?? name, email }).catch((e) => req.payload.logger.error(e))
+          return json(GENERISCH, 201)
         } else {
           // Gleiche Antwort wie bei Erfolg – verrät nicht, ob es die Adresse schon gibt
           if (darfSenden(email)) await schonVorhandenSenden(req, email).catch((e) => req.payload.logger.error(e))

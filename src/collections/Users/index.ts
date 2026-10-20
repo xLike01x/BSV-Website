@@ -10,7 +10,7 @@ import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWeb
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
 import { aktuellesPasswortFeld, passwortUndLogin } from '../../auth/passwort'
-import { zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
+import { meHerabgestuft, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -212,6 +212,7 @@ export const Users: CollectionConfig = {
   ],
   hooks: {
     beforeOperation: [passwortUndLogin],
+    afterMe: [meHerabgestuft],
     // „Passwort vergessen“ beweist ebenfalls, dass die E-Mail-Adresse der Person gehört → gilt als bestätigt.
     // (Payload ruft diesen Hook beim Zurücksetzen mit dem kompletten Konto samt neuem Passwort-Hash auf.)
     beforeValidate: [

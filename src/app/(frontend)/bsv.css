@@ -546,3 +546,15 @@
 .team-banner { margin: 0 0 24px; padding: 14px 18px; border-radius: 16px; font-size: 17px; font-weight: 600; display: flex; gap: 10px; align-items: flex-start; }
 .team-banner--info { background: #e8f1fd; color: #1e3a8a; }
 .team-banner--wichtig { background: #fff4e5; color: #8a4b00; }
+
+/* Barrierefreiheit (Audit F-20): Links im Fließtext nicht nur an der Farbe erkennbar */
+.bsv :is(p, dd, td, figcaption, label, .rich-text, .prose) a:not([class]),
+.bsv footer p a {
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  text-decoration-thickness: 1px;
+}
+.bsv :is(p, dd, td, figcaption, .rich-text, .prose) a:not([class]):hover { text-decoration-thickness: 2px; }
+/* Handy: nichts darf breiter als der Bildschirm werden */
+.suche-form input { min-width: 0; }
+.bsv :is(h1, h2, h3, summary, strong) { overflow-wrap: break-word; hyphens: auto; }

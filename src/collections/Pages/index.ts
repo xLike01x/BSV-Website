@@ -146,7 +146,8 @@ export const Pages: CollectionConfig<'pages'> = {
   versions: {
     drafts: {
       autosave: {
-        interval: 100, // We set this interval for optimal live preview
+        // Zwischenspeichern für die Live-Vorschau: 1 Sekunde nach dem Tippen (vorher 0,1 s → sehr viele Versionen)
+        interval: 1000,
       },
       schedulePublish: true,
     },

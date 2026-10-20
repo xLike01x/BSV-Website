@@ -86,6 +86,7 @@ cp .env.example .env && nano .env
 chmod 600 .env
 pnpm install --frozen-lockfile --prod=false
 pnpm live:pruefen                 # muss „✓ Keine Fehler“ melden
+NODE_ENV=production pnpm payload migrate     # legt alle Tabellen an („Migrated: …“)
 echo "BSV_DIST_DIR=.next-a" > .build-env
 NODE_ENV=production BSV_DIST_DIR=.next-a pnpm build
 exit                              # zurück zu root
@@ -96,7 +97,7 @@ exit                              # zurück zu root
 ```bash
 cp /srv/bsv/deploy/bsv.service /etc/systemd/system/bsv.service
 systemctl daemon-reload && systemctl enable --now bsv
-journalctl -u bsv -f              # beim ersten Start legt die Migration alle Tabellen an („Migrated: …“)
+journalctl -u bsv -f              # Protokoll ansehen (Strg+C beendet nur die Anzeige)
 
 cp /srv/bsv/deploy/Caddyfile /etc/caddy/Caddyfile && nano /etc/caddy/Caddyfile   # Domain prüfen
 systemctl reload caddy
@@ -168,7 +169,7 @@ und kurz durchklicken. Datum in der Go-Live-Checkliste notieren.
 sudo -u bsv -H bash -c 'cd /srv/bsv && ./deploy/update.sh'
 ```
 
-Das Skript sichert, holt den neuen Stand, baut ihn **neben** der laufenden Website, migriert die Datenbank, schaltet um und prüft
+Das Skript sichert, holt den neuen Stand, migriert die Datenbank, baut **neben** der laufenden Website, schaltet um und prüft
 `/api/gesund`. Antwortet die Website nicht, schaltet es automatisch auf den alten Stand zurück. Ausfallzeit: wenige Sekunden.
 
 Vorher immer `pnpm audit --prod` im Blick haben (Sicherheitsmeldungen zu Paketen).

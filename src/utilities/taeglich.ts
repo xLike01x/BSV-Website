@@ -62,6 +62,22 @@ export async function einmalAufraeumen(payload: Payload) {
   await statistikAufraeumen(payload).catch((e) =>
     payload.logger.warn({ err: e }, 'Statistik aufräumen fehlgeschlagen'),
   )
+  // Leere Seiten-Entwürfe (nur „Neu erstellen“ geöffnet und wieder verlassen) nach einem Tag entfernen
+  await payload
+    .delete({
+      collection: 'pages',
+      where: {
+        and: [
+          { or: [{ title: { exists: false } }, { title: { equals: '' } }] },
+          { _status: { equals: 'draft' } },
+          { createdAt: { less_than: new Date(Date.now() - 86400000).toISOString() } },
+        ],
+      },
+      overrideAccess: true,
+      context: { disableRevalidate: true },
+    })
+    .then((r) => r.docs.length && payload.logger.info(`${r.docs.length} leere Seiten-Entwürfe entfernt`))
+    .catch((e) => payload.logger.warn({ err: e }, 'Leere Entwürfe aufräumen fehlgeschlagen'))
 }
 
 /** Läuft kurz nach dem Start und dann einmal täglich: Aufräumen, auf der Live-Website außerdem die tägliche Sicherung */

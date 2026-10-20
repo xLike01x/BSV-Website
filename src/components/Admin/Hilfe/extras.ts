@@ -887,6 +887,12 @@ export const FAQ: Faq[] = [
     bereich: 'users',
   },
   {
+    frage: 'Beim Einrichten der Zwei-Faktor-App steht „Die Einrichtung wurde gerade schon gestartet“.',
+    antwort:
+      'In einem anderen Fenster oder Tab läuft die Einrichtung schon – dort mit dem Code aus der App abschließen. Oder 15 Minuten warten und neu beginnen. Der Schutz verhindert, dass jemand mit deinem Passwort deine Einrichtung überschreibt. Nach dem Einrichten bekommst du zur Sicherheit eine E-Mail.',
+    bereich: 'users',
+  },
+  {
     frage: 'Ich habe mein Passwort vergessen.',
     antwort: 'Auf der Anmeldeseite auf „Passwort vergessen?“ klicken. Kommt keine E-Mail an, hilft ein Admin weiter.',
   },

@@ -30,7 +30,10 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
   const pathname = usePathname()
   const [open, setOpen] = useState<string | null>(null)
   const [mobil, setMobil] = useState(false)
-  const ref = useRef<HTMLDivElement>(null)
+  const ref = useRef<HTMLElement>(null)
+  const panel = useRef<HTMLDivElement>(null)
+  // Per Tastatur geöffnet? Dann springt der Fokus direkt in das Aufklappmenü (statt 10× Tab über die Kopfzeile)
+  const perTastatur = useRef<string | null>(null)
   const [eingeloggt, setEingeloggt] = useState(false)
 
   // Login-Status im Browser abfragen, damit die Seiten selbst statisch bleiben können
@@ -47,9 +50,20 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
     setMobil(false)
   }, [pathname])
 
-  // Escape schließt, Klick außerhalb schließt
+  // Per Tastatur geöffnet → Fokus auf den ersten Link im Aufklappmenü
   useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && (setOpen(null), setMobil(false))
+    if (open && perTastatur.current === open) panel.current?.querySelector<HTMLElement>('a')?.focus()
+  }, [open])
+
+  // Escape schließt (Fokus zurück auf den Menü-Knopf), Klick außerhalb schließt
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape') return
+      const knopf = ref.current?.querySelector<HTMLElement>('.nav-link[aria-expanded="true"]')
+      setOpen(null)
+      setMobil(false)
+      knopf?.focus()
+    }
     const onClick = (e: MouseEvent) => ref.current && !ref.current.contains(e.target as Node) && setOpen(null)
     document.addEventListener('keydown', onKey)
     document.addEventListener('mousedown', onClick)
@@ -69,7 +83,13 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
   const offen = menus.find((m) => m.id === open)
 
   return (
-    <div className="nav" ref={ref} onMouseLeave={() => setOpen(null)}>
+    <header
+      className="nav"
+      ref={ref}
+      onMouseLeave={() => setOpen(null)}
+      // Fokus verlässt die Kopfzeile (Tab weiter in den Inhalt) → Aufklappmenü schließen
+      onBlur={(e) => !e.currentTarget.contains(e.relatedTarget as Node | null) && setOpen(null)}
+    >
       <div className="nav-bar">
         <div className="nav-inner">
           <Link href="/" className="nav-logo" onMouseEnter={() => setOpen(null)}>
@@ -86,9 +106,13 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
                     type="button"
                     className="nav-link"
                     aria-expanded={open === m.id}
+                    aria-controls="nav-panel"
                     aria-current={bereichAktiv(m) ? 'page' : undefined}
                     // Maus: Klick öffnet nur (Hover hat schon geöffnet). Tastatur/Touch (detail 0 bzw. kein Hover): umschalten
-                    onClick={(ev) => setOpen(ev.detail === 0 || open !== m.id ? (open === m.id ? null : m.id) : m.id)}
+                    onClick={(ev) => {
+                      perTastatur.current = ev.detail === 0 ? m.id : null
+                      setOpen(ev.detail === 0 || open !== m.id ? (open === m.id ? null : m.id) : m.id)
+                    }}
                     onMouseEnter={() => setOpen(m.id)}
                   >
                     {e.label}
@@ -136,7 +160,7 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
       </div>
 
       {offen && (
-        <div className="nav-panel">
+        <div className="nav-panel" id="nav-panel" ref={panel}>
           <div className="nav-panel-inner">
             <div className="nav-panel-intro">
               <p className="nav-panel-label">{offen.label}</p>
@@ -199,6 +223,6 @@ export function NavClient({ menus, eintraege }: { menus: NavMenu[]; eintraege: N
           </div>
         </div>
       )}
-    </div>
+    </header>
   )
 }

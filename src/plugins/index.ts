@@ -18,6 +18,7 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
+import { eingangPruefen, mailsPruefen } from '@/hooks/formularBaukasten'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Büdericher SV 1919` : 'Büdericher Spielverein 1919 e.V.'
@@ -67,6 +68,7 @@ export const plugins: Plugin[] = [
     fields: {
       payment: false,
     },
+    beforeEmail: mailsPruefen as never,
     formSubmissionOverrides: {
       // Formulare aus dem Baukasten (Seiten). Eingänge liegen im „Posteingang“, die Formulare selbst unter „Website-Aufbau“.
       labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
@@ -74,7 +76,7 @@ export const plugins: Plugin[] = [
       admin: { group: 'Posteingang', hidden: ausblendenAusserMit('formulare', 'admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
       access: { create: anyone, read: rolleOderRecht('formulare', 'admin', 'redaktion'), update: isAdmin, delete: isAdmin },
       // Gleicher Schutz wie bei Kontakt & Co.: Anfragen pro Adresse begrenzen, übergroße Eingaben abweisen
-      hooks: { beforeValidate: [spamSchutz('formular')] },
+      hooks: { beforeValidate: [spamSchutz('formular'), eingangPruefen] },
     },
     formOverrides: {
       labels: { singular: 'Formular', plural: 'Formulare' },

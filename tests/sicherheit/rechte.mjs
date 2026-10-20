@@ -13,6 +13,22 @@ export default async function rechte(d) {
     if (nachher.team_id !== antrag.team_id) await d.q('update passantraege set team_id=$1 where id=$2', [antrag.team_id, antrag.id])
   } else pruefe('Passantrag für Test vorhanden', false)
 
+  // QA-07: Reihenfolge ganz oder gar nicht, nur mit eigenen Rechten
+  const vorher = await d.q(`select id, reihenfolge from angebote where bereich='fussball' order by id limit 3`)
+  const eigen = await d.q(`select r.parent_id id from angebote_rels r join users u on u.id=r.users_id where u.email='trainer-alte-herren@bsv.test' and r.path='leitung'`)
+  const fremd = vorher.find((a) => !eigen.some((e) => e.id === a.id))
+  const [altEigen] = await d.q('select reihenfolge from angebote where id=$1', [eigen[0].id])
+  await d.q('update angebote set reihenfolge=777 where id=$1', [eigen[0].id])
+  const r0 = await api(tr, 'POST', '/api/angebote/reihenfolge', { ids: [eigen[0].id, fremd.id] })
+  const [nachEigen] = await d.q('select reihenfolge from angebote where id=$1', [eigen[0].id])
+  await d.q('update angebote set reihenfolge=$1 where id=$2', [altEigen.reihenfolge, eigen[0].id])
+  pruefe('Reihenfolge mit fremdem Team → abgelehnt, nichts geändert', r0.s === 400 && Number(nachEigen.reihenfolge) === 777, [r0.s, nachEigen])
+  const red = await login('redaktion@bsv.test')
+  const r1 = await api(red, 'POST', '/api/angebote/reihenfolge', { ids: vorher.map((a) => a.id).reverse() })
+  const neu = await d.q(`select id, reihenfolge from angebote where id = any($1) order by reihenfolge`, [vorher.map((a) => a.id)])
+  pruefe('Redaktion speichert Reihenfolge in einem Schritt', r1.s === 200 && neu[0].id === vorher[2].id, [r1.s, neu])
+  for (const a of vorher) await d.q('update angebote set reihenfolge=$1 where id=$2', [a.reihenfolge, a.id])
+
   // F-25: Bearbeitungssperren nur für die Verwaltung
   const mi = await login('mitglied@bsv.test')
   const r = await api(mi, 'GET', '/api/payload-locked-documents')

@@ -34,7 +34,23 @@ export default async function formulare(d) {
     pruefe('Kontakt: ohne Datenschutz-Haken → 400', (await k({})).s === 400)
     const p = await api(null, 'POST', '/api/probetraining', { name: 'Sicherheitstest', email: 'sicherheitstest-antrag@bsv.test', angebot: team.id, datenschutz: false }, ip())
     pruefe('Probetraining: Datenschutz-Haken „false“ → 400', p.s === 400, p.j)
+    // Formular-Baukasten
+    const red = await (await import('./lib.mjs')).login('redaktion@bsv.test')
+    const lex = { root: { type: 'root', format: '', indent: 0, version: 1, direction: 'ltr', children: [{ type: 'paragraph', format: '', indent: 0, version: 1, direction: 'ltr', textFormat: 0, children: [{ type: 'text', text: 'Danke', format: 0, mode: 'normal', style: '', detail: 0, version: 1 }] }] } }
+    const f = await api(red, 'POST', '/api/forms', { title: 'Sicherheitstest-Formular', fields: [{ blockType: 'text', name: 'vorname', label: 'Vorname', required: true }, { blockType: 'email', name: 'email', label: 'E-Mail', required: true }], confirmationType: 'message', confirmationMessage: lex, emails: [{ emailTo: '{{email}}', cc: '{{email}}', subject: 'Test', message: lex }] })
+    const formId = f.j?.doc?.id
+    pruefe('Testformular angelegt', Boolean(formId), f.j)
+    if (formId) {
+      const ein = (daten) => api(null, 'POST', '/api/form-submissions', { form: formId, submissionData: daten }, ip())
+      pruefe('Baukasten: Pflichtfeld fehlt → 400', (await ein([{ field: 'email', value: 'a@bsv.test' }])).s === 400)
+      const ok = await ein([{ field: 'vorname', value: 'Test' }, { field: 'email', value: 'a@bsv.test' }, { field: 'fremd', value: 'eingeschmuggelt' }])
+      pruefe('Baukasten: gültiger Eingang → 201', ok.s === 201, ok.j)
+      const [row] = await d.q(`select count(*)::int n from form_submissions_submission_data where _parent_id=$1 and field='fremd'`, [ok.j?.doc?.id ?? 0])
+      pruefe('Baukasten: fremde Felder werden verworfen', row?.n === 0, row)
+    }
   } finally {
+    await d.q(`delete from form_submissions where form_id in (select id from forms where title='Sicherheitstest-Formular')`).catch(() => {})
+    await d.q(`delete from forms where title='Sicherheitstest-Formular'`).catch(() => {})
     await d.q(`delete from mitgliedsantraege where email='sicherheitstest-antrag@bsv.test'`)
     await d.q(`delete from kontaktanfragen where email='sicherheitstest-antrag@bsv.test'`)
     await d.q(`delete from probetraining where email='sicherheitstest-antrag@bsv.test'`)

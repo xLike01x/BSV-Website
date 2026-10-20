@@ -11,6 +11,8 @@ import { hasRole } from '@/access/roles'
  */
 export const Statistik: CollectionConfig = {
   slug: 'statistik',
+  // Auswertungen filtern fast immer nach Art und Tag
+  indexes: [{ fields: ['art', 'tag'] }],
   labels: { singular: 'Statistik-Eintrag', plural: 'Statistik' },
   access: {
     read: ({ req }) => hasRole(req.user as never, 'webadmin'),

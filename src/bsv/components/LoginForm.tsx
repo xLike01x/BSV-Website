@@ -33,6 +33,10 @@ export function LoginForm() {
         body: JSON.stringify({ email: f.get('email'), password: f.get('passwort') }),
       })
       if (res.ok) {
+        // Frische Anmeldung: Uhr für das automatische Abmelden neu starten (siehe Admin/AutoAbmelden)
+        try {
+          localStorage.setItem('bsv-letzte-aktivitaet', String(Date.now()))
+        } catch {}
         // Personal (alle außer Mitglied) bestätigt die Anmeldung mit dem zweiten Faktor
         const st = await fetch('/api/users/zwei-faktor/status', { credentials: 'same-origin' }).then((r) => r.json()).catch(() => null)
         router.push(st?.offen ? `/login/zwei-faktor?weiter=${encodeURIComponent(weiter.startsWith('/mitglieder') ? '/mitglieder' : weiter)}` : weiter)

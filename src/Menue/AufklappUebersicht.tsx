@@ -57,12 +57,9 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
     setLaeuft(true)
     setFehler(null)
     try {
-      for (const [i, a] of neu.entries()) {
-        const wert = (i + 1) * 10
-        if (a.reihenfolge === wert) continue
-        const r = await fetch(`/api/angebote/${a.id}`, { method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ reihenfolge: wert }) })
-        if (!r.ok) throw new Error()
-      }
+      // Alles in einem Schritt: entweder die ganze Spalte oder gar nichts
+      const r = await fetch('/api/angebote/reihenfolge', { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ ids: neu.map((a) => a.id) }) })
+      if (!r.ok) throw new Error()
       setGespeichert(true)
       window.setTimeout(() => setGespeichert(false), 2500)
     } catch {

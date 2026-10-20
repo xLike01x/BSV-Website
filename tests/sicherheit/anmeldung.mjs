@@ -61,4 +61,25 @@ export default async function anmeldung(d) {
   let s = 0
   for (let i = 0; i < 6; i++) s = (await api(null, 'POST', '/api/users/forgot-password', { email: `niemand${i}@bsv.test` }, f)).s
   pruefe('„Passwort vergessen“: 6. Anfrage derselben Adresse → 429', s === 429, s)
+
+  // Zwei-Faktor (F-22, F-23, I-01): Testkonto über „Tunnel“-Kopfzeile wie ein echtes Verwaltungskonto behandeln
+  const tunnel = { 'X-Forwarded-Host': 'tunnel.example.org', 'X-Real-IP': ip() }
+  const [admin] = await d.q(`select id from users where email='admin@bsv.test'`)
+  const r0 = await fetch(B + '/api/users/login', { method: 'POST', headers: { 'Content-Type': 'application/json', ...tunnel }, body: JSON.stringify({ email: 'admin@bsv.test', password: PASSWORT }) })
+  pruefe('Testkonto über Tunnel gesperrt (Login 403)', r0.status === 403, r0.status)
+  // Für die 2FA-Prüfung ein Sitzungs-Cookie des Testkontos nehmen und die Tunnel-Kopfzeile mitsenden
+  const ck = await login('admin@bsv.test')
+  try {
+    const me = await api(ck, 'GET', '/api/users/me', undefined, tunnel)
+    pruefe('/me zeigt ohne 2FA-Code keine Admin-Rolle', Array.isArray(me.j?.user?.roles) && !me.j.user.roles.includes('admin'), me.j?.user?.roles)
+    const e1 = await api(ck, 'POST', '/api/users/zwei-faktor/einrichten', {}, tunnel)
+    const e2 = await api(ck, 'POST', '/api/users/zwei-faktor/einrichten', {}, tunnel)
+    pruefe('2FA-Einrichtung: zweiter Start überschreibt nicht (409)', e1.s === 200 && e2.s === 409, [e1.s, e2.s])
+    let st = 0
+    for (let i = 0; i < 6; i++) st = (await api(ck, 'POST', '/api/users/zwei-faktor/bestaetigen', { code: '000000' }, tunnel)).s
+    const [z] = await d.q('select zwei_faktor_fehler from users where id=$1', [admin.id])
+    pruefe('2FA: 6. Fehlversuch → 429, Zähler in der Datenbank', st === 429 && Number(z.zwei_faktor_fehler) >= 5, [st, z])
+  } finally {
+    await d.q(`update users set zwei_faktor_geheimnis=null, zwei_faktor_einrichtung_seit=null, zwei_faktor_fehler=null, zwei_faktor_fehler_seit=null, zwei_faktor_aktiv=false where id=$1`, [admin.id])
+  }
 }

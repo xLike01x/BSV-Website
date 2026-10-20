@@ -22,8 +22,8 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
   const webadmin = hasRole(user as never, 'webadmin')
 
   const [nutzer, angebote] = await Promise.all([
-    req.payload.find({ collection: 'users', limit: 1000, depth: 0, sort: 'name', overrideAccess: false, user, req }),
-    req.payload.find({ collection: 'angebote', limit: 500, depth: 0, sort: 'title', overrideAccess: false, user, req }),
+    req.payload.find({ collection: 'users', limit: 0, pagination: false, depth: 0, sort: 'name', overrideAccess: false, user, req }),
+    req.payload.find({ collection: 'angebote', limit: 0, pagination: false, depth: 0, sort: 'title', overrideAccess: false, user, req }),
   ])
 
   const personen: Person[] = nutzer.docs.map((u) => {

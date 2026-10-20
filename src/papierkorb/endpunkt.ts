@@ -32,7 +32,7 @@ async function liste(req: PayloadRequest): Promise<PapierkorbEintrag[]> {
     if (!col) continue
     const titelFeld = col.config.admin?.useAsTitle || (col.config.upload ? 'filename' : 'id')
     const r = await req.payload
-      .find({ collection: slug as CollectionSlug, where: { deletedAt: { exists: true } }, trash: true, depth: 0, limit: 1000, pagination: false, overrideAccess: true, req, sort: '-deletedAt' })
+      .find({ collection: slug as CollectionSlug, where: { deletedAt: { exists: true } }, trash: true, depth: 0, limit: 0, pagination: false, overrideAccess: true, req, sort: '-deletedAt' })
       .catch(() => null)
     for (const d of (r?.docs ?? []) as unknown as Record<string, unknown>[]) {
       const geloescht = String(d.deletedAt)

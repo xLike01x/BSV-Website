@@ -1,6 +1,9 @@
+import { sql } from '@payloadcms/db-postgres'
 import type { AuthStrategy, Endpoint, Field, PayloadRequest } from 'payload'
 import { JWTAuthentication } from 'payload'
 import QRCode from 'qrcode'
+
+import { mailHtml, mailSenden } from './mail'
 
 import { decrypt, encrypt } from '../utilities/crypto'
 import { testkontenErlaubt } from './testkonten'
@@ -65,6 +68,11 @@ export const zweiFaktorFelder: Field[] = [
   { name: 'zweiFaktorCodes', type: 'json', access: geheim, admin: { hidden: true } },
   { name: 'zweiFaktorSitzungen', type: 'json', access: geheim, admin: { hidden: true } },
   { name: 'zweiFaktorLetzterSchritt', type: 'number', access: geheim, admin: { hidden: true } },
+  // Fehlversuche in der Datenbank (überstehen einen Neustart)
+  { name: 'zweiFaktorFehler', type: 'number', access: geheim, admin: { hidden: true } },
+  { name: 'zweiFaktorFehlerSeit', type: 'date', access: geheim, admin: { hidden: true } },
+  // Beginn einer laufenden Einrichtung – solange darf niemand ein neues Geheimnis anfordern
+  { name: 'zweiFaktorEinrichtungSeit', type: 'date', access: geheim, admin: { hidden: true } },
 ]
 
 const entferneGeheimes = (u: ZfUser) => {
@@ -72,13 +80,23 @@ const entferneGeheimes = (u: ZfUser) => {
   delete u.zweiFaktorCodes
   delete u.zweiFaktorSitzungen
   delete u.zweiFaktorLetzterSchritt
+  delete (u as Record<string, unknown>).zweiFaktorFehler
+  delete (u as Record<string, unknown>).zweiFaktorFehlerSeit
+  delete (u as Record<string, unknown>).zweiFaktorEinrichtungSeit
 }
 
 /** Läuft vor dem Standard-Login-Token-Check und stuft unbestätigte Sitzungen herab. */
 export const zweiFaktorStrategie: AuthStrategy = {
   name: 'bsv-zwei-faktor',
   authenticate: async (args) => {
-    const res = await JWTAuthentication({ ...args, strategyName: 'local-jwt' })
+    // Im Zweifel geschlossen: Wirft irgendetwas hier, gibt es KEINEN Benutzer (sonst würde Payloads
+    // eingebaute Token-Prüfung danach den Nutzer mit vollen Rollen anmelden).
+    let res: Awaited<ReturnType<typeof JWTAuthentication>>
+    try {
+      res = await JWTAuthentication({ ...args, strategyName: 'local-jwt' })
+    } catch {
+      return { user: null }
+    }
     const u = res.user as unknown as ZfUser | null
     if (!u) return res
     u._rollen = [...(u.roles ?? [])]
@@ -114,20 +132,36 @@ export const zweiFaktorStrategie: AuthStrategy = {
   },
 }
 
-// --- Fehlversuche begrenzen (pro Benutzer, im Arbeitsspeicher) ---
-// Jeder Versuch wird VOR der Prüfung gezählt (ohne await dazwischen), damit viele gleichzeitige
-// Anfragen die Sperre nicht umgehen. Ein richtiger Code gibt seinen Versuch wieder frei.
-const fehlversuche = new Map<number, number[]>()
-const aktuelle = (id: number) => (fehlversuche.get(id) ?? []).filter((t) => Date.now() - t < 10 * 60 * 1000)
-/** Gibt einen Zeitstempel zurück, wenn ein Versuch erlaubt ist – sonst null (gesperrt) */
-const versuchReservieren = (id: number): number | null => {
-  const liste = aktuelle(id)
-  if (liste.length >= 5) return null
-  const t = Date.now() + Math.random()
-  fehlversuche.set(id, [...liste, t])
-  return t
+// --- Fehlversuche begrenzen (pro Benutzer, in der Datenbank) ---
+// Jeder Versuch wird VOR der Prüfung atomar gezählt (eine SQL-Anweisung), damit viele gleichzeitige Anfragen
+// die Sperre nicht umgehen und ein Neustart sie nicht zurücksetzt. Ein richtiger Code setzt den Zähler zurück.
+type Db = { drizzle: { execute: (q: unknown) => Promise<{ rows: Record<string, unknown>[] }> } }
+const db = (req: PayloadRequest) => (req.payload.db as unknown as Db).drizzle
+const MAX_FEHLER = 5
+/** true = Versuch erlaubt (und gezählt), false = gesperrt */
+const versuchReservieren = async (req: PayloadRequest, id: number): Promise<boolean> => {
+  const r = await db(req).execute(sql`
+    update users set
+      zwei_faktor_fehler = case when zwei_faktor_fehler_seit is null or zwei_faktor_fehler_seit < now() - interval '10 minutes' then 1 else coalesce(zwei_faktor_fehler, 0) + 1 end,
+      zwei_faktor_fehler_seit = case when zwei_faktor_fehler_seit is null or zwei_faktor_fehler_seit < now() - interval '10 minutes' then now() else zwei_faktor_fehler_seit end
+    where id = ${id} and not (coalesce(zwei_faktor_fehler, 0) >= ${MAX_FEHLER} and zwei_faktor_fehler_seit >= now() - interval '10 minutes')
+    returning id`)
+  return r.rows.length > 0
 }
-const versuchFreigeben = (id: number, t: number) => fehlversuche.set(id, aktuelle(id).filter((x) => x !== t))
+const versuchFreigeben = async (req: PayloadRequest, id: number) => {
+  await db(req).execute(sql`update users set zwei_faktor_fehler = 0, zwei_faktor_fehler_seit = null where id = ${id}`)
+}
+/** Zeitschritt atomar verbrauchen: derselbe Code geht nur einmal durch – auch bei gleichzeitigen Anfragen */
+const schrittVerbrauchen = async (req: PayloadRequest, id: number, schritt: number) => {
+  const r = await db(req).execute(sql`update users set zwei_faktor_letzter_schritt = ${schritt} where id = ${id} and (zwei_faktor_letzter_schritt is null or zwei_faktor_letzter_schritt < ${schritt}) returning id`)
+  return r.rows.length > 0
+}
+/** Wiederherstellungscode atomar entfernen (nur wenn die Liste seit dem Lesen unverändert ist) */
+const codeVerbrauchen = async (req: PayloadRequest, id: number, vorher: string[], rest: string[]) => {
+  const r = await db(req).execute(sql`update users set zwei_faktor_codes = ${JSON.stringify(rest)}::jsonb where id = ${id} and zwei_faktor_codes = ${JSON.stringify(vorher)}::jsonb returning id`)
+  return r.rows.length > 0
+}
+const EINRICHTUNG_MS = 15 * 60 * 1000
 
 const json = (body: unknown, status = 200) => Response.json(body, { status })
 
@@ -181,11 +215,17 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (!istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) return json({ fehler: 'Nur für Zugänge zur Verwaltung nötig.' }, 400)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Die Zwei-Faktor-Anmeldung ist bereits eingerichtet.' }, 400)
+      // Läuft schon eine Einrichtung (z. B. in einem anderen Fenster)? Dann kein neues Geheimnis – sonst könnte jemand
+      // mit dem Passwort die Einrichtung des echten Inhabers überschreiben.
+      const seit = (u as { zweiFaktorEinrichtungSeit?: string | null }).zweiFaktorEinrichtungSeit
+      if (u.zweiFaktorGeheimnis && seit && Date.now() - new Date(seit).getTime() < EINRICHTUNG_MS) {
+        return json({ fehler: 'Die Einrichtung wurde gerade schon gestartet (z. B. in einem anderen Fenster). Bitte dort abschließen oder in 15 Minuten neu beginnen.' }, 409)
+      }
       const geheimnis = neuesGeheimnis()
       await req.payload.update({
         collection: 'users',
         id: u.id,
-        data: { zweiFaktorGeheimnis: encrypt(geheimnis) } as never,
+        data: { zweiFaktorGeheimnis: encrypt(geheimnis), zweiFaktorEinrichtungSeit: new Date().toISOString() } as never,
         overrideAccess: true,
         context: { zweiFaktorIntern: true },
         req,
@@ -203,15 +243,23 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Bereits eingerichtet.' }, 400)
-      const versuch = versuchReservieren(u.id)
-      if (versuch === null) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+      if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
       const body = (await req.json?.().catch(() => ({}))) as { code?: string }
       const geheimnis = u.zweiFaktorGeheimnis ? decrypt(u.zweiFaktorGeheimnis) : null
       const schritt = geheimnis ? pruefeCode(geheimnis, String(body?.code ?? '')) : null
-      if (!schritt) return json({ fehler: 'Der Code stimmt nicht. Bitte den aktuellen Code aus der App eingeben.' }, 400)
-      versuchFreigeben(u.id, versuch)
+      if (!schritt || !(await schrittVerbrauchen(req, u.id, schritt))) return json({ fehler: 'Der Code stimmt nicht. Bitte den aktuellen Code aus der App eingeben.' }, 400)
+      await versuchFreigeben(req, u.id)
       const codes = neueWiederherstellungscodes()
-      await sitzungFreischalten(req, u, { zweiFaktorAktiv: true, zweiFaktorCodes: codes.map(hashCode), zweiFaktorLetzterSchritt: schritt })
+      await sitzungFreischalten(req, u, { zweiFaktorAktiv: true, zweiFaktorCodes: codes.map(hashCode), zweiFaktorEinrichtungSeit: null })
+      // Zur Sicherheit Bescheid geben – falls das jemand anderes war, merkt es der echte Inhaber sofort
+      if (u.email) {
+        const absaetze = [
+          `Für dein Konto wurde am ${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} die Zwei-Faktor-Anmeldung eingerichtet.`,
+          'Warst du das? Dann ist alles in Ordnung.',
+          'Warst du das NICHT, melde dich bitte sofort beim Vorstand bzw. einem Admin – dann hat jemand dein Passwort.',
+        ]
+        await mailSenden(req.payload, { an: u.email, betreff: 'Zwei-Faktor-Anmeldung eingerichtet – BSV 1919', text: absaetze.join('\n\n'), html: mailHtml({ titel: 'Zwei-Faktor-Anmeldung eingerichtet', absaetze }) }).catch(() => {})
+      }
       return json({ ok: true, wiederherstellungscodes: codes })
     },
   },
@@ -223,25 +271,24 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (!u.zweiFaktorAktiv || !u.zweiFaktorGeheimnis) return json({ fehler: 'Noch nicht eingerichtet.' }, 400)
-      const versuch = versuchReservieren(u.id)
-      if (versuch === null) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+      if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
       const body = (await req.json?.().catch(() => ({}))) as { code?: string }
       const eingabe = String(body?.code ?? '').trim()
 
       if (/^\d{6}$/.test(eingabe.replace(/\s/g, ''))) {
         const schritt = pruefeCode(decrypt(u.zweiFaktorGeheimnis), eingabe, u.zweiFaktorLetzterSchritt ?? 0)
-        if (schritt) {
-          versuchFreigeben(u.id, versuch)
-          await sitzungFreischalten(req, u, { zweiFaktorLetzterSchritt: schritt })
+        if (schritt && (await schrittVerbrauchen(req, u.id, schritt))) {
+          await versuchFreigeben(req, u.id)
+          await sitzungFreischalten(req, u)
           return json({ ok: true })
         }
       } else {
         const codes = u.zweiFaktorCodes ?? []
         const h = codes.find((c) => codePasst(eingabe, c))
-        if (h) {
-          versuchFreigeben(u.id, versuch)
-          const rest = codes.filter((c) => c !== h)
-          await sitzungFreischalten(req, u, { zweiFaktorCodes: rest })
+        const rest = codes.filter((c) => c !== h)
+        if (h && (await codeVerbrauchen(req, u.id, codes, rest))) {
+          await versuchFreigeben(req, u.id)
+          await sitzungFreischalten(req, u)
           return json({ ok: true, verbleibend: rest.length })
         }
       }
@@ -267,11 +314,25 @@ export const zweiFaktorZuruecksetzen = async ({
     await req.payload.update({
       collection: 'users',
       id: doc.id,
-      data: { zweiFaktorGeheimnis: null, zweiFaktorCodes: null, zweiFaktorSitzungen: null, zweiFaktorLetzterSchritt: null } as never,
+      data: { zweiFaktorGeheimnis: null, zweiFaktorCodes: null, zweiFaktorSitzungen: null, zweiFaktorLetzterSchritt: null, zweiFaktorFehler: null, zweiFaktorFehlerSeit: null, zweiFaktorEinrichtungSeit: null } as never,
       overrideAccess: true,
       context: { zweiFaktorIntern: true },
       req,
     })
   }
   return doc
+}
+
+/**
+ * /api/users/me: Ohne bestätigten Code die herabgestuften Rollen zeigen (nicht die echten) –
+ * wer nur das Passwort kennt, soll nicht erfahren, welche Rechte das Konto hätte (Audit I-01).
+ */
+export const meHerabgestuft = ({ req, response }: { req: PayloadRequest; response: unknown }) => {
+  const u = req.user as ZfUser | null
+  const r = response as { user?: { roles?: string[]; zusatzrechte?: unknown } } | null
+  if (u?._zweiFaktorOffen && r?.user) {
+    r.user.roles = []
+    r.user.zusatzrechte = {}
+  }
+  return response
 }

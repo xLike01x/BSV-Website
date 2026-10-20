@@ -1,3 +1,4 @@
+import { timingSafeEqual } from 'crypto'
 import type { PayloadRequest } from 'payload'
 import { hasRole } from '@/access/roles'
 import { getPayload } from 'payload'
@@ -22,7 +23,10 @@ export async function GET(req: NextRequest): Promise<Response> {
   const path = searchParams.get('path')
   const previewSecret = searchParams.get('previewSecret')
 
-  if (previewSecret !== process.env.PREVIEW_SECRET) {
+  // Zeitkonstanter Vergleich; ohne gesetztes PREVIEW_SECRET nie freigeben
+  const soll = Buffer.from(process.env.PREVIEW_SECRET ?? '')
+  const ist = Buffer.from(previewSecret ?? '')
+  if (!soll.length || soll.length !== ist.length || !timingSafeEqual(soll, ist)) {
     return new Response('You are not allowed to preview this page', { status: 403 })
   }
 
@@ -33,7 +37,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   const safePath = getSafeRedirect({ fallbackTo: '', redirectTo: path })
 
   if (!safePath) {
-    return new Response('This endpoint can only be used for relative previews', { status: 500 })
+    return new Response('This endpoint can only be used for relative previews', { status: 400 })
   }
 
   let user

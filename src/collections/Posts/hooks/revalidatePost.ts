@@ -21,13 +21,17 @@ export const revalidatePost: CollectionAfterChangeHook<Post> = ({
       revalidateTag('posts-sitemap', 'max')
     }
 
-    // If the post was previously published, we need to revalidate the old path
-    if (previousDoc._status === 'published' && doc._status !== 'published') {
+    // War veröffentlicht und ist es nicht mehr – oder die Adresse (Slug) hat sich geändert: alte Seite und Listen neu aufbauen
+    const zurueckgezogen = previousDoc?._status === 'published' && doc._status !== 'published'
+    const umbenannt = previousDoc?._status === 'published' && previousDoc.slug && previousDoc.slug !== doc.slug
+    if (zurueckgezogen || umbenannt) {
       const oldPath = `/news/${previousDoc.slug}`
 
       payload.logger.info(`Revalidating old post at path: ${oldPath}`)
 
       revalidatePath(oldPath)
+      revalidatePath('/')
+      revalidatePath('/news')
       revalidateTag('posts-sitemap', 'max')
     }
   }

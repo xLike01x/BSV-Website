@@ -7,8 +7,8 @@
 #   2. Neuen Stand von GitHub holen
 #   3. Pakete installieren (genau die Versionen aus pnpm-lock.yaml)
 #   4. Konfiguration prüfen (pnpm live:pruefen)
-#   5. Neu bauen – in den gerade NICHT aktiven Build-Ordner (.next-a / .next-b), die Website läuft weiter
-#   6. Datenbank-Migrationen
+#   5. Datenbank-Migrationen (nur hinzufügende Änderungen – die laufende Website kommt damit weiter klar)
+#   6. Neu bauen – in den gerade NICHT aktiven Build-Ordner (.next-a / .next-b), die Website läuft weiter
 #   7. Umschalten + Neustart, dann Gesundheitsprüfung. Klappt die nicht: automatisch zurück auf den alten Build.
 set -euo pipefail
 
@@ -16,6 +16,7 @@ cd "$(dirname "$0")/.."
 ORDNER="$(pwd)"
 export NODE_ENV=production
 export NEXT_TELEMETRY_DISABLED=1
+export TZ=Europe/Berlin
 export NODE_OPTIONS=--no-deprecation
 
 if [ "$(id -un)" != "bsv" ]; then
@@ -40,6 +41,8 @@ schritt "1/7 Sicherung"
 pnpm -s sicherung:erstellen
 
 schritt "2/7 Neuen Stand holen"
+# Dateien, die der Build selbst anpasst (Next.js trägt seine Build-Ordner ein), vor dem Holen zurücksetzen
+git checkout -- tsconfig.json next-env.d.ts 2>/dev/null || true
 git fetch --quiet origin
 if [ "$(git rev-parse HEAD)" = "$(git rev-parse '@{u}')" ] && [ "${1:-}" != "--neu-bauen" ]; then
   echo "Schon aktuell – nichts zu tun. (Trotzdem neu bauen: ./deploy/update.sh --neu-bauen)"
@@ -54,12 +57,12 @@ pnpm install --frozen-lockfile --prod=false || { zurueck_code; exit 1; }
 schritt "4/7 Konfiguration prüfen"
 pnpm -s live:pruefen || { zurueck_code; exit 1; }
 
-schritt "5/7 Bauen (in $NEU, die Website läuft solange weiter)"
-rm -rf "$NEU"
-BSV_DIST_DIR="$NEU" pnpm -s build || { echo "Bauen fehlgeschlagen."; zurueck_code; exit 1; }
+schritt "5/7 Datenbank-Migrationen"
+pnpm -s payload migrate < /dev/null || { echo "Migration fehlgeschlagen – Website läuft mit altem Stand weiter. Sicherung siehe Schritt 1."; zurueck_code; exit 1; }
 
-schritt "6/7 Datenbank-Migrationen"
-pnpm -s payload migrate || { echo "Migration fehlgeschlagen – Website läuft mit altem Stand weiter. Sicherung siehe Schritt 1."; zurueck_code; exit 1; }
+schritt "6/7 Bauen (in $NEU, die Website läuft solange weiter)"
+rm -rf "$NEU"
+BSV_DIST_DIR="$NEU" pnpm -s build < /dev/null || { echo "Bauen fehlgeschlagen – die Website läuft mit dem alten Stand weiter."; zurueck_code; exit 1; }
 
 schritt "7/7 Umschalten und neu starten"
 echo "BSV_DIST_DIR=$NEU" > .build-env
