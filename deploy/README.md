@@ -77,10 +77,10 @@ ufw allow OpenSSH && ufw allow 80 && ufw allow 443 && ufw enable
 printf 'PasswordAuthentication no\nKbdInteractiveAuthentication no\nPermitRootLogin prohibit-password\n' > /etc/ssh/sshd_config.d/00-bsv.conf
 sshd -t && systemctl restart ssh
 
-# Node.js LTS + pnpm. Node.js 22 bekommt nur bis 30.04.2027 Sicherheits-Updates – für einen neuen Server
-# besser 24 (bis 04.2028): vorher einmal am PC mit Node.js 24 bauen und testen, dann hier setup_24.x.
+# Node.js 24 LTS + pnpm (Sicherheits-Updates bis 30.04.2028; Node.js 22 nur bis 30.04.2027).
+# GitHub prüft bei jedem Push mit Node.js 24: frische Datenbank, Migrationen, Build, Start (Workflow „Node.js 24“).
 # Die Verwaltung (Datensicherung → „Wartung“) zeigt, bis wann die installierte Version Updates bekommt.
-curl -fsSL https://deb.nodesource.com/setup_22.x | bash -
+curl -fsSL https://deb.nodesource.com/setup_24.x | bash -
 apt -y install nodejs
 corepack enable && corepack prepare pnpm@10 --activate
 

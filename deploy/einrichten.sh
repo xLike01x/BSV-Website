@@ -16,7 +16,8 @@ set -euo pipefail
 
 REPO="git@github.com:xLike01x/BSV-Website.git"
 ZIEL="/srv/bsv"
-NODE_MAJOR="${NODE_MAJOR:-22}"
+# Node.js 24 LTS (Sicherheits-Updates bis 04.2028); GitHub testet jeden Stand damit (Workflow „Node.js 24“)
+NODE_MAJOR="${NODE_MAJOR:-24}"
 # Öffentlicher Fingerabdruck von github.com (https://docs.github.com/de/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints)
 GITHUB_FP="SHA256:+DiY3wvvV6TuJJhbpZisF/zLDA0zPMSvHdkr4UvCOqU"
 PROBE="${BSV_PROBE:-}"
