@@ -360,7 +360,7 @@ export interface User {
      */
     verein?: boolean | null;
     /**
-     * Einstellungen · Aufbewahrungsfristen und automatisches Aufräumen.
+     * Einstellungen · Fristen ansehen und verlängern, Fälliges in den Papierkorb verschieben. Kürzer als der Standard nur Admins; nichts wird direkt gelöscht.
      */
     datenschutz?: boolean | null;
     /**
@@ -368,11 +368,11 @@ export interface User {
      */
     statistik?: boolean | null;
     /**
-     * Einstellungen · Endgültig löschen bleibt dem Web-Admin vorbehalten.
+     * Einstellungen · Nur der normale Papierkorb, ohne Bereiche mit persönlichen Daten; Bilder nur mit „Bilder“, Teams nur mit „Alle Teams“. Endgültig löschen bleibt dem Web-Admin.
      */
     papierkorb?: boolean | null;
     /**
-     * Einstellungen · Eigene Tipps in der Hilfe, Rückmeldungen aus „War das hilfreich?“.
+     * Einstellungen · Eigene Tipps in der Hilfe, Rückmeldungen aus „War das hilfreich?“ (ohne Namen).
      */
     hilfe?: boolean | null;
   };

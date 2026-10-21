@@ -76,11 +76,12 @@ export async function faellige(payload: Payload, rollen?: string[]): Promise<Fae
 }
 
 /** Fällige Einträge in den Papierkorb verschieben (Passanträge: direkt löschen; Hinweise: nie automatisch) */
-export async function aufraeumen(payload: Payload, nur?: string[]) {
+export async function aufraeumen(payload: Payload, nur?: string[], ohneHart = false) {
   const f = await fristen(payload)
   let gesamt = 0
   for (const r of regeln(f)) {
     if (r.hinweis || (nur && !nur.includes(r.slug))) continue
+    if (r.hart && ohneHart) continue
     if (r.hart) {
       const weg = await payload.delete({ collection: r.slug as CollectionSlug, where: r.where(vor(r.monate)), overrideAccess: true })
       gesamt += weg.docs.length
@@ -125,7 +126,8 @@ export const datenschutzEndpunkte: Endpoint[] = [
       if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user)) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
       // Kasse räumt nur Mitgliedsanträge auf
       const nur = rollen.includes('admin') || mitZusatzrecht(req.user) ? undefined : ['mitgliedsantraege']
-      return Response.json({ verschoben: await aufraeumen(req.payload, nur) })
+      // Zusatzrecht: nur in den Papierkorb (zurückholbar), nie direkt löschen
+      return Response.json({ verschoben: await aufraeumen(req.payload, nur, mitZusatzrecht(req.user)) })
     },
   },
 ]

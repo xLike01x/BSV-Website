@@ -107,7 +107,7 @@ export const HilfeFeedback: CollectionConfig = {
     { name: 'bereich', label: 'Bereich', type: 'text', required: true, maxLength: 60 },
     { name: 'hilfreich', label: 'Hilfreich', type: 'checkbox' },
     { name: 'kommentar', label: 'Kommentar', type: 'textarea', maxLength: 1000 },
-    { name: 'benutzer', label: 'Von', type: 'relationship', relationTo: 'users', admin: { readOnly: true } },
+    { name: 'benutzer', label: 'Von', type: 'relationship', relationTo: 'users', access: { read: ({ req }) => hasRole(req.user as never, 'admin') }, admin: { readOnly: true } },
   ],
   hooks: {
     beforeChange: [

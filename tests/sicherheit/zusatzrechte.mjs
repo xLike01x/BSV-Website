@@ -95,6 +95,13 @@ export default async function zusatzrechte(d) {
       const g = await api(c, 'GET', '/api/globals/datenschutz')
       pruefe('datenschutz: Fristen lesen', g.s === 200 && 'kontaktMonate' in (g.j ?? {}), g.j && Object.keys(g.j))
       pruefe('datenschutz: Fristen speichern', (await api(c, 'POST', '/api/globals/datenschutz', {})).s === 200)
+      const [ds] = await d.q('select kontakt_monate from datenschutz')
+      const kuerzer = await api(c, 'POST', '/api/globals/datenschutz', { kontaktMonate: 1 })
+      const [ds2] = await d.q('select kontakt_monate from datenschutz')
+      pruefe('datenschutz: Fristen nicht unter den Standard kürzen', kuerzer.s === 403 && ds2.kontakt_monate === ds.kontakt_monate, { s: kuerzer.s, v: ds2.kontakt_monate })
+      const laenger = await api(c, 'POST', '/api/globals/datenschutz', { kontaktMonate: (ds.kontakt_monate ?? 6) + 1 })
+      pruefe('datenschutz: Fristen verlängern', laenger.s === 200)
+      await d.q('update datenschutz set kontakt_monate = $1', [ds.kontakt_monate])
       pruefe('datenschutz: Auskunft (alle Daten einer Person) bleibt Admins vorbehalten', nicht(await api(c, 'GET', '/api/datenschutz/auskunft?email=kasse%40bsv.test')))
     })
 
@@ -108,6 +115,10 @@ export default async function zusatzrechte(d) {
     await mit(['hilfe'], async (c) => {
       pruefe('hilfe: Rückmeldungen lesen', (await api(c, 'GET', '/api/hilfe-feedback?limit=1')).s === 200)
       pruefe('hilfe: Hilfe-Texte speichern', (await api(c, 'POST', '/api/globals/hilfe', {})).s === 200)
+      const fb = await api(c, 'POST', '/api/hilfe-feedback', { bereich: 'zr-test', hilfreich: true })
+      const fbListe = await api(c, 'GET', '/api/hilfe-feedback?where[bereich][equals]=zr-test&depth=2')
+      pruefe('hilfe: Rückmeldungen ohne „Von“ (wer sie geschrieben hat, sieht nur der Admin)', fb.s === 201 && (fbListe.j?.docs ?? []).length > 0 && fbListe.j.docs.every((x) => !('benutzer' in x)), fbListe.j?.docs?.[0])
+      await d.q(`delete from hilfe_feedback where bereich = 'zr-test'`)
     })
 
     // Papierkorb: nur wiederherstellen, nur ohne persönliche Daten, nur der normale Papierkorb
@@ -132,6 +143,24 @@ export default async function zusatzrechte(d) {
       const w2 = await api(c, 'POST', '/api/papierkorb/aktion', { aktion: 'wiederherstellen', eintraege: [{ slug: 'posts', id: pid }] })
       const [n2] = await d.q('select endgueltig_am from posts where id = $1', [pid])
       pruefe('papierkorb: Einträge aus „Nur Web-Admin“ nicht wiederherstellen', w2.j?.ok === 0 && n2?.endgueltig_am !== null, w2.j)
+      if (bild) {
+        await d.q('update media set deleted_at = now() where id = $1', [bild.id])
+        const wb = await api(c, 'POST', '/api/papierkorb/aktion', { aktion: 'wiederherstellen', eintraege: [{ slug: 'media', id: bild.id }] })
+        await d.q('update media set deleted_at = null where id = $1', [bild.id])
+        pruefe('papierkorb: Bilder nur mit Zusatzrecht „medien“ zurückholen (Foto-Einwilligung)', nicht(wb), wb.s)
+      }
+      // Veröffentlichte News mit offenem Entwurf: bleibt nach dem Zurückholen online, mit dem veröffentlichten Text
+      const pub = await api(admin, 'POST', '/api/posts', { title: 'ZR-Test Veröffentlicht', _status: 'published', content: TEXT })
+      const pubId = pub.j?.doc?.id
+      if (pubId) neuePosts.push(pubId)
+      await api(admin, 'PATCH', `/api/posts/${pubId}?draft=true`, { title: 'ZR-Test ENTWURF', _status: 'draft' })
+      await d.q('update posts set deleted_at = now() where id = $1', [pubId])
+      await d.q(`delete from search where id in (select parent_id from search_rels where posts_id = $1)`, [pubId])
+      const wp = await api(c, 'POST', '/api/papierkorb/aktion', { aktion: 'wiederherstellen', eintraege: [{ slug: 'posts', id: pubId }] })
+      const oeffentlich = await api(null, 'GET', `/api/posts/${pubId}?depth=0`)
+      pruefe('papierkorb: veröffentlichte News bleibt nach dem Zurückholen online (ohne den Entwurf)', wp.j?.ok === 1 && oeffentlich.s === 200 && oeffentlich.j?.title === 'ZR-Test Veröffentlicht', { ok: wp.j, s: oeffentlich.s, t: oeffentlich.j?.title })
+      const [suche] = await d.q('select count(*)::int n from search_rels where posts_id = $1', [pubId])
+      pruefe('papierkorb: zurückgeholte News ist wieder in der Suche', suche.n === 1, suche)
     })
     if (antragId) await d.q('update mitgliedsantraege set deleted_at = null where id = $1', [antragId])
 
@@ -177,7 +206,10 @@ export default async function zusatzrechte(d) {
     })
   } finally {
     await setzen([])
-    if (neuePosts.length) await d.q(`delete from posts where id = any($1)`, [neuePosts])
+    if (neuePosts.length) {
+      await d.q(`delete from search where id in (select parent_id from search_rels where posts_id = any($1))`, [neuePosts]).catch(() => {})
+      await d.q(`delete from posts where id = any($1)`, [neuePosts])
+    }
     await d.q(`delete from mitgliedsantraege where email = 'sicherheitstest-zr@bsv.test'`)
     await d.q(`delete from pages where slug = 'zr-test-seite'`)
   }

@@ -1,8 +1,33 @@
-import type { GlobalConfig } from 'payload'
+import type { Field, GlobalConfig, GlobalBeforeChangeHook } from 'payload'
+import { APIError } from 'payload'
 
 import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { darf, rechteLaden } from '@/access/rollenRechte'
+
+/** Nur über das Zusatzrecht hier (nicht Admin, nicht Kasse mit eingeschaltetem Schalter)? */
+const nurZusatzrecht = (user: unknown) => !hasRole(user as never, 'admin') && !darf(user, 'kasse', 'datenschutz') && hatRecht(user, 'datenschutz')
+
+/** Alle Zahlenfelder mit Standardwert (Fristen) – auch in Zeilen */
+const fristFelder = (felder: Field[]): { name: string; standard: number }[] =>
+  felder.flatMap((f) =>
+    'fields' in f && !('name' in f) ? fristFelder(f.fields) : f.type === 'number' && 'name' in f && typeof f.defaultValue === 'number' ? [{ name: f.name, standard: f.defaultValue }] : [],
+  )
+
+/**
+ * Mit dem Zusatzrecht „datenschutz“ dürfen Fristen verlängert, aber nicht unter den Standardwert gekürzt werden –
+ * sonst ließen sich darüber Daten aus Bereichen löschen, die die Person gar nicht sehen darf. Kürzer: nur Admins.
+ */
+const nichtUnterStandard: GlobalBeforeChangeHook = async ({ data, originalDoc, req }) => {
+  await rechteLaden(req.payload)
+  if (!nurZusatzrecht(req.user)) return data
+  const vorher = (originalDoc ?? {}) as Record<string, unknown>
+  for (const { name, standard } of fristFelder(Datenschutz.fields)) {
+    const v = (data as Record<string, unknown>)[name]
+    if (typeof v === 'number' && v < standard && v !== vorher[name]) throw new APIError(`Kürzer als der Standard (${standard}) darf nur ein Admin einstellen.`, 403)
+  }
+  return data
+}
 
 /** Datenschutz-Fristen: Wie lange bleiben persönliche Daten gespeichert? */
 export const Datenschutz: GlobalConfig = {
@@ -12,6 +37,7 @@ export const Datenschutz: GlobalConfig = {
     read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse') || hatRecht(req.user, 'datenschutz'),
     update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'kasse', 'datenschutz') || hatRecht(req.user, 'datenschutz')),
   },
+  hooks: { beforeChange: [nichtUnterStandard] },
   admin: {
     group: 'Einstellungen',
     hidden: ({ user }) => !(hasRole(user as never, 'admin') || darf(user, 'kasse', 'datenschutz') || hatRecht(user, 'datenschutz')),

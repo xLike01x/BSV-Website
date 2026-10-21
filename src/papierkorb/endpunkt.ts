@@ -1,10 +1,13 @@
+import { sql } from '@payloadcms/db-postgres'
+import { revalidatePath, revalidateTag } from 'next/cache'
 import type { CollectionSlug, Endpoint, PayloadRequest } from 'payload'
 
 import { PAPIERKORB, PAPIERKORB_TAGE } from '@/utilities/papierkorb'
 
 import { hatRecht } from '@/access/einzelrechte'
+import { beforeSyncWithSearch } from '@/search/beforeSync'
 
-import { istWebAdminReq, PERSONEN_BEREICHE } from './plugin'
+import { ausfuehren, istWebAdminReq, PERSONEN_BEREICHE, tabelle } from './plugin'
 
 const BEREICHE = [...PAPIERKORB, 'forms', 'form-submissions']
 
@@ -14,6 +17,42 @@ const BEREICHE = [...PAPIERKORB, 'forms', 'form-submissions']
  */
 const NUR_WIEDERHERSTELLEN = BEREICHE.filter((b) => !PERSONEN_BEREICHE.includes(b))
 const mitZusatzrecht = (req: PayloadRequest) => !istWebAdminReq(req) && hatRecht(req.user, 'papierkorb')
+/**
+ * Bilder (z. B. nach Widerruf einer Foto-Einwilligung gelöscht) und Teams (bringen ihre Verantwortlichen und deren Rechte
+ * zurück) nur, wer den Bereich auch selbst bearbeiten darf.
+ */
+const BEREICH_NOETIG: Record<string, 'medien' | 'teams'> = { media: 'medien', alben: 'medien', angebote: 'teams' }
+const zusatzBereiche = (req: PayloadRequest) => NUR_WIEDERHERSTELLEN.filter((b) => !BEREICH_NOETIG[b] || hatRecht(req.user, BEREICH_NOETIG[b]!))
+
+/**
+ * Wiederherstellen ohne Speichern über Payload: Bei News und Seiten würde Payload sonst einen offenen Entwurf in den
+ * Hauptdatensatz schreiben und eine veröffentlichte Seite offline nehmen. Deshalb nur die Papierkorb-Spalten leeren
+ * (Eintrag und seine Versionen) und die Website neu aufbauen.
+ */
+async function zurueckholen(req: PayloadRequest, slug: string, id: number) {
+  const t = tabelle(slug)
+  const r = await ausfuehren(req, sql`update ${sql.identifier(t)} set deleted_at = null, endgueltig_am = null, endgueltig_von = null where id = ${id}`)
+  if (!r.rowCount) throw new Error('nicht gefunden')
+  if (req.payload.collections[slug as CollectionSlug]?.config.versions) {
+    await ausfuehren(req, sql`update ${sql.identifier(`_${t}_v`)} set version_deleted_at = null, version_endgueltig_am = null where parent_id = ${id}`)
+  }
+  // Beim Löschen hat die Suche den Eintrag entfernt – veröffentlichte News wieder aufnehmen
+  if (slug === 'posts') {
+    const d = (await req.payload.findByID({ collection: 'posts', id, depth: 0, draft: false, overrideAccess: true, req }).catch(() => null)) as { title?: string; _status?: string } | null
+    const schon = await req.payload.count({ collection: 'search', where: { 'doc.value': { equals: id } }, overrideAccess: true, req }).catch(() => ({ totalDocs: 1 }))
+    if (d?._status === 'published' && !schon.totalDocs) {
+      const daten = await beforeSyncWithSearch({ req, originalDoc: d, searchDoc: { title: d.title ?? '', doc: { relationTo: 'posts', value: id } } } as never)
+      await req.payload.create({ collection: 'search', data: daten as never, overrideAccess: true, req }).catch((e) => req.payload.logger.warn({ err: e }, 'Suche: wiederhergestellte News nicht aufgenommen'))
+    }
+  }
+  try {
+    revalidatePath('/', 'layout')
+    revalidateTag('pages-sitemap', 'max')
+    revalidateTag('posts-sitemap', 'max')
+  } catch {
+    // außerhalb von Next.js nichts neu aufzubauen
+  }
+}
 
 export type PapierkorbEintrag = {
   slug: string
@@ -36,7 +75,7 @@ async function liste(req: PayloadRequest, nurNormal: boolean): Promise<Papierkor
   const s = (await req.payload.findGlobal({ slug: 'sicherheit' as never, depth: 0, overrideAccess: true }).catch(() => null)) as { papierkorbTage?: number | null } | null
   const tage = s?.papierkorbTage ?? 365
   const alle: PapierkorbEintrag[] = []
-  for (const slug of nurNormal ? NUR_WIEDERHERSTELLEN : BEREICHE) {
+  for (const slug of nurNormal ? zusatzBereiche(req) : BEREICHE) {
     const col = req.payload.collections[slug as CollectionSlug]
     if (!col) continue
     const titelFeld = col.config.admin?.useAsTitle || (col.config.upload ? 'filename' : 'id')
@@ -85,7 +124,7 @@ export const papierkorbEndpunkte: Endpoint[] = [
       const body = (await req.json?.().catch(() => ({}))) as { aktion?: string; eintraege?: { slug?: string; id?: number }[] }
       const eintraege = (body.eintraege ?? []).filter((e) => e.slug && BEREICHE.includes(e.slug) && Number(e.id) > 0).slice(0, 500)
       if (!eintraege.length || !['wiederherstellen', 'loeschen'].includes(body.aktion ?? '')) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 400 })
-      if (zusatz && (body.aktion !== 'wiederherstellen' || eintraege.some((e) => !NUR_WIEDERHERSTELLEN.includes(e.slug!)))) return Response.json({ fehler: 'Endgültig löschen und Bereiche mit persönlichen Daten nur für Web-Admins.' }, { status: 403 })
+      if (zusatz && (body.aktion !== 'wiederherstellen' || eintraege.some((e) => !zusatzBereiche(req).includes(e.slug!)))) return Response.json({ fehler: 'Endgültig löschen, Bereiche mit persönlichen Daten, Bilder und Teams nur für Web-Admins (bzw. mit dem passenden Zusatzrecht).' }, { status: 403 })
       let ok = 0
       const fehler: string[] = []
       for (const e of eintraege) {
@@ -96,9 +135,7 @@ export const papierkorbEndpunkte: Endpoint[] = [
               const d = (await req.payload.findByID({ collection: e.slug as CollectionSlug, id: Number(e.id), trash: true, depth: 0, overrideAccess: true, req }).catch(() => null)) as { deletedAt?: string | null; endgueltigAm?: string | null } | null
               if (!d?.deletedAt || d.endgueltigAm) throw new Error('nicht im Papierkorb')
             }
-            // Mit Zusatzrecht ohne Bezug zur Person speichern: Die Prüfungen „nur eigene Teams“ der Bereiche gelten
-            // fürs Bearbeiten, nicht fürs Zurückholen eines unveränderten Eintrags
-            await req.payload.update({ collection: e.slug as CollectionSlug, id: Number(e.id), data: { deletedAt: null, endgueltigAm: null, endgueltigVon: null } as never, trash: true, overrideAccess: true, ...(zusatz ? {} : { req }) })
+            await zurueckholen(req, e.slug!, Number(e.id))
           } else {
             // Web-Admin: wirklich löschen (der Umleitungs-Hook greift für Web-Admins nicht)
             await req.payload.delete({ collection: e.slug as CollectionSlug, where: { id: { equals: Number(e.id) } }, trash: true, overrideAccess: true, req })
