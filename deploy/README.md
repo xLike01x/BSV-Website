@@ -17,6 +17,39 @@ Besucher ──HTTPS──▶ Caddy (Port 443, Zertifikat automatisch) ──▶
 
 ---
 
+## 0. Schnellweg: alles mit einem Befehl (empfohlen)
+
+`deploy/einrichten.sh` erledigt die Abschnitte 1, 2 und (optional) 3 automatisch. Es stellt am Anfang ein paar Fragen
+(Adresse, `ENCRYPTION_KEY`, optional E-Mail-Versand und Sicherungsdatei) und richtet dann alles ein. Mehrfaches Starten
+schadet nicht, eine vorhandene `.env` wird nie überschrieben.
+
+1. **Server bestellen:** Ubuntu 24.04 LTS. Bei der Bestellung, wenn möglich, gleich einen **SSH-Schlüssel** hinterlegen
+   (am PC in PowerShell: `ssh-keygen -t ed25519`, dann den Inhalt von `C:\Users\<du>\.ssh\id_ed25519.pub` einfügen).
+   Danach steht die **IP-Adresse** des Servers in der Bestellbestätigung bzw. im Kundenbereich.
+2. **Skript (und optional die Sicherung) auf den Server kopieren**, am PC in PowerShell:
+   ```powershell
+   scp F:\BSV-Website\app\deploy\einrichten.sh root@<IP-Adresse>:/root/
+   scp F:\BSV-Website\app\backups\bsv-sicherung_<datum>.tar.gz.enc root@<IP-Adresse>:/root/    # optional
+   ```
+3. **Anmelden und starten:**
+   ```powershell
+   ssh root@<IP-Adresse>
+   bash einrichten.sh          # erst nur ausprobieren: BSV_PROBE=1 bash einrichten.sh
+   ```
+   Unterwegs zeigt das Skript einen Schlüssel an, der einmal bei GitHub eingetragen wird
+   (Repository → Settings → Deploy keys → „Add deploy key“, **ohne** Schreibrecht). Dann Enter drücken.
+4. **Am Ende** zeigt es das Datenbank-Passwort (in den Passwortmanager) und die nächsten Schritte: A-Eintrag bei
+   SiteGround setzen (MX bleibt!), dann `https://<Adresse>/api/gesund` prüfen.
+
+**Generalprobe:** Beim ersten Mal als Adresse z. B. `test.buedericher-spielverein.de` angeben und bei SiteGround nur für
+`test` einen A-Eintrag auf den Server setzen. Die alte Website bleibt dabei völlig unberührt. Passt alles, für den echten
+Betrieb `NEXT_PUBLIC_SERVER_URL` in `/srv/bsv/.env` auf `https://www.buedericher-spielverein.de` ändern, das Skript noch
+einmal starten (Adresse `www.buedericher-spielverein.de`), dann den A-Eintrag für `www` und die Domain ohne `www` umstellen.
+
+Zurück zur alten Website: den A-Eintrag bei SiteGround einfach wieder auf die alte Adresse stellen.
+
+Die folgenden Abschnitte beschreiben dieselben Schritte von Hand – zum Nachlesen oder falls etwas schiefgeht.
+
 ## 1. Server vorbereiten (einmalig, ca. 30 Minuten)
 
 Empfehlung: Ubuntu 24.04 LTS, 2 CPU, 4 GB RAM, 40 GB SSD.

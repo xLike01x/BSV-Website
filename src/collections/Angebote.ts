@@ -4,7 +4,8 @@ import { reihenfolgeEndpunkt } from '@/Menue/reihenfolgeEndpunkt'
 import { medienPruefen } from '@/hooks/medienPruefen'
 import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
-import type { CollectionConfig } from 'payload'
+import { bestaetigenEndpunkt, bestaetigenLinkEndpunkt } from '@/sport/bestaetigung'
+import type { CollectionBeforeChangeHook, CollectionConfig, FieldAccess } from 'payload'
 import { slugField } from 'payload'
 
 import { anyone } from '../access/anyone'
@@ -25,6 +26,21 @@ export const fupaId = (wert: unknown) => {
   return treffer ? treffer[1] : v
 }
 
+type Zeit = { tag?: string | null; von?: string | null; bis?: string | null; ort?: string | null; hinweis?: string | null }
+const zeitenSchluessel = (z: unknown) => JSON.stringify(((Array.isArray(z) ? z : []) as Zeit[]).map((x) => [x?.tag ?? '', x?.von ?? '', x?.bis ?? '', x?.ort ?? '', x?.hinweis ?? '']))
+
+/** Wer die Trainingszeiten ändert, bestätigt damit auch, dass sie aktuell sind („Passt noch?“ entfällt dann) */
+const zeitenBestaetigen: CollectionBeforeChangeHook = ({ data, originalDoc, operation, req }) => {
+  if (operation === 'create' || ('zeiten' in (data ?? {}) && zeitenSchluessel(data.zeiten) !== zeitenSchluessel(originalDoc?.zeiten))) {
+    const u = req.user as { name?: string | null; email?: string } | null
+    data.bestaetigtAm = new Date().toISOString()
+    data.bestaetigtVon = (u?.name || u?.email || 'automatisch').slice(0, 120)
+  }
+  return data
+}
+const nurAngemeldet: FieldAccess = ({ req }) => Boolean(req.user)
+const niemand: FieldAccess = () => false
+
 export const Angebote: CollectionConfig<'angebote'> = {
   slug: 'angebote',
   labels: { singular: 'Angebot', plural: 'Teams & Kurse' },
@@ -44,9 +60,9 @@ export const Angebote: CollectionConfig<'angebote'> = {
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],
   },
-  endpoints: [teilnehmendeEndpunkt, reihenfolgeEndpunkt],
+  endpoints: [teilnehmendeEndpunkt, reihenfolgeEndpunkt, bestaetigenEndpunkt, bestaetigenLinkEndpunkt],
   hooks: {
-    beforeChange: [medienPruefen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
+    beforeChange: [medienPruefen, zeitenBestaetigen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
   fields: [
     { name: 'title', label: 'Name', type: 'text', required: true, admin: { description: 'So heißt das Team oder der Kurs überall auf der Website.' } },
     {
@@ -213,6 +229,16 @@ export const Angebote: CollectionConfig<'angebote'> = {
       ],
     },
     hinweisFeld('AngebotHinweise'),
+    // „Passt noch?“: Stand der Angaben (gesetzt beim Ändern der Zeiten, per Knopf oder per Link aus der Erinnerungs-Mail)
+    {
+      name: 'bestaetigtAm',
+      label: 'Zuletzt bestätigt',
+      type: 'date',
+      access: { create: niemand, update: niemand },
+      admin: { position: 'sidebar', components: { Field: '@/components/Admin/TeamBestaetigt' } },
+    },
+    { name: 'bestaetigtVon', type: 'text', access: { read: nurAngemeldet, create: niemand, update: niemand }, admin: { hidden: true } },
+    { name: 'erinnertAm', type: 'date', access: { read: nurAngemeldet, create: niemand, update: niemand }, admin: { hidden: true } },
     { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.' } },
     { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, access: { create: isEditorField, update: isEditorField }, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
     mitEindeutigemSlug(slugField({ position: 'sidebar' }), 'angebote'),

@@ -189,7 +189,7 @@ export const Users: CollectionConfig = {
       admin: {
         position: 'sidebar',
         condition: (d) => (d?.roles ?? []).some((r: string) => r !== 'mitglied'),
-        description: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams und (Kasse) bei neuem Mitgliedsantrag. Haken entfernen = keine Mails.',
+        description: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams, alle 3 Monate „Passt noch?“ für deine Teams, (Kasse) bei neuem Mitgliedsantrag und (Admins) der Monatsbericht. Haken entfernen = keine Mails.',
       },
     },
     ...zweiFaktorFelder,

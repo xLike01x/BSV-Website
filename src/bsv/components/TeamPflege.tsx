@@ -13,6 +13,8 @@ export type PflegeTeam = {
   bannerText: string | null
   bannerBis: string | null
   bannerArt: string | null
+  /** „Passt noch?“: wann die Angaben zuletzt bestätigt wurden */
+  bestaetigtAm: string | null
   ausfaelle: { id: number; datum: string; grund: string | null }[]
 }
 
@@ -56,6 +58,8 @@ export function TeamPflege({ team, darfAusfall }: { team: PflegeTeam; darfAusfal
   const [bannerArt, setBannerArt] = useState(team.bannerArt ?? 'info')
   const [laeuft, setLaeuft] = useState(false)
   const [meldung, setMeldung] = useState<{ ok: boolean; text: string } | null>(null)
+  const [bestaetigt, setBestaetigt] = useState(team.bestaetigtAm)
+  const standAlt = !bestaetigt || Date.now() - new Date(bestaetigt).getTime() > 90 * 86400000
 
   async function senden(url: string, method: string, body?: unknown) {
     setLaeuft(true)
@@ -83,6 +87,17 @@ export function TeamPflege({ team, darfAusfall }: { team: PflegeTeam; darfAusfal
     }
   }
 
+  async function passtNoch() {
+    setLaeuft(true)
+    setMeldung(null)
+    const res = await fetch(`/api/angebote/${team.id}/bestaetigen`, { method: 'POST', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: '{}' }).catch(() => null)
+    setLaeuft(false)
+    const d = (await res?.json().catch(() => null)) as { am?: string; fehler?: string } | null
+    if (!res?.ok || !d?.am) return setMeldung({ ok: false, text: d?.fehler ?? 'Das hat nicht geklappt. Bitte erneut versuchen.' })
+    setBestaetigt(d.am)
+    setMeldung({ ok: true, text: '✓ Danke! Auf der Teamseite steht jetzt der aktuelle Stand.' })
+  }
+
   async function bannerSpeichern(loeschen = false) {
     const daten = loeschen ? { bannerText: '', bannerBis: null } : { bannerText, bannerBis: bannerBis ? `${bannerBis}T12:00:00.000Z` : null, bannerArt }
     if (await senden(`/api/angebote/${team.id}`, 'PATCH', daten)) {
@@ -96,6 +111,10 @@ export function TeamPflege({ team, darfAusfall }: { team: PflegeTeam; darfAusfal
     <div className="info" style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
       <strong style={{ fontSize: 20 }}>{team.title}</strong>
       <span className="muted">{team.zeit}</span>
+      <span style={{ fontSize: 13, color: standAlt ? '#b54708' : 'var(--bsv-muted)' }}>
+        {bestaetigt ? `Angaben bestätigt: ${new Date(bestaetigt).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Europe/Berlin' })}` : 'Angaben noch nie bestätigt'}
+        {standAlt ? ' – stimmen Zeiten und Infos noch?' : ''}
+      </span>
       {team.bannerText && <span style={{ fontSize: 14, color: '#1e3a8a' }}>ℹ️ Hinweis aktiv: „{team.bannerText}“</span>}
       {team.ausfaelle.length > 0 && (
         <ul style={{ listStyle: 'none', margin: '4px 0 0', padding: 0, display: 'grid', gap: 4, fontSize: 14 }}>
@@ -117,6 +136,9 @@ export function TeamPflege({ team, darfAusfall }: { team: PflegeTeam; darfAusfal
         )}
         <button type="button" className="btn btn-ghost" style={{ minHeight: 40, padding: '0 16px', fontSize: 15 }} onClick={() => setOffen(offen === 'banner' ? '' : 'banner')}>
           Hinweis setzen
+        </button>
+        <button type="button" className="btn btn-ghost" style={{ minHeight: 40, padding: '0 16px', fontSize: 15 }} disabled={laeuft} onClick={passtNoch} title="Zeiten und Infos auf der Teamseite stimmen noch">
+          ✓ Passt noch
         </button>
       </div>
 

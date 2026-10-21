@@ -67,6 +67,12 @@ export default async function AngebotSeite({ params }: Args) {
   const bereichHref = istFussball ? '/fussball' : '/breitensport'
   const gruppe = istFussball ? UNTERGRUPPE_LABEL[a.untergruppe ?? ''] : BEREICH_LABEL[a.bereich]
   const zeiten = a.zeiten ?? []
+  // „Stand“: wann die Angaben zuletzt bestätigt wurden (Zeiten geändert, Knopf in der Verwaltung oder „Passt noch?“-Mail)
+  const standIso = (a as { bestaetigtAm?: string | null }).bestaetigtAm ?? a.updatedAt
+  const stand = {
+    monat: new Date(standIso).toLocaleDateString('de-DE', { month: 'long', year: 'numeric', timeZone: 'Europe/Berlin' }),
+    alt: Date.now() - new Date(standIso).getTime() > 365 * 86400000,
+  }
   const leitung = a.team?.[0]
   const istKind = (a.alterVon ?? 18) < 14
   const passend = alle
@@ -183,6 +189,12 @@ export default async function AngebotSeite({ params }: Args) {
             </div>
           )}
         </div>
+        {zeiten.length > 0 && (
+          <p className="muted" style={{ margin: '14px 0 0', fontSize: 14 }}>
+            Stand der Trainingszeiten: {stand.monat}
+            {stand.alt ? ' – bitte vor dem ersten Besuch kurz beim Team nachfragen, ob sie noch stimmen.' : ''}
+          </p>
+        )}
       </section>
 
       {(a.beschreibung || (a.team?.length ?? 0) > 1) && (

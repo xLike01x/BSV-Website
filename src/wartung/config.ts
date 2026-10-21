@@ -85,5 +85,6 @@ export const Wartung: GlobalConfig = {
     { name: 'saisonGeprueft', type: 'json' },
     { name: 'saisonwechselAm', type: 'date' },
     { name: 'saisonwechselVon', type: 'text' },
+    { name: 'monatsberichtAm', type: 'date', access: { read: nurWebAdmin } },
   ],
 }

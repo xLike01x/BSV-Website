@@ -201,11 +201,13 @@ export const HILFE: Record<string, HilfeText> = {
       'Unter „Verantwortliche“ die Benutzerkonten auswählen, die dieses Team pflegen dürfen (Admin und Redaktion; Admins auch beim Benutzer unter „Team-Berechtigungen“).',
       'Kurzer Hinweis oben auf der Teamseite (z. B. „Heute in Halle 2“): „Hinweis-Banner auf der Teamseite“.',
       'Mit „Aktiv (öffentlich sichtbar)“ blendest du ein Angebot ein oder aus (Admin und Redaktion).',
+      'Rechts „Angaben zuletzt bestätigt“: Stimmt alles noch, auf „✓ Alles noch aktuell“ klicken.',
     ],
     wirkung: [
       'Jedes aktive Angebot hat eine eigene Seite und erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.',
       'Ein neues Team taucht also überall auf, ohne dass ihr woanders etwas ändern müsst.',
       'Verantwortliche können danach News, Bilder und Ausfälle für dieses Team pflegen.',
+      'Auf der Teamseite steht „Stand der Trainingszeiten: Monat Jahr“ (nach über einem Jahr mit der Bitte, vorher nachzufragen). Hat 3 Monate niemand bestätigt, bekommen die Verantwortlichen eine „Passt noch?“-Mail. Wer die Trainingszeiten ändert, bestätigt automatisch.',
     ],
     tipps: [
       '„Reihenfolge“: Kleinere Zahlen stehen weiter vorne.',

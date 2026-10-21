@@ -349,7 +349,7 @@ export interface User {
   bestaetigungBis?: string | null;
   googleId?: string | null;
   /**
-   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams und (Kasse) bei neuem Mitgliedsantrag. Haken entfernen = keine Mails.
+   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams, alle 3 Monate „Passt noch?“ für deine Teams, (Kasse) bei neuem Mitgliedsantrag und (Admins) der Monatsbericht. Haken entfernen = keine Mails.
    */
   mailBenachrichtigung?: boolean | null;
   /**
@@ -509,6 +509,9 @@ export interface Angebote {
    */
   fupaWidgetId?: string | null;
   fussballDeTeamId?: string | null;
+  bestaetigtAm?: string | null;
+  bestaetigtVon?: string | null;
+  erinnertAm?: string | null;
   /**
    * Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.
    */
@@ -2617,6 +2620,9 @@ export interface AngeboteSelect<T extends boolean = true> {
   spielklasse?: T;
   fupaWidgetId?: T;
   fussballDeTeamId?: T;
+  bestaetigtAm?: T;
+  bestaetigtVon?: T;
+  erinnertAm?: T;
   reihenfolge?: T;
   aktiv?: T;
   generateSlug?: T;
@@ -3927,6 +3933,7 @@ export interface Wartung {
     | null;
   saisonwechselAm?: string | null;
   saisonwechselVon?: string | null;
+  monatsberichtAm?: string | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4505,6 +4512,7 @@ export interface WartungSelect<T extends boolean = true> {
   saisonGeprueft?: T;
   saisonwechselAm?: T;
   saisonwechselVon?: T;
+  monatsberichtAm?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

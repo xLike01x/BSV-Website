@@ -63,7 +63,7 @@ export async function codeStand(): Promise<string | null> {
 
 export const schluesselwechselOffen = () => Boolean(process.env.ENCRYPTION_KEY_ALT)
 
-export type WartungStand = { wiederherstellungGetestetAm?: string | null; wiederherstellungVon?: string | null; saisonwechselAm?: string | null; saisonwechselVon?: string | null }
+export type WartungStand = { wiederherstellungGetestetAm?: string | null; wiederherstellungVon?: string | null; saisonwechselAm?: string | null; saisonwechselVon?: string | null; monatsberichtAm?: string | null }
 export async function wartungLesen(payload: Payload): Promise<WartungStand> {
   return ((await payload.findGlobal({ slug: 'wartung' as never, depth: 0, overrideAccess: true }).catch(() => null)) ?? {}) as WartungStand
 }

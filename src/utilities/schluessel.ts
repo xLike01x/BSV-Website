@@ -10,7 +10,7 @@ import crypto from 'crypto'
  * ENCRYPTION_KEY_ALT. Er wird NUR zum Lesen und Prüfen alter Werte benutzt (IBAN, Sicherungen, Ausweis-QR,
  * Wiederherstellungscodes; nicht für den Bot-Schutz) – verschlüsselt und signiert wird immer mit ENCRYPTION_KEY.
  */
-export type Zweck = 'ausweis' | 'wiederherstellung' | 'botschutz' | 'sicherung'
+export type Zweck = 'ausweis' | 'wiederherstellung' | 'botschutz' | 'sicherung' | 'bestaetigung'
 
 export const basisSchluessel = (): string => {
   const k = process.env.ENCRYPTION_KEY

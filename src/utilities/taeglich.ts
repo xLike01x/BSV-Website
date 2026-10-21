@@ -6,6 +6,8 @@ import { datenschutzAutomatisch } from '@/datenschutz/aufraeumen'
 import { statistikAufraeumen } from '@/statistik/aufraeumen'
 import { sicherungErstellen, type Pool } from '@/sicherung/kern'
 import { restAufraeumen } from '@/sicherung/umschluesseln'
+import { erinnerungenVerschicken } from '@/sport/bestaetigung'
+import { monatsberichtVerschicken } from '@/wartung/monatsbericht'
 import { wartungsHinweise } from '@/wartung/pruefen'
 
 const g = globalThis as unknown as { __bsvTaeglich?: NodeJS.Timeout }
@@ -101,6 +103,9 @@ export function taeglicheAufgaben(payload: Payload) {
     } catch (e) {
       payload.logger.warn({ err: e }, 'Zwischendateien des Schlüsselwechsels konnten nicht entfernt werden')
     }
+    // „Passt noch?“-Mails an Trainer (alle 3 Monate je Team) und Monatsbericht an die Admins (einmal im Monat)
+    await erinnerungenVerschicken(payload).catch((e) => payload.logger.warn({ err: e }, '„Passt noch?“-Erinnerungen fehlgeschlagen'))
+    await monatsberichtVerschicken(payload).catch((e) => payload.logger.warn({ err: e }, 'Monatsbericht fehlgeschlagen'))
     // Wartungs-Warnungen (Speicherplatz, auslaufende Versionen, offener Schlüsselwechsel) auch ins Protokoll
     for (const h of await wartungsHinweise(payload).catch(() => [])) if (h.art === 'warn') payload.logger.warn(`Wartung: ${h.text}`)
   }

@@ -33,6 +33,7 @@ import { default as default_3128b959b5f53a177f9b2fbbb89048a9 } from '@/component
 import { SeitenHinweise as SeitenHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { default as default_55f1f0469e11c520ea3427c3563b2e35 } from '@/components/Admin/Teilnehmende'
 import { AngebotHinweise as AngebotHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { default as default_73561ae22e2449f2b86671885e73e844 } from '@/components/Admin/TeamBestaetigt'
 import { AusfallHinweise as AusfallHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { default as default_665fe946ecb1be762c865ff085739da0 } from '@/components/Admin/AktuellesPasswort'
 import { default as default_c34437ee2106d3efe090c1a94dd3f622 } from '@/components/Admin/WasDarf'
@@ -109,6 +110,7 @@ export const importMap = {
   "@/components/Admin/Hinweise#SeitenHinweise": SeitenHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/Teilnehmende#default": default_55f1f0469e11c520ea3427c3563b2e35,
   "@/components/Admin/Hinweise#AngebotHinweise": AngebotHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/TeamBestaetigt#default": default_73561ae22e2449f2b86671885e73e844,
   "@/components/Admin/Hinweise#AusfallHinweise": AusfallHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/AktuellesPasswort#default": default_665fe946ecb1be762c865ff085739da0,
   "@/components/Admin/WasDarf#default": default_c34437ee2106d3efe090c1a94dd3f622,

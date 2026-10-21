@@ -1,0 +1,49 @@
+.bsv-bestaetigt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px 14px;
+  margin-bottom: 18px;
+  border-radius: 12px;
+  background: #e8f6ee;
+
+  &.is-alt {
+    background: #fff4e5;
+  }
+
+  &__label {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: #6e6e73;
+  }
+
+  button {
+    align-self: flex-start;
+    border: 0;
+    background: #157a43;
+    color: #fff;
+    border-radius: 999px;
+    padding: 8px 14px;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+
+    &:disabled {
+      opacity: 0.7;
+      cursor: wait;
+    }
+  }
+
+  small {
+    color: #6e6e73;
+    font-size: 12px;
+    line-height: 1.45;
+  }
+
+  &__fehler {
+    color: #b42318 !important;
+  }
+}

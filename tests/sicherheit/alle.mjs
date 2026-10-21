@@ -4,6 +4,7 @@
  */
 import { db, ergebnis } from './lib.mjs'
 import anmeldung from './anmeldung.mjs'
+import bestaetigung from './bestaetigung.mjs'
 import datenschutz from './datenschutz.mjs'
 import formulare from './formulare.mjs'
 import papierkorb from './papierkorb.mjs'
@@ -13,7 +14,7 @@ import statistik from './statistik.mjs'
 import uploads from './uploads.mjs'
 import wartung from './wartung.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung }
 
 // Einzelne Bereiche: pnpm test:sicherheit -- posteingang
 const nur = process.argv.slice(2)

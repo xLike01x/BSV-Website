@@ -275,6 +275,17 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   ],
   angebote: [
     {
+      id: 'angaben-bestaetigen',
+      titel: '„Passt noch?“ – Angaben eines Teams bestätigen',
+      schritte: [
+        'Am schnellsten vom Handy: Website → Mitgliederbereich → bei deinem Team auf „✓ Passt noch“.',
+        'Oder in der Verwaltung das Team öffnen → rechts im Kasten „Angaben zuletzt bestätigt“ auf „✓ Alles noch aktuell“.',
+        'Oder in der „Passt noch?“-Mail beim Team auf „Prüfen und bestätigen“ und auf der Seite „✓ Ja, passt noch“ (ohne Anmeldung, der Link gilt 30 Tage).',
+        'Stimmt etwas nicht, einfach die Trainingszeiten ändern und speichern – das zählt automatisch als bestätigt.',
+        'Auf der Teamseite steht danach „Stand der Trainingszeiten: Monat Jahr“.',
+      ],
+    },
+    {
       id: 'team-zeiten',
       titel: 'Trainingszeiten ändern',
       video: '/hilfe/trainingszeiten.mp4',
@@ -806,6 +817,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Google-Vorschau (SEO)', text: 'Titel, Beschreibung und Bild, die Google und WhatsApp & Co. beim Teilen anzeigen. Wird automatisch aus Titel, Text und Titelbild erzeugt. Nur ändern, wenn du einen anderen Text möchtest.' },
   ],
   angebote: [
+    { name: 'Angaben zuletzt bestätigt', text: 'Wann jemand zuletzt bestätigt hat, dass Zeiten und Infos stimmen (Knopf „✓ Alles noch aktuell“, „Passt noch?“-Mail oder Trainingszeiten geändert). Steht als „Stand“ auf der Teamseite. Orange, wenn es über ein Jahr her ist.' },
     { name: 'Name', text: 'So heißt das Team oder der Kurs überall auf der Website.' },
     { name: 'Bereich', text: 'Fußball, BSV Kids oder Erwachsene & Senioren – bestimmt, in welchem Menü das Angebot erscheint.' },
     { name: 'Gruppe (Fußball)', text: 'Junioren, Juniorinnen, Senioren oder Seniorinnen – Spalte im Fußball-Menü.' },
@@ -885,7 +897,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy).' },
     { name: 'Teams & Kurse', text: 'In welchen Angeboten die Person selbst mitmacht (als Mitglied). Gibt keine Bearbeitungsrechte.' },
     { name: 'Freigegeben', text: 'Ohne Haken: selbst registriert und wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“. Nur Admins.' },
-    { name: 'E-Mail-Benachrichtigungen', text: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für die eigenen Teams und (Kasse) bei neuem Mitgliedsantrag. Haken entfernen = keine Mails.' },
+    { name: 'E-Mail-Benachrichtigungen', text: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für die eigenen Teams, alle 3 Monate „Passt noch?“ für die eigenen Teams, (Kasse) bei neuem Mitgliedsantrag und (Admins) einmal im Monat der Monatsbericht. Haken entfernen = keine Mails.' },
     { name: 'Team-Berechtigungen', text: 'Welche Teams die Person betreut. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart; ohne eine der beiden wird automatisch „Trainer“ gesetzt. „Trainer“ enthält alle Rechte der Team-Redaktion – beide anzukreuzen ist nicht nötig. Steht gleichzeitig beim Team unter „Verantwortliche“.' },
   ],
   menue: [
@@ -971,6 +983,16 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Was ist die „Passt noch?“-Mail?',
+    antwort: 'Hat 3 Monate lang niemand bestätigt, dass die Angaben eines Teams stimmen, bekommen die Verantwortlichen (Trainer, Team-Redaktion) eine kurze E-Mail – alle eigenen Teams in einer Mail, mit Trainingszeiten. Pro Team ein Knopf „Prüfen und bestätigen“: Er öffnet eine Seite, auf der „✓ Ja, passt noch“ genügt (ohne Anmeldung, 30 Tage gültig). Stimmt etwas nicht, ändert man die Zeiten in der Verwaltung – das zählt automatisch als bestätigt. Auf der Teamseite steht dann „Stand der Trainingszeiten: …“. Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    bereich: 'angebote',
+  },
+  {
+    frage: 'Was ist der Monatsbericht?',
+    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist, welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    bereich: 'dashboard',
+  },
+  {
     frage: 'Ein Trainer hört auf – was muss ich tun?',
     antwort: 'Team öffnen (am einfachsten über Sport → „Saisonwechsel“) → unter „Verantwortliche“ die Person entfernen → Speichern. Betreut sie kein anderes Team mehr: unter Mitglieder → „Benutzer“ bei der Person nur die Rolle „Mitglied“ lassen. Dann kommt sie nicht mehr in die Verwaltung; ihre News und Bilder bleiben.',
     bereich: 'saisonwechsel',
@@ -1017,7 +1039,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
-    antwort: 'Ja, als Trainer für deine Teams (Passanträge zusätzlich an die Rolle „Passwesen“) – sobald der E-Mail-Versand eingerichtet ist. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“ entfernen und speichern.',
+    antwort: 'Ja, als Trainer für deine Teams (Passanträge zusätzlich an die Rolle „Passwesen“) – sobald der E-Mail-Versand eingerichtet ist. Dazu alle 3 Monate die Frage „Passt noch?“ zu deinen Teams. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“ entfernen und speichern.',
   },
   {
     frage: 'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
@@ -1377,6 +1399,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Ich habe mein Handy verloren / eine neue Handy-Nummer.',
       'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
       'Ein Trainer hört auf – was muss ich tun?',
+      'Was ist der Monatsbericht?',
     ],
   },
   redaktion: {
@@ -1469,6 +1492,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       ['passantraege', 'passantrag-bearbeiten'],
       ['media', 'bild-hochladen'],
       ['angebote', 'team-zeiten'],
+      ['angebote', 'angaben-bestaetigen'],
     ],
     faq: [
       'Wie melde ich als Trainer schnell einen Ausfall – auch vom Handy?',
@@ -1476,6 +1500,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Darf ich Fotos von Kindern hochladen?',
       'Warum kann ich ein Team nicht bearbeiten?',
       'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
+      'Was ist die „Passt noch?“-Mail?',
     ],
   },
   teamredaktion: {
@@ -1490,6 +1515,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       ['alben', 'album-anlegen'],
       ['ausfaelle', 'ausfall-melden'],
       ['angebote', 'team-zeiten'],
+      ['angebote', 'angaben-bestaetigen'],
     ],
     faq: [
       'Wie bekommt meine Team-News einen Platz auf der Startseite?',
@@ -1497,6 +1523,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Wie setze ich einen kurzen Hinweis auf die Teamseite (z. B. „Heute in Halle 2“)?',
       'Was ist der Unterschied zwischen „Entwurf speichern“ und „Veröffentlichen“?',
       'Warum kann ich ein Team nicht bearbeiten?',
+      'Was ist die „Passt noch?“-Mail?',
     ],
   },
   mitglied: {

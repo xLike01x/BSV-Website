@@ -208,6 +208,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
                     bannerText: a.bannerText ?? null,
                     bannerBis: a.bannerBis ?? null,
                     bannerArt: a.bannerArt ?? null,
+                    bestaetigtAm: (a as { bestaetigtAm?: string | null }).bestaetigtAm ?? null,
                     ausfaelle: ausfaelle
                       .filter((x) => (typeof x.angebot === 'object' ? x.angebot?.id : x.angebot) === a.id)
                       .map((x) => ({ id: x.id, datum: x.datum, grund: x.grund ?? null })),

@@ -34,4 +34,5 @@ dokumente/
 # Live-Builds im Wechsel (deploy/update.sh)
 /.next-a/
 /.next-b/
+/.next-probe/
 /.build-env
