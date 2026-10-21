@@ -73,11 +73,18 @@ export default function PapierkorbClient({ webAdmin = true }: { webAdmin?: boole
     <div className="bsv-korb">
       <header className="bsv-korb__kopf">
         <h1>Papierkorb</h1>
-        <p>
-          Alles, was in der Verwaltung gelöscht wurde – aus allen Bereichen. <strong>Im Papierkorb</strong> liegt, was gerade gelöscht wurde (das sehen auch die anderen).{' '}
-          <strong>Nur Web-Admin</strong> ist, was jemand anderes endgültig gelöscht hat oder 30 Tage im Papierkorb lag – das siehst nur du. Wiederherstellen bringt den Eintrag mit Bildern
-          und Verknüpfungen an die alte Stelle zurück.
-        </p>
+        {webAdmin ? (
+          <p>
+            Alles, was in der Verwaltung gelöscht wurde – aus allen Bereichen. <strong>Im Papierkorb</strong> liegt, was gerade gelöscht wurde (das sehen auch die anderen).{' '}
+            <strong>Nur Web-Admin</strong> ist, was jemand anderes endgültig gelöscht hat oder 30 Tage im Papierkorb lag – das siehst nur du. Wiederherstellen bringt den Eintrag mit Bildern
+            und Verknüpfungen an die alte Stelle zurück.
+          </p>
+        ) : (
+          <p>
+            Was in den letzten 30 Tagen gelöscht wurde und sich zurückholen lässt – ohne Bereiche mit persönlichen Daten (Anträge, Anfragen, Mitgliedschaften). Bilder und Teams erscheinen nur
+            mit dem passenden Zusatzrecht. <strong>Wiederherstellen</strong> bringt den Eintrag an die alte Stelle zurück. Endgültig löschen kann nur ein Web-Admin.
+          </p>
+        )}
       </header>
 
       <div className="bsv-korb__filter">

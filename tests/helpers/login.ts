@@ -11,21 +11,14 @@ export interface LoginOptions {
 }
 
 /**
- * Logs the user into the admin panel via the login page.
+ * Meldet ein (lokales Test-)Konto über die Anmeldeseite der Website an und öffnet die Verwaltung.
+ * Testkonten brauchen lokal keine Zwei-Faktor-Anmeldung.
  */
-export async function login({
-  page,
-  serverURL = 'http://localhost:3000',
-  user,
-}: LoginOptions): Promise<void> {
-  await page.goto(`${serverURL}/admin/login`)
-
-  await page.fill('#field-email', user.email)
-  await page.fill('#field-password', user.password)
+export async function login({ page, serverURL = 'http://localhost:3000', user }: LoginOptions): Promise<void> {
+  await page.goto(`${serverURL}/login?weiter=/admin`)
+  await page.fill('input[name="email"]', user.email)
+  await page.fill('input[name="passwort"]', user.password)
   await page.click('button[type="submit"]')
-
-  await page.waitForURL(`${serverURL}/admin`)
-
-  const dashboardArtifact = page.locator('span[title="Dashboard"]')
-  await expect(dashboardArtifact).toBeVisible()
+  await page.waitForURL(`${serverURL}/admin`, { timeout: 120_000 })
+  await expect(page.locator('.bsv-dash__kopf')).toBeVisible({ timeout: 120_000 })
 }

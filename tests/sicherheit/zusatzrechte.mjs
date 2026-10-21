@@ -67,6 +67,7 @@ export default async function zusatzrechte(d) {
       const s = await api(c, 'POST', '/api/pages?draft=true', { title: 'ZR-Test Seite', slug: 'zr-test-seite', _status: 'draft' })
       pruefe('seiten: Seite anlegen', s.s === 201, s.j)
       if (s.j?.doc?.id) pruefe('seiten: Seite in den Papierkorb legen', (await api(c, 'PATCH', `/api/pages/${s.j.doc.id}?draft=true`, { deletedAt: new Date().toISOString() })).s === 200)
+      await d.q(`delete from _pages_v where parent_id in (select id from pages where slug = 'zr-test-seite')`)
       await d.q(`delete from pages where slug = 'zr-test-seite'`)
       pruefe('seiten: „Texte & Bilder“ speichern', (await api(c, 'POST', '/api/globals/texte', {})).s === 200)
       pruefe('seiten: keine News anlegen', nicht(await api(c, 'POST', '/api/posts', { title: 'ZR-Test', _status: 'draft' })))
@@ -208,9 +209,12 @@ export default async function zusatzrechte(d) {
     await setzen([])
     if (neuePosts.length) {
       await d.q(`delete from search where id in (select parent_id from search_rels where posts_id = any($1))`, [neuePosts]).catch(() => {})
+      // Versionen zuerst (sonst bleiben sie verwaist zurück und tauchen unter „Letzte Aktivitäten“ auf)
+      await d.q(`delete from _posts_v where parent_id = any($1)`, [neuePosts])
       await d.q(`delete from posts where id = any($1)`, [neuePosts])
     }
     await d.q(`delete from mitgliedsantraege where email = 'sicherheitstest-zr@bsv.test'`)
-    await d.q(`delete from pages where slug = 'zr-test-seite'`)
+    await d.q(`delete from _pages_v where parent_id in (select id from pages where slug = 'zr-test-seite')`)
+      await d.q(`delete from pages where slug = 'zr-test-seite'`)
   }
 }

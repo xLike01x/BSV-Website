@@ -1,17 +1,20 @@
-import { test, expect, Page } from '@playwright/test'
+import { test, expect } from '@playwright/test'
 
-test.describe('Frontend', () => {
-  let page: Page
+test.setTimeout(180_000)
 
-  test.beforeAll(async ({ browser }, testInfo) => {
-    const context = await browser.newContext()
-    page = await context.newPage()
+test.describe('Website', () => {
+  test('Startseite lädt', async ({ page }) => {
+    await page.goto('http://localhost:3000')
+    await expect(page).toHaveTitle(/Büdericher Spielverein/)
+    await expect(page.locator('h1').first()).toBeVisible()
   })
 
-  test('can load homepage', async ({ page }) => {
-    await page.goto('http://localhost:3000')
-    await expect(page).toHaveTitle(/Payload Website Template/)
-    const heading = page.locator('h1').first()
-    await expect(heading).toHaveText('Payload Website Template')
+  test('Registrierung zeigt die Passwortregeln beim Tippen', async ({ page }) => {
+    await page.goto('http://localhost:3000/registrieren')
+    await page.fill('input[name="name"]', 'Erika Musterfrau')
+    await page.fill('input[name="passwort"]', 'Musterfrau!2027')
+    await expect(page.getByText('Namen oder die E-Mail-Adresse')).toBeVisible()
+    await page.fill('input[name="passwort"]', 'Mein Hund frisst 3 Äpfel!')
+    await expect(page.getByText('Passwort: stark')).toBeVisible()
   })
 })
