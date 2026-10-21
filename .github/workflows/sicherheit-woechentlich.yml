@@ -20,6 +20,6 @@ jobs:
           version: 10
       - uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
       - name: Bekannte Sicherheitslücken in Live-Paketen (hoch und kritisch)
         run: pnpm audit --prod --audit-level high
