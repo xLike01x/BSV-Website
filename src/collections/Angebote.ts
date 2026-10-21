@@ -2,14 +2,15 @@ import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { teilnehmendeEndpunkt } from '@/components/Admin/Teilnehmende/endpunkt'
 import { reihenfolgeEndpunkt } from '@/Menue/reihenfolgeEndpunkt'
 import { medienPruefen } from '@/hooks/medienPruefen'
-import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
+import { medienAuswahl, nurEinzelrechte } from '@/access/roles'
+import { hatRecht } from '@/access/einzelrechte'
 import { hinweisFeld } from '@/fields/hinweise'
 import { bestaetigenEndpunkt, bestaetigenLinkEndpunkt } from '@/sport/bestaetigung'
 import type { CollectionBeforeChangeHook, CollectionConfig, FieldAccess } from 'payload'
 import { slugField } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { canEditAngebot, hasRole, isEditor, isEditorField } from '../access/roles'
+import { bereichFeld, bereichZugriff, canEditAngebot, hasRole, imBereich } from '../access/roles'
 import { slugFromTitle } from '../hooks/slugFromTitle'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
@@ -39,7 +40,9 @@ const zeitenBestaetigen: CollectionBeforeChangeHook = ({ data, originalDoc, oper
   return data
 }
 // Nur Verwaltungs-Rollen mit Team-Bezug – nicht wartende Registrierungen oder Sitzungen vor dem zweiten Faktor (ohne Rollen)
-const nurTeamVerwaltung: FieldAccess = ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'uebungsleitung', 'teamredaktion')
+const nurTeamVerwaltung: FieldAccess = ({ req }) => imBereich(req.user, 'teams') || hasRole(req.user as never, 'uebungsleitung', 'teamredaktion')
+// Was nur Admin/Redaktion (bzw. Zusatzrecht „teams“) festlegen: Bereich, Verantwortliche, aktiv
+const teamsFeld = bereichFeld('teams')
 const niemand: FieldAccess = () => false
 
 export const Angebote: CollectionConfig<'angebote'> = {
@@ -47,8 +50,8 @@ export const Angebote: CollectionConfig<'angebote'> = {
   labels: { singular: 'Angebot', plural: 'Teams & Kurse' },
   access: {
     read: anyone,
-    create: isEditor,
-    delete: isEditor,
+    create: bereichZugriff('teams'),
+    delete: bereichZugriff('teams'),
     update: canEditAngebot,
   },
   defaultPopulate: { title: true, slug: true, bereich: true, kategorie: true, alterText: true, bild: true },
@@ -56,7 +59,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Alle Teams und Kurse. Jedes aktive Angebot erscheint automatisch im Menü, im Angebotsfinder und im Mitgliedsantrag.',
     group: 'Sport',
-    hidden: ausblendenBeiNurEinzelrechten,
+    hidden: ({ user }) => nurEinzelrechte(user) && !hatRecht(user, 'teams'),
     useAsTitle: 'title',
     defaultColumns: ['title', 'bereich', 'kategorie', 'alterText'],
     listSearchableFields: ['title'],
@@ -74,7 +77,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
           label: 'Bereich',
           type: 'select',
           required: true,
-          access: { update: isEditorField },
+          access: { update: teamsFeld },
           options: [
             { label: 'Fußball', value: 'fussball' },
             { label: 'BSV Kids', value: 'kids' },
@@ -179,7 +182,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
       relationTo: 'users',
       hasMany: true,
       // Wer ein Team betreuen darf, entscheiden Admin/Redaktion – nicht die Trainer selbst
-      access: { create: isEditorField, update: isEditorField },
+      access: { create: teamsFeld, update: teamsFeld },
       admin: { description: 'Personen mit Rolle Trainer oder Team-Redaktion, die dieses Team/diesen Kurs pflegen dürfen: Zeiten, Ausfälle, Team-News und Bilder.' },
     },
     {
@@ -241,7 +244,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     { name: 'bestaetigtVon', type: 'text', access: { read: nurTeamVerwaltung, create: niemand, update: niemand }, admin: { hidden: true } },
     { name: 'erinnertAm', type: 'date', access: { read: nurTeamVerwaltung, create: niemand, update: niemand }, admin: { hidden: true } },
     { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.' } },
-    { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, access: { create: isEditorField, update: isEditorField }, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
+    { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, access: { create: teamsFeld, update: teamsFeld }, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
     mitEindeutigemSlug(slugField({ position: 'sidebar' }), 'angebote'),
   ],
 }

@@ -1,7 +1,7 @@
 import { sichereAdresse } from '@/fields/sichereAdresse'
 import type { ArrayField, Field, GlobalConfig } from 'payload'
 
-import { ausblendenAusser, isEditor } from '@/access/roles'
+import { ausblendenAusserBereich, bereichZugriff, imBereich } from '@/access/roles'
 import { revalidateAllesGlobal } from '@/hooks/revalidateAlles'
 
 import { STANDARD_FUSSZEILE, STANDARD_HAUPTMENUE, STANDARD_VEREIN_MEHR, STANDARD_VEREIN_UEBER_UNS } from './standard'
@@ -104,18 +104,18 @@ export const Menue: GlobalConfig = {
   label: 'Menü & Fußzeile',
   admin: {
     group: 'Website-Aufbau',
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserBereich('seiten'),
     description:
       'Alle Einträge oben im Menü und unten in der Fußzeile. Reihenfolge ändern: am Griff links ziehen. Entfernen: drei Punkte rechts → „Entfernen“.',
   },
-  access: { read: () => true, update: isEditor },
+  access: { read: () => true, update: bereichZugriff('seiten') },
   endpoints: [
     {
       // Eine Seite mit einem Klick in die Fußzeile („Entdecken“) oder ins Aufklappmenü „Verein“ eintragen
       path: '/ergaenzen',
       method: 'post',
       handler: async (req) => {
-        if (!(await isEditor({ req } as never))) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
+        if (!imBereich(req.user, 'seiten')) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
         const body = (await req.json?.().catch(() => ({}))) as { label?: string; adresse?: string; wo?: 'fusszeile' | 'vereinMehr' }
         if (!body.label || !body.adresse?.startsWith('/') || sichereAdresse(body.adresse) !== true) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
         const m = (await req.payload.findGlobal({ slug: 'menue', depth: 0, req })) as unknown as {

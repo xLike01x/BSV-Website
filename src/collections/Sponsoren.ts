@@ -3,19 +3,19 @@ import type { CollectionConfig } from 'payload'
 import { anyone } from '@/access/anyone'
 import { logoFreistellen } from '@/sponsoren/logo'
 import { sichereAdresse } from '@/fields/sichereAdresse'
-import { ausblendenAusser, isEditor } from '@/access/roles'
+import { ausblendenAusserBereich, bereichZugriff } from '@/access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '@/hooks/revalidateAlles'
 
 /** Sponsoren und Partner – erscheinen auf /sponsoren und (mit Logo) im Laufband der Startseite */
 export const Sponsoren: CollectionConfig = {
   slug: 'sponsoren',
   labels: { singular: 'Sponsor', plural: 'Sponsoren' },
-  access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
+  access: { read: anyone, create: bereichZugriff('sponsoren'), update: bereichZugriff('sponsoren'), delete: bereichZugriff('sponsoren') },
   admin: {
     group: 'Inhalte',
     useAsTitle: 'name',
     defaultColumns: ['name', 'stufe', 'aktiv', 'reihenfolge'],
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserBereich('sponsoren'),
     components: { beforeList: ['@/components/Admin/Einstieg', '@/components/Admin/Sponsoren'] },
     description: 'Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.',
   },

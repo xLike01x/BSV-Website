@@ -1,7 +1,7 @@
 import type { CollectionBeforeChangeHook } from 'payload'
 import { APIError } from 'payload'
 
-import { hasRole, medienSichtbar } from '@/access/roles'
+import { alleBilder, medienSichtbar } from '@/access/roles'
 import { medienImText, medienInDaten } from '@/collections/Media/autoZuordnen'
 
 /** Alle Bild-IDs eines Eintrags (Bildfelder + Bilder im Text) */
@@ -17,7 +17,7 @@ const bilderVon = (doc: unknown) => {
  */
 export const medienPruefen: CollectionBeforeChangeHook = async ({ req, data, originalDoc }) => {
   const user = req.user
-  if (!user || hasRole(user as never, 'admin', 'redaktion')) return data
+  if (!user || alleBilder(user)) return data
   const vorher = bilderVon(originalDoc)
   const neu = [...bilderVon({ ...(originalDoc ?? {}), ...data })].filter((id) => !vorher.has(id))
   if (!neu.length) return data

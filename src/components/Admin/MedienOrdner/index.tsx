@@ -1,7 +1,7 @@
 import type { Payload, TypedUser } from 'payload'
 import React from 'react'
 
-import { hasRole } from '@/access/roles'
+import { alleBilder, imBereich } from '@/access/roles'
 
 import MedienOrdnerClient, { type Ordner } from './Client'
 import './ordner.scss'
@@ -17,7 +17,9 @@ const idVon = (v: unknown): number | null => (v == null ? null : typeof v === 'o
 /** Über der Mediathek: Ordner je Team, „Verein allgemein“ und „Noch nicht zugeordnet“ */
 export default async function MedienOrdner({ payload, user }: { payload: Payload; user: TypedUser | null }) {
   if (!user) return null
-  const redaktion = hasRole(user as never, 'admin', 'redaktion')
+  // Alle Ordner sehen: Redaktion und Zusatzrechte mit Bildern; Bilder verschieben/zuordnen: nur Redaktion bzw. Zusatzrecht „medien“
+  const alle = alleBilder(user)
+  const redaktion = imBereich(user, 'medien')
 
   const [medien, angebote] = await Promise.all([
     payload.find({ collection: 'media', limit: 10000, depth: 0, pagination: false, select: { team: true, allgemein: true, sponsoren: true, personen: true }, overrideAccess: true }),
@@ -28,7 +30,7 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
       pagination: false,
       sort: 'title',
       select: { title: true, bereich: true, aktiv: true },
-      where: redaktion ? undefined : { leitung: { contains: user.id } },
+      where: alle ? undefined : { leitung: { contains: user.id } },
       overrideAccess: true,
     }),
   ])
@@ -56,7 +58,7 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
 
   const eigeneSumme = gruppen.reduce((s, g) => s + g.ordner.reduce((x, o) => x + o.anzahl, 0), 0)
   const oben: Ordner[] = [
-    { key: 'alle', titel: redaktion ? 'Alle Bilder' : 'Alle meine Bilder', anzahl: redaktion ? medien.docs.length : eigeneSumme + allgemein + sponsoren, query: '', symbol: '🗂️' },
+    { key: 'alle', titel: alle ? 'Alle Bilder' : 'Alle meine Bilder', anzahl: alle ? medien.docs.length : eigeneSumme + allgemein + sponsoren, query: '', symbol: '🗂️' },
     { key: 'allgemein', titel: 'Verein allgemein', anzahl: allgemein, query: 'where[and][0][allgemein][equals]=true&where[and][1][sponsoren][not_equals]=true&where[and][2][team][exists]=false', symbol: '🏟️', ziel: redaktion ? { art: 'allgemein' } : undefined },
     { key: 'sponsoren', titel: 'Sponsoren', anzahl: sponsoren, query: 'where[and][0][sponsoren][equals]=true&where[and][1][team][exists]=false', symbol: '🤝', ziel: redaktion ? { art: 'sponsoren' } : undefined },
     ...(redaktion

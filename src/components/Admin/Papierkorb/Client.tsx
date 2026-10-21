@@ -9,7 +9,8 @@ const datum = (s: string | null) => (s ? new Date(s).toLocaleDateString('de-DE',
 const schluessel = (e: PapierkorbEintrag) => `${e.slug}:${e.id}`
 
 /** Zentraler Papierkorb für Web-Admins: filtern, ansehen, wiederherstellen, endgültig löschen */
-export default function PapierkorbClient() {
+/** webAdmin = false: Zusatzrecht „papierkorb“ – nur wiederherstellen, nur der normale Papierkorb ohne persönliche Daten */
+export default function PapierkorbClient({ webAdmin = true }: { webAdmin?: boolean }) {
   const [eintraege, setEintraege] = useState<PapierkorbEintrag[] | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
   const [meldung, setMeldung] = useState<string | null>(null)
@@ -87,7 +88,7 @@ export default function PapierkorbClient() {
               ['papierkorb', '🗑️ Im Papierkorb'],
               ['webadmin', '🔒 Nur Web-Admin'],
             ] as [Stufe, string][]
-          ).map(([k, l]) => (
+          ).filter(([k]) => webAdmin || k === 'alle').map(([k, l]) => (
             <button key={k} type="button" role="tab" aria-selected={stufe === k} onClick={() => setStufe(k)}>
               {l} <span>{anzahl(k)}</span>
             </button>
@@ -119,9 +120,11 @@ export default function PapierkorbClient() {
           <button type="button" className="is-gruen" disabled={laeuft} onClick={() => ausfuehren('wiederherstellen', auswahl)}>
             ↩ Wiederherstellen
           </button>
-          <button type="button" className="is-rot" disabled={laeuft} onClick={() => ausfuehren('loeschen', auswahl)}>
-            Endgültig löschen
-          </button>
+          {webAdmin && (
+            <button type="button" className="is-rot" disabled={laeuft} onClick={() => ausfuehren('loeschen', auswahl)}>
+              Endgültig löschen
+            </button>
+          )}
           <button type="button" onClick={() => setGewaehlt(new Set())}>
             Auswahl aufheben
           </button>
@@ -177,9 +180,11 @@ export default function PapierkorbClient() {
                   <button type="button" disabled={laeuft} onClick={() => ausfuehren('wiederherstellen', [e])}>
                     ↩ Wiederherstellen
                   </button>
-                  <button type="button" className="is-rot" disabled={laeuft} onClick={() => ausfuehren('loeschen', [e])} title="Endgültig löschen">
-                    🗑
-                  </button>
+                  {webAdmin && (
+                    <button type="button" className="is-rot" disabled={laeuft} onClick={() => ausfuehren('loeschen', [e])} title="Endgültig löschen">
+                      🗑
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}

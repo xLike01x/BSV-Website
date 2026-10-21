@@ -5,7 +5,7 @@ import React from 'react'
 
 import { hauptRolle, ROLLEN_PROFIL } from '../Hilfe/extras'
 import { einzelrechteVon, einzelrechtLabel } from '@/access/einzelrechte'
-import { nurEinzelrechte } from '@/access/roles'
+import { imBereich, nurEinzelrechte } from '@/access/roles'
 import { EINTRAEGE, eintragSichtbar, REIHENFOLGE, VERSTECKT } from '../NavZusatz/eintraege'
 import Tour from '../Tour'
 import ErsteSchritte from './ErsteSchritte'
@@ -115,7 +115,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   if (antraege !== null) karten.push({ label: 'Offene Mitgliedsanträge', wert: antraege, farbe: 'orange', href: `${ADMIN}/collections/mitgliedsantraege?where[status][equals]=neu` })
   if (probe !== null) karten.push({ label: 'Neue Probetraining-Anfragen', wert: probe, farbe: 'blau', href: `${ADMIN}/collections/probetraining?where[status][equals]=neu` })
   if (kontakt !== null && karten.length < 4) karten.push({ label: 'Neue Kontaktanfragen', wert: kontakt, farbe: 'orange', href: `${ADMIN}/collections/kontaktanfragen?where[status][equals]=neu` })
-  if (!nurZusatz) karten.push({ label: istTeamRolle ? 'News meiner Teams' : 'News veröffentlicht', wert: news, farbe: 'lila', href: `${ADMIN}/collections/posts` })
+  if (!nurZusatz || einzelrechteVon(user).includes('news')) karten.push({ label: istTeamRolle ? 'News meiner Teams' : 'News veröffentlicht', wert: news, farbe: 'lila', href: `${ADMIN}/collections/posts` })
   if (karten.length < 4 && (!nurZusatz || darf('termine', 'create'))) karten.push({ label: 'Kommende Termine', wert: termine, farbe: 'blau', href: `${ADMIN}/collections/termine` })
   if (karten.length < 4 && (!nurZusatz || einzelrechteVon(user).includes('ausfaelle'))) karten.push({ label: 'Gemeldete Ausfälle', wert: ausfaelle, farbe: 'orange', href: `${ADMIN}/collections/ausfaelle` })
 
@@ -209,7 +209,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
           }
 
   // Redaktion: von Trainern für die Startseite vorgeschlagene News
-  const redaktion = rollen.some((r) => r === 'admin' || r === 'redaktion')
+  const redaktion = imBereich(user, 'news')
   const vorschlaege: Vorschlag[] = redaktion
     ? await sicher(async () => {
         const r = await payload.find({

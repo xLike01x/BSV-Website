@@ -1,5 +1,6 @@
 import { timingSafeEqual } from 'crypto'
 import type { PayloadRequest } from 'payload'
+import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { getPayload } from 'payload'
 import { getSafeRedirect } from 'payload/shared'
@@ -61,7 +62,7 @@ export async function GET(req: NextRequest): Promise<Response> {
   }
 
   // Vorschau nur für Personen, die Inhalte bearbeiten (nicht für Mitglieder)
-  if (!hasRole(user as never, 'admin', 'redaktion', 'uebungsleitung', 'teamredaktion')) {
+  if (!hasRole(user as never, 'admin', 'redaktion', 'uebungsleitung', 'teamredaktion') && !hatRecht(user, 'news') && !hatRecht(user, 'seiten')) {
     draft.disable()
     return new Response('You are not allowed to preview this page', { status: 403 })
   }

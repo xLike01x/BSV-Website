@@ -7,7 +7,7 @@ import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { zweistufigerPapierkorb } from '@/papierkorb/plugin'
 import { anyone } from '@/access/anyone'
-import { ausblendenAusser, ausblendenAusserMit, isAdmin, isEditor, isEditorField, rolleOderRecht } from '@/access/roles'
+import { ausblendenAusser, ausblendenAusserBereich, ausblendenAusserMit, bereichFeld, bereichZugriff, isAdmin, isEditor, rolleOderRecht } from '@/access/roles'
 import { spamSchutz } from '@/hooks/spamSchutz'
 
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
@@ -83,10 +83,10 @@ export const plugins: Plugin[] = [
       trash: true,
       admin: {
         group: 'Website-Aufbau',
-        hidden: ausblendenAusser('admin', 'redaktion'),
+        hidden: ausblendenAusserBereich('seiten'),
         components: { beforeList: ['@/components/Admin/Einstieg'] },
       },
-      access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
+      access: { read: anyone, create: bereichZugriff('seiten'), update: bereichZugriff('seiten'), delete: bereichZugriff('seiten') },
       fields: ({ defaultFields }) => {
         // Deutsche, verständliche Beschriftungen für den Formular-Baukasten
         const beschriftung: Record<string, { label: string; description?: string }> = {
@@ -103,7 +103,7 @@ export const plugins: Plugin[] = [
             ? { ...roh, label: beschriftung[roh.name]!.label, admin: { ...(roh.admin ?? {}), description: beschriftung[roh.name]!.description } }
             : roh) as typeof roh
           // Empfänger-Adressen der Benachrichtigungen sind nicht öffentlich
-          if ('name' in field && field.name === 'emails') field = { ...field, access: { read: isEditorField } } as typeof field
+          if ('name' in field && field.name === 'emails') field = { ...field, access: { read: bereichFeld('seiten') } } as typeof field
           if ('name' in field && field.name === 'confirmationType' && 'options' in field) {
             const text: Record<string, string> = { message: 'Danke-Nachricht zeigen', redirect: 'Auf eine Seite weiterleiten' }
             return {

@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
-import { hasRole } from '@/access/roles'
+import { imBereich } from '@/access/roles'
 
 import { Verlauf } from './Verlauf'
 import { statistikLaden, ZEITRAEUME, type Liste } from './daten'
@@ -51,12 +51,12 @@ function Rangliste({ titel, hinweis, liste, einheit, leer }: { titel: string; hi
   )
 }
 
-/** /admin/statistik – Besucherstatistik ohne Cookies (nur Web-Admin) */
+/** /admin/statistik – Besucherstatistik ohne Cookies (Web-Admin und Zusatzrecht „statistik“) */
 export default async function StatistikSeite({ initPageResult, params, searchParams }: AdminViewServerProps) {
   const { req, permissions, visibleEntities, locale } = initPageResult
   const user = req.user
   if (!user) redirect('/login?weiter=/admin/statistik')
-  if (!hasRole(user as never, 'webadmin')) redirect('/admin')
+  if (!imBereich(user, 'statistik')) redirect('/admin')
 
   const wahl = ZEITRAEUME.find((x) => x.key === String((searchParams as Record<string, unknown> | undefined)?.zeitraum ?? '')) ?? ZEITRAEUME[1]
   const d = await statistikLaden(req.payload, wahl.tage)

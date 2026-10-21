@@ -1,8 +1,7 @@
-import { ausblendenAusser } from '@/access/roles'
+import { ausblendenAusserBereich, bereichZugriff } from '@/access/roles'
 import type { Field, GlobalConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { isEditor } from '../access/roles'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
 import { standardTexte, zusammenfuehren } from './standard'
 
@@ -30,10 +29,10 @@ const gruppe = (name: string, label: string, fields: Field[]): Field => ({
 export const Texte: GlobalConfig = {
   slug: 'texte',
   label: 'Texte & Bilder',
-  access: { read: anyone, update: isEditor },
+  access: { read: anyone, update: bereichZugriff('seiten') },
   admin: {
     group: 'Website-Aufbau',
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserBereich('seiten'),
     description: 'Texte und Bilder der Website – ein Reiter pro Seite, von oben nach unten. Platzhalter: {mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung}, {abMonat} (günstigster Monatsbeitrag aus den Vereinsdaten). Ein Zeilenumbruch in Überschriften wird übernommen.',
   },
   hooks: {

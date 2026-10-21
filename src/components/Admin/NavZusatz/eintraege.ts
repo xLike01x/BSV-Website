@@ -5,10 +5,10 @@ export type Eintrag = { key: string; gruppe: string; href: string; label: string
 
 export const EINTRAEGE: Eintrag[] = [
   { key: 'registrierungen', gruppe: 'Posteingang', href: '/admin/registrierungen', label: 'Registrierungen', rollen: ['admin', 'kasse'], recht: 'registrierungen', zaehler: 'registrierungen' },
-  { key: 'saisonwechsel', gruppe: 'Sport', href: '/admin/saisonwechsel', label: 'Saisonwechsel', rollen: ['admin', 'redaktion'] },
+  { key: 'saisonwechsel', gruppe: 'Sport', href: '/admin/saisonwechsel', label: 'Saisonwechsel', rollen: ['admin', 'redaktion'], recht: 'saisonwechsel' },
   { key: 'rollen', gruppe: 'Einstellungen', href: '/admin/rollen', label: 'Rollen & Rechte', rollen: ['admin'], auch: ['/admin/globals/rollenRechte'] },
-  { key: 'statistik', gruppe: 'Einstellungen', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'] },
-  { key: 'papierkorb', gruppe: 'Einstellungen', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'] },
+  { key: 'statistik', gruppe: 'Einstellungen', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'], recht: 'statistik' },
+  { key: 'papierkorb', gruppe: 'Einstellungen', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'], recht: 'papierkorb' },
   { key: 'sicherung', gruppe: 'Einstellungen', href: '/admin/sicherung', label: 'Datensicherung', rollen: ['webadmin'] },
 ]
 

@@ -1,5 +1,6 @@
 import type { Field, GlobalConfig } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { type Entscheidung, ENTSCHEIDUNG_LABEL, STANDARD_VORLAGEN } from './texte'
 
@@ -23,7 +24,8 @@ export const MailVorlagen: GlobalConfig = {
   slug: 'mailVorlagen',
   label: 'E-Mail-Vorlagen Mitgliedsanträge',
   access: {
-    read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse'),
+    // Lesen (Vorlage beim Antworten einsetzen) auch mit Zusatzrecht „antraege“; ändern nur Kasse/Admin
+    read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse') || hatRecht(req.user, 'antraege'),
     update: ({ req }) => hasRole(req.user as never, 'admin', 'kasse'),
   },
   admin: {

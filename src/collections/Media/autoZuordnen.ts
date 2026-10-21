@@ -1,6 +1,6 @@
 import type { Endpoint, PayloadRequest } from 'payload'
 
-import { hasRole } from '@/access/roles'
+import { imBereich } from '@/access/roles'
 
 /**
  * Ordnet Bilder ohne Ordner automatisch zu – erst als Vorschau, mit `?ausfuehren=1` wirklich.
@@ -150,7 +150,7 @@ export const autoZuordnenEndpunkt: Endpoint = {
   path: '/auto-zuordnen',
   method: 'post',
   handler: async (req) => {
-    if (!hasRole(req.user as never, 'admin', 'redaktion')) return Response.json({ fehler: 'Nur für Redaktion und Admins.' }, { status: 403 })
+    if (!imBereich(req.user, 'medien')) return Response.json({ fehler: 'Nur für Redaktion und Admins.' }, { status: 403 })
     const ausfuehren = new URL(req.url ?? 'http://x').searchParams.get('ausfuehren') === '1'
     const { vorschlaege, offen } = await vorschlaegeErmitteln(req)
     let geaendert = 0

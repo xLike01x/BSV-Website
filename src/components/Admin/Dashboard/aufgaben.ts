@@ -1,6 +1,7 @@
 import { darfRegistrierungen, WARTEND } from '@/auth/registrierung'
 import type { PayloadRequest } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { faellige } from '@/datenschutz/aufraeumen'
 import { sicherungenAuflisten } from '@/sicherung/kern'
 import { wartungLesen, wartungsHinweise } from '@/wartung/pruefen'
@@ -47,17 +48,17 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     if (neu.totalDocs)
       a.push({ key: 'passantraege', art: 'warn', symbol: '⚽', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Passantrag wartet' : 'neue Passanträge warten'} auf Prüfung.`, href: '/admin/collections/passantraege?where[status][equals]=eingereicht', link: 'Prüfen' })
   }
-  if (admin || rollen.includes('kasse')) {
+  if (admin || rollen.includes('kasse') || hatRecht(req.user, 'antraege')) {
     // Mitgliedsanträge: neue und aufgenommene, aber noch nicht für die Kasse exportierte
     const zaehle = (where: object) => req.payload.count({ collection: 'mitgliedsantraege', where: where as never, user: req.user, overrideAccess: false, req }).catch(() => ({ totalDocs: 0 }))
     const [neu, offenExport] = await Promise.all([zaehle({ status: { equals: 'neu' } }), zaehle({ and: [{ status: { equals: 'aufgenommen' } }, { exportiertAm: { exists: false } }] })])
     if (neu.totalDocs)
       a.push({ key: 'antraege', art: 'warn', symbol: '📝', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Mitgliedsantrag wartet' : 'neue Mitgliedsanträge warten'} auf Prüfung.`, href: '/admin/collections/mitgliedsantraege?where[status][equals]=neu', link: 'Prüfen' })
-    if (offenExport.totalDocs)
+    if (offenExport.totalDocs && (admin || rollen.includes('kasse')))
       a.push({ key: 'export', art: 'info', symbol: '📥', text: `${offenExport.totalDocs} aufgenommene${offenExport.totalDocs === 1 ? 'r Antrag ist' : ' Anträge sind'} noch nicht für die Kasse exportiert.`, href: '/admin/collections/mitgliedsantraege', link: 'Exportieren' })
   }
   // Saisonwechsel: im Sommer (15. Juni bis 30. September) erinnern, wenn er in diesem Jahr noch nicht abgeschlossen ist
-  if (admin || rollen.includes('redaktion')) {
+  if (admin || rollen.includes('redaktion') || hatRecht(req.user, 'saisonwechsel')) {
     const heute = new Date()
     const tag = (heute.getMonth() + 1) * 100 + heute.getDate()
     if (tag >= 615 && tag <= 930) {
@@ -72,8 +73,8 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     if (wartend.totalDocs)
       a.push({ key: 'registrierungen', art: 'warn', symbol: '🙋', text: `${wartend.totalDocs} ${wartend.totalDocs === 1 ? 'neue Registrierung wartet' : 'neue Registrierungen warten'} auf Freigabe.`, href: '/admin/registrierungen', link: 'Ansehen' })
   }
-  if (admin || rollen.includes('kasse')) {
-    const f = await faellige(req.payload, rollen).catch(() => [])
+  if (admin || rollen.includes('kasse') || hatRecht(req.user, 'datenschutz')) {
+    const f = await faellige(req.payload, !admin && hatRecht(req.user, 'datenschutz') ? undefined : rollen).catch(() => [])
     const summe = f.reduce((s, x) => s + x.anzahl, 0)
     if (summe)
       a.push({

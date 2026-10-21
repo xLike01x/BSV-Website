@@ -1,6 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
-import { hasRole } from '@/access/roles'
+import { bereichZugriff } from '@/access/roles'
 
 import { anyone } from '../access/anyone'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
@@ -12,7 +12,7 @@ import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
 export const Startseite: GlobalConfig = {
   slug: 'startseite',
   label: 'Startseite & Bilder (alt)',
-  access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion') },
+  access: { read: anyone, update: bereichZugriff('seiten') },
   admin: {
     group: 'Website-Aufbau',
     // Veraltet: Inhalte stehen jetzt unter „Texte & Bilder“ – bleibt nur als Sicherung gespeichert

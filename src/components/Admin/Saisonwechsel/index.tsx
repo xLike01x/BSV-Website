@@ -4,7 +4,7 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
-import { hasRole } from '@/access/roles'
+import { hasRole, imBereich } from '@/access/roles'
 import type { SaisonStand } from '@/wartung/config'
 
 import SaisonwechselClient, { type Zeile } from './Client'
@@ -30,11 +30,11 @@ type Person = { id: number; name?: string | null; email: string; letzteAnmeldung
 
 const idVon = (v: number | { id: number }) => (typeof v === 'object' ? v.id : v)
 
-/** /admin/saisonwechsel – einmal im Jahr alle Fußballteams durchgehen (Admin und Redaktion). Breitensport hat keine Saison. */
+/** /admin/saisonwechsel – einmal im Jahr alle Fußballteams durchgehen (Admin, Redaktion, Zusatzrecht „saisonwechsel“). Breitensport hat keine Saison. */
 export default async function Saisonwechsel({ initPageResult, params, searchParams }: AdminViewServerProps) {
   const { req, permissions, visibleEntities, locale } = initPageResult
   if (!req.user) redirect('/login?weiter=/admin/saisonwechsel')
-  if (!hasRole(req.user as never, 'admin', 'redaktion')) redirect('/admin')
+  if (!imBereich(req.user, 'saisonwechsel')) redirect('/admin')
 
   const angebote = (
     await req.payload.find({

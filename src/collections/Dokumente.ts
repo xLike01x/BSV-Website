@@ -2,14 +2,14 @@ import path from 'path'
 import type { CollectionConfig } from 'payload'
 import { fileURLToPath } from 'url'
 
-import { ausblendenAusser, hasRole, istMitgliedOderMehr } from '@/access/roles'
+import { hasRole, imBereich, istMitgliedOderMehr } from '@/access/roles'
 
 import { privateDatei } from '@/utilities/privateDatei'
 
 import { dokumenteUmziehen } from './dokumenteUmziehen'
 
 const dirname = path.dirname(fileURLToPath(import.meta.url))
-const pflegen = ({ req }: { req: { user?: unknown } }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse')
+const pflegen = ({ req }: { req: { user?: unknown } }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') || imBereich(req.user, 'medien')
 
 /**
  * Geschützte Dateien „Nur für Mitglieder“ (z. B. Protokolle).
@@ -29,7 +29,7 @@ export const Dokumente: CollectionConfig = {
   },
   admin: {
     group: 'Mitglieder',
-    hidden: ausblendenAusser('admin', 'redaktion', 'kasse'),
+    hidden: ({ user }) => !pflegen({ req: { user } }),
     useAsTitle: 'titel',
     defaultColumns: ['titel', 'filename', 'updatedAt'],
     description: 'Dateien nur für angemeldete Mitglieder, z. B. Protokolle. Sie sind nicht öffentlich erreichbar – auch nicht mit dem Link. Eingebunden werden sie unter „Vereinsdaten“ → „Satzung & Downloads“.',

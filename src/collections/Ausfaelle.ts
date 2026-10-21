@@ -9,7 +9,7 @@ import { rechteLaden, schalter } from '../access/rollenRechte'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
 /** Ausfall melden: Admin/Redaktion für alle, Team-Rollen nur für eigene Angebote. */
-const eigeneTeams = redaktionOderEigeneTeams('angebot')
+const eigeneTeams = redaktionOderEigeneTeams('angebot', null)
 /** Team-Redaktion nur, wenn der Web-Admin „Trainingsausfälle melden“ eingeschaltet lässt */
 const ohneTeamredaktion = async (req: PayloadRequest) => {
   await rechteLaden(req.payload)

@@ -1,5 +1,6 @@
 import type { GlobalConfig } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { darf, rechteLaden } from '@/access/rollenRechte'
 
@@ -8,12 +9,12 @@ export const Datenschutz: GlobalConfig = {
   slug: 'datenschutz',
   label: 'Datenschutz-Fristen',
   access: {
-    read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse'),
-    update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'kasse', 'datenschutz')),
+    read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse') || hatRecht(req.user, 'datenschutz'),
+    update: async ({ req }) => (await rechteLaden(req.payload), hasRole(req.user as never, 'admin') || darf(req.user, 'kasse', 'datenschutz') || hatRecht(req.user, 'datenschutz')),
   },
   admin: {
     group: 'Einstellungen',
-    hidden: ({ user }) => !(hasRole(user as never, 'admin') || darf(user, 'kasse', 'datenschutz')),
+    hidden: ({ user }) => !(hasRole(user as never, 'admin') || darf(user, 'kasse', 'datenschutz') || hatRecht(user, 'datenschutz')),
     description: 'Persönliche Daten nur so lange speichern, wie sie gebraucht werden (DSGVO). Hier legst du fest, wann erledigte Einträge aufgeräumt werden.',
   },
   fields: [

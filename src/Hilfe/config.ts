@@ -1,6 +1,10 @@
 import type { CollectionConfig, GlobalConfig } from 'payload'
 
-import { ausblendenAusser, canUseAdminPanel, isAdmin, isEditor } from '@/access/roles'
+import { hatRecht } from '@/access/einzelrechte'
+import { ausblendenAusserBereich, bereichZugriff, canUseAdminPanel, hasRole, isAdmin } from '@/access/roles'
+
+/** Rückmeldungen lesen: Admins und wer das Zusatzrecht „hilfe“ hat */
+const rueckmeldungenLesen = (user: unknown) => hasRole(user as never, 'admin') || hatRecht(user, 'hilfe')
 import { HILFE } from '@/components/Admin/Hilfe/texte'
 
 const BEREICHE = Object.entries(HILFE).map(([value, t]) => ({ label: t.titel, value }))
@@ -14,11 +18,11 @@ export const HilfeInhalte: GlobalConfig = {
   label: 'Hilfe-Texte',
   admin: {
     group: 'Einstellungen',
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserBereich('hilfe'),
     description:
       'Eigene Ergänzungen für den „? Hilfe“-Knopf und das Hilfe-Center. Die eingebauten Texte bleiben erhalten – was du hier einträgst, kommt dazu.',
   },
-  access: { read: canUseAdminPanel, update: isEditor },
+  access: { read: canUseAdminPanel, update: bereichZugriff('hilfe') },
   fields: [
     {
       name: 'ansprechperson',
@@ -86,18 +90,18 @@ export const HilfeInhalte: GlobalConfig = {
   ],
 }
 
-/** Rückmeldungen „Hat dir das geholfen?“ – nur Admins sehen sie. */
+/** Rückmeldungen „Hat dir das geholfen?“ – nur Admins (und Zusatzrecht „hilfe“) sehen sie. */
 export const HilfeFeedback: CollectionConfig = {
   slug: 'hilfe-feedback',
   labels: { singular: 'Hilfe-Rückmeldung', plural: 'Hilfe-Rückmeldungen' },
   admin: {
     group: 'Einstellungen',
-    hidden: ausblendenAusser('admin'),
+    hidden: ({ user }) => !rueckmeldungenLesen(user),
     description: 'Was Nutzer über die Hilfetexte gesagt haben. Viele 👎 bei einem Bereich = Text verbessern.',
     defaultColumns: ['bereich', 'hilfreich', 'kommentar', 'createdAt'],
     useAsTitle: 'bereich',
   },
-  access: { create: canUseAdminPanel, read: isAdmin, update: isAdmin, delete: isAdmin },
+  access: { create: canUseAdminPanel, read: ({ req }) => rueckmeldungenLesen(req.user), update: isAdmin, delete: isAdmin },
   defaultSort: '-createdAt',
   fields: [
     { name: 'bereich', label: 'Bereich', type: 'text', required: true, maxLength: 60 },

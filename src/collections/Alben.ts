@@ -3,7 +3,7 @@ import type { CollectionBeforeChangeHook, CollectionConfig } from 'payload'
 import { APIError, slugField } from 'payload'
 
 import { anyone } from '@/access/anyone'
-import { ausblendenAusser, canUpload, eigeneAngebotIds, hasRole, medienAuswahl, redaktionOderEigeneTeams } from '@/access/roles'
+import { eigeneAngebotIds, hasRole, imBereich, medienAuswahl, redaktionOderEigeneTeams } from '@/access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '@/hooks/revalidateAlles'
 import { medienPruefen } from '@/hooks/medienPruefen'
 import { slugify } from '@/hooks/slugFromTitle'
@@ -26,7 +26,7 @@ const slugAusTitel: CollectionBeforeValidateHook = async ({ data, req, originalD
 /** Team-Rollen legen Alben nur für eigene Teams an */
 const teamAlbumPruefen: CollectionBeforeChangeHook = async ({ req, data }) => {
   const user = req.user
-  if (!user || hasRole(user as never, 'admin', 'redaktion')) return data
+  if (!user || imBereich(user, 'medien')) return data
   const ids = await eigeneAngebotIds(req)
   if (!data.team && ids.length === 1) data.team = ids[0]
   const ziel = Number(typeof data.team === 'object' && data.team ? data.team.id : data.team)
@@ -38,12 +38,17 @@ const teamAlbumPruefen: CollectionBeforeChangeHook = async ({ req, data }) => {
 export const Alben: CollectionConfig = {
   slug: 'alben',
   labels: { singular: 'Fotoalbum', plural: 'Fotoalben' },
-  access: { read: anyone, create: canUpload, update: redaktionOderEigeneTeams('team'), delete: redaktionOderEigeneTeams('team') },
+  access: {
+    read: anyone,
+    create: ({ req }) => imBereich(req.user, 'medien') || hasRole(req.user as never, 'uebungsleitung', 'teamredaktion'),
+    update: redaktionOderEigeneTeams('team', 'medien'),
+    delete: redaktionOderEigeneTeams('team', 'medien'),
+  },
   admin: {
     group: 'Inhalte',
     useAsTitle: 'titel',
     defaultColumns: ['titel', 'datum', 'team', 'aktiv'],
-    hidden: ausblendenAusser('admin', 'redaktion', 'uebungsleitung', 'teamredaktion'),
+    hidden: ({ user }) => !imBereich(user, 'medien') && !hasRole(user as never, 'uebungsleitung', 'teamredaktion'),
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Fotoalben für die Galerie auf der Website, z. B. „Sommerfest 2026“.',
   },
@@ -60,7 +65,7 @@ export const Alben: CollectionConfig = {
           label: 'Team / Kurs (optional)',
           type: 'relationship',
           relationTo: 'angebote',
-          filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+          filterOptions: ({ user }) => (!user || imBereich(user, 'medien') ? true : { leitung: { contains: user.id } }),
           admin: { width: '50%', description: 'Dann erscheint das Album auch auf der Teamseite.' },
         },
       ],

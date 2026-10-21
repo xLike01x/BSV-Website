@@ -1,6 +1,10 @@
 import type { CollectionSlug, Endpoint, Payload, Where } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
+
+// Zusatzrecht „datenschutz“: Fristen einstellen und – wie der tägliche Lauf – Fälliges in den Papierkorb verschieben (alle Bereiche)
+const mitZusatzrecht = (user: unknown) => !hasRole(user as never, 'admin') && hatRecht(user, 'datenschutz')
 
 import { auskunftEndpunkt } from './auskunft'
 
@@ -109,8 +113,8 @@ export const datenschutzEndpunkte: Endpoint[] = [
     method: 'get',
     handler: async (req) => {
       const rollen = ((req.user as { roles?: string[] } | null)?.roles ?? []) as string[]
-      if (!hasRole(req.user as never, 'admin', 'kasse')) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
-      return Response.json({ faellig: await faellige(req.payload, rollen) })
+      if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user)) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
+      return Response.json({ faellig: await faellige(req.payload, mitZusatzrecht(req.user) ? undefined : rollen) })
     },
   },
   {
@@ -118,9 +122,9 @@ export const datenschutzEndpunkte: Endpoint[] = [
     method: 'post',
     handler: async (req) => {
       const rollen = ((req.user as { roles?: string[] } | null)?.roles ?? []) as string[]
-      if (!hasRole(req.user as never, 'admin', 'kasse')) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
+      if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user)) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
       // Kasse räumt nur Mitgliedsanträge auf
-      const nur = rollen.includes('admin') ? undefined : ['mitgliedsantraege']
+      const nur = rollen.includes('admin') || mitZusatzrecht(req.user) ? undefined : ['mitgliedsantraege']
       return Response.json({ verschoben: await aufraeumen(req.payload, nur) })
     },
   },

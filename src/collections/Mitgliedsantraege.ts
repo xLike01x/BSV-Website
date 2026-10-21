@@ -2,7 +2,15 @@ import type { CollectionConfig } from 'payload'
 import { APIError, ValidationError } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { isFinance } from '../access/roles'
+import type { FieldAccess } from 'payload'
+
+import { hatRecht } from '../access/einzelrechte'
+import { hasRole, isFinance } from '../access/roles'
+
+/** Kasse/Admin – oder Zusatzrecht „antraege“ (dann ohne Bankdaten, siehe nurKasse) */
+const antraegeBearbeiten = ({ req }: { req: { user?: unknown } }) => hasRole(req.user as never, 'admin', 'kasse') || hatRecht(req.user, 'antraege')
+/** Bankdaten lesen und ändern: nur Kasse/Admin. Absenden (create) bleibt für das öffentliche Formular offen. */
+const nurKasse: FieldAccess = ({ req }) => hasRole(req.user as never, 'admin', 'kasse')
 import { decrypt, encrypt, isValidIBAN } from '../utilities/crypto'
 import { antragRegeln, geburtsdatumPruefen, plzPruefen, telefonPruefen } from '@/hooks/formularPruefung'
 import { spamSchutz } from '../hooks/spamSchutz'
@@ -23,8 +31,8 @@ export const Mitgliedsantraege: CollectionConfig = {
   labels: { singular: 'Mitgliedsantrag', plural: 'Mitgliedsanträge' },
   access: {
     create: anyone,
-    read: isFinance,
-    update: isFinance,
+    read: antraegeBearbeiten,
+    update: antraegeBearbeiten,
     delete: isFinance,
   },
   admin: {
@@ -171,13 +179,15 @@ export const Mitgliedsantraege: CollectionConfig = {
     {
       type: 'collapsible',
       label: 'SEPA-Lastschriftmandat',
+      admin: { condition: (_d, _s, { user }) => hasRole(user as never, 'admin', 'kasse') },
       fields: [
-        { name: 'kontoinhaber', label: 'Kontoinhaber/in', type: 'text', required: true, maxLength: 120 },
+        { name: 'kontoinhaber', label: 'Kontoinhaber/in', type: 'text', required: true, maxLength: 120, access: { read: nurKasse, update: nurKasse } },
         {
           name: 'iban',
           label: 'IBAN',
           type: 'text',
           required: true,
+          access: { read: nurKasse, update: nurKasse },
           // Beim Absenden Pflicht. Später darf sie leer sein: Beim Wechsel in den Web-Admin-Papierkorb wird sie
           // aus Datenschutzgründen entfernt – ein wiederhergestellter Antrag soll trotzdem speicherbar bleiben.
           validate: (v: unknown, { operation }: { operation?: string }) => operation !== 'create' || (typeof v === 'string' && v.trim() !== '') || 'Bitte die IBAN angeben.',
@@ -216,7 +226,7 @@ export const Mitgliedsantraege: CollectionConfig = {
             ],
           },
         },
-        { name: 'sepaMandat', label: 'SEPA-Mandat erteilt', type: 'checkbox', required: true },
+        { name: 'sepaMandat', label: 'SEPA-Mandat erteilt', type: 'checkbox', required: true, access: { read: nurKasse, update: nurKasse } },
       ],
     },
     {

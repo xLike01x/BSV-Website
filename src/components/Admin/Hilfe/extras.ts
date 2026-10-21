@@ -686,7 +686,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Links unter „Mitglieder“ auf „Benutzer“ und die Person öffnen.',
         'Unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen.',
-        'Die gewünschten Häkchen setzen, z. B. „Kontaktanfragen sehen und bearbeiten“.',
+        'Die gewünschten Häkchen setzen, z. B. „Kontaktanfragen sehen und bearbeiten“ oder „News aller Teams schreiben und bearbeiten“. Unter jedem Häkchen steht, was genau dazugehört.',
+        'Oben bei „🔎 Was darf diese Person?“ prüfen, ob das Ergebnis passt (rechnet sofort mit, auch vor dem Speichern).',
         'Speichern. Die Person kommt damit in die Verwaltung, sieht nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung.',
       ],
     },
@@ -1161,7 +1162,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
-    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen: Kontaktanfragen, Probetraining-Anfragen aller Teams, Passanträge aller Teams, Registrierungen freigeben, Formular-Eingänge, Termine, Ehrenamt & Mitmachen, Trainingsausfälle für alle Teams und Mitgliedschaften (nur lesen). Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben. Alle Personen mit Zusatzrechten auf einen Blick: Einstellungen → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
+    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen fast alle Bereiche: Posteingang (Kontaktanfragen, Probetraining und Passanträge aller Teams, Registrierungen, Formular-Eingänge), Inhalte (News aller Teams, Termine, Ehrenamt, Bilder/Galerie/Dokumente, Sponsoren), Website-Aufbau (Seiten, Menü, Texte & Bilder, Formulare), Sport (alle Teams & Kurse, Ausfälle aller Teams, Saisonwechsel), Mitglieder (Mitgliedsanträge ohne Bankdaten, Mitgliedschaften nur lesen) und Einstellungen (Vereinsdaten, Datenschutz-Fristen, Besucherstatistik, Papierkorb nur wiederherstellen, Hilfe-Texte). Ein Bereichsrecht gibt genau die Rechte, die die zuständige Rolle dort hat – z. B. „News aller Teams“ = wie die Redaktion, aber nur für News. Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Bewusst nie einzeln vergebbar: Benutzerverwaltung, Admin-Rechte, Bankdaten (IBAN, Kontoinhaber, Export für die Kasse) und Datensicherung – dafür gibt es die Rollen Admin, Kasse und Web-Admin. Alle Personen mit Zusatzrechten auf einen Blick: Einstellungen → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
     bereich: 'users',
   },
   {

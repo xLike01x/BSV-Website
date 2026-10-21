@@ -1,5 +1,6 @@
 import type { Endpoint } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { eigeneAngebotIds, hasRole } from '@/access/roles'
 import { rechteLaden, schalter } from '@/access/rollenRechte'
 
@@ -11,7 +12,7 @@ export const teilnehmendeEndpunkt: Endpoint = {
     const id = Number(req.routeParams?.id)
     const user = req.user
     if (!user || !id) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
-    const verwaltung = hasRole(user as never, 'admin', 'redaktion', 'kasse')
+    const verwaltung = hasRole(user as never, 'admin', 'redaktion', 'kasse') || hatRecht(user, 'teams')
     const trainer = hasRole(user as never, 'uebungsleitung') && (await eigeneAngebotIds(req)).includes(id)
     if (!verwaltung && !trainer) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
     await rechteLaden(req.payload)

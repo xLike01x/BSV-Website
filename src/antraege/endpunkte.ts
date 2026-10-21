@@ -1,5 +1,6 @@
 import type { Endpoint, PayloadRequest, Where } from 'payload'
 
+import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { emailAktiv, mailHtml, mailSenden } from '@/auth/mail'
 import { ratenGrenze } from '@/hooks/spamSchutz'
@@ -8,6 +9,8 @@ import { type Entscheidung, MITGLIEDSART_LABEL } from './texte'
 
 const ENTSCHEIDUNGEN: Entscheidung[] = ['aufgenommen', 'rueckfrage', 'abgelehnt']
 const kasse = (req: PayloadRequest) => Boolean(req.user) && hasRole(req.user as never, 'admin', 'kasse')
+/** Entscheiden und antworten: auch mit Zusatzrecht „antraege“ (ohne Bankdaten) */
+const entscheiden = (req: PayloadRequest) => kasse(req) || hatRecht(req.user, 'antraege')
 
 /** Status setzen und optional die Antwort-Mail an die Adresse aus dem Antrag schicken */
 const entscheidung: Endpoint = {
@@ -15,7 +18,7 @@ const entscheidung: Endpoint = {
   method: 'post',
   handler: async (req) => {
     if (!req.user) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
-    if (!kasse(req)) return Response.json({ fehler: 'Diesen Eintrag darfst du nicht bearbeiten.' }, { status: 403 })
+    if (!entscheiden(req)) return Response.json({ fehler: 'Diesen Eintrag darfst du nicht bearbeiten.' }, { status: 403 })
     const id = idAus(req)
     if (!id) return Response.json({ fehler: 'Antrag nicht gefunden.' }, { status: 404 })
     const body = await jsonVon<{ status?: unknown; mail?: { betreff?: unknown; text?: unknown } | null }>(req)

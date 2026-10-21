@@ -116,7 +116,7 @@ export const Users: CollectionConfig = {
           access: { create: istWebAdminField, update: istWebAdminField },
           admin: {
             description:
-              'Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.',
+              'Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“ oder „die Pressewartin soll nur News schreiben“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Ein Bereichsrecht gibt genau die Rechte der zuständigen Rolle in diesem Bereich. Benutzerverwaltung, Admin-Rechte, Bankdaten und Datensicherung lassen sich bewusst nicht einzeln vergeben.',
           },
           fields: EINZELRECHTE.map((r) => ({ name: r.key, label: r.label, type: 'checkbox' as const, defaultValue: false, admin: { description: `${r.gruppe} · ${r.text}` } })),
         },

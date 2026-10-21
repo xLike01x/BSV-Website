@@ -1,6 +1,5 @@
-import { hasRole, isAdminField, istMitgliedOderMehr } from '@/access/roles'
+import { ausblendenAusserBereich, imBereich, isAdminField, istMitgliedOderMehr } from '@/access/roles'
 import { STANDARD_ANLIEGEN } from './anliegen'
-import { ausblendenAusser } from '@/access/roles'
 import type { GlobalConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
@@ -12,8 +11,8 @@ export const Verein: GlobalConfig = {
   slug: 'verein',
   label: 'Vereinsdaten',
   // Redaktion (Vorstand, Downloads) und Kasse (Beiträge) pflegen die Vereinsdaten mit
-  access: { read: anyone, update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
-  admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Texte & Bilder“.', hidden: ausblendenAusser('admin', 'redaktion', 'kasse') },
+  access: { read: anyone, update: ({ req }) => imBereich(req.user, 'verein') },
+  admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Texte & Bilder“.', hidden: ausblendenAusserBereich('verein') },
   hooks: {
     afterChange: [revalidateAllesGlobal],
     // Über die öffentliche Schnittstelle niemals Dateien „Nur für Mitglieder“ verraten
@@ -153,7 +152,7 @@ export const Verein: GlobalConfig = {
               relationTo: 'users',
               // Nur freigegebene Konten; nicht über die öffentliche Schnittstelle sichtbar
               filterOptions: { freigegeben: { not_equals: false } },
-              access: { read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
+              access: { read: ({ req }) => imBereich(req.user, 'verein') },
               admin: {
                 width: '50%',
                 description: 'Verknüpfen, sobald die Person ein Konto hat: „Nachricht senden“ geht dann per E-Mail direkt an sie (die Adresse sieht niemand), und ihr Name bleibt aktuell.',
@@ -163,7 +162,7 @@ export const Verein: GlobalConfig = {
               name: 'fotoAusKonto',
               label: 'Profilfoto aus dem Konto auf der Vereinsseite zeigen',
               type: 'checkbox',
-              access: { read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
+              access: { read: ({ req }) => imBereich(req.user, 'verein') },
               admin: {
                 width: '50%',
                 condition: (_, s) => Boolean(s?.konto) && !s?.foto,
@@ -174,7 +173,7 @@ export const Verein: GlobalConfig = {
               name: 'fotoEinwilligungAm',
               label: 'Einverständnis zum Foto erteilt am',
               type: 'date',
-              access: { read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion', 'kasse') },
+              access: { read: ({ req }) => imBereich(req.user, 'verein') },
               admin: {
                 width: '50%',
                 condition: (_, s) => Boolean(s?.fotoAusKonto),

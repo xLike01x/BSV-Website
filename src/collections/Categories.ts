@@ -1,7 +1,9 @@
 import type { CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { isEditor } from '../access/roles'
+import { bereichZugriff } from '../access/roles'
+
+const newsPflegen = bereichZugriff('news')
 import { slugField } from 'payload'
 import { createBreadcrumbsField, createParentField } from '@payloadcms/plugin-nested-docs'
 
@@ -9,10 +11,10 @@ export const Categories: CollectionConfig = {
   slug: 'categories',
   labels: { singular: 'Kategorie', plural: 'Kategorien' },
   access: {
-    create: isEditor,
-    delete: isEditor,
+    create: newsPflegen,
+    delete: newsPflegen,
     read: anyone,
-    update: isEditor,
+    update: newsPflegen,
   },
   admin: {
     description: 'Schlagworte, nach denen Besucher die News filtern können.',

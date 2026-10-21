@@ -266,6 +266,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Der Kasten „Antrag prüfen“ zeigt Alter, Beitrag, ob die IBAN gültig ist und ob es schon einen Antrag oder eine Mitgliedschaft dieser Person gibt.',
       'Unten im Kasten „✓ Aufnehmen“, „❓ Rückfrage“ oder „Ablehnen“ klicken. Es erscheint eine fertige E-Mail an die Person – Text anpassen (Stellen in [ECKIGEN KLAMMERN] ausfüllen) und bestätigen. Ohne Haken geht keine Mail raus.',
       'Bei „Aufgenommen“ entsteht automatisch der Eintrag für den digitalen Mitgliedsausweis (unter „Mitgliedschaften“) – dort nur noch die Mitgliedsnummer ergänzen.',
+      'Mit dem Zusatzrecht „Mitgliedsanträge bearbeiten – ohne Bankdaten“ siehst und beantwortest du Anträge, aber IBAN, Kontoinhaber und SEPA-Mandat bleiben ausgeblendet. Löschen und „Für die Kasse exportieren“ macht die Kasse.',
       'Für DFBnet/Mitgliederliste: in der Liste oben „📥 … neue exportieren“ – du bekommst eine Excel-Datei (CSV) aller aufgenommenen, noch nicht exportierten Anträge, ohne Bankdaten.',
     ],
     wirkung: [
@@ -356,7 +357,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Rollen wählst du per Kachel mit Häkchen. Jede Kachel erklärt in einer Zeile, wofür die Rolle gedacht ist.',
       'Neue Konten anlegen und Rollen vergeben.',
       'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Einstellungen“ → „Rollen & Rechte“.',
-      'Einzelne Rechte nur für diese Person: beim Benutzer unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen – Häkchen setzen, speichern. Vergeben kann das nur ein Web-Admin; Admins sehen den Abschnitt nur, wenn die Person schon Zusatzrechte hat.',
+      'Einzelne Rechte nur für diese Person: beim Benutzer unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen – Häkchen setzen, speichern. Vergeben kann das nur ein Web-Admin; Admins sehen den Abschnitt nur, wenn die Person schon Zusatzrechte hat. Es gibt sie für fast jeden Bereich (z. B. nur News, nur Sponsoren, nur Vereinsdaten, Mitgliedsanträge ohne Bankdaten) – nie für Benutzerverwaltung, Admin-Rechte, Bankdaten und Datensicherung.',
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: Technik, Admin-Konten, Datensicherung · Admin: alles im Verein außer Admin-Rechte',
       '• Redaktion: alle News, Termine, Seiten, Menü, Texte & Bilder, Sponsoren, Kontaktanfragen · Kasse: Mitgliedsanträge, Mitgliedschaften, Registrierungen · Passwesen: Passanträge aller Teams',
@@ -447,7 +448,7 @@ export const HILFE: Record<string, HilfeText> = {
 
   papierkorb: {
     titel: 'Papierkorb (Web-Admin)',
-    kurz: 'Alles Gelöschte aus allen Bereichen an einer Stelle – filtern, ansehen, wiederherstellen oder endgültig löschen. Nur für Web-Admins.',
+    kurz: 'Alles Gelöschte aus allen Bereichen an einer Stelle – filtern, ansehen, wiederherstellen oder endgültig löschen. Für Web-Admins; mit dem Zusatzrecht „Papierkorb“ nur wiederherstellen (ohne Bereiche mit persönlichen Daten).',
     wozu: {
       text: 'Ein Sicherheitsnetz: Was andere endgültig löschen, ist für sie weg – du kannst es aber noch zurückholen.',
       beispiele: ['Eine versehentlich gelöschte News zurückholen', 'Sehen, wer was endgültig gelöscht hat', 'Alte Einträge wirklich entfernen'],
@@ -468,7 +469,7 @@ export const HILFE: Record<string, HilfeText> = {
 
   statistik: {
     titel: 'Besucherstatistik',
-    kurz: 'Wie viele Menschen die Website besuchen, was sie anschauen und woher sie kommen – ohne Cookies, nur für Web-Admins.',
+    kurz: 'Wie viele Menschen die Website besuchen, was sie anschauen und woher sie kommen – ohne Cookies. Für Web-Admins und Personen mit dem Zusatzrecht „Besucherstatistik“.',
     wozu: {
       text: 'Damit ihr seht, was auf der Website ankommt: welche Seiten beliebt sind, welche Teams gesucht werden und ob der Mitgliedsantrag gut funktioniert.',
       beispiele: ['Kommen nach einem Instagram-Post mehr Besucher?', 'Wird die neue Kursseite angeschaut?', 'Wonach suchen Leute vergeblich?'],

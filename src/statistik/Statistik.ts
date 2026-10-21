@@ -1,13 +1,13 @@
 import type { CollectionConfig } from 'payload'
 
-import { hasRole } from '@/access/roles'
+import { hasRole, imBereich } from '@/access/roles'
 
 /**
  * Besucherstatistik – ein Eintrag pro Seitenaufruf bzw. Ereignis.
  * Datensparsam: keine Cookies, keine IP-Adresse, kein Fingerabdruck über den Tag hinaus.
  * „besucher“ ist ein Kürzel aus IP + Browser + einem täglich wechselnden Zufallswert, der nie gespeichert wird –
  * so lassen sich Besucher eines Tages zählen, aber niemand wiedererkennen.
- * Auswertung: /admin/statistik (nur Web-Admin). Alte Einträge löscht die tägliche Aufgabe (Datenschutz-Fristen).
+ * Auswertung: /admin/statistik (Web-Admin und Zusatzrecht „statistik“). Alte Einträge löscht die tägliche Aufgabe (Datenschutz-Fristen).
  */
 export const Statistik: CollectionConfig = {
   slug: 'statistik',
@@ -15,7 +15,7 @@ export const Statistik: CollectionConfig = {
   indexes: [{ fields: ['art', 'tag'] }],
   labels: { singular: 'Statistik-Eintrag', plural: 'Statistik' },
   access: {
-    read: ({ req }) => hasRole(req.user as never, 'webadmin'),
+    read: ({ req }) => imBereich(req.user, 'statistik'),
     create: () => false,
     update: () => false,
     delete: ({ req }) => hasRole(req.user as never, 'webadmin'),

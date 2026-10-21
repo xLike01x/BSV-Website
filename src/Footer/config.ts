@@ -1,4 +1,4 @@
-import { isEditor } from '../access/roles'
+import { bereichZugriff } from '../access/roles'
 import type { GlobalConfig } from 'payload'
 
 import { link } from '@/fields/link'
@@ -10,7 +10,7 @@ export const Footer: GlobalConfig = {
   admin: { hidden: true },
   access: {
     read: () => true,
-    update: isEditor,
+    update: bereichZugriff('seiten'),
   },
   fields: [
     {

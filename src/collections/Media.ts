@@ -1,4 +1,4 @@
-import { ausblendenBeiNurEinzelrechten } from '@/access/roles'
+import { nurEinzelrechte } from '@/access/roles'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
@@ -13,14 +13,14 @@ import { fileURLToPath } from 'url'
 import type { CollectionBeforeChangeHook } from 'payload'
 import { APIError } from 'payload'
 
-import { canUpload, eigeneAngebotIds, hasRole, medienSichtbar, redaktionOderEigeneTeams } from '../access/roles'
+import { alleBilder, canUpload, darfHochladen, eigeneAngebotIds, imBereich, medienSichtbar, redaktionOderEigeneTeams } from '../access/roles'
 import { autoZuordnenEndpunkt } from './Media/autoZuordnen'
 import { LOGO_GROESSE } from '@/sponsoren/logo'
 
 /** Team-Rollen laden Bilder immer für eines ihrer Teams hoch */
 const teamBildPruefen: CollectionBeforeChangeHook = async ({ req, data, operation }) => {
   const user = req.user as { roles?: string[] } | null
-  if (!user || hasRole(user as never, 'admin', 'redaktion')) return data
+  if (!user || alleBilder(user)) return data
   const ids = await eigeneAngebotIds(req)
   if (!data.team && ids.length === 1) data.team = ids[0]
   const ziel = Number(typeof data.team === 'object' && data.team ? data.team.id : data.team)
@@ -35,19 +35,19 @@ export const Media: CollectionConfig = {
   slug: 'media',
   access: {
     create: canUpload,
-    delete: redaktionOderEigeneTeams('team'),
+    delete: redaktionOderEigeneTeams('team', 'medien'),
     // Öffentlich lesbar – aber Dateien im Papierkorb nur noch für die Verwaltung (z. B. nach Widerruf einer Foto-Einwilligung)
     read: ({ req, isReadingStaticFile }) => {
       if (!isReadingStaticFile || canUpload({ req })) return true
       return { deletedAt: { exists: false } }
     },
-    update: redaktionOderEigeneTeams('team'),
+    update: redaktionOderEigeneTeams('team', 'medien'),
   },
   labels: { singular: 'Bild / Datei', plural: 'Mediathek' },
   admin: {
     description: 'Alle Bilder und Dateien, sortiert in Ordner je Team. Fotos von Kindern nur mit Einverständnis der Eltern hochladen.',
     group: 'Inhalte',
-    hidden: ausblendenBeiNurEinzelrechten,
+    hidden: ({ user }) => nurEinzelrechte(user) && !darfHochladen(user),
     defaultColumns: ['filename', 'alt', 'team', 'allgemein', 'inGalerie'],
     // Team-Rollen sehen nur Bilder ihrer Teams und „Verein allgemein“
     baseFilter: ({ req }) => medienSichtbar(req),
@@ -108,17 +108,17 @@ export const Media: CollectionConfig = {
       label: 'Ordner (Team / Kurs)',
       type: 'relationship',
       relationTo: 'angebote',
-      filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+      filterOptions: ({ user }) => (!user || alleBilder(user) ? true : { leitung: { contains: user.id } }),
       admin: { position: 'sidebar', description: 'Der Ordner, in dem das Bild liegt. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.' },
     },
     {
       name: 'allgemein',
       label: 'Verein allgemein',
       type: 'checkbox',
-      // Nur Redaktion/Admin legen fest, was alle Trainer benutzen dürfen
+      // Nur Redaktion/Admin (bzw. Zusatzrecht „medien“) legen fest, was alle Trainer benutzen dürfen
       access: {
-        create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
-        update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+        create: ({ req }) => imBereich(req.user, 'medien'),
+        update: ({ req }) => imBereich(req.user, 'medien'),
       },
       admin: {
         position: 'sidebar',
@@ -131,8 +131,8 @@ export const Media: CollectionConfig = {
       label: 'Sponsoren-Logo',
       type: 'checkbox',
       access: {
-        create: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
-        update: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+        create: ({ req }) => imBereich(req.user, 'medien') || imBereich(req.user, 'sponsoren'),
+        update: ({ req }) => imBereich(req.user, 'medien') || imBereich(req.user, 'sponsoren'),
       },
       admin: {
         position: 'sidebar',

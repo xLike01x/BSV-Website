@@ -1,10 +1,12 @@
 import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { seoAutomatisch } from '@/hooks/seoAutomatisch'
 import { hinweisFeld } from '@/fields/hinweise'
-import { ausblendenAusser } from '@/access/roles'
+import { ausblendenAusserBereich } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
-import { editorOrPublished, isEditor } from '../../access/roles'
+import { bereichZugriff, editorOrPublished } from '../../access/roles'
+
+const seitenPflegen = bereichZugriff('seiten')
 import { Archive } from '../../blocks/ArchiveBlock/config'
 import { CallToAction } from '../../blocks/CallToAction/config'
 import { Content } from '../../blocks/Content/config'
@@ -28,11 +30,11 @@ export const Pages: CollectionConfig<'pages'> = {
   slug: 'pages',
   labels: { singular: 'Seite', plural: 'Seiten' },
   access: {
-    create: isEditor,
-    delete: isEditor,
+    create: seitenPflegen,
+    delete: seitenPflegen,
     read: editorOrPublished,
-    readVersions: isEditor,
-    update: isEditor,
+    readVersions: seitenPflegen,
+    update: seitenPflegen,
   },
   // This config controls what's populated by default when a page is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -45,7 +47,7 @@ export const Pages: CollectionConfig<'pages'> = {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Eigene Seiten aus Bausteinen bauen, z. B. für ein Fest. Im Menü erscheinen sie erst über „Menü & Fußzeile“.',
     group: 'Website-Aufbau',
-    hidden: ausblendenAusser('admin', 'redaktion'),
+    hidden: ausblendenAusserBereich('seiten'),
     defaultColumns: ['title', 'slug', 'updatedAt'],
     livePreview: {
       url: ({ data, req }) =>

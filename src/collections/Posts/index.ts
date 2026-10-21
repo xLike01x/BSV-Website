@@ -1,6 +1,7 @@
 import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { medienPruefen } from '@/hooks/medienPruefen'
-import { ausblendenBeiNurEinzelrechten, medienAuswahl } from '@/access/roles'
+import { medienAuswahl, nurEinzelrechte } from '@/access/roles'
+import { hatRecht } from '@/access/einzelrechte'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
 
@@ -16,7 +17,7 @@ import {
 import type { Access, CollectionBeforeChangeHook, Where } from 'payload'
 import { APIError } from 'payload'
 
-import { eigeneAngebotIds, hasRole, isEditorField, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../../access/roles'
+import { bereichFeld, eigeneAngebotIds, hasRole, imBereich, redaktionOderEigeneTeams, TEAM_ROLLEN } from '../../access/roles'
 import { Banner } from '../../blocks/Banner/config'
 import { MediaBlock } from '../../blocks/MediaBlock/config'
 import { generatePreviewPath } from '../../utilities/generatePreviewPath'
@@ -35,10 +36,10 @@ import {
 } from '@payloadcms/plugin-seo/fields'
 import { slugField } from 'payload'
 
-/** Redaktion: alle News. Team-Rollen: News ihrer eigenen Teams (auch Entwürfe). Alle anderen: Veröffentlichtes. */
+/** Redaktion (bzw. Zusatzrecht „news“): alle News. Team-Rollen: News ihrer eigenen Teams (auch Entwürfe). Alle anderen: Veröffentlichtes. */
 const newsLesen: Access = async ({ req }) => {
   const user = req.user as { roles?: string[] } | null
-  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  if (imBereich(user, 'news')) return true
   if (hasRole(user as never, ...TEAM_ROLLEN)) {
     const ids = await eigeneAngebotIds(req)
     if (ids.length) return { or: [{ _status: { equals: 'published' } }, { team: { in: ids } }] } as Where
@@ -48,16 +49,16 @@ const newsLesen: Access = async ({ req }) => {
 
 const newsAnlegen: Access = async ({ req }) => {
   const user = req.user as { roles?: string[] } | null
-  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  if (imBereich(user, 'news')) return true
   return hasRole(user as never, ...TEAM_ROLLEN) && (await eigeneAngebotIds(req)).length > 0
 }
 
-const istRedaktion = (user: unknown) => hasRole(user as never, 'admin', 'redaktion')
+const istRedaktion = (user: unknown) => imBereich(user, 'news')
 
 /** Team-News: nur für eigene Teams, Startseite entscheidet die Redaktion */
 const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operation, originalDoc }) => {
   const user = req.user as { roles?: string[] } | null
-  if (!user || hasRole(user as never, 'admin', 'redaktion')) return data
+  if (!user || istRedaktion(user)) return data
   const ids = await eigeneAngebotIds(req)
   const team = typeof data.team === 'object' && data.team ? data.team.id : data.team
   if (!team && ids.length === 1) data.team = ids[0]
@@ -93,7 +94,7 @@ const vorschlagErledigt: CollectionBeforeChangeHook = ({ data }) => {
 /** Versionen/Entwürfe: Redaktion alle, Team-Rollen nur die ihrer Teams, sonst niemand */
 const versionenLesen: Access = async ({ req }) => {
   const user = req.user as { roles?: string[] } | null
-  if (hasRole(user as never, 'admin', 'redaktion')) return true
+  if (istRedaktion(user)) return true
   if (hasRole(user as never, ...TEAM_ROLLEN)) {
     const ids = await eigeneAngebotIds(req)
     if (ids.length) return { 'version.team': { in: ids } } as Where
@@ -107,10 +108,10 @@ export const Posts: CollectionConfig<'posts'> = {
   endpoints: [startseiteEndpunkt],
   access: {
     create: newsAnlegen,
-    delete: redaktionOderEigeneTeams('team'),
+    delete: redaktionOderEigeneTeams('team', 'news'),
     read: newsLesen,
     readVersions: versionenLesen,
-    update: redaktionOderEigeneTeams('team'),
+    update: redaktionOderEigeneTeams('team', 'news'),
   },
   // This config controls what's populated by default when a post is referenced
   // https://payloadcms.com/docs/queries/select#defaultpopulate-collection-config-property
@@ -128,7 +129,7 @@ export const Posts: CollectionConfig<'posts'> = {
     components: { beforeList: ['@/components/Admin/Einstieg'] },
     description: 'Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.',
     group: 'Inhalte',
-    hidden: ausblendenBeiNurEinzelrechten,
+    hidden: ({ user }) => nurEinzelrechte(user) && !hatRecht(user, 'news'),
     defaultColumns: ['title', 'team', 'aufStartseite', '_status', 'publishedAt'],
     livePreview: {
       url: ({ data, req }) =>
@@ -228,7 +229,7 @@ export const Posts: CollectionConfig<'posts'> = {
         return r.docs.length === 1 ? r.docs[0]!.id : undefined
       },
       // Team-Rollen sehen in der Auswahl nur ihre eigenen Teams
-      filterOptions: ({ user }) => (!user || hasRole(user as never, 'admin', 'redaktion') ? true : { leitung: { contains: user.id } }),
+      filterOptions: ({ user }) => (!user || istRedaktion(user) ? true : { leitung: { contains: user.id } }),
       admin: {
         position: 'sidebar',
         description: 'Erscheint auf der Seite dieses Teams. Leer lassen für Vereins-News.',
@@ -251,7 +252,7 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Auf Startseite',
       type: 'checkbox',
       defaultValue: true,
-      access: { create: isEditorField, update: isEditorField },
+      access: { create: bereichFeld('news'), update: bereichFeld('news') },
       admin: {
         position: 'sidebar',
         condition: (_data, _sibling, { user }) => istRedaktion(user),

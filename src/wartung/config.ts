@@ -1,6 +1,6 @@
 import type { Endpoint, GlobalConfig, PayloadRequest } from 'payload'
 
-import { hasRole } from '@/access/roles'
+import { hasRole, imBereich } from '@/access/roles'
 import { istJson } from '@/utilities/istJson'
 
 /**
@@ -37,7 +37,7 @@ const saisonEndpunkt: Endpoint = {
   path: '/saison',
   method: 'post',
   handler: async (req) => {
-    if (!hasRole(req.user as never, 'admin', 'redaktion')) return Response.json({ fehler: 'Nur für Admins und Redaktion.' }, { status: 403 })
+    if (!imBereich(req.user, 'saisonwechsel')) return Response.json({ fehler: 'Nur für Admins und Redaktion.' }, { status: 403 })
     if (!istJson(req)) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 415 })
     const body = (await req.json?.().catch(() => null)) as { aktion?: unknown; id?: unknown; geprueft?: unknown } | null
     const aktion = body?.aktion
@@ -73,7 +73,7 @@ export const Wartung: GlobalConfig = {
   slug: 'wartung',
   label: 'Wartung',
   access: {
-    read: ({ req }) => hasRole(req.user as never, 'admin', 'redaktion'),
+    read: ({ req }) => imBereich(req.user, 'saisonwechsel'),
     // Nur über die Endpunkte (mit Rollenprüfung) – kein freies Bearbeiten
     update: () => false,
   },

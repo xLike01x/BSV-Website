@@ -1,7 +1,7 @@
 import type { Endpoint } from 'payload'
 import { revalidatePath, revalidateTag } from 'next/cache'
 
-import { hasRole } from '@/access/roles'
+import { imBereich } from '@/access/roles'
 import { fehlerAntwort, idAus, jsonVon, nurJson } from '@/posteingang/endpunkte'
 
 /**
@@ -17,7 +17,7 @@ export const startseiteEndpunkt: Endpoint = {
   method: 'post',
   handler: async (req) => {
     if (!req.user) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
-    if (!hasRole(req.user as never, 'admin', 'redaktion')) return Response.json({ fehler: 'Das entscheidet die Redaktion.' }, { status: 403 })
+    if (!imBereich(req.user, 'news')) return Response.json({ fehler: 'Das entscheidet die Redaktion.' }, { status: 403 })
     const id = idAus(req)
     if (!id) return Response.json({ fehler: 'News nicht gefunden.' }, { status: 404 })
     const body = await jsonVon<{ annehmen?: unknown }>(req)

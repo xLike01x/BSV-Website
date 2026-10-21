@@ -288,7 +288,7 @@ export interface User {
    */
   angebote?: (number | Angebote)[] | null;
   /**
-   * Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Benutzer, Admin-Rechte und Bankdaten lassen sich bewusst nicht einzeln vergeben.
+   * Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“ oder „die Pressewartin soll nur News schreiben“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Ein Bereichsrecht gibt genau die Rechte der zuständigen Rolle in diesem Bereich. Benutzerverwaltung, Admin-Rechte, Bankdaten und Datensicherung lassen sich bewusst nicht einzeln vergeben.
    */
   zusatzrechte?: {
     /**
@@ -312,6 +312,10 @@ export interface User {
      */
     formulare?: boolean | null;
     /**
+     * Inhalte · Wie die Redaktion, nur für News: auch Vereins-News, Kategorien und „Auf Startseite“, Vorschläge der Trainer annehmen.
+     */
+    news?: boolean | null;
+    /**
      * Inhalte · Der Vereinskalender auf der Seite „Termine“.
      */
     termine?: boolean | null;
@@ -320,13 +324,57 @@ export interface User {
      */
     gesuche?: boolean | null;
     /**
+     * Inhalte · Alle Bilder bearbeiten und löschen, Fotoalben, Dokumente für Mitglieder.
+     */
+    medien?: boolean | null;
+    /**
+     * Inhalte · Sponsoren und Partner, auch den Hauptsponsor.
+     */
+    sponsoren?: boolean | null;
+    /**
+     * Website-Aufbau · Aufbau und Texte der Website.
+     */
+    seiten?: boolean | null;
+    /**
+     * Sport · Anlegen, Zeiten, Texte, Verantwortliche, aktiv/inaktiv – für alle Teams, nicht nur die eigenen.
+     */
+    teams?: boolean | null;
+    /**
      * Sport · Nicht nur für die eigenen Teams.
      */
     ausfaelle?: boolean | null;
     /**
+     * Sport · Die Liste zum Saisonwechsel öffnen und abhaken (ohne E-Mail-Adressen der Verantwortlichen).
+     */
+    saisonwechsel?: boolean | null;
+    /**
+     * Mitglieder · Anträge sehen, beantworten und aufnehmen. IBAN, Kontoinhaber und Export für die Kasse bleiben der Rolle Kasse vorbehalten.
+     */
+    antraege?: boolean | null;
+    /**
      * Mitglieder · Mitgliedsnummer, Eintritt, Abteilungen (ohne Bankdaten).
      */
     mitgliedschaften?: boolean | null;
+    /**
+     * Einstellungen · Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular, Downloads.
+     */
+    verein?: boolean | null;
+    /**
+     * Einstellungen · Aufbewahrungsfristen und automatisches Aufräumen.
+     */
+    datenschutz?: boolean | null;
+    /**
+     * Einstellungen · Seitenaufrufe ohne personenbezogene Daten.
+     */
+    statistik?: boolean | null;
+    /**
+     * Einstellungen · Endgültig löschen bleibt dem Web-Admin vorbehalten.
+     */
+    papierkorb?: boolean | null;
+    /**
+     * Einstellungen · Eigene Tipps in der Hilfe, Rückmeldungen aus „War das hilfreich?“.
+     */
+    hilfe?: boolean | null;
   };
   /**
    * Lädt das Mitglied selbst im Mitgliederbereich hoch. Sichtbar für das Mitglied, Admin/Kasse und die Trainer seiner Kurse.
@@ -2688,10 +2736,22 @@ export interface UsersSelect<T extends boolean = true> {
         passantraege?: T;
         registrierungen?: T;
         formulare?: T;
+        news?: T;
         termine?: T;
         gesuche?: T;
+        medien?: T;
+        sponsoren?: T;
+        seiten?: T;
+        teams?: T;
         ausfaelle?: T;
+        saisonwechsel?: T;
+        antraege?: T;
         mitgliedschaften?: T;
+        verein?: T;
+        datenschutz?: T;
+        statistik?: T;
+        papierkorb?: T;
+        hilfe?: T;
       };
   profilbild?: T;
   freigegeben?: T;

@@ -43,6 +43,40 @@ const userOf = (req: PayloadRequest) => req.user as MaybeUser
 /** Angemeldet UND freigegeben (selbst registrierte Konten ohne Freigabe haben keine Rollen) */
 export const istMitgliedOderMehr = (user: unknown): boolean => Boolean(user && ((user as MaybeUser)?.roles ?? []).length > 0)
 
+/**
+ * Bereiche, die sich auch als Zusatzrecht einzeln vergeben lassen (src/access/einzelrechte.ts). Wer das Zusatzrecht hat,
+ * darf in diesem Bereich genau das, was die genannten Rollen dort dürfen – nicht mehr.
+ * Bankdaten, Benutzerverwaltung und Datensicherung gibt es bewusst nicht als Bereich.
+ */
+const BEREICH_ROLLEN = {
+  news: ['admin', 'redaktion'],
+  seiten: ['admin', 'redaktion'],
+  medien: ['admin', 'redaktion'],
+  sponsoren: ['admin', 'redaktion'],
+  teams: ['admin', 'redaktion'],
+  saisonwechsel: ['admin', 'redaktion'],
+  verein: ['admin', 'redaktion', 'kasse'],
+  hilfe: ['admin', 'redaktion'],
+  statistik: ['webadmin'],
+} as const satisfies Partial<Record<EinzelrechtKey, readonly Role[]>>
+export type Bereich = keyof typeof BEREICH_ROLLEN
+
+/** Darf die Person in diesem Bereich arbeiten? (passende Rolle oder Zusatzrecht) */
+export const imBereich = (user: unknown, b: Bereich): boolean => hasRole(user as MaybeUser, ...BEREICH_ROLLEN[b]) || hatRecht(user, b)
+export const bereichZugriff =
+  (b: Bereich): Access =>
+  ({ req }) =>
+    imBereich(req.user, b)
+export const bereichFeld =
+  (b: Bereich): FieldAccess =>
+  ({ req }) =>
+    imBereich(req.user, b)
+/** Seitenleiste: nur für Personen mit Zugang zu diesem Bereich */
+export const ausblendenAusserBereich =
+  (b: Bereich) =>
+  ({ user }: { user: unknown }): boolean =>
+    !imBereich(user, b)
+
 /** Admin darf alles. */
 export const isAdmin: Access = ({ req }) => hasRole(userOf(req), 'admin')
 export const isAdminField: FieldAccess = ({ req }) => hasRole(userOf(req), 'admin')
@@ -64,8 +98,14 @@ export const isFinance: Access = ({ req }) => hasRole(userOf(req), 'admin', 'kas
 export const canUseAdminPanel = ({ req }: { req: PayloadRequest }): boolean =>
   hasRole(userOf(req), 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(req.user)
 
-/** Medien hochladen: alle mit Inhaltsrechten. */
-export const canUpload: Access = ({ req }) => hasRole(userOf(req), 'admin', 'redaktion', ...TEAM_ROLLEN)
+/** Medien hochladen: alle mit Inhaltsrechten (Rolle oder Zusatzrecht für einen Bereich mit Bildern). */
+const BILDER_BEREICHE = ['news', 'seiten', 'medien', 'sponsoren', 'teams'] as const
+/** Zusatzrecht für einen Bereich mit Bildern → alle Bilder hochladen, sehen und auswählen (wie die Redaktion) */
+const bilderPerZusatzrecht = (user: unknown): boolean => BILDER_BEREICHE.some((b) => hatRecht(user, b))
+export const darfHochladen = (user: unknown): boolean => hasRole(user as MaybeUser, 'admin', 'redaktion', ...TEAM_ROLLEN) || bilderPerZusatzrecht(user)
+/** Alle Bilder sehen, auswählen und ohne Team-Ordner hochladen (Redaktion bzw. Zusatzrecht für einen Bereich mit Bildern) */
+export const alleBilder = (user: unknown): boolean => hasRole(user as MaybeUser, 'admin', 'redaktion') || bilderPerZusatzrecht(user)
+export const canUpload: Access = ({ req }) => darfHochladen(req.user)
 
 /** Eigenes Benutzerkonto oder Admin. */
 export const isAdminOrSelf: Access = ({ req }) => {
@@ -98,13 +138,13 @@ export const eigeneAngebotIds = async (req: PayloadRequest): Promise<number[]> =
   return ctx._eigeneAngebote
 }
 
-/** Zugriff „alles“ für Redaktion, „nur eigene Teams“ (über ein Feld) für Team-Rollen */
+/** Zugriff „alles“ für Redaktion (bzw. Zusatzrecht des Bereichs), „nur eigene Teams“ (über ein Feld) für Team-Rollen */
 export const redaktionOderEigeneTeams =
-  (feld: string): Access =>
+  (feld: string, bereich: Bereich | null): Access =>
   async ({ req }) => {
     const user = userOf(req)
     if (!user) return false
-    if (hasRole(user, 'admin', 'redaktion')) return true
+    if (hasRole(user, 'admin', 'redaktion') || (bereich && hatRecht(user, bereich))) return true
     if (hasRole(user, ...TEAM_ROLLEN)) {
       const ids = await eigeneAngebotIds(req)
       return ids.length ? ({ [feld]: { in: ids } } as Where) : false
@@ -112,18 +152,18 @@ export const redaktionOderEigeneTeams =
     return false
   }
 
-/** Angebote bearbeiten: Admin/Redaktion alle, Team-Rollen nur die eigenen. */
+/** Angebote bearbeiten: Admin/Redaktion (bzw. Zusatzrecht „teams“) alle, Team-Rollen nur die eigenen. */
 export const canEditAngebot: Access = ({ req }) => {
   const user = userOf(req)
   if (!user) return false
-  if (hasRole(user, 'admin', 'redaktion')) return true
+  if (imBereich(user, 'teams')) return true
   if (hasRole(user, ...TEAM_ROLLEN)) return { leitung: { contains: user.id } }
   return false
 }
 
-/** Veröffentlichte Inhalte für alle, Entwürfe nur für Redaktion/Admin. */
+/** Veröffentlichte Seiten für alle, Entwürfe nur für Redaktion/Admin bzw. Zusatzrecht „seiten“. */
 export const editorOrPublished: Access = ({ req }) => {
-  if (hasRole(userOf(req), 'admin', 'redaktion')) return true
+  if (imBereich(req.user, 'seiten')) return true
   return { _status: { equals: 'published' } }
 }
 
@@ -162,7 +202,7 @@ export const rolleOderRecht =
  */
 export const medienSichtbar = async (req: PayloadRequest): Promise<Where | null> => {
   const user = userOf(req)
-  if (!user || hasRole(user, 'admin', 'redaktion')) return null
+  if (!user || alleBilder(user)) return null
   const ids = await eigeneAngebotIds(req)
   return { or: [...(ids.length ? [{ team: { in: ids } }] : []), { allgemein: { equals: true } }] }
 }

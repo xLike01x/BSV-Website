@@ -17,14 +17,24 @@ const ZUSATZ_TEAM: Record<string, Partial<Record<'ansehen' | 'anlegen', Stufe>>>
 }
 
 /** Eigene Seiten der Verwaltung (keine Sammlungen) – wer sie öffnen darf */
-const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeiten: boolean }[] = [
+const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeiten: boolean; recht?: string }[] = [
   { slug: 'hilfe', titel: 'Hilfe-Center', rollen: 'alle', bearbeiten: false },
-  { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true },
+  { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true, recht: 'registrierungen' },
+  { slug: 'saisonwechsel', titel: 'Saisonwechsel (Fußball)', rollen: ['admin', 'redaktion'], bearbeiten: true, recht: 'saisonwechsel' },
   { slug: 'rollen', titel: 'Rollen & Rechte', rollen: ['admin'], bearbeiten: false },
   { slug: 'sicherung', titel: 'Datensicherung', rollen: ['webadmin'], bearbeiten: true },
-  { slug: 'statistik', titel: 'Besucherstatistik', rollen: ['webadmin'], bearbeiten: false },
-  { slug: 'papierkorb', titel: 'Papierkorb (alle Bereiche)', rollen: ['webadmin'], bearbeiten: true },
+  { slug: 'statistik', titel: 'Besucherstatistik', rollen: ['webadmin'], bearbeiten: false, recht: 'statistik' },
+  { slug: 'papierkorb', titel: 'Papierkorb (alle Bereiche)', rollen: ['webadmin'], bearbeiten: true, recht: 'papierkorb' },
 ]
+/** Zusatzrechte, die bei Team-Rollen die Einschränkung „nur eigene Teams“ für einen Bereich aufheben */
+const ALLE_STATT_EIGENE: Record<string, string[]> = { posts: ['news'], ausfaelle: ['ausfaelle'], media: ['news', 'seiten', 'medien', 'sponsoren', 'teams'], alben: ['medien'] }
+/** Feldnamen eines Filters, die nichts mit „eigenen Teams“ zu tun haben */
+const ALLGEMEIN = new Set(['_status', 'deletedAt', 'endgueltigAm'])
+const nurAllgemeineFilter = (w: unknown): boolean => {
+  if (!w || typeof w !== 'object') return true
+  return Object.entries(w as Record<string, unknown>).every(([k, v]) => (k === 'and' || k === 'or' ? Array.isArray(v) && v.every(nurAllgemeineFilter) : ALLGEMEIN.has(k)))
+}
+
 /** Diese Einträge legen Mitglieder selbst im Mitgliederbereich an (nicht in der Verwaltung) */
 const UEBER_MITGLIEDERBEREICH = new Set(['passantraege'])
 
@@ -54,8 +64,9 @@ export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrec
         const r = await (fn as (a: unknown) => unknown)({ req: fakeReq, data })
         if (r === true) return 'ja'
         if (!r || typeof r !== 'object') return 'nein'
-        // „Alle veröffentlichten“ (z. B. News) zählt als sehen – eingeschränkt sind nur Entwürfe anderer
-        return JSON.stringify(r).includes('"_status"') ? 'ja' : 'eigene'
+        // „Alle veröffentlichten“ (z. B. News) zählt als sehen – eingeschränkt sind nur Entwürfe anderer.
+        // Filter nur auf Papierkorb-Felder (nicht Gelöschtes / nicht im Web-Admin-Papierkorb) sind keine Einschränkung auf eigene Teams.
+        return JSON.stringify(r).includes('"_status"') || nurAllgemeineFilter(r) ? 'ja' : 'eigene'
       } catch {
         return 'nein'
       }
@@ -81,7 +92,7 @@ export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrec
         }
       })())
       // Team-Rollen: Einschränkungen aus Hooks – außer eine stärkere Rolle oder ein Zusatzrecht gibt „alle“
-      const zusatz = rolleTeam && !roles.some((r) => ['admin', 'redaktion'].includes(r)) && !(c.slug === 'ausfaelle' && zusatzrechte.ausfaelle) ? (ZUSATZ_TEAM[c.slug] ?? {}) : {}
+      const zusatz = rolleTeam && !roles.some((r) => ['admin', 'redaktion'].includes(r)) && !(ALLE_STATT_EIGENE[c.slug] ?? []).some((k) => zusatzrechte[k]) ? (ZUSATZ_TEAM[c.slug] ?? {}) : {}
       zeilen.push({
         slug: c.slug,
         art: 'bereich',
@@ -114,7 +125,7 @@ export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrec
       })
     }
     for (const s of SEITEN) {
-      const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)) || (s.slug === 'registrierungen' && zusatzrechte.registrierungen === true))
+      const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)) || (s.recht ? zusatzrechte[s.recht] === true : false))
       zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten', ansehen: darf ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
     }
     return zeilen
