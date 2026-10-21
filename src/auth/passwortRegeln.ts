@@ -14,8 +14,11 @@ export const MAX_LAENGE = 200
 
 export type Regel = { key: 'laenge' | 'gross' | 'klein' | 'zahl' | 'sonder'; text: string; ok: boolean }
 
+/** Länge in echten Zeichen (ein Emoji zählt einfach) – im Browser und auf dem Server gleich */
+const laenge = (pw: string) => (pw.length > MAX_LAENGE * 4 ? Infinity : [...pw].length)
+
 export const passwortRegeln = (pw: string): Regel[] => [
-  { key: 'laenge', text: `mindestens ${MIN_LAENGE} Zeichen`, ok: pw.length >= MIN_LAENGE && pw.length <= MAX_LAENGE },
+  { key: 'laenge', text: `mindestens ${MIN_LAENGE} Zeichen`, ok: laenge(pw) >= MIN_LAENGE && laenge(pw) <= MAX_LAENGE },
   { key: 'gross', text: 'ein Großbuchstabe', ok: /\p{Lu}/u.test(pw) },
   { key: 'klein', text: 'ein Kleinbuchstabe', ok: /\p{Ll}/u.test(pw) },
   { key: 'zahl', text: 'eine Zahl', ok: /\p{Nd}/u.test(pw) },
@@ -58,7 +61,7 @@ const kern = (pw: string, leet: boolean) =>
     .replace(/[^a-z]/g, '')
 
 const istAllerweltswort = (k: string) => {
-  if (!k) return true
+  if (!k) return false // nur Buchstaben außerhalb a–z (z. B. kyrillisch) – darüber entscheiden die übrigen Regeln
   if (WOERTER.has(k)) return true
   // Wort doppelt („bsvbsv“) oder zwei Allerweltswörter hintereinander („hallobsv“)
   for (let i = 3; i <= k.length - 3; i++) if (WOERTER.has(k.slice(0, i)) && WOERTER.has(k.slice(i))) return true
@@ -79,24 +82,26 @@ const hatReihe = (pw: string) => {
 }
 
 /** Teile von Name und E-Mail ab 4 Zeichen (z. B. „thomas“, „wilms“, „twilms“) */
+const ausschreiben = (t: string) => [...t.toLowerCase()].map((c) => UMLAUTE[c] ?? c).join('')
 const persoenlicheTeile = (name?: string | null, email?: string | null) => {
-  const lokal = String(email ?? '').toLowerCase().split('@')[0] ?? ''
-  return [...String(name ?? '').toLowerCase().split(/[\s.,_+-]+/), lokal, ...lokal.split(/[._+-]+/)].map((t) => t.trim()).filter((t) => t.length >= 4)
+  const lokal = ausschreiben(String(email ?? '').split('@')[0] ?? '')
+  return [...ausschreiben(String(name ?? '')).split(/[\s.,_+-]+/), lokal, ...lokal.split(/[._+-]+/)].map((t) => t.trim()).filter((t) => t.length >= 4)
 }
 
 export type Kontext = { name?: string | null; email?: string | null }
 
 /** Erster Verstoß als verständlicher Satz – oder null, wenn das Passwort passt */
 export function passwortFehler(pw: string, kontext: Kontext = {}): string | null {
-  if (pw.length < MIN_LAENGE) return `Das Passwort braucht mindestens ${MIN_LAENGE} Zeichen.`
-  if (pw.length > MAX_LAENGE) return `Das Passwort darf höchstens ${MAX_LAENGE} Zeichen haben.`
+  if (pw.length > MAX_LAENGE * 4) return `Das Passwort darf höchstens ${MAX_LAENGE} Zeichen haben.`
+  if (laenge(pw) < MIN_LAENGE) return `Das Passwort braucht mindestens ${MIN_LAENGE} Zeichen.`
+  if (laenge(pw) > MAX_LAENGE) return `Das Passwort darf höchstens ${MAX_LAENGE} Zeichen haben.`
   const fehlt = passwortRegeln(pw).filter((r) => !r.ok && r.key !== 'laenge').map((r) => FEHLT[r.key])
   if (fehlt.length) return `Das Passwort braucht noch ${fehlt.length > 1 ? `${fehlt.slice(0, -1).join(', ')} und ${fehlt.at(-1)}` : fehlt[0]}.`
   if (istAllerweltswort(kern(pw, false)) || istAllerweltswort(kern(pw, true)))
     return 'Dieses Passwort ist zu leicht zu erraten (ein häufiges Wort oder Vereinsbegriff mit Zahlen). Tipp: ein kurzer Satz, z. B. „Mein Hund frisst 3 Äpfel!“'
   if (hatReihe(pw)) return 'Bitte keine Reihen wie „12345“, „abcde“, „qwert“ oder „aaaaa“ verwenden.'
-  const klein = pw.toLowerCase()
-  if (persoenlicheTeile(kontext.name, kontext.email).some((t) => klein.includes(t))) return 'Das Passwort darf deinen Namen oder deine E-Mail-Adresse nicht enthalten.'
+  const klein = ausschreiben(pw)
+  if (persoenlicheTeile(kontext.name, kontext.email).some((t) => klein.includes(t))) return 'Das Passwort darf den Namen oder die E-Mail-Adresse des Kontos nicht enthalten.'
   return null
 }
 

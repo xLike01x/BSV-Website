@@ -28,6 +28,8 @@ export async function seedTestUser(): Promise<void> {
   await payload.create({
     collection: 'users',
     data: { ...testUser, name: 'Test Admin (E2E)', roles: ['admin'], testkonto: true } as never,
+    // Festes Testpasswort: nur Länge/Zeichenarten prüfen (wie bei der Testkonten-Anlage)
+    context: { bsvTestkonto: true },
   })
 }
 

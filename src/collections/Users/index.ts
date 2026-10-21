@@ -9,7 +9,7 @@ import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
-import { aktuellesPasswortFeld, passwortUndLogin } from '../../auth/passwort'
+import { aktuellesPasswortFeld, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
 import { teamsNachher, teamsVerantwortlichFeld, teamsVorher } from './teamsVerantwortlich'
 import { meHerabgestuft, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
@@ -237,6 +237,7 @@ export const Users: CollectionConfig = {
     ],
     afterChange: [zweiFaktorZuruecksetzen as never, teamsNachher],
     beforeChange: [
+      passwortNichtPersoenlich,
       teamsVorher,
       // Eigene E-Mail nur über die Verwaltung ändern (sonst könnte man sich z. B. fremde Mitgliedsausweise „holen“).
       // Selbst registrierte Konten können bis zur Freigabe auch den Namen nicht mehr ändern.

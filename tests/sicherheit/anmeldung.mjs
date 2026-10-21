@@ -60,7 +60,17 @@ export default async function anmeldung(d) {
   const ad = await login('admin@bsv.test')
   r = await api(ad, 'POST', '/api/users/testkonten', {})
   pruefe('Testpasswort wiederhergestellt', r.s === 200 && Boolean(await login('mitglied@bsv.test')), r.s)
-  r = await api(ad, 'POST', '/api/users', { email: 'sicherheitstest-kurz@bsv.test', name: 'Test', password: 'kurz', roles: ['mitglied'] })
+  // Nach dem Zurücksetzen sind alte Sitzungen der Testkonten beendet – neu anmelden
+  const ad2 = await login('admin@bsv.test')
+  const mi3 = await login('mitglied@bsv.test')
+  r = await api(null, 'PATCH', `/api/users/${ich.id}`, { password: 'Mitglied#Rad7x' })
+  pruefe('Ohne Anmeldung: Passwort mit Namensteil verrät nichts (403 statt Namens-Hinweis)', r.s === 403, r.s)
+  r = await api(mi3, 'PATCH', `/api/users?where[id][equals]=${ich.id}`, { password: 'Wilde Hummel 4 summt!' })
+  pruefe('Eigenes Passwort per Sammel-Update (ohne aktuelles Passwort) → 400', r.s === 400, r)
+  r = await api(ad2, 'POST', '/api/users', { email: 'sicherheitstest-zahl@bsv.test', name: 'Test Zahl', password: 12345678901, roles: ['mitglied'] })
+  pruefe('Passwort als Zahl → 400 (kein Absturz)', r.s === 400, r.s)
+  await d.q(`delete from users where email='sicherheitstest-zahl@bsv.test'`)
+  r = await api(await login('admin@bsv.test'), 'POST', '/api/users', { email: 'sicherheitstest-kurz@bsv.test', name: 'Test', password: 'kurz', roles: ['mitglied'] })
   pruefe('Verwaltung legt Konto mit kurzem Passwort an → 400', r.s === 400, r)
   await d.q(`delete from users where email='sicherheitstest-kurz@bsv.test'`)
 

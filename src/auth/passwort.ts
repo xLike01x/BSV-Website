@@ -1,5 +1,5 @@
 import crypto from 'crypto'
-import type { CollectionBeforeOperationHook, Field, PayloadRequest, Where } from 'payload'
+import type { CollectionBeforeChangeHook, CollectionBeforeOperationHook, Field, PayloadRequest } from 'payload'
 import { APIError } from 'payload'
 
 import { ratenGrenze } from '@/hooks/spamSchutz'
@@ -29,20 +29,23 @@ async function passwortStimmt(pw: string, hash?: string | null, salt?: string | 
 
 type Konto = { name?: string | null; email?: string | null }
 
-/** Name und E-Mail der Person, deren Passwort gesetzt wird (für „nicht den eigenen Namen“) */
-async function kontoZumPasswort(req: PayloadRequest, operation: string, a: { data?: Record<string, unknown>; id?: unknown }): Promise<Konto> {
-  const d = (a.data ?? {}) as Konto
-  if (operation === 'create' || (operation === 'update' && a.id == null)) return d
-  const where: Where = operation === 'resetPassword' ? { resetPasswordToken: { equals: String(a.data?.token ?? '') } } : { id: { equals: a.id } }
-  const vorhanden = (await req.payload.db.findOne({ collection: 'users', where, req }).catch(() => null)) as Konto | null
-  return { name: d.name ?? vorhanden?.name, email: d.email ?? vorhanden?.email }
+/**
+ * Konto zu einem NOCH GÜLTIGEN Link aus „Passwort vergessen“ (wer ihn hat, ist die Person selbst).
+ * Bei abgelaufenen/benutzten Links nichts verraten.
+ */
+async function kontoZumLink(req: PayloadRequest, token: unknown): Promise<Konto> {
+  if (typeof token !== 'string' || !token) return {}
+  const k = (await req.payload.db
+    .findOne({ collection: 'users', where: { and: [{ resetPasswordToken: { equals: token } }, { resetPasswordExpiration: { greater_than: new Date().toISOString() } }] }, req })
+    .catch(() => null)) as Konto | null
+  return k ?? {}
 }
 
 const passwortPruefen = (pw: unknown, konto: Konto, testkontenAnlage: boolean) => {
   if (typeof pw !== 'string') return
   // Anlage der Testkonten (nur lokal, nur aus dem Server-Code, festes Testpasswort): nur Länge und Zeichenarten
   const fehler = testkontenAnlage
-    ? pw.length < MIN_LAENGE || pw.length > MAX_LAENGE || passwortRegeln(pw).some((r) => !r.ok)
+    ? passwortRegeln(pw).some((r) => !r.ok)
       ? `Das Passwort braucht ${MIN_LAENGE} bis ${MAX_LAENGE} Zeichen mit Groß- und Kleinbuchstaben, Zahl und Sonderzeichen.`
       : null
     : passwortFehler(pw, konto)
@@ -53,6 +56,11 @@ const eigenesKonto = (req: PayloadRequest, id: unknown) => req.user && id != nul
 
 export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, operation, req }) => {
   const a = args as { data?: Record<string, unknown>; id?: unknown }
+  // Kein Passwort aus Zahlen/Listen (sonst Absturz bzw. stilles Ignorieren)
+  if ((operation === 'create' || operation === 'update' || operation === 'resetPassword') && a.data && 'password' in a.data && a.data.password != null && typeof a.data.password !== 'string')
+    throw new APIError('Ungültiges Passwort.', 400)
+  // Passwörter nur einzeln ändern – ein Sammel-Update (per where) umginge „aktuelles Passwort“
+  if (operation === 'update' && a.id == null && typeof a.data?.password === 'string' && req.user) throw new APIError('Passwörter bitte nur einzeln ändern.', 400)
   if (operation === 'login' && req.headers) {
     ratenGrenze(req, 'login', 20, 300)
     const email = String(a.data?.email ?? '').toLowerCase().trim()
@@ -62,8 +70,11 @@ export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, op
     if (!vorhanden) await pbkdf2(pw || 'x', crypto.randomBytes(32).toString('hex'), 600000, 32)
   }
   if (operation === 'forgotPassword' && req.headers) ratenGrenze(req, 'passwort-vergessen', 5, 50)
+  // Hier läuft die Prüfung VOR der Rechteprüfung von Payload – deshalb ohne Daten fremder Konten (sonst ließen sich
+  // Namen erraten). Name/E-Mail beim Ändern prüft passwortNichtPersoenlich (nach der Rechteprüfung).
   if ((operation === 'create' || operation === 'update' || operation === 'resetPassword') && typeof a.data?.password === 'string') {
-    passwortPruefen(a.data.password, await kontoZumPasswort(req, operation, a), req.context?.bsvTestkonto === true)
+    const konto: Konto = operation === 'create' ? (a.data as Konto) : operation === 'resetPassword' ? await kontoZumLink(req, a.data.token) : {}
+    passwortPruefen(a.data.password, konto, req.context?.bsvTestkonto === true)
   }
   if (operation === 'update' && typeof a.data?.password === 'string' && eigenesKonto(req, a.id)) {
     const aktuell = String(a.data.aktuellesPasswort ?? '')
@@ -74,6 +85,14 @@ export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, op
   }
   if (a.data && 'aktuellesPasswort' in a.data) delete a.data.aktuellesPasswort
   return args
+}
+
+/** Beim Ändern: Passwort darf Name/E-Mail des Kontos nicht enthalten – erst nach der Rechteprüfung (beforeChange) */
+export const passwortNichtPersoenlich: CollectionBeforeChangeHook = ({ data, originalDoc, operation, req }) => {
+  if (operation !== 'update' || typeof data?.password !== 'string' || req.context?.bsvTestkonto === true) return data
+  const fehler = passwortFehler(data.password, { name: data.name ?? originalDoc?.name, email: data.email ?? originalDoc?.email })
+  if (fehler) throw new APIError(fehler, 400)
+  return data
 }
 
 /** Feld „Aktuelles Passwort“ – erscheint nur beim Ändern des eigenen Passworts, wird nie gespeichert */
