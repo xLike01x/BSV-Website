@@ -78,6 +78,13 @@ export async function wartungsHinweise(payload: Payload): Promise<Hinweis[]> {
     h.push({ key: 'speicher', art: 'warn', symbol: '💽', text: `Der Speicherplatz ist zu ${sp.prozent} % belegt (noch ${sp.freiGB.toFixed(1)} GB frei). Alte Bilder aufräumen oder mehr Speicher buchen.` })
   if (schluesselwechselOffen())
     h.push({ key: 'schluessel', art: 'warn', symbol: '🔑', text: 'Der Schlüsselwechsel ist nicht abgeschlossen: ENCRYPTION_KEY_ALT steht noch in der .env. Wenn alles umgestellt ist, Zeile löschen und neu starten.' })
+  if (process.env.NODE_ENV === 'production' && process.env.BSV_ERINNERUNGEN === 'aus')
+    h.push({
+      key: 'erinnerungen-aus',
+      art: 'warn',
+      symbol: '📭',
+      text: 'Automatische Mails sind abgeschaltet (BSV_ERINNERUNGEN=aus in der .env, z. B. von der Generalprobe): keine „Passt noch?“-Mails, kein Monatsbericht. Für den echten Betrieb Zeile löschen und neu starten.',
+    })
   for (const l of [nodeLaufzeit(), await postgresLaufzeit(payload)]) {
     if (!l?.ende || l.tage === null || l.tage > VORLAUF_TAGE) continue
     const wann = new Date(`${l.ende}T00:00:00Z`).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })

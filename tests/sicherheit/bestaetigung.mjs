@@ -26,6 +26,8 @@ export default async function bestaetigung(d) {
     pruefe('Trainer: fremdes Team → 403', (await api(tr, 'POST', `/api/angebote/${fremd.id}/bestaetigen`, {})).s === 403)
     const ohneJson = await fetch(`${B}/api/angebote/${eigen.id}/bestaetigen`, { method: 'POST', headers: { Cookie: tr, 'Content-Type': 'text/plain' }, body: '{}' })
     pruefe('Ohne JSON (Formular von fremder Seite) → 415', ohneJson.status === 415)
+    const fastJson = await fetch(`${B}/api/angebote/${eigen.id}/bestaetigen`, { method: 'POST', headers: { Cookie: tr, 'Content-Type': 'text/plain; x=application/json' }, body: '{}' })
+    pruefe('„application/json“ nur als Zusatz im Content-Type → 415', fastJson.status === 415)
     pruefe('Unsinnige ID → 400', (await api(tr, 'POST', '/api/angebote/abc/bestaetigen', {})).s === 400)
     const geaendertVorher = (await stand(eigen.id)).updated_at
     const ok = await api(tr, 'POST', `/api/angebote/${eigen.id}/bestaetigen`, {})
@@ -33,6 +35,15 @@ export default async function bestaetigung(d) {
     pruefe('Trainer: eigenes Team bestätigen', ok.s === 200 && new Date(s1.bestaetigt_am) > new Date('2025-01-01'), ok.j)
     pruefe('„Zuletzt geändert“ bleibt unverändert', String(s1.updated_at) === String(geaendertVorher))
     pruefe('Fremdes Team blieb unberührt', new Date((await stand(fremd.id)).bestaetigt_am) < new Date('2021-01-01'))
+    pruefe('„Bestätigt von“ enthält keine E-Mail-Adresse', s1.bestaetigt_von && !s1.bestaetigt_von.includes('@'), s1.bestaetigt_von)
+    const nochmal = await api(tr, 'POST', `/api/angebote/${eigen.id}/bestaetigen`, {})
+    const s1b = await stand(eigen.id)
+    pruefe('Doppelklick innerhalb 10 Minuten: kein erneutes Schreiben', nochmal.s === 200 && String(s1b.bestaetigt_am) === String(s1.bestaetigt_am) && nochmal.j?.von === s1.bestaetigt_von, nochmal.j)
+    const mitglied = await login('mitglied@bsv.test')
+    const alsMitglied = await api(mitglied, 'GET', `/api/angebote/${eigen.id}?depth=0`)
+    pruefe('Mitglied (ohne Team-Rechte): sieht „bestätigt von“ nicht', alsMitglied.s === 200 && !('bestaetigtVon' in (alsMitglied.j ?? {})), Object.keys(alsMitglied.j ?? {}))
+    const alsTrainer = await api(tr, 'GET', `/api/angebote/${eigen.id}?depth=0`)
+    pruefe('Trainer sieht „bestätigt von“', alsTrainer.s === 200 && 'bestaetigtVon' in (alsTrainer.j ?? {}))
 
     // Direkt über die Schnittstelle setzen geht nicht
     await zuruecksetzen()

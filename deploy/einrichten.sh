@@ -39,8 +39,21 @@ if [ "${ID:-}" != "ubuntu" ] || [ "${VERSION_ID:-}" != "24.04" ]; then
   hinweis "Gedacht für Ubuntu 24.04 – gefunden: ${PRETTY_NAME:-unbekannt}."
   [ -z "$PROBE" ] && { read -rp "  Trotzdem fortfahren? (j/N) " a; [[ "$a" =~ ^[jJ] ]] || exit 1; }
 fi
-: >"$PROTOKOLL" 2>/dev/null || PROTOKOLL=/dev/null
+{ echo; echo "===== Lauf vom $(date '+%d.%m.%Y %H:%M:%S') ====="; } >>"$PROTOKOLL" 2>/dev/null || PROTOKOLL=/dev/null
 chmod 600 "$PROTOKOLL" 2>/dev/null || true
+# Schon eingerichtet? Dann bleiben .env und Datenbank-Zugang, und das Bauen übernimmt deploy/update.sh
+# (Sicherung vorher, Bauen neben der laufenden Website, Zurückschalten bei Fehlern).
+BESTEHEND=""
+[ -f "$ZIEL/.env" ] && BESTEHEND=1
+GEBAUT=""
+[ -f "$ZIEL/.build-env" ] && GEBAUT=1
+# Zeichen, die die .env-Leser (Next.js, Node --env-file) unterschiedlich deuten, sind verboten:
+# $ (Variable), # (Kommentar), Anführungszeichen, Backtick, Backslash, Leerzeichen
+SICHER_MUSTER='^[]A-Za-z0-9._+/=@:,!%^*()?~;&|<>[{}-]+$'
+sicherer_wert() { [[ "$1" =~ $SICHER_MUSTER ]]; }
+# Eingabe lesen; ohne Tastatur (Ende der Eingabe) abbrechen statt endlos zu fragen
+frage() { read -rp "$1" "$2" || { echo; fehler "Keine Eingabe mehr – abgebrochen."; exit 1; }; }
+env_wert() { sed -n "s/^$1=//p" "$ZIEL/.env" | tail -n1; }
 
 fett "BSV-Website – Server einrichten"
 echo "  Erst ein paar Fragen, danach läuft alles von allein. Abbrechen jederzeit mit Strg+C."
@@ -49,20 +62,33 @@ echo "  Erst ein paar Fragen, danach läuft alles von allein. Abbrechen jederzei
 fett "1. Adresse der Website"
 echo "  Für die Generalprobe z. B. test.buedericher-spielverein.de, für den echten Betrieb www.buedericher-spielverein.de"
 while true; do
-  read -rp "  Adresse [www.buedericher-spielverein.de]: " DOMAIN
+  frage "  Adresse [www.buedericher-spielverein.de]: " DOMAIN
   DOMAIN="${DOMAIN:-www.buedericher-spielverein.de}"
   DOMAIN="${DOMAIN,,}"; DOMAIN="${DOMAIN#https://}"; DOMAIN="${DOMAIN#http://}"; DOMAIN="${DOMAIN%/}"
   [[ "$DOMAIN" =~ ^([a-z0-9]([a-z0-9-]{0,61}[a-z0-9])?\.)+[a-z]{2,}$ ]] && break
   hinweis "Das sieht nicht nach einer Adresse aus (nur Kleinbuchstaben, z. B. www.beispiel.de)."
 done
 
+p=""; a=""; SCHLUESSEL=""; SMTP_HOST=""; SMTP_PORT="465"; SMTP_USER=""; SMTP_PASS=""; SMTP_FROM=""
+if [ -n "$BESTEHEND" ]; then
+  fett "2./3. Schlüssel und E-Mail-Versand"
+  ok "Schon eingerichtet ($ZIEL/.env) – keine Eingabe nötig"
+else
 fett "2. Der geheime Schlüssel (ENCRYPTION_KEY)"
 echo "  Genau derselbe wie in der .env auf deinem PC (steht im Passwortmanager). Die Eingabe bleibt unsichtbar."
 while true; do
-  read -rsp "  ENCRYPTION_KEY: " SCHLUESSEL; echo
+  read -rsp "  ENCRYPTION_KEY: " SCHLUESSEL || { echo; fehler "Keine Eingabe mehr – abgebrochen."; exit 1; }; echo
   if [ ${#SCHLUESSEL} -lt 32 ]; then hinweis "Zu kurz (mindestens 32 Zeichen). Bitte aus dem Passwortmanager kopieren."; continue; fi
   if [[ "$SCHLUESSEL" =~ bitte|ersetzen|beispiel ]]; then hinweis "Das ist noch der Platzhalter aus .env.example."; continue; fi
-  read -rsp "  Zur Kontrolle noch einmal: " SCHLUESSEL2; echo
+  if ! sicherer_wert "$SCHLUESSEL"; then
+    hinweis "Der Schlüssel enthält Leer- oder Sonderzeichen wie \$ # \" ' \\ – die liest die .env nicht überall gleich."
+    echo "    Ist das wirklich genau der Wert aus der .env vom PC (der Schlüssel darf nie geändert werden)?"
+    echo "    Dann abbrechen und die .env von Hand anlegen: deploy/README.md, Abschnitt 2."
+    read -rp "  Noch einmal eingeben? (J/n) " b || exit 1
+    [[ "$b" =~ ^[nN] ]] && exit 1
+    continue
+  fi
+  read -rsp "  Zur Kontrolle noch einmal: " SCHLUESSEL2 || exit 1; echo
   [ "$SCHLUESSEL" = "$SCHLUESSEL2" ] && break
   hinweis "Die beiden Eingaben sind verschieden – bitte noch einmal."
 done
@@ -70,41 +96,108 @@ unset SCHLUESSEL2
 
 fett "3. E-Mail-Versand (geht auch später, siehe deploy/README.md Abschnitt 4)"
 read -rp "  Jetzt einrichten? (j/N) " a
-SMTP_HOST=""; SMTP_PORT="465"; SMTP_USER=""; SMTP_PASS=""; SMTP_FROM=""
 if [[ "$a" =~ ^[jJ] ]]; then
-  read -rp "  Postausgangsserver (z. B. mail.beispiel.de): " SMTP_HOST
-  read -rp "  Port [465]: " p; SMTP_PORT="${p:-465}"
-  read -rp "  Benutzer/E-Mail (z. B. website@buedericher-spielverein.de): " SMTP_USER
-  read -rsp "  Passwort des Postfachs (unsichtbar): " SMTP_PASS; echo
-  read -rp "  Absender [$SMTP_USER]: " p; SMTP_FROM="${p:-$SMTP_USER}"
+  while true; do
+    frage "  Postausgangsserver (z. B. mail.beispiel.de): " SMTP_HOST
+    SMTP_HOST="${SMTP_HOST,,}"; SMTP_HOST="${SMTP_HOST//[[:space:]]/}"
+    [[ "$SMTP_HOST" =~ ^[a-z0-9.-]+\.[a-z0-9-]{2,}$ ]] && break
+    hinweis "Bitte nur die Adresse, z. B. mail.beispiel.de"
+  done
+  while true; do
+    frage "  Port [465]: " p; SMTP_PORT="${p//[[:space:]]/}"; SMTP_PORT="${SMTP_PORT:-465}"
+    [[ "$SMTP_PORT" =~ ^[0-9]{2,5}$ ]] && break
+    hinweis "Bitte eine Zahl, meist 465 oder 587"
+  done
+  while true; do
+    frage "  Benutzer/E-Mail (z. B. website@buedericher-spielverein.de): " SMTP_USER
+    SMTP_USER="${SMTP_USER//[[:space:]]/}"
+    [ -n "$SMTP_USER" ] && sicherer_wert "$SMTP_USER" && break
+    hinweis "Ohne Leer- und Sonderzeichen wie \$ # Anführungszeichen"
+  done
+  while true; do
+    read -rsp "  Passwort des Postfachs (unsichtbar): " SMTP_PASS || exit 1; echo
+    sicherer_wert "$SMTP_PASS" && break
+    hinweis "Das Passwort enthält Leer- oder Sonderzeichen wie \$ # \" ' \\ – die liest die .env nicht sicher. Am besten beim Anbieter ein Passwort ohne diese Zeichen setzen, oder den E-Mail-Versand später von Hand eintragen."
+    read -rp "  Später eintragen? (J/n) " b || exit 1; [[ "$b" =~ ^[nN] ]] || { SMTP_HOST=""; SMTP_PASS=""; break; }
+  done
+  if [ -n "$SMTP_HOST" ]; then
+    while true; do
+      frage "  Absender [$SMTP_USER]: " p; SMTP_FROM="${p//[[:space:]]/}"; SMTP_FROM="${SMTP_FROM:-$SMTP_USER}"
+      [[ "$SMTP_FROM" == *@* ]] && sicherer_wert "$SMTP_FROM" && break
+      hinweis "Bitte eine E-Mail-Adresse"
+    done
+  fi
+fi
 fi
 
 fett "4. Inhalte vom PC übernehmen (geht auch später)"
 echo "  Liegt eine Sicherungsdatei (bsv-sicherung_….tar.gz.enc) schon auf dem Server? Dann den Pfad angeben, z. B. /root/bsv-sicherung_2026-10-21_09-00.tar.gz.enc"
 SICHERUNG=""
 while true; do
-  read -rp "  Pfad (leer = später): " SICHERUNG
+  frage "  Pfad (leer = später): " SICHERUNG
   [ -z "$SICHERUNG" ] && break
-  [ -f "$SICHERUNG" ] && [[ "$SICHERUNG" =~ \.tar\.gz(\.enc)?$ ]] && break
+  if [ -f "$SICHERUNG" ] && [[ "$SICHERUNG" =~ \.tar\.gz(\.enc)?$ ]]; then
+    [[ "$(basename "$SICHERUNG")" =~ ^[A-Za-z0-9][A-Za-z0-9._-]*$ ]] && break
+    hinweis "Der Dateiname enthält ungewöhnliche Zeichen – bitte umbenennen (z. B. bsv-sicherung.tar.gz.enc)."
+    continue
+  fi
   hinweis "Datei nicht gefunden oder keine Sicherung (.tar.gz.enc)."
 done
+
+# SSH: Passwort-Anmeldung nur abschalten, wenn bestätigt ist, dass die Anmeldung mit Schlüssel klappt
+SSH_HAERTEN=""
+SSH_SCHON=""
+[ -f /etc/ssh/sshd_config.d/00-bsv.conf ] && SSH_SCHON=1
+SCHLUESSEL_DA=""
+for f in /root/.ssh/authorized_keys /home/*/.ssh/authorized_keys; do [ -s "$f" ] && SCHLUESSEL_DA=1; done
+if [ -n "$SCHLUESSEL_DA" ] && [ -z "$SSH_SCHON" ]; then
+  fett "5. SSH-Anmeldung absichern"
+  echo "  Danach geht die Anmeldung am Server NUR noch mit SSH-Schlüssel, nicht mehr mit Passwort."
+  echo "  Nur mit „j“ antworten, wenn du dich gerade mit deinem Schlüssel angemeldet hast (ohne Passwort-Eingabe)."
+  frage "  Passwort-Anmeldung abschalten? (j/N) " a
+  [[ "$a" =~ ^[jJ] ]] && SSH_HAERTEN=1
+fi
 
 ROOT_DOMAIN=""
 [[ "$DOMAIN" == www.* ]] && ROOT_DOMAIN="${DOMAIN#www.}"
 
+# Erneuter Lauf (z. B. von der Generalprobe auf www): passt die vorhandene .env zur Adresse?
+URL_ANPASSEN=""; ERINNERUNGEN_AN=""
+if [ -n "$BESTEHEND" ]; then
+  ALT_URL="$(env_wert NEXT_PUBLIC_SERVER_URL)"
+  if [ "$ALT_URL" != "https://$DOMAIN" ]; then
+    hinweis "In der .env steht als Adresse noch „${ALT_URL:-nichts}“, gewählt ist https://$DOMAIN."
+    frage "  In der .env auf https://$DOMAIN ändern? (J/n) " a
+    [[ "$a" =~ ^[nN] ]] || URL_ANPASSEN=1
+  fi
+  if [ -n "$ROOT_DOMAIN" ] && [ "$(env_wert BSV_ERINNERUNGEN)" = "aus" ]; then
+    hinweis "In der .env steht noch BSV_ERINNERUNGEN=aus (Generalprobe): keine „Passt noch?“-Mails, kein Monatsbericht."
+    frage "  Für den echten Betrieb einschalten (Zeile löschen)? (J/n) " a
+    [[ "$a" =~ ^[nN] ]] || ERINNERUNGEN_AN=1
+  fi
+fi
+
 fett "Zusammenfassung"
 echo "  Adresse:          https://$DOMAIN${ROOT_DOMAIN:+   (und $ROOT_DOMAIN → Weiterleitung)}"
-echo "  ENCRYPTION_KEY:   ${#SCHLUESSEL} Zeichen"
-echo "  E-Mail-Versand:   ${SMTP_HOST:-später}"
+if [ -n "$BESTEHEND" ]; then
+  echo "  Einstellungen:    vorhandene .env${URL_ANPASSEN:+ (Adresse wird angepasst)}${ERINNERUNGEN_AN:+ (automatische Mails werden eingeschaltet)}"
+  [ -n "$GEBAUT" ] && echo "  Bauen:            über deploy/update.sh (Sicherung vorher, bei Fehlern zurück)"
+else
+  echo "  ENCRYPTION_KEY:   ${#SCHLUESSEL} Zeichen"
+  echo "  E-Mail-Versand:   ${SMTP_HOST:-später}"
+fi
+if [ -n "$SSH_SCHON" ]; then echo "  SSH:              schon abgesichert (nur mit Schlüssel)"
+else echo "  SSH:              $([ -n "$SSH_HAERTEN" ] && echo 'nur noch mit Schlüssel' || echo 'unverändert')"; fi
 echo "  Sicherung:        ${SICHERUNG:-später}"
 echo "  Node.js:          $NODE_MAJOR"
 if [ -n "$PROBE" ]; then
   fett "Probelauf – es wurde nichts verändert."
   echo "  Ablauf wäre: Updates → Firewall/fail2ban → SSH absichern → Node.js/pnpm → Nutzer „bsv“ → Datenbank → Zugang zu GitHub"
-  echo "  → Website holen → .env → Pakete → Prüfung → Datenbank-Tabellen → ${SICHERUNG:+Sicherung einspielen → }Bauen → Dienst → HTTPS (Caddy)"
+  if [ -n "$GEBAUT" ]; then echo "  → .env prüfen → Dienst → deploy/update.sh (Sicherung, Update, Migrationen, Bauen) → ${SICHERUNG:+Sicherung einspielen → }Start → HTTPS (Caddy)"
+  else echo "  → Website holen → .env → Dienst → Pakete → Prüfung → Datenbank-Tabellen → ${SICHERUNG:+Sicherung einspielen → }Bauen → Start → HTTPS (Caddy)"; fi
   exit 0
 fi
-read -rp "  Los geht's? (J/n) " a
+frage "  Los geht's? (J/n) " a
 [[ "$a" =~ ^[nN] ]] && exit 0
 
 # ---------------------------------------------------------------- System
@@ -128,10 +221,8 @@ leise ufw --force enable
 ok "Firewall an"
 
 schritt "SSH absichern"
-# Nur abschalten, was sicher ist: Passwort-Anmeldung erst, wenn ein SSH-Schlüssel hinterlegt ist – sonst sperrt man sich aus.
-SCHLUESSEL_DA=""
-for f in /root/.ssh/authorized_keys /home/*/.ssh/authorized_keys; do [ -s "$f" ] && SCHLUESSEL_DA=1; done
-if [ -n "$SCHLUESSEL_DA" ]; then
+# Nur nach ausdrücklicher Bestätigung (Frage 5) – sonst sperrt man sich womöglich aus.
+if [ -n "$SSH_HAERTEN" ]; then
   cat >/etc/ssh/sshd_config.d/00-bsv.conf <<'EOF'
 # BSV: nur Anmeldung mit SSH-Schlüssel, root nur mit Schlüssel
 PasswordAuthentication no
@@ -145,8 +236,10 @@ EOF
     rm -f /etc/ssh/sshd_config.d/00-bsv.conf
     hinweis "SSH-Einstellung fehlerhaft – unverändert gelassen."
   fi
+elif [ -n "$SSH_SCHON" ]; then
+  ok "Schon abgesichert (nur Anmeldung mit SSH-Schlüssel)"
 else
-  hinweis "Kein SSH-Schlüssel hinterlegt – Passwort-Anmeldung bleibt vorerst an. Später nachholen (deploy/README.md, Abschnitt 1)."
+  hinweis "Passwort-Anmeldung bleibt vorerst an. Später nachholen, wenn die Anmeldung mit Schlüssel klappt: Skript erneut starten (deploy/README.md, Abschnitt 1)."
 fi
 
 schritt "Node.js $NODE_MAJOR und pnpm"
@@ -175,10 +268,11 @@ if [ -f "$ZIEL/.env" ]; then
   ok "Vorhandene .env gefunden – Datenbank-Zugang bleibt, wie er ist"
 else
   DB_PW="$(openssl rand -hex 24)"
+  # Passwort über die Standardeingabe – so taucht es nicht in der Prozessliste auf
   if sudo -u postgres psql -tAc "SELECT 1 FROM pg_roles WHERE rolname='bsv'" | grep -q 1; then
-    sudo -u postgres psql -q -c "ALTER USER bsv WITH PASSWORD '$DB_PW';" >>"$PROTOKOLL" 2>&1
+    printf "ALTER USER bsv WITH PASSWORD '%s';\n" "$DB_PW" | sudo -u postgres psql -q -v ON_ERROR_STOP=1 >>"$PROTOKOLL" 2>&1
   else
-    sudo -u postgres psql -q -c "CREATE USER bsv WITH PASSWORD '$DB_PW';" >>"$PROTOKOLL" 2>&1
+    printf "CREATE USER bsv WITH PASSWORD '%s';\n" "$DB_PW" | sudo -u postgres psql -q -v ON_ERROR_STOP=1 >>"$PROTOKOLL" 2>&1
   fi
   sudo -u postgres psql -tAc "SELECT 1 FROM pg_database WHERE datname='bsv'" | grep -q 1 || sudo -u postgres psql -q -c "CREATE DATABASE bsv OWNER bsv;" >>"$PROTOKOLL" 2>&1
   ok "Datenbank „bsv“ mit eigenem, zufälligem Passwort (nur lokal erreichbar)"
@@ -220,13 +314,20 @@ if [ ! -d "$ZIEL/.git" ]; then
   als_bsv "git reset -q --hard"
   ok "Website-Dateien geholt"
 else
-  als_bsv "git pull -q --ff-only" >>"$PROTOKOLL" 2>&1 || hinweis "Konnte nicht aktualisieren (lokale Änderungen?) – nutze den vorhandenen Stand."
-  ok "Website-Dateien vorhanden"
+  ok "Website-Dateien vorhanden (aktualisiert wird gleich über deploy/update.sh)"
 fi
 
 schritt "Einstellungen (.env)"
 if [ -f "$ZIEL/.env" ]; then
-  ok "Vorhandene .env bleibt unverändert"
+  if [ -n "$URL_ANPASSEN" ] || [ -n "$ERINNERUNGEN_AN" ]; then
+    cp -p "$ZIEL/.env" "$ZIEL/.env.vorher"
+    [ -n "$URL_ANPASSEN" ] && sed -i "s|^NEXT_PUBLIC_SERVER_URL=.*|NEXT_PUBLIC_SERVER_URL=https://${DOMAIN}|" "$ZIEL/.env"
+    [ -n "$ERINNERUNGEN_AN" ] && sed -i -e '/^# Generalprobe: keine automatischen Mails/d' -e '/^BSV_ERINNERUNGEN=aus$/d' "$ZIEL/.env"
+    chown bsv:bsv "$ZIEL/.env" "$ZIEL/.env.vorher"; chmod 600 "$ZIEL/.env" "$ZIEL/.env.vorher"
+    ok ".env angepasst (vorheriger Stand: $ZIEL/.env.vorher)"
+  else
+    ok "Vorhandene .env bleibt unverändert"
+  fi
 else
   ENV_TMP="$(mktemp)"
   chmod 600 "$ENV_TMP"
@@ -238,6 +339,10 @@ else
     echo "PREVIEW_SECRET=$(openssl rand -hex 32)"
     echo "NEXT_PUBLIC_SERVER_URL=https://${DOMAIN}"
     echo "NEXT_TELEMETRY_DISABLED=1"
+    if [ -z "$ROOT_DOMAIN" ]; then
+      echo "# Generalprobe: keine automatischen Mails (Erinnerungen, Monatsbericht) an echte Personen. Für den echten Betrieb löschen."
+      echo "BSV_ERINNERUNGEN=aus"
+    fi
     if [ -n "$SMTP_HOST" ]; then
       echo "SMTP_HOST=${SMTP_HOST}"
       echo "SMTP_PORT=${SMTP_PORT}"
@@ -253,41 +358,66 @@ else
 fi
 unset SCHLUESSEL SMTP_PASS
 
-schritt "Pakete installieren (dauert ein paar Minuten)"
-als_bsv "pnpm install --frozen-lockfile --prod=false" >>"$PROTOKOLL" 2>&1
-ok "Pakete installiert"
-
-schritt "Einstellungen prüfen"
-als_bsv "pnpm -s live:pruefen" | tee -a "$PROTOKOLL"
-
-schritt "Datenbank-Tabellen anlegen"
-als_bsv "NODE_ENV=production pnpm payload migrate" >>"$PROTOKOLL" 2>&1
-ok "Datenbank auf dem neuesten Stand"
-
-if [ -n "$SICHERUNG" ]; then
-  schritt "Inhalte vom PC einspielen"
-  systemctl stop bsv >>"$PROTOKOLL" 2>&1 || true
-  sudo -u bsv mkdir -p "$ZIEL/backups"
-  chmod 700 "$ZIEL/backups"
-  NAME="$(basename "$SICHERUNG")"
-  [[ "$NAME" =~ ^[A-Za-z0-9._-]+$ ]] || { fehler "Dateiname enthält ungewöhnliche Zeichen – bitte umbenennen (z. B. bsv-sicherung.tar.gz.enc)."; exit 1; }
-  install -o bsv -g bsv -m 600 "$SICHERUNG" "$ZIEL/backups/$NAME"
-  als_bsv "NODE_ENV=production pnpm -s sicherung:einspielen '$NAME' ja" | tee -a "$PROTOKOLL"
-  ok "Inhalte übernommen"
-fi
-
-schritt "Website bauen (dauert ein paar Minuten)"
-AKTIV=".next-a"
-[ -f "$ZIEL/.build-env" ] && AKTIV="$(sed -n 's/^BSV_DIST_DIR=//p' "$ZIEL/.build-env")"
-als_bsv "NODE_ENV=production BSV_DIST_DIR=${AKTIV:-.next-a} pnpm build" >>"$PROTOKOLL" 2>&1
-echo "BSV_DIST_DIR=${AKTIV:-.next-a}" | sudo -u bsv tee "$ZIEL/.build-env" >/dev/null
-ok "Gebaut"
-
-schritt "Dienst einrichten und starten"
+# Dienst-Datei vor dem Bauen einrichten: deploy/update.sh startet die Website über systemctl neu
+schritt "Dienst einrichten"
+UNIT_NEU=""
+cmp -s "$ZIEL/deploy/bsv.service" /etc/systemd/system/bsv.service || UNIT_NEU=1
 install -m 644 "$ZIEL/deploy/bsv.service" /etc/systemd/system/bsv.service
 systemctl daemon-reload
 systemctl enable bsv >>"$PROTOKOLL" 2>&1
-systemctl restart bsv
+ok "Dienst „bsv“ eingerichtet"
+
+# Sicherung einspielen – immer erst NACH den Migrationen, damit neue Tabellen und Spalten mit übernommen werden
+einspielen() {
+  schritt "Inhalte vom PC einspielen"
+  NAME="$(basename "$SICHERUNG")"
+  sudo -u bsv mkdir -p "$ZIEL/backups"
+  chmod 700 "$ZIEL/backups"
+  install -o bsv -g bsv -m 600 "$SICHERUNG" "$ZIEL/backups/$NAME"
+  systemctl stop bsv >>"$PROTOKOLL" 2>&1 || true
+  if ! als_bsv "NODE_ENV=production pnpm -s sicherung:einspielen '$NAME' ja" | tee -a "$PROTOKOLL"; then
+    [ -n "$GEBAUT" ] && systemctl start bsv >>"$PROTOKOLL" 2>&1
+    fehler "Einspielen fehlgeschlagen – Protokoll: $PROTOKOLL"
+    exit 1
+  fi
+  ok "Inhalte übernommen${GEBAUT:+ (der vorherige Stand wurde vorher automatisch gesichert)}"
+}
+
+if [ -n "$GEBAUT" ]; then
+  # Schon einmal gebaut: wie jedes Update – Sicherung, neuer Stand, Prüfung, Migrationen, Bauen neben der
+  # laufenden Website, Umschalten, bei Fehlern automatisch zurück
+  schritt "Aktualisieren und neu bauen (über deploy/update.sh)"
+  systemctl is-active --quiet bsv || systemctl start bsv >>"$PROTOKOLL" 2>&1 || true
+  if ! sudo -u bsv -H env COREPACK_ENABLE_DOWNLOAD_PROMPT=0 bash -c "cd $ZIEL && ./deploy/update.sh --neu-bauen" | tee -a "$PROTOKOLL"; then
+    systemctl is-active --quiet bsv || systemctl start bsv >>"$PROTOKOLL" 2>&1 || true
+    fehler "Aktualisieren fehlgeschlagen – die bisherige Version läuft weiter. Protokoll: $PROTOKOLL"
+    exit 1
+  fi
+  ok "Aktualisiert"
+  [ -n "$SICHERUNG" ] && einspielen
+else
+  schritt "Pakete installieren (dauert ein paar Minuten)"
+  als_bsv "pnpm install --frozen-lockfile --prod=false" >>"$PROTOKOLL" 2>&1
+  ok "Pakete installiert"
+
+  schritt "Einstellungen prüfen"
+  als_bsv "pnpm -s live:pruefen" | tee -a "$PROTOKOLL"
+
+  schritt "Datenbank-Tabellen anlegen"
+  als_bsv "NODE_ENV=production pnpm payload migrate" >>"$PROTOKOLL" 2>&1
+  ok "Datenbank auf dem neuesten Stand"
+
+  [ -n "$SICHERUNG" ] && einspielen
+
+  schritt "Website bauen (dauert ein paar Minuten)"
+  als_bsv "NODE_ENV=production BSV_DIST_DIR=.next-a pnpm build" >>"$PROTOKOLL" 2>&1
+  echo "BSV_DIST_DIR=.next-a" | sudo -u bsv tee "$ZIEL/.build-env" >/dev/null
+  ok "Gebaut"
+fi
+
+schritt "Website starten"
+if [ -n "$UNIT_NEU" ] || [ -n "$URL_ANPASSEN$ERINNERUNGEN_AN" ]; then systemctl restart bsv
+else systemctl is-active --quiet bsv || systemctl start bsv; fi
 for _ in $(seq 1 60); do
   curl -fsS --max-time 3 http://127.0.0.1:3000/api/gesund >/dev/null 2>&1 && break
   sleep 2

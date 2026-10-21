@@ -984,12 +984,12 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 export const FAQ: Faq[] = [
   {
     frage: 'Was ist die „Passt noch?“-Mail?',
-    antwort: 'Hat 3 Monate lang niemand bestätigt, dass die Angaben eines Teams stimmen, bekommen die Verantwortlichen (Trainer, Team-Redaktion) eine kurze E-Mail – alle eigenen Teams in einer Mail, mit Trainingszeiten. Pro Team ein Knopf „Prüfen und bestätigen“: Er öffnet eine Seite, auf der „✓ Ja, passt noch“ genügt (ohne Anmeldung, 30 Tage gültig). Stimmt etwas nicht, ändert man die Zeiten in der Verwaltung – das zählt automatisch als bestätigt. Auf der Teamseite steht dann „Stand der Trainingszeiten: …“. Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    antwort: 'Hat 3 Monate lang niemand bestätigt, dass die Angaben eines Teams stimmen, bekommen die Verantwortlichen (Trainer, Team-Redaktion) eine kurze E-Mail – alle eigenen Teams in einer Mail, mit Trainingszeiten. Pro Team ein Knopf „Prüfen und bestätigen“: Er öffnet eine Seite, auf der „✓ Ja, passt noch“ genügt (ohne Anmeldung, 30 Tage gültig). Stimmt etwas nicht, ändert man die Zeiten in der Verwaltung – das zählt automatisch als bestätigt. Auf der Teamseite steht dann „Stand der Trainingszeiten: …“. Verschickt wird nur von der echten Live-Website (nicht vom PC, nicht von der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
     bereich: 'angebote',
   },
   {
     frage: 'Was ist der Monatsbericht?',
-    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist, welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist, welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Verschickt wird nur von der echten Live-Website (nicht vom PC, nicht von der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
     bereich: 'dashboard',
   },
   {

@@ -7,6 +7,7 @@ import { hasRole } from '@/access/roles'
 import { emailAktiv, mailHtml, mailSenden } from '@/auth/mail'
 import { getServerSideURL } from '@/utilities/getURL'
 import { gleich, schluessel } from '@/utilities/schluessel'
+import { istJson } from '@/utilities/istJson'
 
 /**
  * „Passt noch?“ – Trainingszeiten und Infos eines Teams bestätigen.
@@ -47,19 +48,41 @@ export function tokenPruefen(t: unknown): TokenErgebnis {
 
 /* ---------- Speichern ---------- */
 
-const nameVon = (u: { name?: string | null; email?: string | null } | null | undefined) => (u?.name || u?.email || 'unbekannt').slice(0, 120)
+// Nie die E-Mail-Adresse speichern – „bestätigt von“ sehen auch andere Verwaltungs-Konten
+export const nameVon = (u: { name?: string | null } | null | undefined) => (u?.name?.trim() || 'Konto ohne Namen').slice(0, 120)
 
-/** Setzt „Zuletzt bestätigt“ – ohne „Zuletzt geändert“ zu verschieben; baut die Teamseite neu auf */
-export async function bestaetigtSetzen(payload: Payload, teamId: number, von: string) {
-  const db = (payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<unknown> } }).drizzle
+/**
+ * Setzt „Zuletzt bestätigt“ – ohne „Zuletzt geändert“ zu verschieben; baut die Website neu auf.
+ * Wurde das Team gerade erst (vor weniger als 10 Minuten) bestätigt, passiert nichts – so lässt sich mit einem
+ * Link oder Knopf kein ständiger Neuaufbau der Website auslösen.
+ */
+export async function bestaetigtSetzen(payload: Payload, teamId: number, von: string): Promise<{ am: string; von: string }> {
+  const db = (payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<{ rows?: { bestaetigt_am?: string | Date; bestaetigt_von?: string | null }[] }> } }).drizzle
   const am = new Date().toISOString()
-  await db.execute(sql`update "angebote" set "bestaetigt_am" = ${am}, "bestaetigt_von" = ${von} where "id" = ${teamId}`)
+  const r = await db.execute(
+    sql`update "angebote" set "bestaetigt_am" = ${am}, "bestaetigt_von" = ${von}
+        where "id" = ${teamId} and ("bestaetigt_am" is null or "bestaetigt_am" < now() - interval '10 minutes') returning "bestaetigt_am"`,
+  )
+  if (!r.rows?.length) {
+    // Schon kurz zuvor bestätigt: den gespeicherten Stand zurückgeben (auch die Person, die es war)
+    const jetzt = (await db.execute(sql`select "bestaetigt_am", "bestaetigt_von" from "angebote" where "id" = ${teamId}`)).rows?.[0]
+    return { am: jetzt?.bestaetigt_am ? new Date(jetzt.bestaetigt_am).toISOString() : am, von: jetzt?.bestaetigt_von || von }
+  }
   try {
     revalidatePath('/', 'layout')
   } catch {
     // außerhalb von Next.js (Skripte) nichts neu aufzubauen
   }
-  return am
+  return { am, von }
+}
+
+/**
+ * Frühere Versionen haben bei Konten ohne Namen die E-Mail-Adresse als „bestätigt von“ gespeichert. Solche Reste
+ * (auch aus eingespielten Sicherungen) ersetzt der tägliche Lauf – die Adresse gehört nicht an diese Stelle.
+ */
+export async function alteAdressenEntfernen(payload: Payload) {
+  const db = (payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<unknown> } }).drizzle
+  await db.execute(sql`update "angebote" set "bestaetigt_von" = 'Konto ohne Namen' where "bestaetigt_von" like '%@%'`)
 }
 
 /** Darf die angemeldete Person dieses Team bearbeiten? (dieselbe Regel wie beim Speichern, inkl. „nur eigene Teams“) */
@@ -74,8 +97,6 @@ async function darfTeamAendern(req: PayloadRequest, id: number) {
   return false
 }
 
-const istJson = (req: PayloadRequest) => (req.headers.get('content-type') ?? '').includes('application/json')
-
 /** POST /api/angebote/:id/bestaetigen – Knopf „✓ Alles noch aktuell“ in der Verwaltung */
 export const bestaetigenEndpunkt: Endpoint = {
   path: '/:id/bestaetigen',
@@ -86,9 +107,7 @@ export const bestaetigenEndpunkt: Endpoint = {
     const id = Number(req.routeParams?.id)
     if (!Number.isInteger(id) || id <= 0 || id > 2147483647) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 400 })
     if (!(await darfTeamAendern(req, id))) return Response.json({ fehler: 'Dieses Team darfst du nicht bearbeiten.' }, { status: 403 })
-    const von = nameVon(req.user as never)
-    const am = await bestaetigtSetzen(req.payload, id, von)
-    return Response.json({ am, von })
+    return Response.json(await bestaetigtSetzen(req.payload, id, nameVon(req.user as never)))
   },
 }
 
@@ -114,7 +133,7 @@ export const bestaetigenLinkEndpunkt: Endpoint = {
     const body = (await req.json?.().catch(() => null)) as { t?: unknown } | null
     const r = await linkAufloesen(req.payload, body?.t)
     if (typeof r === 'string') return Response.json({ fehler: r }, { status: r === 'abgelaufen' ? 410 : 400 })
-    const am = await bestaetigtSetzen(req.payload, r.team.id, nameVon(r.konto))
+    const { am } = await bestaetigtSetzen(req.payload, r.team.id, nameVon(r.konto))
     return Response.json({ am, team: r.team.title })
   },
 }
@@ -132,9 +151,18 @@ const zeitenText = (z: Team['zeiten']) =>
  * haben → eine E-Mail je verantwortlicher Person (alle ihre Teams in einer Mail). Nie an Testkonten, nie an Personen,
  * die E-Mail-Benachrichtigungen abbestellt haben.
  */
+/**
+ * Automatische Mails (Erinnerungen, Monatsbericht) nur von der echten Live-Website: nicht beim Entwickeln am PC,
+ * nicht von der Generalprobe (BSV_ERINNERUNGEN=aus) und nicht ohne eingerichteten E-Mail-Versand.
+ */
+export const automatischeMailsAn = () => {
+  const url = process.env.NEXT_PUBLIC_SERVER_URL ?? ''
+  return process.env.NODE_ENV === 'production' && emailAktiv() && process.env.BSV_ERINNERUNGEN !== 'aus' && url.startsWith('https://') && !/localhost|127\.0\.0\.1/.test(url)
+}
+
 export async function erinnerungenVerschicken(payload: Payload): Promise<number> {
-  // Ohne E-Mail-Versand (live ohne SMTP) nichts als „erinnert“ merken – sonst käme die Erinnerung erst in 90 Tagen
-  if (!emailAktiv() && process.env.NODE_ENV === 'production') return 0
+  // Sonst nichts als „erinnert“ merken – die Erinnerung käme dann erst in 90 Tagen
+  if (!automatischeMailsAn()) return 0
   const grenze = new Date(Date.now() - ERINNERN_NACH_TAGEN * 86400000).toISOString()
   const faellig = (
     await payload.find({

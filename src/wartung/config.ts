@@ -1,6 +1,7 @@
 import type { Endpoint, GlobalConfig, PayloadRequest } from 'payload'
 
 import { hasRole } from '@/access/roles'
+import { istJson } from '@/utilities/istJson'
 
 /**
  * Wartung: wann zuletzt eine Wiederherstellung getestet und der Saisonwechsel gemacht wurde.
@@ -16,7 +17,7 @@ const getestetEndpunkt: Endpoint = {
   method: 'post',
   handler: async (req) => {
     if (!hasRole(req.user as never, 'webadmin')) return Response.json({ fehler: 'Nur für Web-Admins.' }, { status: 403 })
-    if (!(req.headers.get('content-type') ?? '').includes('application/json')) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 415 })
+    if (!istJson(req)) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 415 })
     const am = new Date().toISOString()
     await req.payload.updateGlobal({ slug: 'wartung' as never, data: { wiederherstellungGetestetAm: am, wiederherstellungVon: name(req) } as never, overrideAccess: true, req })
     return Response.json({ am, von: name(req) })
@@ -37,7 +38,7 @@ const saisonEndpunkt: Endpoint = {
   method: 'post',
   handler: async (req) => {
     if (!hasRole(req.user as never, 'admin', 'redaktion')) return Response.json({ fehler: 'Nur für Admins und Redaktion.' }, { status: 403 })
-    if (!(req.headers.get('content-type') ?? '').includes('application/json')) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 415 })
+    if (!istJson(req)) return Response.json({ fehler: 'Ungültige Anfrage.' }, { status: 415 })
     const body = (await req.json?.().catch(() => null)) as { aktion?: unknown; id?: unknown; geprueft?: unknown } | null
     const aktion = body?.aktion
     if (aktion !== 'pruefen' && aktion !== 'start' && aktion !== 'abschliessen') return Response.json({ fehler: 'Unbekannte Aktion.' }, { status: 400 })

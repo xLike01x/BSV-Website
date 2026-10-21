@@ -43,6 +43,7 @@ export function konfigurationPruefen(env: NodeJS.ProcessEnv = process.env, live 
   if (/bsv:bsv@/.test(env.DATABASE_URL ?? '')) fehler.push('DATABASE_URL nutzt noch das Entwicklungs-Passwort „bsv“')
   if (!env.SMTP_HOST) warnungen.push('SMTP_HOST fehlt: Registrierung und „Passwort vergessen“ funktionieren nicht')
   else for (const n of ['SMTP_USER', 'SMTP_PASS', 'SMTP_FROM']) if (!env[n]) warnungen.push(`${n} fehlt – E-Mail-Versand wird scheitern`)
+  if (env.BSV_ERINNERUNGEN === 'aus') warnungen.push('BSV_ERINNERUNGEN=aus: keine automatischen Mails („Passt noch?“, Monatsbericht). Für den echten Betrieb Zeile löschen.')
   if (env.NEXT_TELEMETRY_DISABLED !== '1') warnungen.push('NEXT_TELEMETRY_DISABLED=1 empfohlen')
   return { fehler, warnungen }
 }

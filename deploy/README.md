@@ -42,9 +42,19 @@ schadet nicht, eine vorhandene `.env` wird nie überschrieben.
    SiteGround setzen (MX bleibt!), dann `https://<Adresse>/api/gesund` prüfen.
 
 **Generalprobe:** Beim ersten Mal als Adresse z. B. `test.buedericher-spielverein.de` angeben und bei SiteGround nur für
-`test` einen A-Eintrag auf den Server setzen. Die alte Website bleibt dabei völlig unberührt. Passt alles, für den echten
-Betrieb `NEXT_PUBLIC_SERVER_URL` in `/srv/bsv/.env` auf `https://www.buedericher-spielverein.de` ändern, das Skript noch
-einmal starten (Adresse `www.buedericher-spielverein.de`), dann den A-Eintrag für `www` und die Domain ohne `www` umstellen.
+`test` einen A-Eintrag auf den Server setzen. Die alte Website bleibt dabei völlig unberührt. Bei einer Adresse ohne
+`www` schreibt das Skript `BSV_ERINNERUNGEN=aus` in die `.env`: Die Generalprobe verschickt dann keine automatischen
+Mails (Erinnerungen, Monatsbericht) an echte Personen.
+
+Passt alles, für den echten Betrieb das Skript noch einmal starten und als Adresse `www.buedericher-spielverein.de`
+angeben. Beim zweiten Lauf fragt es nicht mehr nach Schlüssel und E-Mail. Es bietet an, in `/srv/bsv/.env` die Adresse
+umzustellen und `BSV_ERINNERUNGEN=aus` zu löschen (beides mit „J“ bestätigen; der vorherige Stand bleibt als
+`/srv/bsv/.env.vorher`). Dann baut es über `deploy/update.sh` neu: Sicherung vorher, bei Fehlern läuft die bisherige
+Version weiter. Eine Sicherungsdatei vom PC spielt es erst **nach** dem Update ein, damit neue Tabellen mit übernommen
+werden. Zum Schluss den A-Eintrag für `www` und die Domain ohne `www` umstellen.
+
+Wer lieber von Hand ändert: in `/srv/bsv/.env` `NEXT_PUBLIC_SERVER_URL` anpassen, die Zeile `BSV_ERINNERUNGEN=aus` löschen,
+dann `./deploy/update.sh --neu-bauen` als Nutzer `bsv`.
 
 Zurück zur alten Website: den A-Eintrag bei SiteGround einfach wieder auf die alte Adresse stellen.
 
@@ -63,9 +73,9 @@ dpkg-reconfigure -plow unattended-upgrades          # automatische Sicherheitsup
 # Firewall: nur SSH, HTTP, HTTPS
 ufw allow OpenSSH && ufw allow 80 && ufw allow 443 && ufw enable
 
-# SSH nur mit Schlüssel, kein Root-Login (vorher eigenen Schlüssel hinterlegen und testen!)
-sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication no/; s/^#\?PermitRootLogin .*/PermitRootLogin no/' /etc/ssh/sshd_config
-systemctl restart ssh
+# SSH nur mit Schlüssel; root nur mit Schlüssel (vorher eigenen Schlüssel hinterlegen und die Anmeldung testen!)
+printf 'PasswordAuthentication no\nKbdInteractiveAuthentication no\nPermitRootLogin prohibit-password\n' > /etc/ssh/sshd_config.d/00-bsv.conf
+sshd -t && systemctl restart ssh
 
 # Node.js LTS + pnpm. Node.js 22 bekommt nur bis 30.04.2027 Sicherheits-Updates – für einen neuen Server
 # besser 24 (bis 04.2028): vorher einmal am PC mit Node.js 24 bauen und testen, dann hier setup_24.x.

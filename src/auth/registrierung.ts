@@ -5,6 +5,7 @@ import { hatRecht } from '@/access/einzelrechte'
 import { hasRole } from '@/access/roles'
 import { ratenGrenze } from '@/hooks/spamSchutz'
 import { getServerSideURL } from '@/utilities/getURL'
+import { istJson } from '@/utilities/istJson'
 
 import { loesungPruefen, neueAufgabe } from './botschutz'
 import { emailAktiv, mailHtml, mailSenden } from './mail'
@@ -42,7 +43,7 @@ export const darfRegistrierungen = (user: unknown) => hasRole(user as never, 'ad
 const darfFreigeben = (req: PayloadRequest) => darfRegistrierungen(req.user)
 
 const vonDerWebsite = (req: PayloadRequest) => {
-  if (!(req.headers.get('content-type') ?? '').includes('application/json')) return false
+  if (!istJson(req)) return false
   const herkunft = req.headers.get('origin')
   return !(prod() && herkunft && herkunft !== new URL(getServerSideURL()).origin)
 }

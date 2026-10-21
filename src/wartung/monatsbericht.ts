@@ -1,7 +1,8 @@
 import type { CollectionSlug, Payload, Where } from 'payload'
 
 import { hasRole } from '@/access/roles'
-import { emailAktiv, mailHtml, mailSenden } from '@/auth/mail'
+import { mailHtml, mailSenden } from '@/auth/mail'
+import { automatischeMailsAn } from '@/sport/bestaetigung'
 import { WARTEND } from '@/auth/registrierung'
 import { faellige } from '@/datenschutz/aufraeumen'
 import { sicherungenAuflisten } from '@/sicherung/kern'
@@ -83,7 +84,7 @@ export async function berichtErstellen(payload: Payload): Promise<Bericht> {
 
 /** Täglich aufgerufen: verschickt den Bericht höchstens einmal pro Kalendermonat */
 export async function monatsberichtVerschicken(payload: Payload, jetzt = new Date()): Promise<number> {
-  if (!emailAktiv() && process.env.NODE_ENV === 'production') return 0
+  if (!automatischeMailsAn()) return 0
   const w = await wartungLesen(payload)
   const zuletzt = w.monatsberichtAm ? new Date(w.monatsberichtAm) : null
   if (zuletzt && zuletzt.getFullYear() === jetzt.getFullYear() && zuletzt.getMonth() === jetzt.getMonth()) return 0
