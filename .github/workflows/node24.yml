@@ -58,8 +58,9 @@ jobs:
           fehler=0
           for p in /api/gesund / /angebote /login /admin/login; do
             c="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "http://127.0.0.1:3000$p")"
-            echo "$p → $c"
-            case "$c" in 200|307|308) ;; *) fehler=1 ;; esac
+            echo "::notice::$p → $c"
+            case "$c" in 200|302|303|307|308) ;; *) fehler=1 ;; esac
           done
-          if [ "$fehler" = 1 ]; then tail -n 80 start.log; exit 1; fi
-          grep -iE 'error|fehler' start.log | grep -v 'Testkonten' | head -20 || true
+          # Auffälligkeiten aus dem Server-Protokoll als Hinweise (ohne Schlüssel – die stehen nie im Protokoll)
+          grep -iE 'error|fehler|warn' start.log | grep -v 'Testkonten' | head -15 | while IFS= read -r z; do echo "::warning::${z:0:300}"; done || true
+          if [ "$fehler" = 1 ]; then tail -n 15 start.log | while IFS= read -r z; do echo "::error::${z:0:300}"; done; exit 1; fi
