@@ -1,0 +1,65 @@
+# Probelauf mit Node.js 24 (Vorbereitung für den Live-Server, Go-Live-Checkliste):
+# frische Datenbank → Migrationen → Schlüsselwechsel-Test → Produktions-Build → Start → Seiten abrufen.
+# Alle Schlüssel werden hier zufällig erzeugt und gelten nur für diesen einen Lauf.
+name: Node.js 24
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  node24:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: bsvci
+          POSTGRES_PASSWORD: ci-nur-fuer-diesen-lauf
+          POSTGRES_DB: bsv
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd "pg_isready -U bsvci" --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: pnpm
+      - run: node -v
+      - run: pnpm install --frozen-lockfile
+      - name: Einstellungen nur für diesen Lauf (zufällig)
+        run: |
+          for n in PAYLOAD_SECRET ENCRYPTION_KEY PREVIEW_SECRET; do
+            v="$(openssl rand -hex 32)"; echo "::add-mask::$v"; echo "$n=$v" >> .env
+          done
+          {
+            echo "DATABASE_URL=postgresql://bsvci:ci-nur-fuer-diesen-lauf@127.0.0.1:5432/bsv"
+            echo "NEXT_PUBLIC_SERVER_URL=https://ci.beispiel.de"
+            echo "NEXT_TELEMETRY_DISABLED=1"
+          } >> .env
+          chmod 600 .env
+      - run: npx tsc --noEmit -p .
+      - name: Datenbank-Tabellen anlegen (Migrationen)
+        run: NODE_ENV=production pnpm payload migrate
+      - name: Schlüsselwechsel-Test
+        run: pnpm test:schluessel
+      - name: Produktions-Build
+        run: NODE_ENV=production BSV_DIST_DIR=.next-a pnpm build
+      - name: Starten und Seiten abrufen
+        run: |
+          NODE_ENV=production BSV_DIST_DIR=.next-a node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000 > start.log 2>&1 &
+          for _ in $(seq 1 60); do curl -fsS --max-time 3 http://127.0.0.1:3000/api/gesund >/dev/null 2>&1 && break; sleep 2; done
+          fehler=0
+          for p in /api/gesund / /angebote /login /admin/login; do
+            c="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "http://127.0.0.1:3000$p")"
+            echo "$p → $c"
+            case "$c" in 200|307|308) ;; *) fehler=1 ;; esac
+          done
+          if [ "$fehler" = 1 ]; then tail -n 80 start.log; exit 1; fi
+          grep -iE 'error|fehler' start.log | grep -v 'Testkonten' | head -20 || true
