@@ -53,10 +53,10 @@ jobs:
         run: NODE_ENV=production BSV_DIST_DIR=.next-a pnpm build
       - name: Starten und Seiten abrufen
         run: |
-          NODE_ENV=production BSV_DIST_DIR=.next-a node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000 > start.log 2>&1 &
+          NO_COLOR=1 NODE_ENV=production BSV_DIST_DIR=.next-a node node_modules/next/dist/bin/next start -H 127.0.0.1 -p 3000 > start.log 2>&1 &
           for _ in $(seq 1 60); do curl -fsS --max-time 3 http://127.0.0.1:3000/api/gesund >/dev/null 2>&1 && break; sleep 2; done
           fehler=0
-          for p in /api/gesund / /angebote /login /admin/login; do
+          for p in /api/gesund / /trainingszeiten /fussball /news /login /admin/login; do
             c="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 "http://127.0.0.1:3000$p")"
             echo "::notice::$p → $c"
             case "$c" in 200|302|303|307|308) ;; *) fehler=1 ;; esac
