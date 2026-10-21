@@ -364,7 +364,7 @@ export interface User {
      */
     datenschutz?: boolean | null;
     /**
-     * Einstellungen · Seitenaufrufe ohne personenbezogene Daten.
+     * Einstellungen · Seitenaufrufe und Suchbegriffe der Website – ohne Cookies und ohne IP-Adressen.
      */
     statistik?: boolean | null;
     /**

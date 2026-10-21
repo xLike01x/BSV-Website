@@ -89,8 +89,8 @@ async function anlegen(req: PayloadRequest) {
     const daten = { name: k.name, roles: k.roles, password: TESTPASSWORT, testkonto: true } as never
     // Ohne req: interne Anlage, damit Schutzregeln für echte Konten nicht greifen
     const doc = vorhanden.docs[0]
-      ? await p.update({ collection: 'users', id: vorhanden.docs[0].id, data: daten, overrideAccess: true })
-      : await p.create({ collection: 'users', data: { ...(daten as object), email: k.email } as never, overrideAccess: true })
+      ? await p.update({ collection: 'users', id: vorhanden.docs[0].id, data: daten, overrideAccess: true, context: { bsvTestkonto: true } })
+      : await p.create({ collection: 'users', data: { ...(daten as object), email: k.email } as never, overrideAccess: true, context: { bsvTestkonto: true } })
     ids.set(k.email, doc.id as number)
   }
   // Teams zuordnen (Verantwortliche) – bestehende Verantwortliche bleiben erhalten

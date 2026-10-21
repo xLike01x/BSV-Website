@@ -8,6 +8,7 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { istJson } from '@/utilities/istJson'
 
 import { loesungPruefen, neueAufgabe } from './botschutz'
+import { passwortFehler } from './passwortRegeln'
 import { emailAktiv, mailHtml, mailSenden } from './mail'
 
 /**
@@ -148,7 +149,8 @@ export const registrierungEndpunkte: Endpoint[] = [
       // Kein Link im Namen – der Name steht in der Bestätigungs-E-Mail (sonst Spam über fremde Postfächer)
       if (/https?:|www\.|\.[a-z]{2,}\/|[<>]/i.test(name)) return json({ fehler: 'Bitte gib nur deinen Vor- und Nachnamen ein.' }, 400)
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ fehler: 'Bitte gib eine gültige E-Mail-Adresse ein.' }, 400)
-      if (passwort.length < 10 || passwort.length > 200) return json({ fehler: 'Das Passwort braucht mindestens 10 Zeichen.' }, 400)
+      const pwFehler = passwortFehler(passwort, { name, email })
+      if (pwFehler) return json({ fehler: pwFehler }, 400)
       if (!body.datenschutz) return json({ fehler: 'Bitte bestätige die Datenschutzhinweise.' }, 400)
       const botFehler = loesungPruefen(body.botschutz)
       if (botFehler) return json({ fehler: botFehler, neueAufgabe: true }, 400)

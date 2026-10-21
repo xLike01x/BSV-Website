@@ -67,7 +67,7 @@ export default async function rechte(d) {
     if (andererId) {
       const ad = await login('admin@bsv.test')
       pruefe('Admin ändert E-Mail eines anderen Admins → 403', (await api(ad, 'PATCH', `/api/users/${andererId}`, { email: 'uebernommen@bsv.test' })).s === 403)
-      pruefe('Admin ändert Passwort eines anderen Admins → 403', (await api(ad, 'PATCH', `/api/users/${andererId}`, { password: 'Uebernommen-12345' })).s === 403)
+      pruefe('Admin ändert Passwort eines anderen Admins → 403', (await api(ad, 'PATCH', `/api/users/${andererId}`, { password: 'Fremder#Zugriff7x' })).s === 403)
       pruefe('Admin löscht anderen Admin → 403', (await api(ad, 'DELETE', `/api/users/${andererId}`)).s === 403)
       pruefe('Admin ändert Namen eines anderen Admins → 200', (await api(ad, 'PATCH', `/api/users/${andererId}`, { name: 'Sicherheitstest Admin 2' })).s === 200)
     }

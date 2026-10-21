@@ -3,7 +3,10 @@
 import Link from 'next/link'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
+import { passwortFehler } from '@/auth/passwortRegeln'
 import { sha256Hex } from '@/bsv/sha256'
+
+import { PasswortHinweis } from './PasswortHinweis'
 
 export type AngebotWahl = { id: number; title: string; bereich: string }
 type Aufgabe = { salz: string; ziel: string; max: number; signatur: string }
@@ -35,6 +38,7 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
   const [gesendet, setGesendet] = useState<string | null>(null)
   const [loesung, setLoesung] = useState<Loesung | null>(null)
   const [schutzFehler, setSchutzFehler] = useState(false)
+  const [eingabe, setEingabe] = useState({ name: '', email: '', passwort: '' })
   const lauf = useRef({ aus: false })
 
   const neueAufgabe = useCallback(async () => {
@@ -67,6 +71,8 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
     e.preventDefault()
     setFehler(null)
     const f = new FormData(e.currentTarget)
+    const pwFehler = passwortFehler(String(f.get('passwort') ?? ''), { name: String(f.get('name') ?? ''), email: String(f.get('email') ?? '') })
+    if (pwFehler) return setFehler(pwFehler)
     if (f.get('passwort') !== f.get('passwort2')) return setFehler('Die beiden Passwörter sind nicht gleich.')
     if (!loesung) return setFehler('Einen kleinen Moment noch – die Sicherheitsprüfung läuft. Dann einfach noch einmal auf „Konto erstellen“ tippen.')
     setLaedt(true)
@@ -126,16 +132,17 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
     <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
       <label className="field">
         Vor- und Nachname
-        <input name="name" required autoComplete="name" maxLength={120} />
+        <input name="name" required autoComplete="name" maxLength={120} onChange={(e) => setEingabe((x) => ({ ...x, name: e.target.value }))} />
       </label>
       <label className="field">
         E-Mail
-        <input name="email" type="email" required autoComplete="email" maxLength={200} />
+        <input name="email" type="email" required autoComplete="email" maxLength={200} onChange={(e) => setEingabe((x) => ({ ...x, email: e.target.value }))} />
       </label>
       <label className="field">
-        Passwort (mindestens 10 Zeichen)
-        <input name="passwort" type="password" required minLength={10} maxLength={200} autoComplete="new-password" />
+        Passwort
+        <input name="passwort" type="password" required minLength={10} maxLength={200} autoComplete="new-password" aria-describedby="passwort-hinweis" onChange={(e) => setEingabe((x) => ({ ...x, passwort: e.target.value }))} />
       </label>
+      <PasswortHinweis id="passwort-hinweis" passwort={eingabe.passwort} kontext={{ name: eingabe.name, email: eingabe.email }} />
       <label className="field">
         Passwort wiederholen
         <input name="passwort2" type="password" required minLength={10} maxLength={200} autoComplete="new-password" />

@@ -663,7 +663,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       video: '/hilfe/konto-anlegen.mp4',
       schritte: [
         'Links unter „Mitglieder“ auf „Benutzer“, dann „Neu erstellen“ klicken.',
-        'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben (mindestens 10 Zeichen).',
+        'Name und E-Mail eintragen, ein vorläufiges Passwort vergeben (mindestens 10 Zeichen mit Groß- und Kleinbuchstaben, Zahl und Sonderzeichen; keine Allerweltswörter wie „Sommer2026!“, keine Reihen wie „12345“, nicht der eigene Name – unter dem Feld steht live, was noch fehlt).',
         'Bei „Rollen“ die passende Kachel ankreuzen, z. B. „Trainer“ (mehrere möglich).',
         'Direkt darunter bei „Team-Berechtigungen“ die Teams auswählen. Oben zeigt „Was darf diese Person?“ in Klartext, was die Rollen erlauben.',
         'Speichern.',
@@ -984,6 +984,11 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Welche Regeln gelten für Passwörter?',
+    antwort: 'Überall gleich (Registrierung, „Passwort vergessen“, Mein Konto, Anlegen durch die Verwaltung): 10 bis 200 Zeichen, mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und ein Sonderzeichen (auch ein Leerzeichen zählt). Abgelehnt werden außerdem leicht zu erratende Passwörter – ein Allerweltswort oder Vereinsbegriff mit Zahlen dahinter wie „Sommer2026!“, „Passwort123!“, „BSV1919bsv!“ (auch als „P@ssw0rt“) –, Reihen wie „12345“, „abcde“, „qwert“ oder „aaaaa“ und Passwörter mit dem eigenen Namen oder der E-Mail-Adresse. Unter dem Passwortfeld steht beim Tippen, was noch fehlt, mit einer Stärke-Anzeige. Bestehende Passwörter bleiben gültig, die Regeln gelten beim nächsten Ändern. Tipp: ein kurzer Satz wie „Mein Hund frisst 3 Äpfel!“ ist sicher und gut zu merken.',
+    bereich: 'users',
+  },
+  {
     frage: 'Was ist die „Passt noch?“-Mail?',
     antwort: 'Hat 3 Monate lang niemand bestätigt, dass die Angaben eines Teams stimmen, bekommen die Verantwortlichen (Trainer, Team-Redaktion) eine kurze E-Mail – alle eigenen Teams in einer Mail, mit Trainingszeiten. Pro Team ein Knopf „Prüfen und bestätigen“: Er öffnet eine Seite, auf der „✓ Ja, passt noch“ genügt (ohne Anmeldung, 30 Tage gültig). Stimmt etwas nicht, ändert man die Zeiten in der Verwaltung – das zählt automatisch als bestätigt. Auf der Teamseite steht dann „Stand der Trainingszeiten: …“. Verschickt wird nur von der echten Live-Website (nicht vom PC, nicht von der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
     bereich: 'angebote',
@@ -1259,7 +1264,7 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wie ändere ich mein Passwort?',
     antwort:
-      'Oben rechts auf dein Symbol → „Mein Konto“ → „Passwort ändern“. Neues Passwort zweimal eingeben (mindestens 10 Zeichen) und darunter zur Bestätigung dein aktuelles Passwort. Dann „Speichern“. Das aktuelle Passwort schützt dein Konto, falls jemand an deinem offenen Rechner sitzt.',
+      'Oben rechts auf dein Symbol → „Mein Konto“ → „Passwort ändern“. Neues Passwort zweimal eingeben (mindestens 10 Zeichen mit Groß- und Kleinbuchstaben, Zahl und Sonderzeichen; keine Allerweltswörter wie „Sommer2026!“, keine Reihen wie „12345“, nicht der eigene Name) und darunter zur Bestätigung dein aktuelles Passwort. Dann „Speichern“. Das aktuelle Passwort schützt dein Konto, falls jemand an deinem offenen Rechner sitzt.',
     bereich: 'users',
   },
   {

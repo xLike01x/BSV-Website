@@ -700,7 +700,7 @@ await aufnahme('vorstand', admin, async ({ page, neu, oeffne, menueZeigen, unter
 
 let regId = null
 if (soll('registrierung-freigeben')) {
-  const r = await api.post(`${base}/api/users`, { data: { email: 'jan.beispiel@beispiel.test', name: 'Jan Beispiel', password: 'Beispiel-2027!', roles: ['mitglied'], freigegeben: false, registriertUeber: 'website', emailBestaetigt: true } })
+  const r = await api.post(`${base}/api/users`, { data: { email: 'jan.beispiel@beispiel.test', name: 'Jan Beispiel', password: 'Gelbe-Tulpe-am-Tor-27!', roles: ['mitglied'], freigegeben: false, registriertUeber: 'website', emailBestaetigt: true } })
   regId = (await r.json()).doc?.id ?? null
   if (!regId) console.log('Testregistrierung konnte nicht angelegt werden')
 }
