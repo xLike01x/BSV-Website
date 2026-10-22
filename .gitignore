@@ -35,4 +35,5 @@ dokumente/
 /.next-a/
 /.next-b/
 /.next-probe/
+/.next-audit/
 /.build-env
