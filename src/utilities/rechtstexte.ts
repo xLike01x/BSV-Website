@@ -220,7 +220,9 @@ export async function rechtstexteUebernehmen(payload: Payload) {
       id: seite.id,
       data: { layout: [{ blockType: 'content', columns: [{ size: 'full', richText: alsRichtext(md) }] }], _status: 'published' } as never,
       overrideAccess: true,
-      context: { rechtstexte: true },
+      // Läuft beim Start – oft mitten im ersten Seitenaufruf, wo Next.js kein „revalidatePath“ erlaubt (sonst bricht die
+      // Übernahme ab). Die Seite wird ohnehin bei jedem Aufruf frisch gebaut bzw. beim nächsten Speichern neu aufgebaut.
+      context: { rechtstexte: true, disableRevalidate: true },
     })
     payload.logger.info(`Rechtstexte: Seite „${slug}“ auf die überarbeitete Fassung (zur Prüfung) umgestellt`)
   }
