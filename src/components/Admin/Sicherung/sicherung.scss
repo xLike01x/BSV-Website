@@ -184,6 +184,16 @@
     color: #b54708;
   }
 
+  /* Sicherheitsmeldungen: eine Zeile je Meldung */
+  .bsv-sicherung__meldungen {
+    margin: 0 0 6px;
+    padding-left: 18px;
+
+    li {
+      margin-bottom: 4px;
+    }
+  }
+
   @media (max-width: 640px) {
     &,
     tbody {

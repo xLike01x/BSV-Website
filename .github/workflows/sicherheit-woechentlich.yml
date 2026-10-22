@@ -1,11 +1,12 @@
-# Wöchentliche Sicherheitsprüfung der Pakete – läuft auch, wenn monatelang niemand etwas ändert.
+# Tägliche Sicherheitsprüfung der Pakete – läuft auch, wenn monatelang niemand etwas ändert.
+# (Dateiname bleibt „wöchentlich“, damit Verlauf und Benachrichtigungen erhalten bleiben.)
 # Schlägt fehl, sobald ein Paket, das live läuft, eine bekannte hohe oder kritische Lücke hat.
 # GitHub schickt dann eine E-Mail (Einstellungen → Notifications → Actions: „Only notify for failed workflows“).
 # Bewusst geprüfte Ausnahmen stehen in package.json unter pnpm.auditConfig.ignoreGhsas (Begründung: deploy/README.md).
-name: Sicherheitsprüfung (wöchentlich)
+name: Sicherheitsprüfung (täglich)
 on:
   schedule:
-    - cron: '17 5 * * 1' # montags ca. 7:17 Uhr deutscher Zeit
+    - cron: '17 5 * * *' # täglich ca. 7:17 Uhr deutscher Zeit (Sommerzeit; im Winter 6:17)
   workflow_dispatch:
 permissions:
   contents: read

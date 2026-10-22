@@ -3,6 +3,7 @@ import { useRouter } from 'next/navigation'
 import React, { useState } from 'react'
 
 import type { SicherungInfo } from '@/sicherung/kern'
+import type { PaketStand } from '@/wartung/pakete'
 import type { Laufzeit, Speicher } from '@/wartung/pruefen'
 
 export type WartungDaten = {
@@ -12,6 +13,7 @@ export type WartungDaten = {
   speicher: Speicher | null
   code: string | null
   schluesselwechsel: boolean
+  pakete: PaketStand
 }
 const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
 
@@ -168,8 +170,49 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
             <tr>
               <th>Installierte Version</th>
               <td>{wartung.code ? datum(wartung.code) : 'unbekannt'}</td>
-              <td>Spätestens alle 3 Monate aktualisieren (Update-Tag). Sicherheitsmeldungen prüft GitHub jeden Montag.</td>
+              <td>Spätestens alle 3 Monate aktualisieren (Update-Tag). Sicherheitsmeldungen prüfen die Website und GitHub täglich.</td>
             </tr>
+            <tr className={wartung.pakete.meldungen.length ? 'is-warn' : undefined}>
+              <th>Sicherheitsmeldungen</th>
+              <td>{wartung.pakete.meldungen.length ? `⚠️ ${wartung.pakete.meldungen.length} offen` : wartung.pakete.geprueftAm ? 'keine bekannt' : 'noch nicht geprüft'}</td>
+              <td>
+                {wartung.pakete.meldungen.length > 0 && (
+                  <ul className="bsv-sicherung__meldungen">
+                    {wartung.pakete.meldungen.map((m, i) => (
+                      <li key={`${m.paket}-${m.url ?? i}`}>
+                        <strong>
+                          {m.schwere === 'critical' ? 'Kritisch' : 'Hoch'} · {m.paket} {m.version}
+                        </strong>{' '}
+                        – {m.titel}
+                        {m.betroffen ? ` (betroffen: ${m.betroffen})` : ''}
+                        {m.url && (
+                          <>
+                            {' '}
+                            <a href={m.url} target="_blank" rel="noopener noreferrer">
+                              Details ↗
+                            </a>
+                          </>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+                {wartung.pakete.meldungen.length > 0
+                  ? 'Was tun: Update in Auftrag geben (Paket aktualisieren, testen) und auf dem Server deploy/update.sh ausführen – die Sicherung davor macht das Skript selbst.'
+                  : 'Täglich gegen die Sicherheitsdatenbank von npm geprüft (nur hohe und kritische Lücken in Paketen, die live laufen).'}
+                {wartung.pakete.geprueftAm && ` Zuletzt geprüft: ${wann(wartung.pakete.geprueftAm)}.`}
+                {wartung.pakete.fehlerSeit && ' ⚠️ Die letzte Prüfung ist fehlgeschlagen (keine Verbindung?).'}
+              </td>
+            </tr>
+            {wartung.pakete.updates.map((u) => (
+              <tr key={u.paket}>
+                <th>{u.name}</th>
+                <td>
+                  {u.installiert} → {u.neu}
+                </td>
+                <td>{u.hauptversion ? 'Neue Hauptversion – größerer Umbau, nur mit ausführlichen Tests einplanen.' : 'Update verfügbar – beim nächsten Update-Tag mitnehmen (bei Sicherheitsmeldungen sofort).'}</td>
+              </tr>
+            ))}
             <tr className={wartung.schluesselwechsel ? 'is-warn' : undefined}>
               <th>Schlüssel</th>
               <td>{wartung.schluesselwechsel ? 'Wechsel läuft' : 'in Ordnung'}</td>

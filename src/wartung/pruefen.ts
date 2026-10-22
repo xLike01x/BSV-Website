@@ -2,6 +2,8 @@ import { execFile } from 'child_process'
 import fs from 'fs'
 import type { Payload } from 'payload'
 
+import { paketPruefungAus, paketStand } from './pakete'
+
 /**
  * Wartungs-Prüfungen für Web-Admins (Dashboard-Hinweise, Datensicherungs-Seite, tägliches Protokoll):
  * Speicherplatz, Alter der installierten Website-Version, auslaufende Node.js-/PostgreSQL-Versionen,
@@ -95,6 +97,28 @@ export async function wartungsHinweise(payload: Payload): Promise<Hinweis[]> {
       text: l.tage < 0 ? `${l.name} ${l.version} bekommt seit ${wann} keine Sicherheits-Updates mehr – bitte aktualisieren.` : `${l.name} ${l.version} bekommt ab ${wann} keine Sicherheits-Updates mehr – Wechsel einplanen.`,
     })
   }
+  // Sicherheitsmeldungen und neue Versionen (tägliche Paket-Prüfung, src/wartung/pakete.ts)
+  const p = paketStand()
+  if (p.meldungen.length) {
+    const kritisch = p.meldungen.some((m) => m.schwere === 'critical')
+    const pakete = [...new Set(p.meldungen.map((m) => `${m.paket} ${m.version}`))].join(', ')
+    h.push({
+      key: 'sicherheitsmeldung',
+      art: 'warn',
+      symbol: '🚨',
+      text: `${kritisch ? 'Kritische' : 'Hohe'} Sicherheitslücke in ${pakete} bekannt (${p.meldungen.length} ${p.meldungen.length === 1 ? 'Meldung' : 'Meldungen'}). Bitte zeitnah aktualisieren – Details unter „Wartung“.`,
+    })
+  }
+  for (const u of p.updates)
+    h.push({
+      key: `update-${u.paket}`,
+      art: 'info',
+      symbol: '⬆️',
+      text: `${u.hauptversion ? 'Neue Hauptversion' : 'Update verfügbar'}: ${u.name} ${u.neu} (installiert ${u.installiert}).${u.hauptversion ? ' Größerer Umbau – nur mit Tests einplanen.' : ' Beim nächsten Update-Tag mitnehmen.'}`,
+    })
+  if (!paketPruefungAus() && p.fehlerSeit && Date.now() - new Date(p.fehlerSeit).getTime() > 3 * 86400000)
+    h.push({ key: 'paketpruefung', art: 'info', symbol: '📡', text: 'Die Prüfung auf Sicherheitsmeldungen klappt seit mehreren Tagen nicht (keine Verbindung zu registry.npmjs.org?).' })
+
   const code = await codeStand()
   const codeTage = code ? Math.floor((Date.now() - new Date(code).getTime()) / 86400000) : null
   if (process.env.NODE_ENV === 'production' && codeTage !== null && codeTage > CODE_ALT_TAGE)

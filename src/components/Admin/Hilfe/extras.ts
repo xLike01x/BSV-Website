@@ -841,7 +841,7 @@ export const FELDER: Record<string, Feld[]> = {
   media: [
     { name: 'Bildbeschreibung', text: 'Beschreibt, was zu sehen ist. Wichtig für Menschen, die sich Seiten vorlesen lassen.' },
     { name: 'Sind Personen zu erkennen?', text: 'Pflicht beim Hochladen. „Ja“ nur, wenn die Einwilligung vorliegt – bei Kindern von den Eltern. In der Mediathek zeigt der Ordner „Angabe zu Personen fehlt“ alte Bilder ohne Angabe.' },
-    { name: 'Ordner (Team / Kurs)', text: 'Der Ordner des Bildes. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es.' },
+    { name: 'Ordner (Team / Kurs)', text: 'Der einzige Ordner, den es gibt: das Team, zu dem das Bild gehört. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es. Oben in der Mediathek siehst du alle Ordner als Kacheln – Bilder in der Liste anhaken und auf eine Kachel ziehen sortiert sie um.' },
     { name: 'Verein allgemein', text: 'Für Bilder ohne Team, z. B. Logo oder Sportplatz. Alle Trainer dürfen sie benutzen, aber nicht ändern. Setzen kann das nur die Redaktion.' },
     { name: 'Noch nicht zugeordnet', text: 'Bilder ohne Team und ohne „Verein allgemein“. Nur die Redaktion sieht sie – Trainer können sie nicht benutzen.' },
     { name: 'In der Bildergalerie des Teams zeigen', text: 'Das Bild erscheint in der Fotogalerie auf der Seite des Teams.' },
@@ -850,7 +850,6 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Bildunterschrift (optional)', text: 'Text, der unter dem Bild erscheinen kann, z. B. Fotograf oder Anlass.' },
     { name: 'Bild bearbeiten', text: 'Nach dem Hochladen: zuschneiden und den „wichtigsten Bildbereich“ setzen – dann bleibt z. B. ein Gesicht auch in kleinen Vorschaubildern sichtbar.' },
     { name: 'Bildgrößen', text: 'Die Website erzeugt automatisch kleinere Versionen für schnelle Ladezeiten. Darum musst du dich nicht kümmern.' },
-    { name: 'Ordner (Team / Kurs)', text: 'Der einzige Ordner, den es gibt: das Team, zu dem das Bild gehört. Oben in der Mediathek siehst du alle Ordner als Kacheln – Bilder in der Liste anhaken und auf eine Kachel ziehen sortiert sie um.' },
   ],
   pages: [
     { name: 'Titel', text: 'Name der Seite, steht auch im Browser-Tab. Daraus entsteht die Adresse.' },
@@ -1033,6 +1032,11 @@ export const FAQ: Faq[] = [
     frage: 'Was passiert, wenn ein Mitglied seine E-Mail-Adresse ändern möchte?',
     antwort: 'Die Anmelde-E-Mail ändert nur ein Admin: Benutzer öffnen → E-Mail ändern → Speichern (bei Admin- und Web-Admin-Konten nur ein Web-Admin). Mitglieder selbst können sie absichtlich nicht ändern – sonst könnte jemand eine fremde Adresse eintragen. Ausweise hängen am Benutzerkonto, nicht an der E-Mail, und bleiben deshalb sichtbar. In der Mitgliedschaft steht zusätzlich eine E-Mail-Adresse (darüber werden Ausweise neuen Konten zugeordnet) – die bei Bedarf ebenfalls anpassen.',
     bereich: 'users',
+  },
+  {
+    frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload)?',
+    antwort: 'Die Website prüft jeden Tag (und kurz nach jedem Start) alle Pakete, die live laufen, gegen die Sicherheitsdatenbank von npm. Gibt es eine hohe oder kritische Lücke, sehen Web-Admins oben im Dashboard „🚨 Sicherheitslücke …“; Details stehen unter Datensicherung → Wartung (Schweregrad, betroffene Versionen, Link zur Beschreibung). Neue Versionen von Next.js und Payload erscheinen als „⬆️ Update verfügbar“. Zusätzlich prüft GitHub täglich und schickt bei Fund eine E-Mail; die Warnung steht auch im Monatsbericht. Was tun: Update in Auftrag geben (aktualisieren und testen) und auf dem Server deploy/update.sh ausführen – die Sicherung davor macht das Skript selbst. Übertragen werden dabei nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
+    bereich: 'sicherung',
   },
   {
     frage: 'Gibt es eine Rolle, die nur ansehen darf?',
