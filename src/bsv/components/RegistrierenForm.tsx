@@ -4,9 +4,13 @@ import Link from 'next/link'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { passwortFehler } from '@/auth/passwortRegeln'
+
 import { sha256Hex } from '@/bsv/sha256'
 
 import { PasswortHinweis } from './PasswortHinweis'
+
+/** Auf der Registrierung ohne Beispiel-Tipp (gewünscht) */
+const ohneTipp = (t: string) => t.replace(/\s*Tipp:.*$/, '')
 
 export type AngebotWahl = { id: number; title: string; bereich: string }
 type Aufgabe = { salz: string; ziel: string; max: number; signatur: string }
@@ -72,7 +76,7 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
     setFehler(null)
     const f = new FormData(e.currentTarget)
     const pwFehler = passwortFehler(String(f.get('passwort') ?? ''), { name: String(f.get('name') ?? ''), email: String(f.get('email') ?? '') })
-    if (pwFehler) return setFehler(pwFehler)
+    if (pwFehler) return setFehler(ohneTipp(pwFehler))
     if (f.get('passwort') !== f.get('passwort2')) return setFehler('Die beiden Passwörter sind nicht gleich.')
     if (!loesung) return setFehler('Einen kleinen Moment noch – die Sicherheitsprüfung läuft. Dann einfach noch einmal auf „Konto erstellen“ tippen.')
     setLaedt(true)
@@ -101,7 +105,7 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
         setGesendet(String(f.get('email') ?? ''))
         return
       }
-      setFehler(d.fehler ?? 'Das hat nicht geklappt. Bitte versuche es erneut.')
+      setFehler(d.fehler ? ohneTipp(d.fehler) : 'Das hat nicht geklappt. Bitte versuche es erneut.')
     } catch {
       setFehler('Keine Verbindung. Bitte versuche es erneut.')
     }
@@ -142,7 +146,7 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
         Passwort
         <input name="passwort" type="password" required minLength={10} maxLength={200} autoComplete="new-password" aria-describedby="passwort-hinweis" onChange={(e) => setEingabe((x) => ({ ...x, passwort: e.target.value }))} />
       </label>
-      <PasswortHinweis id="passwort-hinweis" passwort={eingabe.passwort} kontext={{ name: eingabe.name, email: eingabe.email }} />
+      <PasswortHinweis id="passwort-hinweis" passwort={eingabe.passwort} kontext={{ name: eingabe.name, email: eingabe.email }} ohneTipp />
       <label className="field">
         Passwort wiederholen
         <input name="passwort2" type="password" required minLength={10} maxLength={200} autoComplete="new-password" />
@@ -175,7 +179,9 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
       <label className="check">
         <input type="checkbox" name="datenschutz" required />
         <span>
-          Ich habe die <Link href="/datenschutz">Datenschutzhinweise</Link> gelesen.
+          Ich habe die <Link href="/datenschutz" target="_blank" rel="noopener noreferrer">
+            Datenschutzhinweise
+          </Link> gelesen.
         </span>
       </label>
       {fehler && (

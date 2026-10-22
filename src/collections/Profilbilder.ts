@@ -34,7 +34,8 @@ const fotoLesen: Access = async ({ req }) => {
 
 const eigenesOderAdmin: Access = ({ req }) => {
   const user = req.user as U
-  if (!user) return false
+  // Ohne bestätigten zweiten Faktor (nur Passwort bekannt) nichts ändern oder löschen
+  if (!user || (user as { _zweiFaktorOffen?: boolean })._zweiFaktorOffen) return false
   if (hasRole(user as never, 'admin')) return true
   return { besitzer: { equals: user.id } }
 }

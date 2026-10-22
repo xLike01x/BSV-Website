@@ -46,7 +46,29 @@ export default function PapierkorbClient({ webAdmin = true }: { webAdmin?: boole
 
   const ausfuehren = async (aktion: 'wiederherstellen' | 'loeschen', auswahl: PapierkorbEintrag[]) => {
     if (!auswahl.length) return
-    if (aktion === 'loeschen' && !window.confirm(`${auswahl.length} ${auswahl.length === 1 ? 'Eintrag' : 'Einträge'} wirklich endgültig löschen? Das lässt sich nicht rückgängig machen – auch Bilder und Dateien sind dann weg.`)) return
+    if (aktion === 'loeschen') {
+      // Erst nachsehen, was noch verknüpft ist – dann mit diesen Angaben fragen
+      setLaeuft(true)
+      const v = await fetch('/api/papierkorb/verknuepfungen', {
+        method: 'POST',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ eintraege: auswahl.map((e) => ({ slug: e.slug, id: e.id })) }),
+      })
+        .then((r) => (r.ok ? r.json() : { eintraege: [] }))
+        .catch(() => ({ eintraege: [] }))
+      setLaeuft(false)
+      const zeilen = ((v.eintraege ?? []) as { slug: string; id: number; verknuepfungen: { bereich: string; anzahl: number; mitloeschen: boolean }[] }[]).map((x) => {
+        const titel = auswahl.find((e) => e.slug === x.slug && e.id === x.id)?.titel ?? `#${x.id}`
+        const mit = x.verknuepfungen.filter((k) => k.mitloeschen).map((k) => `${k.anzahl} × ${k.bereich}`)
+        const luecke = x.verknuepfungen.filter((k) => !k.mitloeschen).map((k) => `${k.anzahl} × ${k.bereich}`)
+        return `• „${titel}“${mit.length ? `\n   wird MITGELÖSCHT: ${mit.join(', ')}` : ''}${luecke.length ? `\n   wird noch verwendet in: ${luecke.join(', ')} (dort fehlt es danach)` : ''}`
+      })
+      const frage =
+        `${auswahl.length} ${auswahl.length === 1 ? 'Eintrag' : 'Einträge'} wirklich endgültig löschen? Das lässt sich nicht rückgängig machen – auch Bilder und Dateien sind dann weg.` +
+        (zeilen.length ? `\n\n⚠️ Vorsicht – noch verknüpft (erst prüfen, dann gegebenenfalls fortfahren):\n${zeilen.join('\n')}` : '')
+      if (!window.confirm(frage)) return
+    }
     setLaeuft(true)
     setFehler(null)
     setMeldung(null)
@@ -59,7 +81,7 @@ export default function PapierkorbClient({ webAdmin = true }: { webAdmin?: boole
     const d = r ? await r.json().catch(() => ({})) : {}
     if (!r?.ok) setFehler(d.fehler ?? 'Das hat nicht geklappt.')
     else {
-      setMeldung(`${d.ok} ${d.ok === 1 ? 'Eintrag' : 'Einträge'} ${aktion === 'wiederherstellen' ? 'wiederhergestellt – wieder an der alten Stelle' : 'endgültig gelöscht'}.`)
+      if (d.ok) setMeldung(`${d.ok} ${d.ok === 1 ? 'Eintrag' : 'Einträge'} ${aktion === 'wiederherstellen' ? 'wiederhergestellt – wieder an der alten Stelle' : 'endgültig gelöscht'}.`)
       if (d.fehler?.length) setFehler(d.fehler.join(' · '))
     }
     setGewaehlt(new Set())

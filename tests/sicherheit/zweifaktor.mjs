@@ -41,6 +41,14 @@ export default async function zweifaktor(d) {
     r = await api(ck, 'POST', '/api/users/zwei-faktor/einrichten', { passwort: PW })
     const geheimnis = String(r.j?.geheimnis ?? '')
     pruefe('Einschalten mit Passwort → QR-Code', r.s === 200 && Boolean(r.j?.qr) && geheimnis.length > 10, r.s)
+    // Ein richtiges Passwort bei einer laufenden Einrichtung setzt den Code-Fehlerzähler nicht zurück
+    for (let i = 0; i < 4; i++) await api(ck, 'POST', '/api/users/zwei-faktor/bestaetigen', { code: '000001' })
+    r = await api(ck, 'POST', '/api/users/zwei-faktor/einrichten', { passwort: PW })
+    pruefe('Einrichtung läuft schon: erneutes Einschalten → 409', r.s === 409, r.s)
+    await api(ck, 'POST', '/api/users/zwei-faktor/bestaetigen', { code: '000001' })
+    r = await api(ck, 'POST', '/api/users/zwei-faktor/bestaetigen', { code: '000001' })
+    pruefe('… der Zähler läuft weiter: 6. falscher Code → 429', r.s === 429, r.s)
+    await d.q('update users set zwei_faktor_fehler = 0, zwei_faktor_fehler_seit = null where email=$1', [MAIL])
     r = await api(ck, 'POST', '/api/users/zwei-faktor/bestaetigen', { code: totp(geheimnis) })
     const codes = r.j?.wiederherstellungscodes ?? []
     pruefe('Ersten Code bestätigen → eingeschaltet, 10 Wiederherstellungscodes', r.s === 200 && codes.length === 10, r)
@@ -70,6 +78,19 @@ export default async function zweifaktor(d) {
     ck = await anmelden(MAIL, PW)
     st = await status(ck)
     pruefe('Danach wieder ohne Code anmelden', st.offen === false && st.eingerichtet === false, st)
+
+    // Aktuelles Passwort beim Passwortwechsel: höchstens 5 Versuche
+    const [ich] = await d.q('select id from users where email=$1', [MAIL])
+    let letzte = 0
+    for (let i = 0; i < 6; i++) letzte = (await api(ck, 'PATCH', `/api/users/${ich.id}`, { password: 'Neue Wolke 4 zieht weiter!', aktuellesPasswort: 'Falsch Falsch 1!' })).s
+    pruefe('Passwort ändern: 6. falsches aktuelles Passwort → 429', letzte === 429, letzte)
+
+    // Nur Zusatzrechte (sonst Mitglied): Pflicht, nicht abschaltbar
+    await d.q('update users set zusatzrechte_news = true where email=$1', [MAIL])
+    const zk = await anmelden(MAIL, PW)
+    const sz = await status(zk)
+    r = await api(zk, 'POST', '/api/users/zwei-faktor/ausschalten', { passwort: PW, code: '000000' })
+    pruefe('Nur Zusatzrecht: nicht freiwillig, Ausschalten → 403', sz.freiwillig === false && r.s === 403, { sz, s: r.s })
 
     // Verwaltungszugang: Pflicht, nicht abschaltbar
     r = await api(ad, 'POST', '/api/users', { email: STAFF, name: 'Test Pflicht', password: PW, roles: ['redaktion'] })

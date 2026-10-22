@@ -94,7 +94,9 @@ export function KontaktForm({ anliegen, direkt = [] }: { anliegen: string[]; dir
       <label className="check field-full">
         <input type="checkbox" name="datenschutz" required />
         <span>
-          Ich habe die <Link href="/datenschutz">Datenschutzhinweise</Link> gelesen.
+          Ich habe die <Link href="/datenschutz" target="_blank" rel="noopener noreferrer">
+            Datenschutzhinweise
+          </Link> gelesen.
         </span>
       </label>
       {fehler && (

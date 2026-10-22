@@ -25,8 +25,8 @@ export const Passdokumente: CollectionConfig = {
     create: ({ req }) => istMitgliedOderMehr(req.user),
     update: ({ req }) => istPassVerwaltung(req.user),
     delete: async (args) => {
-      const user = args.req.user as { id: number } | null
-      if (!user) return false
+      const user = args.req.user as { id: number; _zweiFaktorOffen?: boolean } | null
+      if (!user || user._zweiFaktorOffen) return false
       if (istPassVerwaltung(user)) return true
       // Eigene Unterlagen nur, solange sie noch keinem Antrag zugeordnet sind
       return { and: [{ hochgeladenVon: { equals: user.id } }, { antrag: { exists: false } }] } as Where

@@ -106,7 +106,9 @@ export function ProbetrainingForm({ angebotId, angebotName, ansprechperson, istK
       <label className="check field-full">
         <input type="checkbox" name="datenschutz" required />
         <span>
-          Ich habe die <Link href="/datenschutz">Datenschutzhinweise</Link> gelesen. Meine Angaben werden nur zur Bearbeitung dieser Anfrage genutzt.
+          Ich habe die <Link href="/datenschutz" target="_blank" rel="noopener noreferrer">
+            Datenschutzhinweise
+          </Link> gelesen. Meine Angaben werden nur zur Bearbeitung dieser Anfrage genutzt.
         </span>
       </label>
       {fehler && (

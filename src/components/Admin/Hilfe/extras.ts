@@ -527,6 +527,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Oben „🗑️ Im Papierkorb“ oder „🔒 Nur Web-Admin“ wählen, dazu nach Bereich, Person oder Titel filtern.',
         '„↩ Wiederherstellen“ – der Eintrag ist wieder an seiner Stelle.',
         'Wirklich weg haben: „Endgültig löschen“. Das lässt sich nicht rückgängig machen.',
+        'Vorher zeigt die Rückfrage, was noch verknüpft ist: „wird MITGELÖSCHT“ (z. B. die Eingänge eines Formulars, Ausfälle, Probetraining-Anfragen und Passanträge eines Teams – die gehen ohne den Eintrag nicht) und „wird noch verwendet in“ (z. B. ein Bild in einer News – dort fehlt es danach). Erst prüfen, dann bestätigen oder abbrechen.',
       ],
     },
   ],

@@ -15,17 +15,18 @@ const STUFEN = [
  * Live-Anzeige unter dem Passwortfeld: Checkliste der Regeln, Stärke-Balken und – sobald die Grundregeln erfüllt sind –
  * der genaue Grund, falls das Passwort trotzdem zu leicht ist. Dieselben Regeln prüft der Server verbindlich.
  */
-export function PasswortHinweis({ passwort, kontext, id }: { passwort: string; kontext?: Kontext; id?: string }) {
+export function PasswortHinweis({ passwort, kontext, id, ohneTipp = false }: { passwort: string; kontext?: Kontext; id?: string; ohneTipp?: boolean }) {
   if (!passwort) {
     return (
       <p id={id} className="muted" style={{ margin: '-4px 0 0', fontSize: 14, lineHeight: 1.5 }}>
-        Mindestens 10 Zeichen mit Groß- und Kleinbuchstaben, Zahl und Sonderzeichen. Tipp: ein kurzer Satz, z. B. „Mein Hund frisst 3 Äpfel!“
+        Mindestens 10 Zeichen mit Groß- und Kleinbuchstaben, Zahl und Sonderzeichen.{ohneTipp ? '' : ' Tipp: ein kurzer Satz, z. B. „Mein Hund frisst 3 Äpfel!“'}
       </p>
     )
   }
   const regeln = passwortRegeln(passwort)
   const staerke = passwortStaerke(passwort, kontext)
-  const grund = regeln.every((r) => r.ok) ? passwortFehler(passwort, kontext) : null
+  const roh = regeln.every((r) => r.ok) ? passwortFehler(passwort, kontext) : null
+  const grund = roh && ohneTipp ? roh.replace(/\s*Tipp:.*$/, '') : roh
   const stufe = STUFEN[staerke]!
   return (
     <div id={id} aria-live="polite" style={{ margin: '-4px 0 0', fontSize: 14, lineHeight: 1.5 }}>

@@ -1,4 +1,4 @@
-import { api, B, login, pruefe } from './lib.mjs'
+import { api, B, login, mitWebAdmin, pruefe } from './lib.mjs'
 
 const absatz = (kinder) => ({ type: 'paragraph', format: '', indent: 0, version: 1, direction: 'ltr', textFormat: 0, children: kinder })
 const text = (t) => ({ type: 'text', text: t, format: 0, mode: 'normal', style: '', detail: 0, version: 1 })
@@ -136,7 +136,53 @@ export default async function haertung(d) {
     link.fields.url = 'https://www.example.org/'
     r = await api(red, 'POST', '/api/posts', { title: 'Haertungstest Link', content: lex([link]), _status: 'draft' })
     pruefe('News mit https-Link → 201', r.s === 201, r)
+
+    // Papierkorb: Verknüpfungen vor dem endgültigen Löschen; Pflicht-Verknüpfungen (Formular-Eingänge) gehen mit
+    const f = await api(ad, 'POST', '/api/forms', { title: 'Haertungstest Formular', fields: [], confirmationType: 'message', confirmationMessage: lex([text('Danke')]) })
+    const fid = f.j?.doc?.id
+    pruefe('Testformular angelegt', f.s === 201 && Boolean(fid), f.j?.errors ?? f.s)
+    if (fid) {
+      await d.q('insert into form_submissions (form_id) values ($1), ($1)', [fid])
+      await d.q('update forms set deleted_at = now() where id = $1', [fid])
+      await mitWebAdmin(d, 'admin@bsv.test', async () => {
+        const wa = await login('admin@bsv.test')
+        const v = await api(wa, 'POST', '/api/papierkorb/verknuepfungen', { eintraege: [{ slug: 'forms', id: fid }] })
+        const k = v.j?.eintraege?.[0]?.verknuepfungen ?? []
+        pruefe('Verknüpfungen: 2 Formular-Eingänge werden mitgelöscht', v.s === 200 && k.some((x) => x.mitloeschen && x.anzahl === 2), v.j)
+        const l = await api(wa, 'POST', '/api/papierkorb/aktion', { aktion: 'loeschen', eintraege: [{ slug: 'forms', id: fid }] })
+        const [rest] = await d.q('select (select count(*) from forms where id=$1)::int f, (select count(*) from form_submissions where form_id=$1)::int s', [fid])
+        pruefe('Formular mit Eingängen endgültig gelöscht (Eingänge mit)', l.s === 200 && l.j?.ok === 1 && rest.f === 0 && rest.s === 0, { l: l.j, rest })
+      })
+      pruefe('Verknüpfungen nur für Web-Admins', (await api(ad, 'POST', '/api/papierkorb/verknuepfungen', { eintraege: [{ slug: 'forms', id: 1 }] })).s === 403)
+    }
+    // Bild in einer News: wird als „noch verwendet“ gemeldet (dort entsteht eine Lücke)
+    {
+      const sharp = (await import('sharp')).default
+      const png = await sharp({ create: { width: 40, height: 30, channels: 3, background: '#aa3366' } }).png().toBuffer()
+      const fd2 = new FormData()
+      fd2.append('file', new Blob([png], { type: 'image/png' }), 'haertungstest-verkn.png')
+      fd2.append('_payload', JSON.stringify({ alt: 'Haertungstest', personen: 'keine' }))
+      const u = await fetch(B + '/api/media', { method: 'POST', headers: { Cookie: red }, body: fd2 })
+      const bid = (await u.json().catch(() => null))?.doc?.id
+      try {
+        if (bid) {
+          const n = await api(ad, 'POST', '/api/posts', { title: 'Haertungstest Bild', content: lex([text('x')]), heroImage: bid, _status: 'draft' })
+          await mitWebAdmin(d, 'admin@bsv.test', async () => {
+            const wa = await login('admin@bsv.test')
+            const v = await api(wa, 'POST', '/api/papierkorb/verknuepfungen', { eintraege: [{ slug: 'media', id: bid }] })
+            const k = v.j?.eintraege?.[0]?.verknuepfungen ?? []
+            pruefe('Verknüpfungen: Bild wird in 1 News verwendet (Lücke, nicht mitlöschen)', n.s === 201 && k.some((x) => !x.mitloeschen && x.anzahl === 1 && /News/.test(x.bereich)), { n: n.s, k })
+          })
+        } else pruefe('Bild für den Verknüpfungs-Test hochgeladen', false, u.status)
+      } finally {
+        await aufraeumen()
+        const fs = await import('fs/promises')
+        for (const row of await d.q(`delete from media where filename like 'haertungstest-verkn%' returning *`))
+          for (const [k2, fn] of Object.entries(row)) if (k2.endsWith('filename') && fn) await fs.rm(new URL(`../../medien/${fn}`, import.meta.url), { force: true })
+      }
+    }
   } finally {
     await aufraeumen()
+    await d.q(`delete from forms where title = 'Haertungstest Formular'`).catch(() => {})
   }
 }

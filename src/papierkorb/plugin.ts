@@ -5,6 +5,8 @@ import { deleteByIDOperation, deleteOperation, parseParams } from 'payload'
 import { hasRole } from '@/access/roles'
 import { bildCacheLeeren } from '@/utilities/bildCacheLeeren'
 
+import { verknuepfteMitloeschen } from './verknuepfungen'
+
 /**
  * Zweistufiger Papierkorb
  * 1. Löschen → normaler Papierkorb (Payload, Feld deletedAt). Nach 30 Tagen automatisch weiter zu Stufe 2.
@@ -208,6 +210,8 @@ export const zweistufigerPapierkorb: Plugin = (config: Config): Config => ({
       hooks: {
         ...c.hooks,
         beforeChange: [papierkorbFelderBeimAnlegen, wiederherstellen, ...(c.hooks?.beforeChange ?? [])],
+        // Endgültig löschen: Datensätze, die ohne diesen Eintrag nicht stehen dürfen, gehen mit
+        beforeDelete: [verknuepfteMitloeschen, ...(c.hooks?.beforeDelete ?? [])],
       },
       fields: [
         ...c.fields,

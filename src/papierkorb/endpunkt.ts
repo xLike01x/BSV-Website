@@ -8,6 +8,7 @@ import { hatRecht } from '@/access/einzelrechte'
 import { beforeSyncWithSearch } from '@/search/beforeSync'
 
 import { ausfuehren, istWebAdminReq, PERSONEN_BEREICHE, tabelle } from './plugin'
+import { type Verknuepfung, verknuepfungen } from './verknuepfungen'
 
 const BEREICHE = [...PAPIERKORB, 'forms', 'form-submissions']
 
@@ -116,6 +117,22 @@ export const papierkorbEndpunkte: Endpoint[] = [
     },
   },
   {
+    // Vor dem endgültigen Löschen: Was ist mit den gewählten Einträgen noch verknüpft? (nur Web-Admins)
+    path: '/papierkorb/verknuepfungen',
+    method: 'post',
+    handler: async (req) => {
+      if (!istWebAdminReq(req)) return Response.json({ fehler: 'Nur für Web-Admins.' }, { status: 403 })
+      const body = (await req.json?.().catch(() => ({}))) as { eintraege?: { slug?: string; id?: number }[] }
+      const eintraege = (body.eintraege ?? []).filter((e) => e.slug && BEREICHE.includes(e.slug) && Number(e.id) > 0).slice(0, 200)
+      const ergebnis: { slug: string; id: number; verknuepfungen: Verknuepfung[] }[] = []
+      for (const e of eintraege) {
+        const v = await verknuepfungen(req, e.slug!, Number(e.id))
+        if (v.length) ergebnis.push({ slug: e.slug!, id: Number(e.id), verknuepfungen: v })
+      }
+      return Response.json({ eintraege: ergebnis }, { headers: { 'Cache-Control': 'no-store' } })
+    },
+  },
+  {
     path: '/papierkorb/aktion',
     method: 'post',
     handler: async (req) => {
@@ -138,11 +155,16 @@ export const papierkorbEndpunkte: Endpoint[] = [
             await zurueckholen(req, e.slug!, Number(e.id))
           } else {
             // Web-Admin: wirklich löschen (der Umleitungs-Hook greift für Web-Admins nicht)
-            await req.payload.delete({ collection: e.slug as CollectionSlug, where: { id: { equals: Number(e.id) } }, trash: true, overrideAccess: true, req })
+            const r = await req.payload.delete({ collection: e.slug as CollectionSlug, where: { id: { equals: Number(e.id) } }, trash: true, overrideAccess: true, req })
+            // Sammel-Löschen wirft bei Fehlern nicht, sondern meldet sie in „errors“
+            if (r.errors?.length) throw new Error(String((r.errors[0] as { message?: string }).message ?? 'Löschen fehlgeschlagen'))
+            if (!r.docs?.length) throw new Error('nicht gefunden')
           }
           ok++
         } catch (err) {
-          fehler.push(`${e.slug} #${e.id}: ${(err as Error).message}`)
+          // Keine Datenbank-Details an die Oberfläche – die stehen im Server-Protokoll
+          req.payload.logger.error({ err }, `Papierkorb: ${e.slug} #${e.id} – ${body.aktion} fehlgeschlagen`)
+          fehler.push(`${label(req, e.slug!)} #${e.id}: ${body.aktion === 'loeschen' ? 'konnte nicht gelöscht werden' : 'konnte nicht wiederhergestellt werden'} (Details im Server-Protokoll).`)
         }
       }
       return Response.json({ ok, fehler })

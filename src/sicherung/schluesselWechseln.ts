@@ -146,7 +146,7 @@ const dateien = sicherungenAuflisten()
 const verschluesselt = dateien.filter((d) => d.datei.endsWith('.enc'))
 const klartext = dateien.filter((d) => !d.datei.endsWith('.enc'))
 console.log(`\nSicherungen im Ordner backups: ${verschluesselt.length} verschlüsselt${klartext.length ? `, ${klartext.length} UNverschlüsselt (werden nicht angefasst)` : ''}`)
-console.log(`Konten mit Zwei-Faktor: ${zf.aktiv}${zweiFaktorNeu ? ' → werden zurückgesetzt (beim nächsten Anmelden neu einrichten)' : ''}`)
+console.log(`Konten mit Zwei-Faktor: ${zf.aktiv}${zweiFaktorNeu ? ' → werden zurückgesetzt (Verwaltungszugänge richten sie beim nächsten Anmelden neu ein, bei Mitgliedern ist die freiwillige Zwei-Faktor-Anmeldung danach aus)' : ''}`)
 
 if (!ausfuehren) {
   console.log('\nProbelauf beendet – nichts geändert. Zum Ausführen: pnpm schluessel:wechseln ausfuehren')

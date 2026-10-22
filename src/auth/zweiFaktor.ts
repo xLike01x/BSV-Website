@@ -97,8 +97,8 @@ const entferneGeheimes = (u: ZfUser) => {
 export const zweiFaktorStrategie: AuthStrategy = {
   name: 'bsv-zwei-faktor',
   authenticate: async (args) => {
-    // Im Zweifel geschlossen: Wirft irgendetwas hier, gibt es KEINEN Benutzer (sonst würde Payloads
-    // eingebaute Token-Prüfung danach den Nutzer mit vollen Rollen anmelden).
+    // Im Zweifel geschlossen: Wirft irgendetwas hier, gibt es KEINEN Benutzer. Payloads eingebaute Token-Prüfung
+    // („local-jwt“) ist in payload.config.ts (onInit) entfernt – diese Strategie ist der einzige Prüfweg.
     let res: Awaited<ReturnType<typeof JWTAuthentication>>
     try {
       res = await JWTAuthentication({ ...args, strategyName: 'local-jwt' })
@@ -247,20 +247,20 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Die Zwei-Faktor-Anmeldung ist bereits eingerichtet.' }, 400)
-      // Freiwillig (Mitglieder): nur mit dem Passwort – sonst könnte jemand an einem offen gelassenen Rechner
-      // seine eigene App verbinden und den Inhaber damit aussperren
-      if (!istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) {
-        if ((req.user as { _wartetAufFreigabe?: boolean } | null)?._wartetAufFreigabe) return json({ fehler: 'Erst nach der Freischaltung durch die Verwaltung möglich.' }, 400)
-        if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
-        const body = (await req.json?.().catch(() => ({}))) as { passwort?: unknown }
-        if (!(await passwortRichtig(req, u.id, body?.passwort))) return json({ fehler: 'Das Passwort stimmt nicht.' }, 400)
-        await versuchFreigeben(req, u.id)
-      }
       // Läuft schon eine Einrichtung (z. B. in einem anderen Fenster)? Dann kein neues Geheimnis – sonst könnte jemand
       // mit dem Passwort die Einrichtung des echten Inhabers überschreiben.
       const seit = (u as { zweiFaktorEinrichtungSeit?: string | null }).zweiFaktorEinrichtungSeit
       if (u.zweiFaktorGeheimnis && seit && Date.now() - new Date(seit).getTime() < EINRICHTUNG_MS) {
         return json({ fehler: 'Die Einrichtung wurde gerade schon gestartet (z. B. in einem anderen Fenster). Bitte dort abschließen oder in 15 Minuten neu beginnen.' }, 409)
+      }
+      // Freiwillig (Mitglieder): nur mit dem Passwort – sonst könnte jemand an einem offen gelassenen Rechner seine
+      // eigene App verbinden und den Inhaber damit aussperren. Ein richtiges Passwort setzt den Fehlerzähler NICHT
+      // zurück (das geschieht erst nach dem bestätigten Code) – sonst ließe sich der Code-Zähler damit umgehen.
+      if (!istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) {
+        if ((req.user as { _wartetAufFreigabe?: boolean } | null)?._wartetAufFreigabe) return json({ fehler: 'Erst nach der Freischaltung durch die Verwaltung möglich.' }, 400)
+        if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+        const body = (await req.json?.().catch(() => ({}))) as { passwort?: unknown }
+        if (!(await passwortRichtig(req, u.id, body?.passwort))) return json({ fehler: 'Das Passwort stimmt nicht.' }, 400)
       }
       const geheimnis = neuesGeheimnis()
       await req.payload.update({
@@ -284,6 +284,9 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Bereits eingerichtet.' }, 400)
+      // Ein abgebrochenes Einrichten gilt nur 15 Minuten
+      const gestartet = (u as { zweiFaktorEinrichtungSeit?: string | null }).zweiFaktorEinrichtungSeit
+      if (!gestartet || Date.now() - new Date(gestartet).getTime() > EINRICHTUNG_MS) return json({ fehler: 'Die Einrichtung ist abgelaufen. Bitte neu beginnen.' }, 400)
       if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
       const body = (await req.json?.().catch(() => ({}))) as { code?: string }
       const geheimnis = u.zweiFaktorGeheimnis ? decrypt(u.zweiFaktorGeheimnis) : null
@@ -386,6 +389,16 @@ export const zweiFaktorZuruecksetzen = async ({
       context: { zweiFaktorIntern: true },
       req,
     })
+    // Bescheid an die Person – falls das unerwartet kommt, merkt sie es sofort
+    if (doc.email) {
+      const personal = istPersonal(doc.roles, doc.zusatzrechte)
+      const absaetze = [
+        `Die Verwaltung hat am ${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} die Zwei-Faktor-Anmeldung deines Kontos zurückgesetzt (z. B. wegen eines verlorenen Handys).`,
+        personal ? 'Beim nächsten Anmelden richtest du sie mit deiner App neu ein.' : 'Sie ist jetzt aus. Du kannst sie im Mitgliederbereich unter „Mein Konto“ wieder einschalten.',
+        'Hast du das nicht veranlasst, melde dich bitte beim Verein.',
+      ]
+      await mailSenden(req.payload, { an: doc.email, betreff: 'Zwei-Faktor-Anmeldung zurückgesetzt – BSV 1919', text: absaetze.join('\n\n'), html: mailHtml({ titel: 'Zwei-Faktor-Anmeldung zurückgesetzt', absaetze }) }).catch(() => {})
+    }
   }
   return doc
 }

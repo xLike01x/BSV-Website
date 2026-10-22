@@ -125,10 +125,15 @@ export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, op
   }
   if (operation === 'update' && typeof a.data?.password === 'string' && eigenesKonto(req, a.id)) {
     const aktuell = String(a.data.aktuellesPasswort ?? '')
+    // Höchstens 5 Versuche je Konto in 10 Minuten – sonst ließe sich mit einer fremden offenen Sitzung das Passwort raten
+    const schluessel = `aendern|${req.user!.id}`
+    if (offeneFehlversuche(schluessel).length >= FEHL_MAX) throw new APIError('Zu viele Versuche. Bitte in 10 Minuten erneut probieren.', 429)
+    versuchMerken(schluessel)
     const ich = (await req.payload.db.findOne({ collection: 'users', where: { id: { equals: req.user!.id } }, req })) as { hash?: string; salt?: string } | null
     if (!aktuell || !(await passwortStimmt(aktuell, ich?.hash, ich?.salt))) {
       throw new APIError('Bitte zum Ändern dein aktuelles Passwort eingeben (Feld „Aktuelles Passwort“).', 400)
     }
+    fehlversuche.delete(schluessel)
   }
   if (a.data && 'aktuellesPasswort' in a.data) delete a.data.aktuellesPasswort
   return args
