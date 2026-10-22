@@ -16,6 +16,10 @@ const GLOBALS = ['header', 'footer', 'menue', 'texte', 'startseite', 'verein', '
 const UPLOADS = new Set(['media', 'dokumente', 'profilbilder', 'passdokumente'])
 /** Schreiben muss überall scheitern (hilfe-feedback ist die einzige Ausnahme fürs Anlegen) */
 const SCHREIBEN = LESBAR.filter((s) => s !== 'hilfe-feedback').concat('passdokumente', 'search')
+/** Öffentliche Formulare: Anlegen bleibt wie für jeden Besucher möglich (hier mit ungültigem Inhalt → 400 statt 403) */
+const OEFFENTLICH = new Set(['kontaktanfragen', 'probetraining', 'mitgliedsantraege', 'form-submissions', 'passantraege'])
+/** Darf ein Mitglied für sich selbst anlegen – „Nur ansehen“ ohne weitere Rolle zählt dafür als Mitglied */
+const MITGLIED = new Set(['profilbilder', 'passdokumente'])
 const GEHEIM = ['zweiFaktorGeheimnis', 'zweiFaktorCodes', 'zweiFaktorSitzungen', 'zweiFaktorFehler', 'bestaetigungHash', 'googleId', 'hash', 'salt']
 
 const verboten = (r) => r.s === 401 || r.s === 403
@@ -77,9 +81,9 @@ export default async function nurAnsehen(d) {
     const trl = await api(leser, 'GET', `/api/posts?trash=true&where[id][equals]=${geloescht.id}&depth=0`)
     pruefe('Papierkorb: gelöschte News nicht lesbar', tr.s === 404 || verboten(tr), tr.s)
     pruefe('Papierkorb: gelöschte News nicht in der Liste', trl.j?.totalDocs === 0, trl.j?.totalDocs)
-    for (const [m, p] of [['GET', '/api/sicherung'], ['GET', '/api/papierkorb/liste'], ['GET', '/api/mitgliedsantraege/export'], ['POST', '/api/datenschutz/auskunft'], ['GET', '/api/users/rechte-vorschau']]) {
-      const r = await api(leser, m, p, m === 'POST' ? { email: 'mitglied@bsv.test' } : undefined)
-      pruefe(`${m} ${p}: kein Zugriff`, verboten(r) || r.s === 404 || r.s === 405, r.s)
+    for (const [m, p] of [['GET', '/api/sicherung'], ['GET', '/api/papierkorb/liste'], ['POST', '/api/mitgliedsantraege/export'], ['GET', '/api/datenschutz/auskunft?email=mitglied@bsv.test'], ['GET', '/api/rechte-vorschau?rollen=admin']]) {
+      const r = await api(leser, m, p, m === 'POST' ? {} : undefined, { Origin: B })
+      pruefe(`${m} ${p}: kein Zugriff`, verboten(r), r.s)
     }
 
     // --- Schreiben: überall abgelehnt ---
@@ -87,8 +91,13 @@ export default async function nurAnsehen(d) {
     for (const s of SCHREIBEN) {
       const [e] = await d.q(`select id from ${s.replace(/-/g, '_')} order by id limit 1`).catch(() => [])
       ids[s] = e?.id
-      const c = UPLOADS.has(s) ? await hochladen(leser, s) : await api(leser, 'POST', `/api/${s}`, { title: 'x', name: 'x' })
-      pruefe(`${s}: anlegen verboten`, verboten(c), c.s)
+      const c = UPLOADS.has(s) ? await hochladen(leser, s) : await api(leser, 'POST', `/api/${s}`, { title: 'x', name: 'x' }, ip())
+      if (OEFFENTLICH.has(s)) pruefe(`${s}: Formular für Besucher/Mitglieder bleibt nutzbar (Eingaben geprüft, nicht abgewiesen)`, c.s === 400, c.s)
+      else if (MITGLIED.has(s)) {
+        pruefe(`${s}: eigenes anlegen wie ein Mitglied erlaubt`, c.s === 201, c.s)
+        if (c.j?.doc?.id) await api(leser, 'DELETE', `/api/${s}/${c.j.doc.id}`)
+      }
+      else pruefe(`${s}: anlegen verboten`, verboten(c), c.s)
       if (!e) continue
       const u = await api(leser, 'PATCH', `/api/${s}/${e.id}`, { title: 'geändert', name: 'geändert' })
       pruefe(`${s}: ändern verboten`, verboten(u) || u.s === 404, u.s)
@@ -174,6 +183,66 @@ export default async function nurAnsehen(d) {
       })
     }
 
+    // --- Versionen von News im Papierkorb (auch ältere Versionen ohne eigenes „gelöscht“) ---
+    const neu = await api(admin, 'POST', '/api/posts?draft=true', { title: 'Sicherheitstest Papierkorb-Versionen', _status: 'draft' })
+    const nid = neu.j?.doc?.id
+    if (nid) {
+      await api(admin, 'PATCH', `/api/posts/${nid}?draft=true`, { title: 'Sicherheitstest Papierkorb-Versionen 2' })
+      const vorher = await api(leser, 'GET', `/api/posts/versions?where[parent][equals]=${nid}&depth=0`)
+      await api(admin, 'PATCH', `/api/posts/${nid}`, { deletedAt: new Date().toISOString() })
+      const nachher = await api(leser, 'GET', `/api/posts/versions?where[parent][equals]=${nid}&depth=0`)
+      pruefe('Versionen lesbar, solange die News nicht im Papierkorb liegt', vorher.j?.totalDocs >= 2, vorher.j?.totalDocs)
+      pruefe('Keine Versionen von News im Papierkorb (auch ältere nicht)', nachher.s === 200 && nachher.j?.totalDocs === 0, nachher.j?.totalDocs)
+      const [alt] = await d.q('select id from _posts_v where parent_id=$1 order by id limit 1', [nid])
+      const einzeln = await api(leser, 'GET', `/api/posts/versions/${alt.id}?depth=0`)
+      pruefe('Einzelne ältere Version einer gelöschten News nicht lesbar', einzeln.s === 404 || verboten(einzeln), einzeln.s)
+      await api(admin, 'PATCH', `/api/posts/${nid}?trash=true`, { deletedAt: null })
+      const zurueck = await api(leser, 'GET', `/api/posts/versions?where[parent][equals]=${nid}&depth=0`)
+      pruefe('Nach dem Wiederherstellen sind die Versionen wieder lesbar', zurueck.j?.totalDocs >= 2, { s: zurueck.s, n: zurueck.j?.totalDocs })
+      await d.q('delete from _posts_v where parent_id=$1', [nid])
+      await d.q('delete from posts where id=$1', [nid])
+    } else pruefe('Test-News angelegt', false, neu.j)
+
+    // --- Rolle vergeben: nur Web-Admins ---
+    const [mitglied] = await d.q(`select id from users where email='mitglied@bsv.test'`)
+    const vergeben = await api(admin, 'PATCH', `/api/users/${mitglied.id}`, { roles: ['mitglied', 'lesen'] })
+    const rollenM = (await d.q('select value from users_roles where parent_id=$1', [mitglied.id])).map((r) => r.value)
+    pruefe('Admin kann „Nur ansehen“ nicht vergeben (nur Web-Admin)', verboten(vergeben) && !rollenM.includes('lesen'), { s: vergeben.s, rollenM })
+    if (rollenM.includes('lesen')) await d.q(`delete from users_roles where parent_id=$1 and value='lesen'`, [mitglied.id])
+
+    // --- Nur ansehen + Mitglied: Mitgliederbereich bleibt nutzbar ---
+    await d.q(`insert into users_roles ("order", parent_id, value) values (3, $1, 'mitglied')`, [konto.id])
+    try {
+      const c = await login(LESER)
+      const pa = await api(c, 'POST', '/api/passantraege', {}, ip())
+      pruefe('Nur ansehen + Mitglied: Passantrag stellen nicht abgewiesen (Eingaben geprüft)', pa.s === 400, pa.s)
+      const pb = await hochladen(c, 'profilbilder')
+      pruefe('Nur ansehen + Mitglied: eigenes Profilfoto hochladen', pb.s === 201, pb.s)
+    } finally {
+      await d.q(`delete from users_roles where parent_id=$1 and value='mitglied'`, [konto.id])
+      await d.q(`delete from profilbilder where filename like 'sicherheitstest-lesen%'`)
+    }
+
+    // --- Trainer + Nur ansehen: Bilder fremder Teams bleiben tabu ---
+    const [bildFremd] = await d.q('select id, team_id from media where team_id is not null and deleted_at is null order by id limit 1')
+    const [trainer] = bildFremd
+      ? await d.q(`select u.id, u.email, a.id as team from users u join angebote a on u.name = 'Test Trainer ' || a.title where u.testkonto = true and a.id <> $1 order by a.id limit 1`, [bildFremd.team_id])
+      : []
+    if (trainer) {
+      await d.q(`insert into users_roles ("order", parent_id, value) values (5, $1, 'lesen')`, [trainer.id])
+      try {
+        const c = await login(trainer.email)
+        const p = await api(c, 'POST', '/api/posts?draft=true', { title: 'Sicherheitstest Trainer+Leser', _status: 'draft', team: trainer.team, heroImage: bildFremd.id })
+        pruefe('Trainer + Nur ansehen: Bild eines fremden Teams nicht verwendbar', verboten(p) || p.s === 400, p.s)
+        if (p.j?.doc?.id) {
+          await d.q('delete from _posts_v where parent_id=$1', [p.j.doc.id])
+          await d.q('delete from posts where id=$1', [p.j.doc.id])
+        }
+      } finally {
+        await d.q(`delete from users_roles where parent_id=$1 and value='lesen'`, [trainer.id])
+      }
+    } else pruefe('Trainer und Team-Bild für den Test gefunden', false)
+
     // --- Mit einer weiteren Rolle (z. B. Redaktion) darf die Person dort wieder arbeiten ---
     await d.q(`insert into users_roles ("order", parent_id, value) values (2, $1, 'redaktion')`, [konto.id])
     try {
@@ -190,6 +259,12 @@ export default async function nurAnsehen(d) {
   } finally {
     if (antragId) await d.q('delete from mitgliedsantraege where id=$1', [antragId])
     for (const t of UPLOADS) await d.q(`delete from ${t} where filename like 'sicherheitstest-lesen%'`).catch(() => {})
+    // Hochgeladene Testdateien (auch verkleinerte Fassungen) von der Platte entfernen
+    const fs = await import('fs/promises')
+    for (const ordner of ['medien', 'profilbilder', 'passantraege', 'dokumente']) {
+      const dir = new URL(`../../${ordner}/`, import.meta.url)
+      for (const f of await fs.readdir(dir).catch(() => [])) if (f.startsWith('sicherheitstest-lesen')) await fs.rm(new URL(f, dir), { force: true })
+    }
     await d.q('delete from _posts_v where parent_id=$1', [geloescht.id])
     await d.q('delete from posts where id=$1', [geloescht.id])
   }

@@ -30,10 +30,13 @@ export default async function Registrierungen({ initPageResult, params, searchPa
     aktiv: (a as { aktiv?: boolean | null }).aktiv !== false,
   }})
   const emails = r.docs.map((u) => u.email)
-  const antraege = emails.length
+  // „Nur ansehen“: Hinweise auf Anträge bzw. Ausweise nur, wenn diese Bereiche für die Rolle freigegeben sind
+  const zeigeAntraege = !nurAnsehen || (await leserHaken(req, 'mitgliedsantraege'))
+  const zeigeAusweise = !nurAnsehen || (await leserHaken(req, 'mitgliedschaften'))
+  const antraege = zeigeAntraege && emails.length
     ? (await req.payload.find({ collection: 'mitgliedsantraege', where: { or: emails.map((e) => ({ email: { like: e } })) }, limit: 500, depth: 0, overrideAccess: true, select: { email: true, status: true } as never })).docs
     : []
-  const mitglieder = emails.length
+  const mitglieder = zeigeAusweise && emails.length
     ? (await req.payload.find({ collection: 'mitgliedschaften', where: { and: [{ email: { in: emails } }, { konto: { exists: false } }] }, limit: 500, depth: 0, overrideAccess: true })).docs
     : []
   const eintraege: Eintrag[] = r.docs.map((u) => {

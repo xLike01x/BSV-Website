@@ -12,7 +12,7 @@ const ROLLEN: { value: string; titel: string; text: string; symbol: string; nurW
   { value: 'redaktion', titel: 'Redaktion', symbol: '✏️', text: 'Alle News, Termine, Seiten, Menü, Texte & Bilder, Sponsoren, Kontaktanfragen.' },
   { value: 'kasse', titel: 'Kasse', symbol: '💶', text: 'Mitgliedsanträge mit Bankdaten, Mitgliedschaften, Registrierungen.' },
   { value: 'passwesen', titel: 'Passwesen', symbol: '🪪', text: 'Fußball-Passanträge aller Teams.' },
-  { value: 'lesen', titel: 'Nur ansehen', symbol: '👀', text: 'Alles in der Verwaltung lesen, nichts ändern (z. B. Vorstand, Kassenprüfung). Was genau, steuert der Web-Admin unter Rollen-Rechte.' },
+  { value: 'lesen', titel: 'Nur ansehen', symbol: '👀', text: 'Alles in der Verwaltung lesen, nichts ändern (z. B. Vorstand, Kassenprüfung). Was genau, steuert der Web-Admin unter Rollen-Rechte.', nurWebAdmin: true },
   { value: 'admin', titel: 'Admin', symbol: '🛡️', text: 'Alles im Verein, auch Benutzer und Rollen – außer Admin-Rechte vergeben.', nurWebAdmin: true },
   { value: 'webadmin', titel: 'Web-Admin', symbol: '🔧', text: 'Technik und oberste Rechte: Admin-Konten, Datensicherung, Rechte-Einstellungen.', nurWebAdmin: true },
 ]

@@ -1,7 +1,9 @@
 import type { CollectionSlug, Endpoint, Payload, Where } from 'payload'
 
 import { hatRecht } from '@/access/einzelrechte'
+import { leserSiehtBereich } from '@/access/nurAnsehen'
 import { hasRole } from '@/access/roles'
+import { rechteLaden } from '@/access/rollenRechte'
 
 // Zusatzrecht „datenschutz“: Fristen einstellen und – wie der tägliche Lauf – Fälliges in den Papierkorb verschieben (alle Bereiche)
 const mitZusatzrecht = (user: unknown) => !hasRole(user as never, 'admin') && hatRecht(user, 'datenschutz')
@@ -117,7 +119,10 @@ export const datenschutzEndpunkte: Endpoint[] = [
       // „Nur ansehen“ sieht, was fällig ist (aufräumen kann die Rolle nicht – siehe /datenschutz/aufraeumen)
       const leser = hasRole(req.user as never, 'lesen')
       if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user) && !leser) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
-      return Response.json({ faellig: await faellige(req.payload, mitZusatzrecht(req.user) || leser ? undefined : rollen) })
+      const liste = await faellige(req.payload, mitZusatzrecht(req.user) || leser ? undefined : rollen)
+      // „Nur ansehen“ ohne weitere Berechtigung: nur Bereiche, deren Haken gesetzt ist
+      const nurLesend = leser && !hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user)
+      return Response.json({ faellig: nurLesend ? (await rechteLaden(req.payload), liste.filter((f) => leserSiehtBereich(req.user, f.slug))) : liste })
     },
   },
   {

@@ -15,7 +15,8 @@ const anzahlWebAdmins = async (req: PayloadRequest, ohne?: number | string) => {
 /**
  * Schutz der obersten Konten:
  * - Web-Admin hat immer auch „admin“.
- * - Nur Web-Admins vergeben oder entziehen „admin“/„webadmin“ (Ausnahme: solange es noch keinen Web-Admin gibt).
+ * - Nur Web-Admins vergeben oder entziehen „admin“/„webadmin“/„lesen“ (Ausnahme: solange es noch keinen Web-Admin gibt).
+ *   „Nur ansehen“ öffnet auch Bereiche, die sonst nur Web-Admins sehen (z. B. Besucherstatistik).
  * - Konten von Web-Admins kann nur ein Web-Admin ändern (oder die Person selbst).
  * - Bei anderen Admins darf nur ein Web-Admin E-Mail und Passwort ändern, die Zwei-Faktor-Anmeldung zurücksetzen
  *   oder das Konto löschen – sonst könnte ein Admin das Konto eines anderen Admins übernehmen (Audit I-03).
@@ -48,10 +49,10 @@ export const webadminSchutz: CollectionBeforeChangeHook = async ({ req, data, or
 
   if (neu) {
     const nachher = data.roles as string[]
-    const geaendert = ['admin', 'webadmin'].some((r) => (vorher.roles ?? []).includes(r) !== nachher.includes(r))
+    const geaendert = ['admin', 'webadmin', 'lesen'].some((r) => (vorher.roles ?? []).includes(r) !== nachher.includes(r))
     if (geaendert && !binIchWebAdmin) {
       const gibtWebAdmin = (await anzahlWebAdmins(req)) > 0
-      if (gibtWebAdmin) throw new APIError('Admin- und Web-Admin-Rechte kann nur ein Web-Admin vergeben oder entziehen.', 403)
+      if (gibtWebAdmin) throw new APIError('Die Rollen Admin, Web-Admin und „Nur ansehen“ kann nur ein Web-Admin vergeben oder entziehen.', 403)
     }
     if (operation === 'update' && hat(vorher, 'webadmin') && !nachher.includes('webadmin') && (await anzahlWebAdmins(req, vorher.id)) === 0)
       throw new APIError('Das ist der letzte Web-Admin. Bitte zuerst eine andere Person zum Web-Admin machen.', 400)

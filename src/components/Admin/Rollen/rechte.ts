@@ -1,6 +1,7 @@
 import type { PayloadRequest } from 'payload'
 
 import { ROLES } from '@/access/roles'
+import { schalter } from '@/access/rollenRechte'
 
 export type Stufe = 'ja' | 'eigene' | 'nein' | 'website'
 export type RechteZeile = { slug: string; art: 'bereich' | 'einstellung' | 'seite'; titel: string; gruppe: string; ansehen: Stufe; anlegen: Stufe; bearbeiten: Stufe; loeschen: Stufe }
@@ -17,13 +18,14 @@ const ZUSATZ_TEAM: Record<string, Partial<Record<'ansehen' | 'anlegen', Stufe>>>
 }
 
 /** Eigene Seiten der Verwaltung (keine Sammlungen) – wer sie öffnen darf */
-const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeiten: boolean; recht?: string }[] = [
+/** lesen: „Nur ansehen“ darf die Seite ansehen, solange dieser Haken unter Rollen-Rechte gesetzt ist */
+const SEITEN: { slug: string; titel: string; rollen: string[] | 'alle'; bearbeiten: boolean; recht?: string; lesen?: 'benutzer' | 'statistik' }[] = [
   { slug: 'hilfe', titel: 'Hilfe-Center', rollen: 'alle', bearbeiten: false },
-  { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true, recht: 'registrierungen' },
+  { slug: 'registrierungen', titel: 'Registrierungen (freigeben)', rollen: ['admin', 'kasse'], bearbeiten: true, recht: 'registrierungen', lesen: 'benutzer' },
   { slug: 'saisonwechsel', titel: 'Saisonwechsel (Fußball)', rollen: ['admin', 'redaktion'], bearbeiten: true, recht: 'saisonwechsel' },
-  { slug: 'rollen', titel: 'Rollen & Rechte', rollen: ['admin'], bearbeiten: false },
+  { slug: 'rollen', titel: 'Rollen & Rechte', rollen: ['admin'], bearbeiten: false, lesen: 'benutzer' },
   { slug: 'sicherung', titel: 'Datensicherung', rollen: ['webadmin'], bearbeiten: true },
-  { slug: 'statistik', titel: 'Besucherstatistik', rollen: ['webadmin'], bearbeiten: false, recht: 'statistik' },
+  { slug: 'statistik', titel: 'Besucherstatistik', rollen: ['webadmin'], bearbeiten: false, recht: 'statistik', lesen: 'statistik' },
   { slug: 'papierkorb', titel: 'Papierkorb (alle Bereiche)', rollen: ['webadmin'], bearbeiten: true, recht: 'papierkorb' },
 ]
 /** Zusatzrechte, die bei Team-Rollen die Einschränkung „nur eigene Teams“ für einen Bereich aufheben */
@@ -126,7 +128,8 @@ export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrec
     }
     for (const s of SEITEN) {
       const darf = verwaltung && (s.rollen === 'alle' || s.rollen.some((r) => roles.includes(r)) || (s.recht ? zusatzrechte[s.recht] === true : false))
-      zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten', ansehen: darf ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
+      const leser = verwaltung && Boolean(s.lesen && roles.includes('lesen') && schalter('lesen', s.lesen))
+      zeilen.push({ slug: `seite-${s.slug}`, art: 'seite', titel: s.titel, gruppe: 'Sonderseiten', ansehen: darf || leser ? 'ja' : 'nein', anlegen: 'nein', bearbeiten: darf && s.bearbeiten ? 'ja' : 'nein', loeschen: 'nein' })
     }
     return zeilen
   }

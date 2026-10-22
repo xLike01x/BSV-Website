@@ -217,8 +217,9 @@ export const rolleOderRecht =
  */
 export const medienSichtbar = async (req: PayloadRequest): Promise<Where | null> => {
   const user = userOf(req)
-  // „Nur ansehen“ sieht alle Ordner (wählen oder zuordnen kann die Rolle ohnehin nichts)
-  if (!user || alleBilder(user) || istLeser(user)) return null
+  // Reines „Nur ansehen“ sieht alle Ordner (wählen oder zuordnen kann es nichts). Mit Trainer/Team-Redaktion zusammen
+  // gilt weiter „nur eigene Teams“ – sonst könnte die Person fremde Bilder (z. B. Kinderfotos) in ihre News einbauen.
+  if (!user || alleBilder(user) || nurLeser(user)) return null
   const ids = await eigeneAngebotIds(req)
   return { or: [...(ids.length ? [{ team: { in: ids } }] : []), { allgemein: { equals: true } }] }
 }

@@ -7,6 +7,8 @@ import { handleServerFunctions, RootLayout } from '@payloadcms/next/layouts'
 import React from 'react'
 
 import { importMap } from './admin/importMap.js'
+// Eigene Prüfungen für „form-state“ und „schedule-publish“ (Bearbeitungssperren, geplantes Veröffentlichen)
+import { serverFunktionen } from '@/utilities/serverFunktionen'
 import './custom.scss'
 
 type Args = {
@@ -19,6 +21,7 @@ const serverFunction: ServerFunctionClient = async function (args) {
     ...args,
     config,
     importMap,
+    serverFunctions: serverFunktionen,
   })
 }
 

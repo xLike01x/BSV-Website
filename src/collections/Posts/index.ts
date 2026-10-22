@@ -1,6 +1,6 @@
 import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { medienPruefen } from '@/hooks/medienPruefen'
-import { istLeser, medienAuswahl, nurEinzelrechte } from '@/access/roles'
+import { medienAuswahl, nurEinzelrechte, nurLeser } from '@/access/roles'
 import { hatRecht } from '@/access/einzelrechte'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
@@ -55,7 +55,7 @@ const newsAnlegen: Access = async ({ req }) => {
 
 const istRedaktion = (user: unknown) => imBereich(user, 'news')
 /** Felder der Redaktion anzeigen – auch für „Nur ansehen“ (dort ohnehin schreibgeschützt) */
-const siehtRedaktionsfelder = (user: unknown) => istRedaktion(user) || istLeser(user)
+const siehtRedaktionsfelder = (user: unknown) => istRedaktion(user) || nurLeser(user)
 
 /** Team-News: nur für eigene Teams, Startseite entscheidet die Redaktion */
 const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operation, originalDoc }) => {

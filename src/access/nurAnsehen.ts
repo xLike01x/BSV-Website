@@ -1,4 +1,5 @@
-import type { Access, CollectionConfig, Config, Field, FieldAccess, GlobalConfig, Plugin, Where } from 'payload'
+import { sql } from '@payloadcms/db-postgres'
+import type { Access, CollectionConfig, Config, Field, FieldAccess, GlobalConfig, PayloadRequest, Plugin, Where } from 'payload'
 
 import { istLeser, nurLeser } from './roles'
 import { rechteLaden, schalter, SCHALTER } from './rollenRechte'
@@ -10,9 +11,10 @@ import { rechteLaden, schalter, SCHALTER } from './rollenRechte'
  * (auch die von Plugins) – neue Bereiche sind damit automatisch abgedeckt:
  * - Lesen: zusätzlich erlaubt (Bereich, Versionen/Entwürfe, Felder mit eigener Leseregel, Seitenleiste).
  *   Sensible Bereiche hängen an Haken unter „Rollen-Rechte → Nur ansehen“ (ab Werk an).
- * - Schreiben: wer NUR „Nur ansehen“ hat (keine weitere Rolle, keine Einzelrechte), wird überall abgewiesen –
- *   auch wenn die ursprüngliche Regel es erlauben würde. Ausnahmen: das eigene Benutzerkonto (Name, Passwort …) und
- *   „Hat dir das geholfen?“ in der Hilfe.
+ * - Schreiben: Wer NUR „Nur ansehen“ hat (keine weitere Verwaltungsrolle, keine Einzelrechte), wird geprüft, als hätte er
+ *   diese Rolle nicht – er behält also die Rechte eines Mitglieds bzw. Besuchers (Kontaktformular, Mitgliedsantrag,
+ *   eigenes Profilfoto, Passantrag), bekommt aber keine Verwaltungsrechte. Dazu: das eigene Benutzerkonto (Name,
+ *   Passwort …), „Hat dir das geholfen?“ in der Hilfe. Bearbeitungssperren: siehe payload.config.ts.
  *
  * Nie lesbar (auch nicht mit Haken): Pass-Unterlagen (Ausweise, Kinderfotos), Sicherheits-Einstellungen (nur so weit
  * wie für alle Verwaltungs-Zugänge – z. B. die Zeit bis zum automatischen Abmelden),
@@ -56,6 +58,12 @@ const GEHEIME_FELDER = new Set([
   'googleId',
 ])
 
+/** Felder, deren engere Leseregel auch für diese Rolle gilt (Bereich.Feld) */
+const NUR_ORIGINAL = new Set([
+  // „Hat dir das geholfen?“ bleibt für alle außer Admins anonym
+  'hilfe-feedback.benutzer',
+])
+
 /** Felder, die zusätzlich den Haken „Bankdaten“ brauchen */
 const BANK_FELDER: Record<string, Set<string>> = { mitgliedsantraege: new Set(['iban', 'kontoinhaber', 'sepaMandat']) }
 
@@ -92,22 +100,62 @@ const lesen =
     return (await leserDarf(args.req, slug)) ? true : r
   }
 
-/** Versionen/Entwürfe: wie Lesen – aber keine Versionen gelöschter Einträge */
+type Db = { drizzle: { execute: (q: unknown) => Promise<{ rows: Record<string, unknown>[] }> } }
+
+/**
+ * Versionen/Entwürfe: wie Lesen – aber keine Versionen von Einträgen im Papierkorb. Beim Verschieben in den Papierkorb
+ * bekommt nur die neueste Version „deletedAt“; ältere Versionen werden deshalb über den Eintrag selbst ausgeschlossen.
+ */
 const versionenLesen =
   (slug: string, orig: Access | undefined, mitPapierkorb: boolean): Access =>
   async (args) => {
     const r = orig ? await orig(args) : Boolean(args.req.user)
     if (r === true) return r
     if (!(await leserDarf(args.req, slug))) return r
-    return mitPapierkorb ? ({ 'version.deletedAt': { exists: false } } as Where) : true
+    if (!mitPapierkorb) return true
+    const res = await (args.req.payload.db as unknown as Db).drizzle
+      // Im Papierkorb: der Eintrag selbst – oder (nur als Entwurf verschoben) seine neueste Version.
+      // Nur die neueste zählt: nach dem Wiederherstellen tragen ältere Versionen das Löschdatum noch.
+      .execute(
+        sql`select id from ${sql.identifier(slug.replace(/-/g, '_'))} where deleted_at is not null
+            union select parent_id from ${sql.identifier(`_${slug.replace(/-/g, '_')}_v`)} where latest = true and version_deleted_at is not null and parent_id is not null`,
+      )
+      .catch(() => null)
+    if (!res) return false
+    const ids = res.rows.map((x) => Number(x.id)).filter(Boolean)
+    return ids.length ? ({ and: [{ 'version.deletedAt': { exists: false } }, { parent: { not_in: ids } }] } as Where) : ({ 'version.deletedAt': { exists: false } } as Where)
   }
 
-/** Schreiben: reine „Nur ansehen“-Konten nie (eigenes Konto ausgenommen) */
+/**
+ * Die Person mit ihren Rechten OHNE „Nur ansehen“ – für reine Leser-Konten. So behält sie genau die Rechte eines
+ * Mitglieds bzw. Besuchers (Kontaktformular, Mitgliedsantrag, eigenes Profilfoto, Passantrag im Mitgliederbereich),
+ * aber keine Verwaltungsrechte. Proxy statt Kopie: Payloads req ist ein Request-Objekt (z. B. headers am Prototyp).
+ */
+const ohneLeserolle = (req: PayloadRequest): PayloadRequest => {
+  const u = req.user as (Record<string, unknown> & { roles?: string[] | null }) | null
+  // Ohne weitere Rolle wie ein Mitglied (die Rolle öffnet auch den Mitgliederbereich, siehe istMitgliedOderMehr)
+  const rest = (u?.roles ?? []).filter((r) => r !== 'lesen')
+  const user = u ? { ...u, roles: rest.length ? rest : ['mitglied'] } : u
+  return new Proxy(req, {
+    get(ziel, k) {
+      if (k === 'user') return user
+      const v = Reflect.get(ziel, k, ziel)
+      return typeof v === 'function' ? v.bind(ziel) : v
+    },
+  })
+}
+
+/**
+ * Schreiben: Reine „Nur ansehen“-Konten werden mit ihren übrigen Rollen (meist „Mitglied“) geprüft – nie mit
+ * Verwaltungsrechten. Ohne ausdrückliche Regel (Payloads Standard „jede angemeldete Person“) gibt es nichts.
+ * eigeneRegel: unverändert prüfen (eigenes Benutzerkonto, „Hat dir das geholfen?“).
+ */
 const nichtFuerLeser =
-  (orig: Access | undefined, eigenesKonto = false): Access =>
+  (orig: Access | undefined, eigeneRegel = false): Access =>
   async (args) => {
-    if (nurLeser(args.req.user) && !eigenesKonto) return false
-    return orig ? orig(args) : Boolean(args.req.user)
+    if (!nurLeser(args.req.user) || eigeneRegel) return orig ? orig(args) : Boolean(args.req.user)
+    if (!orig) return false
+    return orig({ ...args, req: ohneLeserolle(args.req) })
   }
 
 /** Feld mit eigener Leseregel: für die Rolle zusätzlich lesbar (außer Geheimes; Bankdaten nur mit Haken) */
@@ -115,6 +163,7 @@ const feldLesen =
   (slug: string, name: string, orig: FieldAccess): FieldAccess =>
   async (args) => {
     if (await orig(args)) return true
+    if (NUR_ORIGINAL.has(`${slug}.${name}`)) return false
     if (!(await leserDarf(args.req, slug))) return false
     return BANK_FELDER[slug]?.has(name) ? hakenAn('bankdaten') : true
   }
@@ -148,8 +197,8 @@ const bereich = (c: CollectionConfig): CollectionConfig => {
       ...a,
       read: lesen(c.slug, a.read, true),
       ...(c.versions ? { readVersions: versionenLesen(c.slug, a.readVersions, Boolean(c.trash)) } : {}),
-      // Einzige Ausnahme: „Hat dir das geholfen?“ in der Hilfe (Rückmeldung an die Admins, ändert nichts an der Website)
-      create: c.slug === 'hilfe-feedback' ? a.create : nichtFuerLeser(a.create),
+      // „Hat dir das geholfen?“ in der Hilfe: Rückmeldung an die Admins, ändert nichts an der Website
+      create: nichtFuerLeser(a.create, c.slug === 'hilfe-feedback'),
       // Eigenes Konto: Name, Passwort, Benachrichtigungen – die Feldregeln der Benutzer bleiben unverändert
       update: nichtFuerLeser(a.update, c.slug === 'users'),
       delete: nichtFuerLeser(a.delete),
