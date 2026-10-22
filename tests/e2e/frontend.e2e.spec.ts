@@ -11,6 +11,8 @@ test.describe('Website', () => {
 
   test('Registrierung zeigt die Passwortregeln beim Tippen', async ({ page }) => {
     await page.goto('http://localhost:3000/registrieren')
+    // Erst eintippen, wenn die Seite fertig geladen ist (sonst kommt die Eingabe vor React an und die Anzeige bleibt leer)
+    await page.waitForLoadState('networkidle')
     await page.fill('input[name="name"]', 'Erika Musterfrau')
     await page.fill('input[name="passwort"]', 'Musterfrau!2027')
     await expect(page.getByText('Namen oder die E-Mail-Adresse')).toBeVisible()

@@ -2,7 +2,8 @@ import crypto from 'crypto'
 import type { CollectionAfterErrorHook, CollectionBeforeChangeHook, CollectionBeforeOperationHook, Field, PayloadRequest } from 'payload'
 import { APIError, AuthenticationError, LockedAuth } from 'payload'
 
-import { ratenGrenze } from '@/hooks/spamSchutz'
+import { anschluss, ratenGrenze } from '@/hooks/spamSchutz'
+import { clientIp } from '@/utilities/clientIp'
 
 import { MAX_LAENGE, MIN_LAENGE, passwortFehler, passwortRegeln } from './passwortRegeln'
 
@@ -12,7 +13,9 @@ import { MAX_LAENGE, MIN_LAENGE, passwortFehler, passwortRegeln } from './passwo
  *   keine Reihen, nicht Name/E-Mail) – überall (Registrierung, Zurücksetzen, Ändern, Anlegen durch die Verwaltung)
  * - Eigenes Passwort ändern nur mit dem aktuellen Passwort (sonst reicht eine fremde, offene Sitzung zur Übernahme)
  * - Anmelden: höchstens 20 Versuche je Anschluss (IPv6: je /64-Netz) und 600 für alle in 10 Minuten
- *   (zusätzlich zur Kontosperre nach 5 Fehlversuchen)
+ * - Sperre je Konto UND Anschluss: 5 Fehlversuche von einem Anschluss sperren nur diesen Anschluss für dieses Konto
+ *   10 Minuten – wer von fremden Anschlüssen rät, sperrt den echten Inhaber nicht aus. Zusätzlich sperrt Payload
+ *   das Konto ganz nach 100 Fehlversuchen von überall (Schutz gegen verteiltes Raten, siehe Users → maxLoginAttempts)
  * - Anmelden mit unbekannter E-Mail oder gesperrtem Konto dauert genauso lange und meldet dasselbe wie ein falsches
  *   Passwort (verrät nicht, wer ein Konto hat – siehe anmeldeFehlerEinheitlich)
  */
@@ -56,6 +59,43 @@ const passwortPruefen = (pw: unknown, konto: Konto, testkontenAnlage: boolean) =
 
 const eigenesKonto = (req: PayloadRequest, id: unknown) => req.user && id != null && String(id) === String(req.user.id)
 
+// --- Sperre je Konto und Anschluss (im Arbeitsspeicher; die Website läuft als genau eine Instanz) ---
+const FEHL_FENSTER_MS = 10 * 60 * 1000
+const FEHL_MAX = 5
+const fehlversuche = new Map<string, number[]>()
+const fehlSchluessel = (req: Pick<PayloadRequest, 'headers'>, email: string) => {
+  const ip = clientIp(req.headers)
+  return `${ip === 'unbekannt' ? ip : anschluss(ip)}|${email}`
+}
+const emailAus = (v: unknown) => String(v ?? '').toLowerCase().trim().slice(0, 200)
+const offeneFehlversuche = (schluessel: string) => {
+  const jetzt = Date.now()
+  const liste = (fehlversuche.get(schluessel) ?? []).filter((t) => jetzt - t < FEHL_FENSTER_MS)
+  if (liste.length) fehlversuche.set(schluessel, liste)
+  else fehlversuche.delete(schluessel)
+  return liste
+}
+const fehlversuchMerken = (req: PayloadRequest) => {
+  const email = emailAus((req.data as { email?: unknown } | undefined)?.email)
+  if (!email || !req.headers) return
+  const s = fehlSchluessel(req, email)
+  fehlversuche.set(s, [...offeneFehlversuche(s), Date.now()])
+  if (fehlversuche.size > 20000) for (const k of [...fehlversuche.keys()]) offeneFehlversuche(k)
+}
+/** Nach erfolgreicher Anmeldung bzw. neuem Passwort: Fehlversuche dieses Kontos von DIESEM Anschluss vergessen
+ *  (andere Anschlüsse bleiben gesperrt – sonst bekäme ein Angreifer nach jeder Anmeldung des Inhabers neue Versuche) */
+const fehlversucheVergessen = (req: PayloadRequest, email: unknown) => {
+  const e = emailAus(email)
+  if (e && req.headers) fehlversuche.delete(fehlSchluessel(req, e))
+}
+export const anmeldungGeklappt = ({ req, user }: { req: PayloadRequest; user: { email?: string | null } }) => {
+  fehlversucheVergessen(req, user?.email)
+}
+export const passwortNeuGesetzt = ({ operation, req, result }: { operation: string; req: PayloadRequest; result: unknown }) => {
+  if (operation === 'resetPassword') fehlversucheVergessen(req, (result as { user?: { email?: string } } | null)?.user?.email)
+  return result
+}
+
 export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, operation, req }) => {
   const a = args as { data?: Record<string, unknown>; id?: unknown }
   // Kein Passwort aus Zahlen/Listen (sonst Absturz bzw. stilles Ignorieren)
@@ -65,13 +105,17 @@ export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, op
   if (operation === 'update' && a.id == null && typeof a.data?.password === 'string' && req.user) throw new APIError('Passwörter bitte nur einzeln ändern.', 400)
   if (operation === 'login' && req.headers) {
     ratenGrenze(req, 'login', 20, 600)
-    const email = String(a.data?.email ?? '').toLowerCase().trim()
+    const email = emailAus(a.data?.email)
     const pw = String(a.data?.password ?? '')
     const vorhanden = (email ? await req.payload.db.findOne({ collection: 'users', where: { email: { equals: email } }, req }) : null) as { lockUntil?: string | null } | null
     // Unbekannte E-Mail oder gesperrtes Konto: einmal „umsonst“ rechnen – Payload bricht dort ohne Passwortprüfung ab,
     // die Antwort käme sonst schneller und verriete, dass es das Konto gibt
     const gesperrt = Boolean(vorhanden?.lockUntil && new Date(vorhanden.lockUntil) > new Date())
-    if (!vorhanden || gesperrt) await pbkdf2(pw || 'x', crypto.randomBytes(32).toString('hex'), 600000, 32)
+    // Dieser Anschluss hat für diese E-Mail schon 5 Fehlversuche: abweisen – mit gleicher Rechenzeit und Meldung wie ein
+    // falsches Passwort, und unabhängig davon, ob es das Konto gibt
+    const anschlussGesperrt = Boolean(email) && offeneFehlversuche(fehlSchluessel(req, email)).length >= FEHL_MAX
+    if (!vorhanden || gesperrt || anschlussGesperrt) await pbkdf2(pw || 'x', crypto.randomBytes(32).toString('hex'), 600000, 32)
+    if (anschlussGesperrt) throw new APIError(ANMELDEFEHLER, 401)
   }
   if (operation === 'forgotPassword' && req.headers) ratenGrenze(req, 'passwort-vergessen', 5, 50)
   // Hier läuft die Prüfung VOR der Rechteprüfung von Payload – deshalb ohne Daten fremder Konten (sonst ließen sich
@@ -109,7 +153,11 @@ export const aktuellesPasswortFeld: Field = {
 
 /** Gleiche Meldung für „falsches Passwort“, „unbekannte E-Mail“ und „Konto gesperrt“ (sonst verrät die Sperre, dass es das Konto gibt) */
 export const ANMELDEFEHLER = 'E-Mail oder Passwort stimmen nicht. Nach 5 Fehlversuchen ist die Anmeldung für 10 Minuten gesperrt.'
-export const anmeldeFehlerEinheitlich: CollectionAfterErrorHook = ({ error }) => {
+export const anmeldeFehlerEinheitlich: CollectionAfterErrorHook = ({ error, req }) => {
   // instanceof statt Klassenname (der kann im Produktions-Build verkürzt sein)
-  if (error instanceof LockedAuth || error instanceof AuthenticationError) return { response: { errors: [{ message: ANMELDEFEHLER }] }, status: 401 }
+  if (error instanceof LockedAuth || error instanceof AuthenticationError) {
+    // Falsches Passwort, unbekannte E-Mail oder gesperrtes Konto: für Konto + Anschluss zählen
+    fehlversuchMerken(req)
+    return { response: { errors: [{ message: ANMELDEFEHLER }] }, status: 401 }
+  }
 }

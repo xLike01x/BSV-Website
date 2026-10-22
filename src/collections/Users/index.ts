@@ -9,7 +9,7 @@ import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
-import { aktuellesPasswortFeld, anmeldeFehlerEinheitlich, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
+import { aktuellesPasswortFeld, anmeldeFehlerEinheitlich, anmeldungGeklappt, passwortNeuGesetzt, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
 import { teamsNachher, teamsVerantwortlichFeld, teamsVorher } from './teamsVerantwortlich'
 import { loginHerabgestuft, meHerabgestuft, ohneOffenenZweitenFaktor, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
@@ -36,10 +36,13 @@ export const Users: CollectionConfig = {
   },
   auth: {
     tokenExpiration: 60 * 60 * 8, // 8 Stunden
-    maxLoginAttempts: 5,
+    // Ganze Konto-Sperre erst nach 100 Fehlversuchen von überall (verteiltes Raten). Die eigentliche Bremse ist die
+    // Sperre je Konto UND Anschluss nach 5 Fehlversuchen (src/auth/passwort.ts) – so kann niemand Fremdes ein Konto
+    // mit ein paar falschen Passwörtern dauerhaft aussperren.
+    maxLoginAttempts: 100,
     // Anmelde-Cookie: nur über HTTPS (Live-Website), nicht für fremde Seiten
     cookies: { secure: process.env.NODE_ENV === 'production', sameSite: 'Lax' },
-    lockTime: 10 * 60 * 1000, // 10 Minuten Sperre nach 5 Fehlversuchen
+    lockTime: 10 * 60 * 1000, // 10 Minuten
     // Läuft vor dem Standard-Token-Check: ohne bestätigten zweiten Faktor gelten keine Rollen
     strategies: [zweiFaktorStrategie],
     // „Passwort vergessen“: deutsche E-Mail mit Link auf die eigene Seite (nicht in die Verwaltung)
@@ -208,7 +211,7 @@ export const Users: CollectionConfig = {
     beforeOperation: [passwortUndLogin],
     afterError: [anmeldeFehlerEinheitlich],
     afterMe: [meHerabgestuft],
-    afterOperation: [loginHerabgestuft as never],
+    afterOperation: [loginHerabgestuft as never, passwortNeuGesetzt as never],
     // „Passwort vergessen“ beweist ebenfalls, dass die E-Mail-Adresse der Person gehört → gilt als bestätigt.
     // (Payload ruft diesen Hook beim Zurücksetzen mit dem kompletten Konto samt neuem Passwort-Hash auf.)
     beforeValidate: [
@@ -233,6 +236,7 @@ export const Users: CollectionConfig = {
     ],
     // Letzte Anmeldung merken (für „Alte Zugänge“ in der Rollen-Übersicht)
     afterLogin: [
+      anmeldungGeklappt,
       async ({ req, user }) => {
         await req.payload
           .update({ collection: 'users', id: user.id, data: { letzteAnmeldung: new Date().toISOString() } as never, overrideAccess: true, context: { zweiFaktorIntern: true }, req })

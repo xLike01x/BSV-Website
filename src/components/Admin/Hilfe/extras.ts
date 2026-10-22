@@ -1276,12 +1276,12 @@ export const FAQ: Faq[] = [
   {
     frage: 'Beim Anmelden steht „Zu viele Anfragen“.',
     antwort:
-      'Von deinem Anschluss kamen in kurzer Zeit sehr viele Anmeldeversuche (Schutz gegen Passwort-Raten). 10 Minuten warten, dann geht es wieder. Nach 5 falschen Passwörtern ist zusätzlich das Konto 10 Minuten gesperrt – ein Admin kann es vorher entsperren.',
+      'Von deinem Anschluss kamen in kurzer Zeit sehr viele Anmeldeversuche (Schutz gegen Passwort-Raten). 10 Minuten warten, dann geht es wieder.',
   },
   {
     frage: 'Beim Anmelden steht „E-Mail oder Passwort stimmen nicht“, obwohl das Passwort richtig ist.',
     antwort:
-      'Nach 5 falschen Passwörtern ist die Anmeldung für dieses Konto 10 Minuten gesperrt. Die Meldung ist dann absichtlich dieselbe wie bei einem falschen Passwort – sonst könnte jemand Fremdes ausprobieren, welche E-Mail-Adressen ein Konto haben. Lösung: 10 Minuten warten oder „Passwort vergessen?“ nutzen. Ein Admin kann das Konto vorher entsperren: Benutzer → Person öffnen → „Entsperren“.',
+      'Nach 5 falschen Passwörtern ist die Anmeldung für dieses Konto 10 Minuten gesperrt – aber nur von dem Internetanschluss aus, von dem falsch eingegeben wurde. Von einem anderen Anschluss (z. B. Handy im Mobilfunk statt WLAN) geht es sofort. So kann niemand Fremdes dich mit ein paar falschen Passwörtern aussperren. Erst nach 100 Fehlversuchen von überall ist das ganze Konto 10 Minuten gesperrt. Die Meldung ist absichtlich dieselbe wie bei einem falschen Passwort – sonst könnte jemand ausprobieren, welche E-Mail-Adressen ein Konto haben. Lösung: 10 Minuten warten, anderen Anschluss nehmen oder „Passwort vergessen?“ nutzen. Ein Admin kann ein ganz gesperrtes Konto vorher entsperren: Benutzer → Person öffnen → „Entsperren“.',
     bereich: 'users',
   },
   {

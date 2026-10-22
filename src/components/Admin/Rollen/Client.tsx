@@ -702,7 +702,8 @@ function KeinZugang() {
           das Konto nur als Mitglied, bis der Code aus der Handy-App bestätigt ist.
         </li>
         <li>
-          <strong>Gesperrte Konten</strong> – nach 5 falschen Passwörtern für 10 Minuten (ein Admin
+          <strong>Gesperrte Anmeldung</strong> – nach 5 falschen Passwörtern für 10 Minuten, aber nur von
+          dem Anschluss, von dem geraten wurde; nach 100 Fehlversuchen von überall das ganze Konto (ein Admin
           kann sofort entsperren).
         </li>
         <li>

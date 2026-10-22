@@ -87,29 +87,45 @@ export default async function anmeldung(d) {
   for (let i = 0; i < 6; i++) s = (await api(null, 'POST', '/api/users/forgot-password', { email: `niemand${i}@bsv.test` }, f)).s
   pruefe('„Passwort vergessen“: 6. Anfrage derselben Adresse → 429', s === 429, s)
 
-  // Audit 2026-10 F-2: Gesperrtes Konto verrät sich nicht (gleiche Meldung, gleiche Dauer wie unbekannte E-Mail)
+  // Audit 2026-10 F-2: Sperre je Konto UND Anschluss – Fremde sperren den Inhaber nicht aus; gesperrt verrät nichts
   const sperr = 'sicherheitstest-sperre@bsv.test'
+  const sperrPw = 'Gruene Wiese 8 am Bach!'
   await d.q(`delete from users where email=$1`, [sperr])
-  r = await api(await login('admin@bsv.test'), 'POST', '/api/users', { email: sperr, name: 'Test Sperre', password: 'Gruene Wiese 8 am Bach!', roles: ['mitglied'] })
+  r = await api(await login('admin@bsv.test'), 'POST', '/api/users', { email: sperr, name: 'Test Sperre', password: sperrPw, roles: ['mitglied'] })
   if (r.s !== 201) pruefe('Konto für den Sperr-Test angelegt', false, r)
   else {
     try {
       const sk = { 'X-Real-IP': ip() }
       for (let i = 0; i < 5; i++) await api(null, 'POST', '/api/users/login', { email: sperr, password: 'falsch-falsch' }, sk)
-      const [gs] = await d.q(`select lock_until > now() as gesperrt from users where email=$1`, [sperr])
-      const gesperrt = await api(null, 'POST', '/api/users/login', { email: sperr, password: 'Gruene Wiese 8 am Bach!' }, sk)
+      const gesperrt = await api(null, 'POST', '/api/users/login', { email: sperr, password: sperrPw }, sk)
       const unbek = await api(null, 'POST', '/api/users/login', { email: 'gibtsnicht-sperre@bsv.test', password: 'falsch-falsch' }, sk)
       pruefe(
-        'Gesperrtes Konto: gleiche Antwort wie unbekannte E-Mail',
-        gs?.gesperrt === true && gesperrt.s === unbek.s && gesperrt.j?.errors?.[0]?.message === unbek.j?.errors?.[0]?.message,
-        { gs, gesperrt: [gesperrt.s, gesperrt.j], unbek: [unbek.s, unbek.j] },
+        'Nach 5 Fehlversuchen: dieser Anschluss kommt auch mit richtigem Passwort nicht rein (gleiche Antwort wie unbekannte E-Mail)',
+        gesperrt.s === 401 && gesperrt.s === unbek.s && gesperrt.j?.errors?.[0]?.message === unbek.j?.errors?.[0]?.message,
+        { gesperrt: [gesperrt.s, gesperrt.j], unbek: [unbek.s, unbek.j] },
       )
+      const [gs] = await d.q(`select lock_until > now() as gesperrt from users where email=$1`, [sperr])
+      pruefe('… das Konto selbst ist nicht gesperrt', gs?.gesperrt !== true, gs)
+      const anders = await api(null, 'POST', '/api/users/login', { email: sperr, password: sperrPw }, { 'X-Real-IP': ip() })
+      pruefe('Inhaber von einem anderen Anschluss: Anmeldung klappt', anders.s === 200, anders.s)
+      const nochmal = await api(null, 'POST', '/api/users/login', { email: sperr, password: sperrPw }, sk)
+      pruefe('… der ratende Anschluss bleibt trotzdem gesperrt', nochmal.s === 401, nochmal.s)
       const tg = [], tu = []
       for (let i = 0; i < 3; i++) {
         tg.push(await zeit(sperr, 'falsch-falsch', sk))
         tu.push(await zeit(`gibtsnicht-s${i}@bsv.test`, 'falsch-falsch', sk))
       }
-      pruefe(`Gesperrtes Konto: Antwortzeit wie unbekannte E-Mail (Median ${Math.round(m(tg))} ms vs. ${Math.round(m(tu))} ms)`, Math.abs(m(tg) - m(tu)) < 150, { tg, tu })
+      pruefe(`Gesperrter Anschluss: Antwortzeit wie unbekannte E-Mail (Median ${Math.round(m(tg))} ms vs. ${Math.round(m(tu))} ms)`, Math.abs(m(tg) - m(tu)) < 150, { tg, tu })
+
+      // Verteiltes Raten: 100 Fehlversuche von 20 Anschlüssen sperren das Konto ganz (10 Minuten)
+      const netz = Math.floor(Math.random() * 250) // frische Adressen (gesperrte Anschlüsse aus früheren Läufen zählen nicht mit)
+      for (let a = 0; a < 20; a++) {
+        const k = { 'X-Real-IP': `198.18.${netz}.${a + 10}` }
+        for (let i = 0; i < 5; i++) await api(null, 'POST', '/api/users/login', { email: sperr, password: 'falsch-falsch' }, k)
+      }
+      const [ganz] = await d.q(`select lock_until > now() as gesperrt from users where email=$1`, [sperr])
+      const neu = await api(null, 'POST', '/api/users/login', { email: sperr, password: sperrPw }, { 'X-Real-IP': ip() })
+      pruefe('100 Fehlversuche von überall: Konto gesperrt, gleiche Meldung', ganz?.gesperrt === true && neu.s === 401 && neu.j?.errors?.[0]?.message === unbek.j?.errors?.[0]?.message, { ganz, s: neu.s, j: neu.j })
     } finally {
       await d.q(`delete from users where email=$1`, [sperr])
     }
