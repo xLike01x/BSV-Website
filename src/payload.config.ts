@@ -63,6 +63,7 @@ import { Gesuche } from './collections/Gesuche'
 import { datenschutzEndpunkte } from './datenschutz/aufraeumen'
 import { defaultLexical } from '@/fields/defaultLexical'
 import { getServerSideURL } from './utilities/getURL'
+import { rechtstexteUebernehmen } from './utilities/rechtstexte'
 
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
@@ -123,6 +124,8 @@ const konfiguration = buildConfig({
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
     await trainerUmbenennen(payload).catch((e) => payload.logger.warn({ err: e }, 'Trainer-Umbenennung fehlgeschlagen'))
     await startseiteUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme „Startseite & Bilder“ fehlgeschlagen'))
+    // Überarbeitete Rechtstexte einmalig übernehmen (nur solange noch der alte Text drinsteht)
+    await rechtstexteUebernehmen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme der Rechtstexte fehlgeschlagen'))
     await texteBilderUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme nach „Texte & Bilder“ fehlgeschlagen'))
     await datenschutzStandards(payload).catch((e) => payload.logger.warn({ err: e }, 'Datenschutz-Standards setzen fehlgeschlagen'))
     startFertig()
