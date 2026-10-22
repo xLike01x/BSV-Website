@@ -1,3 +1,4 @@
+import { sql } from '@payloadcms/db-postgres'
 import type { Payload } from 'payload'
 
 /**
@@ -206,6 +207,21 @@ const ALT: Record<string, RegExp> = {
   datenschutz: /ENTWURF – vor dem Livegang vom Vorstand prüfen/,
 }
 
+const EINMALIG_BIS = new Date('2026-12-31T23:59:59Z').getTime()
+const PRUEF_KENNUNG = 'ENTWURF zur Prüfung durch den Vorstand (Stand 22.10.2026)'
+
+/** Hatte die Seite (jetzt oder in einer früheren Version) schon einmal die Prüf-Fassung? */
+async function hatteSchonPruefFassung(payload: Payload, id: number): Promise<boolean> {
+  const db = (payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<{ rows: { n: number }[] }> } }).drizzle
+  const muster = `%${PRUEF_KENNUNG}%`
+  const r = await db.execute(sql`
+    select (
+      (select count(*) from pages_blocks_content_columns c join pages_blocks_content b on c._parent_id = b.id where b._parent_id = ${id} and c.rich_text::text like ${muster})
+      + (select count(*) from _pages_v_blocks_content_columns c join _pages_v_blocks_content b on c._parent_id = b.id join _pages_v v on b._parent_id = v.id where v.parent_id = ${id} and c.rich_text::text like ${muster})
+    )::int as n`)
+  return Number(r.rows[0]?.n ?? 0) > 0
+}
+
 export async function rechtstexteUebernehmen(payload: Payload) {
   for (const [slug, md] of [
     ['impressum', IMPRESSUM],
@@ -214,7 +230,12 @@ export async function rechtstexteUebernehmen(payload: Payload) {
     const seite = (await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 0, overrideAccess: true })).docs[0] as
       | { id: number; layout?: unknown }
       | undefined
-    if (!seite || !ALT[slug]!.test(seitenText(seite.layout))) continue
+    if (!seite) continue
+    const alterText = ALT[slug]!.test(seitenText(seite.layout))
+    // Datenschutz: auf Wunsch von Thomas (22.10.2026) einmalig auch ohne den alten Entwurfs-Satz ersetzen – aber nur,
+    // wenn die Seite die Prüf-Fassung noch nie hatte (sonst würden spätere Änderungen des Vorstands überschrieben)
+    const einmalig = slug === 'datenschutz' && Date.now() < EINMALIG_BIS && !(await hatteSchonPruefFassung(payload, seite.id))
+    if (!alterText && !einmalig) continue
     await payload.update({
       collection: 'pages',
       id: seite.id,
