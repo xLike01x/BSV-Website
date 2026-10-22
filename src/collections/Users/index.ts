@@ -9,7 +9,7 @@ import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
-import { aktuellesPasswortFeld, anmeldeFehlerEinheitlich, anmeldungGeklappt, passwortNeuGesetzt, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
+import { aktuellesPasswortFeld, anmeldeFehlerEinheitlich, anmeldungGeklappt, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
 import { teamsNachher, teamsVerantwortlichFeld, teamsVorher } from './teamsVerantwortlich'
 import { loginHerabgestuft, meHerabgestuft, ohneOffenenZweitenFaktor, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
@@ -211,7 +211,7 @@ export const Users: CollectionConfig = {
     beforeOperation: [passwortUndLogin],
     afterError: [anmeldeFehlerEinheitlich],
     afterMe: [meHerabgestuft],
-    afterOperation: [loginHerabgestuft as never, passwortNeuGesetzt as never],
+    afterOperation: [loginHerabgestuft as never],
     // „Passwort vergessen“ beweist ebenfalls, dass die E-Mail-Adresse der Person gehört → gilt als bestätigt.
     // (Payload ruft diesen Hook beim Zurücksetzen mit dem kompletten Konto samt neuem Passwort-Hash auf.)
     beforeValidate: [

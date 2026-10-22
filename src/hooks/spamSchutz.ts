@@ -39,12 +39,9 @@ function zaehlen(key: string, max: number): boolean {
 }
 
 /**
- * Für eigene Endpunkte (z. B. Registrierung, Login): wirft 429, wenn von dieser Adresse – oder von allen
- * zusammen – zu viele Anfragen kommen. Grenze für alle: standardmäßig das 10-Fache der Grenze pro Adresse.
- */
-/**
- * Schlüssel für die Begrenzung pro Anschluss: IPv4 wie sie ist, IPv6 nur die ersten 64 Bit –
- * ein einzelner Anschluss bekommt meist ein ganzes /64-Netz und könnte sonst beliebig viele Adressen nutzen.
+ * Schlüssel für die Begrenzung pro Anschluss: IPv4 wie sie ist, IPv6 nur die ersten 56 Bit – ein einzelner Anschluss
+ * bekommt meist ein /56-Netz (256 /64-Netze) und könnte sonst beliebig viele Adressen nutzen. Gröber (z. B. /48)
+ * würde Kunden desselben Anbieters zusammenlegen.
  */
 export function anschluss(ip: string): string {
   if (!ip.includes(':')) return ip
@@ -53,10 +50,15 @@ export function anschluss(ip: string): string {
   const [links = '', rechts] = ip.toLowerCase().split('::')
   const l = links ? links.split(':') : []
   const r = rechts === undefined ? [] : rechts ? rechts.split(':') : []
-  const teile = rechts === undefined ? l : [...l, ...Array(Math.max(0, 8 - l.length - r.length)).fill('0'), ...r]
-  return `${teile.slice(0, 4).map((t) => t.replace(/^0+(?=.)/, '')).join(':')}::/64`
+  const teile = (rechts === undefined ? l : [...l, ...Array(Math.max(0, 8 - l.length - r.length)).fill('0'), ...r]).map((t) => t.padStart(4, '0'))
+  // Erste 56 Bit: drei Blöcke plus die vordere Hälfte des vierten (Anschlüsse bekommen meist ein /56 – 256 /64-Netze)
+  return `${teile.slice(0, 3).join(':')}:${(teile[3] ?? '0000').slice(0, 2)}00::/56`
 }
 
+/**
+ * Für eigene Endpunkte (z. B. Registrierung, Login): wirft 429, wenn von dieser Adresse – oder von allen
+ * zusammen – zu viele Anfragen kommen. Grenze für alle: standardmäßig das 10-Fache der Grenze pro Adresse.
+ */
 export function ratenGrenze(req: Pick<PayloadRequest, 'headers'>, schluessel: string, max = MAX_PRO_FENSTER, maxAlle = max * 10) {
   const roh = clientIp(req.headers)
   const ip = roh === 'unbekannt' ? roh : anschluss(roh)

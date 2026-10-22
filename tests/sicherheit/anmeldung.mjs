@@ -117,6 +117,26 @@ export default async function anmeldung(d) {
       }
       pruefe(`Gesperrter Anschluss: Antwortzeit wie unbekannte E-Mail (Median ${Math.round(m(tg))} ms vs. ${Math.round(m(tu))} ms)`, Math.abs(m(tg) - m(tu)) < 150, { tg, tu })
 
+      // Leeres Passwort: gleiche schnelle Antwort für bestehendes und unbekanntes Konto (verrät nichts)
+      const leerK = { 'X-Real-IP': ip() }
+      const l1 = await api(null, 'POST', '/api/users/login', { email: sperr, password: '' }, leerK)
+      const l2 = await api(null, 'POST', '/api/users/login', { email: 'gibtsnicht-leer@bsv.test', password: '   ' }, leerK)
+      pruefe('Leeres Passwort: gleiche Antwort für bestehendes und unbekanntes Konto', l1.s === 400 && l1.s === l2.s && l1.j?.errors?.[0]?.message === l2.j?.errors?.[0]?.message, [l1, l2])
+      const tl = [], tlu = []
+      for (let i = 0; i < 3; i++) {
+        tl.push(await zeit(sperr, '', leerK))
+        tlu.push(await zeit(`gibtsnicht-l${i}@bsv.test`, '', leerK))
+      }
+      pruefe(`Leeres Passwort: gleiche Antwortzeit (Median ${Math.round(m(tl))} ms vs. ${Math.round(m(tlu))} ms)`, Math.abs(m(tl) - m(tlu)) < 150, { tl, tlu })
+
+      // Parallele Anfragen: auch 8 gleichzeitige Fehlversuche zählen alle – danach ist der Anschluss gesperrt
+      const parK = { 'X-Real-IP': ip() }
+      await Promise.all(Array.from({ length: 8 }, () => api(null, 'POST', '/api/users/login', { email: sperr, password: 'falsch-falsch' }, parK)))
+      const nachPar = await api(null, 'POST', '/api/users/login', { email: sperr, password: sperrPw }, parK)
+      pruefe('Nach 8 parallelen Fehlversuchen ist der Anschluss gesperrt', nachPar.s === 401, nachPar.s)
+      const [vorGanz] = await d.q(`select login_attempts from users where email=$1`, [sperr])
+      pruefe('… und höchstens 5 davon wurden wirklich geprüft', Number(vorGanz?.login_attempts ?? 0) <= 5, vorGanz)
+
       // Verteiltes Raten: 100 Fehlversuche von 20 Anschlüssen sperren das Konto ganz (10 Minuten)
       const netz = Math.floor(Math.random() * 250) // frische Adressen (gesperrte Anschlüsse aus früheren Läufen zählen nicht mit)
       for (let a = 0; a < 20; a++) {

@@ -6,16 +6,16 @@ import { anschluss } from '@/hooks/spamSchutz'
 describe('Ratenbegrenzung: Anschluss-Schlüssel', () => {
   it.each([
     ['198.51.100.7', '198.51.100.7'],
-    ['2001:db8:1:2:3:4:5:6', '2001:db8:1:2::/64'],
-    ['2001:db8:1:2::9', '2001:db8:1:2::/64'],
-    ['2001:db8::1', '2001:db8:0:0::/64'],
-    ['2001:0DB8:0001:0002:ffff::1', '2001:db8:1:2::/64'],
+    ['2001:db8:1:2:3:4:5:6', '2001:0db8:0001:0000::/56'],
+    ['2001:db8:1:2ab::9', '2001:0db8:0001:0200::/56'],
+    ['2001:db8::1', '2001:0db8:0000:0000::/56'],
+    ['2001:0DB8:0001:ff02:ffff::1', '2001:0db8:0001:ff00::/56'],
     ['::ffff:203.0.113.5', '203.0.113.5'],
   ])('%s → %s', (ein, soll) => expect(anschluss(ein)).toBe(soll))
 
-  it('Adressen aus demselben /64-Netz teilen sich einen Zähler', () => {
-    expect(anschluss('2001:db8:aa:bb::1')).toBe(anschluss('2001:db8:aa:bb:ffff:ffff:ffff:fffe'))
-    expect(anschluss('2001:db8:aa:bb::1')).not.toBe(anschluss('2001:db8:aa:bc::1'))
+  it('Adressen aus demselben /56-Netz teilen sich einen Zähler', () => {
+    expect(anschluss('2001:db8:aa:bb::1')).toBe(anschluss('2001:db8:aa:ff:ffff:ffff:ffff:fffe'))
+    expect(anschluss('2001:db8:aa:bb::1')).not.toBe(anschluss('2001:db8:aa:1bb::1'))
   })
 })
 
