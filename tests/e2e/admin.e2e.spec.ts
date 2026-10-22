@@ -34,6 +34,17 @@ test.describe('Verwaltung', () => {
     await expect(page.locator('input[name="title"]')).toBeVisible({ timeout: 120_000 })
   })
 
+  test('Impressum und Datenschutz lassen sich im Editor öffnen', async () => {
+    for (const slug of ['impressum', 'datenschutz']) {
+      const antwort = await page.request.get(`http://localhost:3000/api/pages?where[slug][equals]=${slug}&limit=1&depth=0`)
+      const seite = (await antwort.json()).docs?.[0]
+      if (!seite) continue // Seite gibt es in dieser Datenbank nicht
+      await page.goto(`http://localhost:3000/admin/collections/pages/${seite.id}`)
+      await expect(page.locator('[data-lexical-editor="true"]').first()).toBeVisible({ timeout: 120_000 })
+      await expect(page.getByText('parseEditorState')).toHaveCount(0)
+    }
+  })
+
   test('Neues Passwort zeigt die Regeln live an', async () => {
     await page.goto('http://localhost:3000/admin/collections/users/create')
     const feld = page.locator('#field-password')

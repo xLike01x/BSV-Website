@@ -175,7 +175,8 @@ const mitUmbruechen = (zeilen: string[]): Node[] =>
 
 export function alsRichtext(md: string, hinweis = true) {
   const kinder: Node[] = []
-  if (hinweis) kinder.push({ type: 'quote', children: textKnoten(PRUEFHINWEIS), ...basis })
+  // Kein „quote“: der Editor der Text-Spalten kennt diesen Knotentyp nicht („parseEditorState: type quote not found“)
+  if (hinweis) kinder.push({ type: 'paragraph', children: textKnoten(`**${PRUEFHINWEIS.replace(/\*\*/g, '')}**`), textFormat: 1, ...basis })
   for (const block of md.split(/\n\s*\n/)) {
     const zeilen = block.split('\n').map((z) => z.trimEnd()).filter((z) => z.trim())
     if (!zeilen.length) continue
@@ -222,20 +223,65 @@ async function hatteSchonPruefFassung(payload: Payload, id: number): Promise<boo
   return Number(r.rows[0]?.n ?? 0) > 0
 }
 
+/** Wandelt „quote“-Knoten (von der ersten Fassung dieser Übernahme) in Absätze um – ohne sonst etwas am Text zu ändern */
+const ohneZitate = (wert: unknown): { wert: unknown; geaendert: boolean } => {
+  if (Array.isArray(wert)) {
+    let geaendert = false
+    const neu = wert.map((w) => {
+      const r = ohneZitate(w)
+      geaendert ||= r.geaendert
+      return r.wert
+    })
+    return { wert: neu, geaendert }
+  }
+  if (wert && typeof wert === 'object') {
+    let geaendert = false
+    const neu: Record<string, unknown> = {}
+    for (const [k, v] of Object.entries(wert)) {
+      const r = ohneZitate(v)
+      geaendert ||= r.geaendert
+      neu[k] = r.wert
+    }
+    if (neu.type === 'quote') {
+      neu.type = 'paragraph'
+      neu.textFormat = 0
+      geaendert = true
+    }
+    return { wert: neu, geaendert }
+  }
+  return { wert, geaendert: false }
+}
+
+async function zitateReparieren(payload: Payload, slug: string, seite: { id: number; layout?: unknown; _status?: string }) {
+  const { wert, geaendert } = ohneZitate(seite.layout)
+  if (!geaendert) return
+  await payload.update({
+    collection: 'pages',
+    id: seite.id,
+    data: { layout: wert, _status: seite._status ?? 'published' } as never,
+    overrideAccess: true,
+    context: { rechtstexte: true, disableRevalidate: true },
+  })
+  payload.logger.info(`Rechtstexte: Seite „${slug}“ repariert (Hinweis-Block ist jetzt im Editor bearbeitbar)`)
+}
+
 export async function rechtstexteUebernehmen(payload: Payload) {
   for (const [slug, md] of [
     ['impressum', IMPRESSUM],
     ['datenschutz', DATENSCHUTZ],
   ] as const) {
     const seite = (await payload.find({ collection: 'pages', where: { slug: { equals: slug } }, limit: 1, depth: 0, overrideAccess: true })).docs[0] as
-      | { id: number; layout?: unknown }
+      | { id: number; layout?: unknown; _status?: string }
       | undefined
     if (!seite) continue
     const alterText = ALT[slug]!.test(seitenText(seite.layout))
     // Datenschutz: auf Wunsch von Thomas (22.10.2026) einmalig auch ohne den alten Entwurfs-Satz ersetzen – aber nur,
     // wenn die Seite die Prüf-Fassung noch nie hatte (sonst würden spätere Änderungen des Vorstands überschrieben)
     const einmalig = slug === 'datenschutz' && Date.now() < EINMALIG_BIS && !(await hatteSchonPruefFassung(payload, seite.id))
-    if (!alterText && !einmalig) continue
+    if (!alterText && !einmalig) {
+      await zitateReparieren(payload, slug, seite)
+      continue
+    }
     await payload.update({
       collection: 'pages',
       id: seite.id,
