@@ -4,6 +4,7 @@ import { bereichZugriff } from '@/access/roles'
 
 import { anyone } from '../access/anyone'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
+import { sichereAdresse } from '@/fields/sichereAdresse'
 
 /**
  * Startseite & Bilder: die grüne Aktions-Box und alle Bilder der Bereichsseiten.
@@ -43,7 +44,7 @@ export const Startseite: GlobalConfig = {
                   type: 'row',
                   fields: [
                     { name: 'linkText', label: 'Button-Text', type: 'text', defaultValue: 'Mehr zum Projekt' },
-                    { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen', admin: { description: 'z. B. /kunstrasen oder https://…' } },
+                    { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen', validate: sichereAdresse, admin: { description: 'z. B. /kunstrasen oder https://…' } },
                   ],
                 },
                 { name: 'bild', label: 'Bild (z. B. Plakat)', type: 'upload', relationTo: 'media', admin: { description: 'Hochformat sieht am besten aus.' } },

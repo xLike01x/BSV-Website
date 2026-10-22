@@ -9,9 +9,9 @@ import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
 import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
-import { aktuellesPasswortFeld, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
+import { aktuellesPasswortFeld, anmeldeFehlerEinheitlich, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
 import { teamsNachher, teamsVerantwortlichFeld, teamsVorher } from './teamsVerantwortlich'
-import { meHerabgestuft, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
+import { loginHerabgestuft, meHerabgestuft, ohneOffenenZweitenFaktor, zweiFaktorEndpunkte, zweiFaktorFelder, zweiFaktorStrategie, zweiFaktorZuruecksetzen } from '../../auth/zweiFaktor'
 
 export const Users: CollectionConfig = {
   slug: 'users',
@@ -74,8 +74,10 @@ export const Users: CollectionConfig = {
       options: ROLE_OPTIONS,
       defaultValue: ['mitglied'],
       required: true,
-      saveToJWT: true,
+      // Nicht ins Anmelde-Token: Rechte werden bei jeder Anfrage aus der Datenbank gelesen, und das Token wäre
+      // sonst lesbar, bevor der zweite Faktor bestätigt ist (Audit 2026-10 F-4)
       access: {
+        read: ohneOffenenZweitenFaktor,
         create: isAdminField,
         update: isAdminField,
       },
@@ -113,7 +115,7 @@ export const Users: CollectionConfig = {
           label: false,
           type: 'group',
           // Nur Web-Admins vergeben Zusatzrechte – Admins sehen sie, ändern aber nicht
-          access: { create: istWebAdminField, update: istWebAdminField },
+          access: { read: ohneOffenenZweitenFaktor, create: istWebAdminField, update: istWebAdminField },
           admin: {
             description:
               'Nur für Ausnahmen, wenn eine ganze Rolle zu viel wäre – z. B. „der Jugendleiter soll alle Probetraining-Anfragen sehen“ oder „die Pressewartin soll nur News schreiben“. Im Normalfall reicht die Rolle oben. Häkchen setzen, speichern, gilt beim nächsten Seitenaufruf. Wer ein Zusatzrecht hat, kommt in die Verwaltung und braucht die Zwei-Faktor-Anmeldung. Ein Bereichsrecht gibt genau die Rechte der zuständigen Rolle in diesem Bereich. Benutzerverwaltung, Admin-Rechte, Bankdaten und Datensicherung lassen sich bewusst nicht einzeln vergeben.',
@@ -204,7 +206,9 @@ export const Users: CollectionConfig = {
   ],
   hooks: {
     beforeOperation: [passwortUndLogin],
+    afterError: [anmeldeFehlerEinheitlich],
     afterMe: [meHerabgestuft],
+    afterOperation: [loginHerabgestuft as never],
     // „Passwort vergessen“ beweist ebenfalls, dass die E-Mail-Adresse der Person gehört → gilt als bestätigt.
     // (Payload ruft diesen Hook beim Zurücksetzen mit dem kompletten Konto samt neuem Passwort-Hash auf.)
     beforeValidate: [
@@ -250,10 +254,16 @@ export const Users: CollectionConfig = {
         return data
       },
       // Die allererste Person, die sich anlegt, wird automatisch Web-Admin.
+      // Auf der Live-Website nur über das Server-Skript „pnpm konto:erstes“ – sonst könnte sich jeder, der eine frisch
+      // eingerichtete (leere) Website zuerst findet, im Browser selbst zum Web-Admin machen.
       async ({ req, operation, data }) => {
         if (operation === 'create') {
           const { totalDocs } = await req.payload.count({ collection: 'users', overrideAccess: true })
-          if (totalDocs === 0) data.roles = ['webadmin', 'admin']
+          if (totalDocs === 0) {
+            if (process.env.NODE_ENV === 'production' && req.context?.bsvErstesKonto !== true)
+              throw new APIError('Das erste Konto wird auf dem Server angelegt: pnpm konto:erstes (siehe deploy/README.md).', 403)
+            data.roles = ['webadmin', 'admin']
+          }
         }
         return data
       },

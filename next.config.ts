@@ -54,6 +54,8 @@ const nextConfig: NextConfig = {
       },
     ],
     qualities: [100],
+    // Verkleinerte Bilder höchstens 10 Minuten zwischenspeichern (statt 4 Stunden) – gelöschte Bilder verschwinden so schnell
+    minimumCacheTTL: 600,
   },
   webpack: (webpackConfig) => {
     webpackConfig.resolve.extensionAlias = {

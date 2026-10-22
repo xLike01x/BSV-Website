@@ -42,8 +42,24 @@ function zaehlen(key: string, max: number): boolean {
  * Für eigene Endpunkte (z. B. Registrierung, Login): wirft 429, wenn von dieser Adresse – oder von allen
  * zusammen – zu viele Anfragen kommen. Grenze für alle: standardmäßig das 10-Fache der Grenze pro Adresse.
  */
+/**
+ * Schlüssel für die Begrenzung pro Anschluss: IPv4 wie sie ist, IPv6 nur die ersten 64 Bit –
+ * ein einzelner Anschluss bekommt meist ein ganzes /64-Netz und könnte sonst beliebig viele Adressen nutzen.
+ */
+export function anschluss(ip: string): string {
+  if (!ip.includes(':')) return ip
+  const v4 = ip.match(/^::ffff:(\d{1,3}(?:\.\d{1,3}){3})$/i)
+  if (v4) return v4[1]!
+  const [links = '', rechts] = ip.toLowerCase().split('::')
+  const l = links ? links.split(':') : []
+  const r = rechts === undefined ? [] : rechts ? rechts.split(':') : []
+  const teile = rechts === undefined ? l : [...l, ...Array(Math.max(0, 8 - l.length - r.length)).fill('0'), ...r]
+  return `${teile.slice(0, 4).map((t) => t.replace(/^0+(?=.)/, '')).join(':')}::/64`
+}
+
 export function ratenGrenze(req: Pick<PayloadRequest, 'headers'>, schluessel: string, max = MAX_PRO_FENSTER, maxAlle = max * 10) {
-  const ip = clientIp(req.headers)
+  const roh = clientIp(req.headers)
+  const ip = roh === 'unbekannt' ? roh : anschluss(roh)
   // Ohne bekannte Adresse (nur lokal) gilt nur die Grenze für alle
   const proIp = ip === 'unbekannt' || zaehlen(`${schluessel}:${ip}`, max)
   if (!proIp || !zaehlen(`${schluessel}:*`, maxAlle)) throw new APIError('Zu viele Anfragen. Bitte versuche es in ein paar Minuten erneut.', 429)

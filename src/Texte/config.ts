@@ -4,6 +4,7 @@ import type { Field, GlobalConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
 import { standardTexte, zusammenfuehren } from './standard'
+import { sichereAdresse } from '@/fields/sichereAdresse'
 
 /**
  * Alle festen Überschriften und Texte der Website an einer Stelle.
@@ -139,7 +140,7 @@ export const Texte: GlobalConfig = {
                   type: 'row',
                   fields: [
                     { name: 'linkText', label: 'Button-Text', type: 'text', defaultValue: 'Mehr zum Projekt' },
-                    { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen', admin: { description: 'z. B. /kunstrasen oder https://…' } },
+                    { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen', validate: sichereAdresse, admin: { description: 'z. B. /kunstrasen oder https://…' } },
                   ],
                 },
                 bild('bild', 'Bild (z. B. Plakat)', 'Hochformat sieht am besten aus.'),

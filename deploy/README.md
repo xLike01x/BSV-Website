@@ -153,6 +153,20 @@ DNS: A- (und ggf. AAAA-) Eintrag der Domain auf die Server-IP. Sobald der zeigt,
 **Prüfen:**
 - `curl -s https://www.buedericher-spielverein.de/api/gesund` → `{"ok":true}`
 - Von außen `http://<Server-IP>:3000` → **keine** Verbindung (gut so)
+- `https://www.buedericher-spielverein.de/admin/create-first-user` → **403** (gesperrt, siehe unten)
+
+### Erstes Konto (nur ohne Sicherung)
+
+„Erstes Konto anlegen“ im Browser ist live gesperrt (in der Website und zusätzlich in Caddy/nginx) – sonst könnte sich
+jemand, der die neue Adresse vor dir findet, selbst zum Web-Admin machen. Wer **keine** Sicherung einspielt, legt das
+erste Konto auf dem Server an (`einrichten.sh` fragt das automatisch ab):
+
+```bash
+sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production pnpm konto:erstes'
+```
+
+Fragt Name, E-Mail und Passwort (unsichtbar) ab, legt einen Web-Admin an und tut nichts, wenn es schon Konten gibt.
+Danach im Browser anmelden und die Zwei-Faktor-Anmeldung einrichten.
 
 ## 3. Inhalte vom PC übernehmen
 

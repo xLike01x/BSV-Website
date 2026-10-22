@@ -3,6 +3,7 @@ import type { Access, CollectionConfig, CollectionSlug, Config, Endpoint, FieldA
 import { deleteByIDOperation, deleteOperation, parseParams } from 'payload'
 
 import { hasRole } from '@/access/roles'
+import { bildCacheLeeren } from '@/utilities/bildCacheLeeren'
 
 /**
  * Zweistufiger Papierkorb
@@ -20,6 +21,12 @@ import { hasRole } from '@/access/roles'
 
 export const istWebAdminReq = (req: PayloadRequest) => hasRole(req.user as never, 'webadmin')
 const istAdminReq = (req: PayloadRequest) => hasRole(req.user as never, 'admin')
+
+/** Suchindex-Einträge gelöschter News entfernen (die Suche zeigt sonst Titel, Adresse und Beschreibung weiter an) */
+export const suchindexEntfernen = (req: { payload: { db: unknown } }, ids: number[]) =>
+  ids.length
+    ? ausfuehren(req, sql`delete from "search" where id in (select parent_id from "search_rels" where posts_id in ${sql.raw(`(${ids.filter((n) => Number.isInteger(n) && n > 0).join(',') || '0'})`)})`).catch(() => null)
+    : Promise.resolve(null)
 
 /** Tabellenname in Postgres (Payload: Bindestriche → Unterstriche) */
 export const tabelle = (slug: string) => slug.replace(/-/g, '_')
@@ -103,8 +110,15 @@ async function verschieben(c: CollectionConfig, req: PayloadRequest, ziel: Where
   if (!docs.length) return { docs, abgelehnt: false }
   const ids = docs.map((d) => Number(d.id)).filter((n) => Number.isInteger(n) && n > 0)
   const von = name(req)
-  // Eine einzige Anweisung – entweder alle oder keiner. Danach passiert in dieser Anfrage nichts mehr.
+  // Eine einzige Anweisung – entweder alle oder keiner. Versionen und Suchindex folgen danach; scheitert das, gleicht
+  // die tägliche Wartung es aus (versionenUndSucheAbgleichen).
   await ausfuehren(req, sql`update ${sql.identifier(tabelle(c.slug))} set endgueltig_am = now(), endgueltig_von = ${von}, deleted_at = coalesce(deleted_at, now())${zusatzBeimEntfernen(c.slug)} where id in ${sql.raw(`(${ids.join(',')})`)} and endgueltig_am is null`)
+  // Auch die Versionen (sonst über ?draft=true weiter lesbar) und den Suchindex – sonst bleiben News/Seiten öffentlich auffindbar
+  if (c.versions) {
+    await ausfuehren(req, sql`update ${sql.identifier(`_${tabelle(c.slug)}_v`)} set version_deleted_at = coalesce(version_deleted_at, now()), version_endgueltig_am = now() where parent_id in ${sql.raw(`(${ids.join(',')})`)}`)
+  }
+  if (c.slug === 'posts') await suchindexEntfernen(req, ids)
+  if (c.slug === 'media') await bildCacheLeeren()
   const jetzt = new Date().toISOString()
   // Nur das Nötigste zurückgeben (die Suche lief ohne Feldrechte)
   return { docs: docs.map((d) => ({ id: d.id, deletedAt: d.deletedAt ?? jetzt, endgueltigAm: jetzt, endgueltigVon: von })), abgelehnt: false }

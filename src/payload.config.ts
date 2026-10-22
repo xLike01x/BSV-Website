@@ -3,7 +3,7 @@ import { Statistik } from './statistik/Statistik'
 import { statistikEndpunkt } from './statistik/endpunkt'
 import { papierkorbEndpunkte } from './papierkorb/endpunkt'
 import { startpruefung } from './utilities/startpruefung'
-import { gesundEndpunkt } from './utilities/gesund'
+import { gesundEndpunkt, startFertig } from './utilities/gesund'
 import { datenschutzStandards } from './datenschutz/standards'
 import { cspBerichtEndpunkt } from './utilities/cspBericht'
 import { keineFalschenKnoepfe } from './utilities/keineFalschenKnoepfe'
@@ -15,7 +15,7 @@ import { nodemailerAdapter } from '@payloadcms/email-nodemailer'
 import { anzeigeMail } from './auth/mail'
 import sharp from 'sharp'
 import path from 'path'
-import { buildConfig, type CollectionConfig, PayloadRequest } from 'payload'
+import { buildConfig, type CollectionBeforeChangeHook, type CollectionConfig, PayloadRequest } from 'payload'
 import { fileURLToPath } from 'url'
 
 import { Categories } from './collections/Categories'
@@ -94,10 +94,30 @@ const konfiguration = buildConfig({
   endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt, ...papierkorbEndpunkte, gesundEndpunkt, cspBerichtEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
+    // Nur die eigene Prüfung (mit zweitem Faktor) meldet Benutzer an. Payloads eingebaute Token-Prüfung läuft sonst
+    // als Rückfall, wenn unsere einmal keinen Benutzer liefert – und gäbe dann die vollen Rollen ohne 2FA.
+    // (Unsere Prüfung ruft die Token-Prüfung selbst auf; doppelt gebraucht wird sie nicht.)
+    payload.authStrategies = payload.authStrategies.filter((s) => s.name !== 'local-jwt')
     if (process.env.NEXT_PHASE === 'phase-production-build') return
-    await startpruefung(payload)
-    medienUmziehen(payload)
-    await rechteLaden(payload, true)
+    // Payload ruft onInit nach einem Fehler nicht erneut auf – eine Website mit gefährlicher Einstellung darf deshalb
+    // gar nicht erst weiterlaufen (systemd/update.sh merken das und schalten zurück)
+    try {
+      await startpruefung(payload)
+    } catch (e) {
+      if (process.env.NODE_ENV === 'production') {
+        payload.logger.fatal({ err: e }, 'Startprüfung fehlgeschlagen – die Website wird beendet.')
+        process.exit(1)
+      }
+      throw e
+    }
+    // Tägliche Aufgaben (Sicherung, Papierkorb, Datenschutz) zuerst – unabhängig von den Übernahme-Schritten unten
+    taeglicheAufgaben(payload)
+    try {
+      medienUmziehen(payload)
+    } catch (e) {
+      payload.logger.warn({ err: e }, 'Medien-Umzug fehlgeschlagen')
+    }
+    await rechteLaden(payload, true).catch((e) => payload.logger.warn({ err: e }, 'Rollen-Rechte laden fehlgeschlagen'))
     await hauptsponsorUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Hauptsponsor-Übernahme fehlgeschlagen'))
     await doppelteHauptsponsorenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Doppelte Hauptsponsoren aufräumen fehlgeschlagen'))
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
@@ -105,7 +125,7 @@ const konfiguration = buildConfig({
     await startseiteUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme „Startseite & Bilder“ fehlgeschlagen'))
     await texteBilderUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme nach „Texte & Bilder“ fehlgeschlagen'))
     await datenschutzStandards(payload).catch((e) => payload.logger.warn({ err: e }, 'Datenschutz-Standards setzen fehlgeschlagen'))
-    taeglicheAufgaben(payload)
+    startFertig()
   },
   admin: {
     components: {
@@ -307,6 +327,12 @@ export default konfiguration.then((c) => {
   if (sperren) {
     const nurVerwaltung = ({ req }: { req: Parameters<typeof canUseAdminPanel>[0]['req'] }) => canUseAdminPanel({ req })
     sperren.access = { ...sperren.access, read: nurVerwaltung, create: nurVerwaltung, update: nurVerwaltung, delete: nurVerwaltung }
+    // Eine Sperre gehört immer dem, der sie anlegt oder übernimmt – nie im Namen anderer (Audit 2026-10)
+    const eigeneSperre: CollectionBeforeChangeHook = ({ data, req }) => {
+      if (req.user) data.user = { relationTo: req.user.collection ?? 'users', value: req.user.id }
+      return data
+    }
+    sperren.hooks = { ...sperren.hooks, beforeChange: [...(sperren.hooks?.beforeChange ?? []), eigeneSperre] }
   }
   return keineFalschenKnoepfe(c)
 })

@@ -41,7 +41,7 @@ export const teamsVerantwortlichFeld: Field = {
   hasMany: true,
   virtual: true,
   maxDepth: 0,
-  access: { read: ({ req }) => Boolean(req.user), create: isAdminField, update: isAdminField },
+  access: { read: ({ req }) => Boolean(req.user) && !(req.user as { _zweiFaktorOffen?: boolean })._zweiFaktorOffen, create: isAdminField, update: isAdminField },
   hooks: { afterRead: [lesen] },
   admin: {
     // Virtuelle Felder sind sonst schreibgeschützt – dieses Feld ist bewusst bearbeitbar (Speichern: Hooks unten)

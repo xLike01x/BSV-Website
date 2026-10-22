@@ -191,11 +191,12 @@ if [ -n "$SSH_SCHON" ]; then echo "  SSH:              schon abgesichert (nur mi
 else echo "  SSH:              $([ -n "$SSH_HAERTEN" ] && echo 'nur noch mit Schlüssel' || echo 'unverändert')"; fi
 echo "  Sicherung:        ${SICHERUNG:-später}"
 echo "  Node.js:          $NODE_MAJOR"
+ERSTES=""; [ -z "$SICHERUNG" ] && ERSTES="erstes Konto → "
 if [ -n "$PROBE" ]; then
   fett "Probelauf – es wurde nichts verändert."
   echo "  Ablauf wäre: Updates → Firewall/fail2ban → SSH absichern → Node.js/pnpm → Nutzer „bsv“ → Datenbank → Zugang zu GitHub"
-  if [ -n "$GEBAUT" ]; then echo "  → .env prüfen → Dienst → deploy/update.sh (Sicherung, Update, Migrationen, Bauen) → ${SICHERUNG:+Sicherung einspielen → }Start → HTTPS (Caddy)"
-  else echo "  → Website holen → .env → Dienst → Pakete → Prüfung → Datenbank-Tabellen → ${SICHERUNG:+Sicherung einspielen → }Bauen → Start → HTTPS (Caddy)"; fi
+  if [ -n "$GEBAUT" ]; then echo "  → .env prüfen → Dienst → deploy/update.sh (Sicherung, Update, Migrationen, Bauen) → ${SICHERUNG:+Sicherung einspielen → }Start → ${ERSTES}HTTPS (Caddy)"
+  else echo "  → Website holen → .env → Dienst → Pakete → Prüfung → Datenbank-Tabellen → ${SICHERUNG:+Sicherung einspielen → }Bauen → Start → ${ERSTES}HTTPS (Caddy)"; fi
   exit 0
 fi
 frage "  Los geht's? (J/n) " a
@@ -428,6 +429,14 @@ if curl -fsS --max-time 3 http://127.0.0.1:3000/api/gesund >/dev/null 2>&1; then
   exit 1
 fi
 
+# Ohne Sicherung ist die Datenbank leer: Das erste Konto (Web-Admin) wird hier angelegt – im Browser ist
+# „Erstes Konto anlegen“ auf der Live-Website gesperrt (sonst könnte es jemand anderes vor dir tun)
+if [ -z "$SICHERUNG" ]; then
+  schritt "Erstes Konto anlegen (Web-Admin)"
+  if als_bsv "NODE_ENV=production pnpm -s konto:erstes" </dev/tty; then ok "Erstes Konto erledigt"
+  else hinweis "Nicht angelegt – später nachholen: sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production pnpm konto:erstes'"; fi
+fi
+
 schritt "HTTPS mit Caddy"
 if ! command -v caddy >/dev/null; then
   if ! leise apt-get -y install caddy; then
@@ -482,6 +491,7 @@ cat <<EOF
   2. Prüfen: https://${DOMAIN}/api/gesund  →  {"ok":true}
   3. In der Verwaltung: eigenes Konto anmelden, Zwei-Faktor einrichten,
      Rollen & Rechte → Testkonten → „Alle Testkonten löschen“.
+     (Ohne Sicherung: Das erste Konto hast du eben angelegt. Nachholen: NODE_ENV=production pnpm konto:erstes)
   4. Weiter mit der Go-Live-Checkliste (externe Sicherung, Überwachung, E-Mail-Test).
 
   Updates später:  sudo -u bsv -H bash -c 'cd /srv/bsv && ./deploy/update.sh'

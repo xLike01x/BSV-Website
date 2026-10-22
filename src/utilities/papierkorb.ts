@@ -21,6 +21,7 @@ export async function papierkorbAufraeumen(payload: Payload) {
   const ds = (await payload.findGlobal({ slug: 'datenschutz' as never, depth: 0, overrideAccess: true }).catch(() => null)) as { personenPapierkorbTage?: number | null } | null
   const personenTage = Math.max(1, Math.min(90, ds?.personenPapierkorbTage ?? 30))
   const personenGrenze = new Date(Date.now() - personenTage * 86400000).toISOString()
+  await versionenUndSucheAbgleichen(payload)
   let weiter = 0
   let gesamt = 0
   for (const slug of [...PAPIERKORB, 'forms', 'form-submissions']) {
@@ -37,6 +38,29 @@ export async function papierkorbAufraeumen(payload: Payload) {
   if (weiter) payload.logger.info(`Papierkorb: ${weiter} Einträge nach ${PAPIERKORB_TAGE} Tagen in den Web-Admin-Papierkorb verschoben`)
   if (gesamt) payload.logger.info(`Web-Admin-Papierkorb: ${gesamt} Einträge nach ${tage} Tagen endgültig gelöscht`)
   return gesamt
+}
+
+/**
+ * Gelöschte News/Seiten: Versionen ebenfalls als gelöscht markieren (sonst über ?draft=true lesbar) und den Suchindex
+ * bereinigen. Fängt alles ab, was am Payload-Ablauf vorbei in den Papierkorb kam (z. B. ältere Stände).
+ */
+export async function versionenUndSucheAbgleichen(payload: Payload) {
+  for (const slug of ['posts', 'pages']) {
+    const t = tabelle(slug)
+    await ausfuehren(
+      { payload },
+      sql`update ${sql.identifier(`_${t}_v`)} v set version_deleted_at = p.deleted_at, version_endgueltig_am = p.endgueltig_am from ${sql.identifier(t)} p where v.parent_id = p.id and p.deleted_at is not null and v.version_deleted_at is null`,
+    ).catch((e) => payload.logger.warn({ err: e }, `Versionen ${slug} abgleichen fehlgeschlagen`))
+    // Wiederhergestellt: ältere Versionen wieder freigeben (sonst fehlen sie im Versionsverlauf)
+    await ausfuehren(
+      { payload },
+      sql`update ${sql.identifier(`_${t}_v`)} v set version_deleted_at = null, version_endgueltig_am = null from ${sql.identifier(t)} p where v.parent_id = p.id and p.deleted_at is null and v.version_deleted_at is not null`,
+    ).catch((e) => payload.logger.warn({ err: e }, `Versionen ${slug} freigeben fehlgeschlagen`))
+  }
+  await ausfuehren(
+    { payload },
+    sql`delete from "search" s where not exists (select 1 from "search_rels" r join "posts" p on p.id = r.posts_id where r.parent_id = s.id and p.deleted_at is null)`,
+  ).catch((e) => payload.logger.warn({ err: e }, 'Suchindex bereinigen fehlgeschlagen'))
 }
 
 type Doc = { id: number | string; deletedAt?: string | null }

@@ -8,6 +8,7 @@ import {
   UnderlineFeature,
   type LinkFields,
 } from '@payloadcms/richtext-lexical'
+import { sichereAdresse } from '@/fields/sichereAdresse'
 
 export const defaultLexical = lexicalEditor({
   features: [
@@ -37,7 +38,8 @@ export const defaultLexical = lexicalEditor({
               if ((options?.siblingData as LinkFields)?.linkType === 'internal') {
                 return true // no validation needed, as no url should exist for internal links
               }
-              return value ? true : 'URL is required'
+              // Nur interne Pfade, https://, mailto: und tel: – keine „javascript:“-Links
+              return value ? sichereAdresse(value) : 'URL is required'
             }) as TextFieldSingleValidation,
           },
         ]

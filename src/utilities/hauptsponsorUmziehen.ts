@@ -1,5 +1,6 @@
 import { logoFreistellen } from '@/sponsoren/logo'
 import type { Payload } from 'payload'
+import { zeileAendern } from '@/utilities/zeileAendern'
 
 type Alt = { name?: string | null; url?: string | null; logo?: number | { id: number } | null }
 
@@ -70,7 +71,7 @@ export async function doppelteHauptsponsorenAufraeumen(payload: Payload) {
     const k = schluessel(d)
     const unveraendert = !d.text && Math.abs(new Date(d.updatedAt).getTime() - new Date(d.createdAt).getTime()) < 5000
     if (gesehen.has(k) && unveraendert) {
-      await payload.db.updateOne({ collection: 'sponsoren', id: d.id, data: { deletedAt: new Date().toISOString() } as never, returning: false })
+      await zeileAendern(payload, 'sponsoren', d.id, { deletedAt: new Date().toISOString() })
       n++
     } else gesehen.add(k)
   }

@@ -3,6 +3,7 @@ import { revalidatePath, revalidateTag } from 'next/cache'
 
 import { imBereich } from '@/access/roles'
 import { fehlerAntwort, idAus, jsonVon, nurJson } from '@/posteingang/endpunkte'
+import { zeileAendern } from '@/utilities/zeileAendern'
 
 /**
  * Vorschlag für die Startseite annehmen oder ablehnen – nur Redaktion und Admins.
@@ -35,7 +36,7 @@ export const startseiteEndpunkt: Endpoint = {
         // 1) Entwurf: Entscheidung mitnehmen, damit sie beim späteren Veröffentlichen erhalten bleibt (prüft die Rechte)
         await req.payload.update({ ...gemeinsam, data, draft: true })
         // 2) Veröffentlichte Fassung: nur diese beiden Felder, ohne den Entwurf zu veröffentlichen
-        await req.payload.db.updateOne({ collection: 'posts', id, data, req })
+        await zeileAendern(req.payload, 'posts', id, data, req)
         revalidatePath('/')
         revalidatePath('/news')
         if (live.slug) revalidatePath(`/news/${live.slug}`)

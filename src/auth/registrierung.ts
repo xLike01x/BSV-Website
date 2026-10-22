@@ -1,4 +1,5 @@
 import crypto from 'crypto'
+import { sql } from '@payloadcms/db-postgres'
 import type { Endpoint, PayloadRequest, Where } from 'payload'
 
 import { hatRecht } from '@/access/einzelrechte'
@@ -8,8 +9,10 @@ import { getServerSideURL } from '@/utilities/getURL'
 import { istJson } from '@/utilities/istJson'
 
 import { loesungPruefen, neueAufgabe } from './botschutz'
+import { passwortStimmt } from './passwort'
 import { passwortFehler } from './passwortRegeln'
 import { emailAktiv, mailHtml, mailSenden } from './mail'
+import { zeileAendern } from '@/utilities/zeileAendern'
 
 /**
  * Selbst-Registrierung für Mitglieder:
@@ -63,13 +66,7 @@ const hallo = (name?: string) => (name ? `Hallo ${name},` : 'Hallo,')
 /** Neuen Bestätigungslink erzeugen (in der Datenbank steht nur der Fingerabdruck, nie der Link selbst) */
 async function linkErzeugen(req: PayloadRequest, id: number) {
   const token = crypto.randomBytes(32).toString('base64url')
-  await req.payload.db.updateOne({
-    collection: 'users',
-    id,
-    data: { bestaetigungHash: sha(token), bestaetigungBis: new Date(Date.now() + LINK_STUNDEN * 3600000).toISOString() } as never,
-    req,
-    returning: false,
-  })
+  await zeileAendern(req.payload, 'users', id, { bestaetigungHash: sha(token), bestaetigungBis: new Date(Date.now() + LINK_STUNDEN * 3600000).toISOString() }, req)
   return `${getServerSideURL()}/registrieren/bestaetigen?t=${token}`
 }
 
@@ -117,6 +114,9 @@ async function gueltigeAngebote(req: PayloadRequest, roh: unknown): Promise<numb
 
 const GENERISCH = { ok: true }
 
+/** Sieht nach Link oder Adresse aus (auch „beispiel.de“ ohne Schrägstrich – Mailprogramme machen daraus einen Link) */
+export const namensLink = (name: string) => /https?:|www\.|[<>@/\\]|[\p{L}\d-]{2,}\.[a-z]{2,}/iu.test(name)
+
 export const registrierungEndpunkte: Endpoint[] = [
   {
     // Rechenaufgabe für den unsichtbaren Bot-Schutz
@@ -147,7 +147,7 @@ export const registrierungEndpunkte: Endpoint[] = [
       const passwort = String(body.passwort ?? '')
       if (name.length < 2) return json({ fehler: 'Bitte gib deinen Namen ein.' }, 400)
       // Kein Link im Namen – der Name steht in der Bestätigungs-E-Mail (sonst Spam über fremde Postfächer)
-      if (/https?:|www\.|\.[a-z]{2,}\/|[<>]/i.test(name)) return json({ fehler: 'Bitte gib nur deinen Vor- und Nachnamen ein.' }, 400)
+      if (namensLink(name)) return json({ fehler: 'Bitte gib nur deinen Vor- und Nachnamen ein.' }, 400)
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) return json({ fehler: 'Bitte gib eine gültige E-Mail-Adresse ein.' }, 400)
       const pwFehler = passwortFehler(passwort, { name, email })
       if (pwFehler) return json({ fehler: pwFehler }, 400)
@@ -160,7 +160,8 @@ export const registrierungEndpunkte: Endpoint[] = [
       if (vorhanden) {
         const nurMitglied = !(vorhanden.roles ?? []).some((r) => r !== 'mitglied')
         if (unbestaetigt(vorhanden) && vorhanden.freigegeben === false && nurMitglied) {
-          if (!darfSenden(email)) return json({ fehler: 'Wir haben dir gerade schon eine E-Mail geschickt. Bitte schau in dein Postfach (auch im Spam-Ordner) oder versuche es in 5 Minuten erneut.' }, 429)
+          // Gerade erst gesendet: still nichts senden – eine eigene Meldung würde verraten, dass es die Adresse gibt
+          if (!darfSenden(email)) return json(GENERISCH, 201)
           // Nie bestätigte Registrierung: NICHT ersetzen (sonst könnte jemand Fremdes Name und Passwort des
           // wartenden Kontos austauschen) – nur den Bestätigungslink an die Adresse erneut schicken.
           // Wer sich beim Passwort vertippt hatte: nach der Bestätigung „Passwort vergessen?“ nutzen.
@@ -181,7 +182,7 @@ export const registrierungEndpunkte: Endpoint[] = [
         overrideAccess: true,
         req,
       })
-      await req.payload.db.updateOne({ collection: 'users', id: neu.id, data: { registriertUeber: 'email', emailBestaetigt: false } as never, req, returning: false })
+      await zeileAendern(req.payload, 'users', neu.id, { registriertUeber: 'email', emailBestaetigt: false }, req)
       try {
         zuletztGesendet.set(email, Date.now())
         await bestaetigungSenden(req, { id: neu.id as number, name, email })
@@ -195,22 +196,40 @@ export const registrierungEndpunkte: Endpoint[] = [
     },
   },
   {
-    // Link aus der Bestätigungs-E-Mail
+    // Link aus der Bestätigungs-E-Mail – mit Passwort (Schutz vor vorab angelegten Konten):
+    // Sonst könnte jemand mit fremder E-Mail-Adresse und EIGENEM Passwort registrieren; klickt die echte Person
+    // den Link, wäre das Konto mit dem Passwort des Fremden bestätigt. Deshalb gibt die Person beim Bestätigen
+    // ihr Passwort ein: Stimmt es mit dem bei der Registrierung gewählten überein, bleibt es; sonst wird die
+    // Eingabe (nach den Passwort-Regeln) zum neuen Passwort. In beiden Fällen kennt am Ende nur, wer das
+    // Postfach hat, das Passwort.
     path: '/registrieren/bestaetigen',
     method: 'post',
     handler: async (req) => {
       if (!vonDerWebsite(req)) return json({ fehler: 'Ungültige Anfrage.' }, 400)
       if (begrenzt(req, 'bestaetigen', 20)) return json({ fehler: 'zu-viele' }, 429)
-      const body = (await req.json?.().catch(() => ({}))) as { t?: string }
-      const t = String(body.t ?? '')
+      const body = (await req.json?.().catch(() => ({}))) as { t?: unknown; passwort?: unknown }
+      const t = typeof body.t === 'string' ? body.t : ''
       if (!/^[\w-]{40,60}$/.test(t)) return json({ fehler: 'ungueltig' }, 400)
       const u = (await req.payload.find({ collection: 'users', where: { bestaetigungHash: { equals: sha(t) } }, limit: 1, depth: 0, overrideAccess: true, showHiddenFields: true })).docs[0] as unknown as
         | (Konto & { bestaetigungBis?: string | null })
         | undefined
       if (!u) return json({ fehler: 'ungueltig' }, 400)
       if (!u.bestaetigungBis || new Date(u.bestaetigungBis) < new Date()) return json({ fehler: 'abgelaufen' }, 400)
-      await req.payload.db.updateOne({ collection: 'users', id: u.id, data: { emailBestaetigt: true, bestaetigungHash: null, bestaetigungBis: null } as never, req, returning: false })
-      return json({ ok: true, freigegeben: u.freigegeben !== false })
+      // Ohne Passwort nur prüfen, ob der Link gilt (die Seite zeigt dann das Formular)
+      if (body.passwort == null) return json({ ok: true, passwortNoetig: true })
+      if (typeof body.passwort !== 'string' || !body.passwort) return json({ fehler: 'passwort', meldung: 'Bitte gib ein Passwort ein.' }, 400)
+      const passwort = body.passwort
+      const voll = (await req.payload.db.findOne({ collection: 'users', where: { id: { equals: u.id } }, req })) as { hash?: string; salt?: string } | null
+      const gleich = await passwortStimmt(passwort, voll?.hash, voll?.salt)
+      if (!gleich) {
+        const meldung = passwortFehler(passwort, { name: u.name, email: u.email })
+        if (meldung) return json({ fehler: 'passwort', meldung }, 400)
+        await req.payload.update({ collection: 'users', id: u.id, data: { password: passwort } as never, overrideAccess: true, context: { zweiFaktorIntern: true }, req })
+      }
+      // Alle Sitzungen und Fehlversuche zurücksetzen – die Bestätigung beginnt das Konto „frisch“
+      await zeileAendern(req.payload, 'users', u.id, { emailBestaetigt: true, bestaetigungHash: null, bestaetigungBis: null, loginAttempts: 0, lockUntil: null }, req)
+      await (req.payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<unknown> } }).drizzle.execute(sql`delete from users_sessions where _parent_id = ${u.id}`)
+      return json({ ok: true, neuesPasswort: !gleich, freigegeben: u.freigegeben !== false })
     },
   },
   {

@@ -2,6 +2,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import type { Payload } from 'payload'
 import sharp from 'sharp'
+import { zeileAendern } from '@/utilities/zeileAendern'
 
 /**
  * Bildgröße „logo“: Logo ohne leeren Rand (weiß oder durchsichtig), höchstens 800 × 800.
@@ -33,12 +34,7 @@ export async function logoFreistellen(payload: Payload, id: number) {
     .webp(LOGO_GROESSE.formatOptions.options)
     .toBuffer({ resolveWithObject: true })
   await fs.writeFile(path.join(dir, ziel), data)
-  await payload.db.updateOne({
-    collection: 'media',
-    id,
-    data: { sizes: { logo: { filename: ziel, width: info.width, height: info.height, mimeType: 'image/webp', filesize: info.size } } } as never,
-    returning: false,
-  })
+  await zeileAendern(payload, 'media', id, { sizes: { logo: { filename: ziel, width: info.width, height: info.height, mimeType: 'image/webp', filesize: info.size } } })
   return true
 }
 

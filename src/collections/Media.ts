@@ -16,6 +16,7 @@ import { APIError } from 'payload'
 import { alleBilder, canUpload, darfHochladen, eigeneAngebotIds, imBereich, medienSichtbar, redaktionOderEigeneTeams } from '../access/roles'
 import { autoZuordnenEndpunkt } from './Media/autoZuordnen'
 import { LOGO_GROESSE } from '@/sponsoren/logo'
+import { bildCacheLeeren } from '@/utilities/bildCacheLeeren'
 
 /** Team-Rollen laden Bilder immer für eines ihrer Teams hoch */
 const teamBildPruefen: CollectionBeforeChangeHook = async ({ req, data, operation }) => {
@@ -55,6 +56,19 @@ export const Media: CollectionConfig = {
   },
   endpoints: [autoZuordnenEndpunkt],
   hooks: {
+    // Gelöscht oder in den Papierkorb gelegt → verkleinerte Fassungen im Bild-Zwischenspeicher sofort entfernen
+    afterChange: [
+      async ({ doc, previousDoc }) => {
+        if (doc?.deletedAt && !previousDoc?.deletedAt) await bildCacheLeeren()
+        return doc
+      },
+    ],
+    afterDelete: [
+      async ({ doc }) => {
+        await bildCacheLeeren()
+        return doc
+      },
+    ],
     beforeChange: [
       teamBildPruefen,
       // Ordner eindeutig halten: Team-Ordner schließt „Sponsoren“ aus, „Sponsoren“ zählt als Vereinsbild (alle dürfen es benutzen)
@@ -96,7 +110,8 @@ export const Media: CollectionConfig = {
       label: 'Wo liegt die Einwilligung? (optional, empfohlen)',
       type: 'text',
       maxLength: 200,
-      access: { read: ({ req }) => Boolean(req.user) },
+      // Nur wer Bilder hochladen darf (Redaktion, Trainer, Team-Redaktion …) – nicht jedes Mitgliedskonto
+      access: { read: ({ req }) => darfHochladen(req.user) },
       admin: {
         condition: (d) => d?.personen === 'einwilligung',
         description: 'Z. B. „Foto-Einwilligung im Mitgliedsantrag“ oder „Formular vom 03.05.2026, Ordner Vorstand“. Hilft, wenn jemand widerruft oder nachfragt. Nicht öffentlich sichtbar.',
@@ -161,6 +176,11 @@ export const Media: CollectionConfig = {
     // Bewusst NICHT in public/: Dateien laufen nur über /api/media/file/… und damit über die Zugriffsregeln
     // (Papierkorb-Bilder sind sofort weg, Payload setzt sichere Header)
     staticDir: path.resolve(dirname, '../../medien'),
+    // Kurz zwischenspeichern: gelöschte Bilder (z. B. nach Widerruf einer Foto-Einwilligung) verschwinden so schnell
+    modifyResponseHeaders: ({ headers }) => {
+      headers.set('Cache-Control', 'public, max-age=600')
+      return headers
+    },
     // Nur Bilder und PDFs – keine HTML/XML/SVG-Dateien, die im Browser Skripte ausführen könnten
     mimeTypes: ['image/jpeg', 'image/png', 'image/webp', 'image/gif', 'image/avif', 'application/pdf'],
     adminThumbnail: 'thumbnail',

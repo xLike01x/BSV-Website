@@ -19,6 +19,8 @@ import { beforeSyncWithSearch } from '@/search/beforeSync'
 import { Page, Post } from '@/payload-types'
 import { getServerSideURL } from '@/utilities/getURL'
 import { eingangPruefen, mailsPruefen } from '@/hooks/formularBaukasten'
+import { keineUploadsPerAdresse } from '@/hooks/keinUploadPerAdresse'
+import { sortierenNurEigeneFelder } from '@/hooks/sortierSchutz'
 
 const generateTitle: GenerateTitle<Post | Page> = ({ doc }) => {
   return doc?.title ? `${doc.title} | Büdericher SV 1919` : 'Büdericher Spielverein 1919 e.V.'
@@ -142,6 +144,10 @@ export const plugins: Plugin[] = [
       },
     },
   }),
+  // Uploads nur mit Datei, nie per Internet-Adresse (gilt für alle Upload-Bereiche)
+  keineUploadsPerAdresse,
+  // Sortieren über die Schnittstelle nur nach eigenen Feldern (nicht über verknüpfte Konten)
+  sortierenNurEigeneFelder,
   // Muss als Letztes laufen: hängt sich an alle Bereiche mit Papierkorb (auch die der Plugins)
   zweistufigerPapierkorb,
 ]

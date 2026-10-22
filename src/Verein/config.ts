@@ -96,6 +96,7 @@ export const Verein: GlobalConfig = {
       admin: { hidden: true },
       fields: [
         { name: 'name', label: 'Name', type: 'text' },
+        // Veraltet und unsichtbar – keine Prüfung (sonst scheiterte jedes Speichern an einem alten Wert, den niemand sieht)
         { name: 'url', label: 'Website', type: 'text' },
         { name: 'logo', label: 'Logo', type: 'upload', relationTo: 'media' },
       ],
@@ -308,7 +309,7 @@ export const Verein: GlobalConfig = {
           type: 'row',
           fields: [
             { name: 'linkText', label: 'Button-Text', type: 'text', defaultValue: 'Mehr zum Projekt' },
-            { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen' },
+            { name: 'linkUrl', label: 'Button-Link', type: 'text', defaultValue: '/kunstrasen', validate: sichereAdresse },
           ],
         },
         { name: 'bild', label: 'Bild (z. B. Plakat)', type: 'upload', relationTo: 'media' },
@@ -321,8 +322,8 @@ export const Verein: GlobalConfig = {
       // Wird jetzt unter „Menü & Fußzeile → Kontakt-Spalte“ gepflegt (dient nur noch als Startwert)
       admin: { condition: () => false },
       fields: [
-        { name: 'instagram', type: 'text', defaultValue: 'https://www.instagram.com/buedericher_spielverein/' },
-        { name: 'facebook', type: 'text', defaultValue: 'https://www.facebook.com/bsv1919ev/' },
+        { name: 'instagram', type: 'text', defaultValue: 'https://www.instagram.com/buedericher_spielverein/', validate: sichereAdresse },
+        { name: 'facebook', type: 'text', defaultValue: 'https://www.facebook.com/bsv1919ev/', validate: sichereAdresse },
       ],
     },
   ],

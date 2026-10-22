@@ -49,7 +49,7 @@ export function LoginForm() {
         setUnbestaetigt(String(f.get('email') ?? ''))
         setFehler('Deine E-Mail-Adresse ist noch nicht bestätigt. Bitte klicke auf den Link in der E-Mail, die wir dir nach der Registrierung geschickt haben (auch im Spam-Ordner nachsehen).')
       } else if (/Testkonten/.test(msg)) setFehler(msg)
-      else setFehler(/locked|gesperrt/i.test(msg) ? 'Zu viele Fehlversuche. Das Konto ist für 10 Minuten gesperrt.' : 'E-Mail oder Passwort stimmen nicht.')
+      else setFehler('E-Mail oder Passwort stimmen nicht. Nach 5 Fehlversuchen ist die Anmeldung für 10 Minuten gesperrt – dann kurz warten oder „Passwort vergessen?“ nutzen.')
     } catch {
       setFehler('Keine Verbindung. Bitte versuche es erneut.')
     }

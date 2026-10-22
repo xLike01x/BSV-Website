@@ -7,15 +7,17 @@ import anmeldung from './anmeldung.mjs'
 import bestaetigung from './bestaetigung.mjs'
 import datenschutz from './datenschutz.mjs'
 import formulare from './formulare.mjs'
+import haertung from './haertung.mjs'
 import papierkorb from './papierkorb.mjs'
 import posteingang from './posteingang.mjs'
 import rechte from './rechte.mjs'
+import registrierung from './registrierung.mjs'
 import statistik from './statistik.mjs'
 import uploads from './uploads.mjs'
 import wartung from './wartung.mjs'
 import zusatzrechte from './zusatzrechte.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung, zusatzrechte }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung, zusatzrechte, registrierung, haertung }
 
 // Einzelne Bereiche: pnpm test:sicherheit -- posteingang
 const nur = process.argv.slice(2)

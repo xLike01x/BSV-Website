@@ -45,7 +45,8 @@ export const mailsPruefen = async (mails: Mail[], params: { data?: { form?: unkn
       if (ausEingabe(v.cc)) neu.cc = ''
       if (ausEingabe(v.bcc)) neu.bcc = ''
       if (ausEingabe(v.emailFrom)) neu.from = undefined
-      if (ausEingabe(v.replyTo) && !EINE_ADRESSE.test(String(m.replyTo ?? '').trim())) neu.replyTo = undefined
+      // Das Plugin nimmt für „Antwort an“ ersatzweise den Absender – also auch dessen Platzhalter prüfen
+      if (ausEingabe(v.replyTo || v.emailFrom) && !EINE_ADRESSE.test(String(m.replyTo ?? '').trim())) neu.replyTo = undefined
       if (ausEingabe(v.emailTo) && !EINE_ADRESSE.test(String(m.to ?? '').trim())) return null
       return neu
     })

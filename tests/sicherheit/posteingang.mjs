@@ -172,6 +172,7 @@ export default async function posteingang(d) {
     await d.q(`delete from kontaktanfragen where email=$1`, [MAIL])
     await d.q(`delete from probetraining where email=$1`, [MAIL])
     for (const id of postIds) {
+      await d.q(`delete from search where id in (select parent_id from search_rels where posts_id = $1)`, [id]).catch(() => {})
       await d.q(`delete from _posts_v where parent_id=$1`, [id]).catch(() => {})
       await d.q(`delete from posts where id=$1`, [id]).catch(() => {})
     }

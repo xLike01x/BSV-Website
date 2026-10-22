@@ -1024,6 +1024,12 @@ export const FAQ: Faq[] = [
     bereich: 'sicherung',
   },
   {
+    frage: 'Wie lege ich auf einem neuen Server das erste Konto an?',
+    antwort:
+      'Nicht im Browser: „Erstes Konto anlegen“ ist auf der Live-Website gesperrt – sonst könnte sich jemand, der die neue Adresse vor dir findet, selbst zum Web-Admin machen. Das Einrichtungs-Skript (deploy/einrichten.sh) fragt ohne Sicherung automatisch nach Name, E-Mail und Passwort. Nachholen auf dem Server: sudo -u bsv -H bash -c \'cd /srv/bsv && NODE_ENV=production pnpm konto:erstes\'. Mit eingespielter Sicherung sind die Konten schon da. Danach im Browser anmelden und die Zwei-Faktor-Anmeldung einrichten.',
+    bereich: 'sicherung',
+  },
+  {
     frage: 'Was passiert, wenn der Web-Admin ausfällt? Wer kann übernehmen?',
     antwort: 'Dafür gibt es das Notfall-Handbuch (Ordner „Notizen“ bzw. im Projekt: „Notfall-Handbuch“): wem Server, Domain und Konten gehören, wo die Zugangsdaten liegen (Passwortmanager des Vorstands) und was eine Nachfolge braucht. Die Website läuft ohne Zutun weiter; nur Updates und Notfälle brauchen jemanden mit Server-Zugang.',
     bereich: 'sicherung',
@@ -1271,6 +1277,18 @@ export const FAQ: Faq[] = [
     frage: 'Beim Anmelden steht „Zu viele Anfragen“.',
     antwort:
       'Von deinem Anschluss kamen in kurzer Zeit sehr viele Anmeldeversuche (Schutz gegen Passwort-Raten). 10 Minuten warten, dann geht es wieder. Nach 5 falschen Passwörtern ist zusätzlich das Konto 10 Minuten gesperrt – ein Admin kann es vorher entsperren.',
+  },
+  {
+    frage: 'Beim Anmelden steht „E-Mail oder Passwort stimmen nicht“, obwohl das Passwort richtig ist.',
+    antwort:
+      'Nach 5 falschen Passwörtern ist die Anmeldung für dieses Konto 10 Minuten gesperrt. Die Meldung ist dann absichtlich dieselbe wie bei einem falschen Passwort – sonst könnte jemand Fremdes ausprobieren, welche E-Mail-Adressen ein Konto haben. Lösung: 10 Minuten warten oder „Passwort vergessen?“ nutzen. Ein Admin kann das Konto vorher entsperren: Benutzer → Person öffnen → „Entsperren“.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Warum fragt die Seite „E-Mail bestätigen“ nach einem Passwort?',
+    antwort:
+      'Schutz vor vorab angelegten Konten: Sonst könnte sich jemand mit der E-Mail-Adresse einer anderen Person und einem eigenen Passwort registrieren – klickt die echte Person dann den Link, hätte der Fremde Zugang. Deshalb gibt man beim Bestätigen das Passwort von der Registrierung ein. Wer es nicht mehr weiß, gibt einfach ein neues ein – dann gilt das neue. So kennt am Ende nur, wer das Postfach hat, das Passwort.',
+    bereich: 'users',
   },
   {
     frage: 'Ich kann bei einem anderen Admin E-Mail oder Passwort nicht ändern.',

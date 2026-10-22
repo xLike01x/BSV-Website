@@ -87,6 +87,63 @@ export default async function anmeldung(d) {
   for (let i = 0; i < 6; i++) s = (await api(null, 'POST', '/api/users/forgot-password', { email: `niemand${i}@bsv.test` }, f)).s
   pruefe('„Passwort vergessen“: 6. Anfrage derselben Adresse → 429', s === 429, s)
 
+  // Audit 2026-10 F-2: Gesperrtes Konto verrät sich nicht (gleiche Meldung, gleiche Dauer wie unbekannte E-Mail)
+  const sperr = 'sicherheitstest-sperre@bsv.test'
+  await d.q(`delete from users where email=$1`, [sperr])
+  r = await api(await login('admin@bsv.test'), 'POST', '/api/users', { email: sperr, name: 'Test Sperre', password: 'Gruene Wiese 8 am Bach!', roles: ['mitglied'] })
+  if (r.s !== 201) pruefe('Konto für den Sperr-Test angelegt', false, r)
+  else {
+    try {
+      const sk = { 'X-Real-IP': ip() }
+      for (let i = 0; i < 5; i++) await api(null, 'POST', '/api/users/login', { email: sperr, password: 'falsch-falsch' }, sk)
+      const [gs] = await d.q(`select lock_until > now() as gesperrt from users where email=$1`, [sperr])
+      const gesperrt = await api(null, 'POST', '/api/users/login', { email: sperr, password: 'Gruene Wiese 8 am Bach!' }, sk)
+      const unbek = await api(null, 'POST', '/api/users/login', { email: 'gibtsnicht-sperre@bsv.test', password: 'falsch-falsch' }, sk)
+      pruefe(
+        'Gesperrtes Konto: gleiche Antwort wie unbekannte E-Mail',
+        gs?.gesperrt === true && gesperrt.s === unbek.s && gesperrt.j?.errors?.[0]?.message === unbek.j?.errors?.[0]?.message,
+        { gs, gesperrt: [gesperrt.s, gesperrt.j], unbek: [unbek.s, unbek.j] },
+      )
+      const tg = [], tu = []
+      for (let i = 0; i < 3; i++) {
+        tg.push(await zeit(sperr, 'falsch-falsch', sk))
+        tu.push(await zeit(`gibtsnicht-s${i}@bsv.test`, 'falsch-falsch', sk))
+      }
+      pruefe(`Gesperrtes Konto: Antwortzeit wie unbekannte E-Mail (Median ${Math.round(m(tg))} ms vs. ${Math.round(m(tu))} ms)`, Math.abs(m(tg) - m(tu)) < 150, { tg, tu })
+    } finally {
+      await d.q(`delete from users where email=$1`, [sperr])
+    }
+  }
+
+  // Audit 2026-10 F-4: Vor dem 2FA-Code keine echten Rollen – weder in der Login-Antwort, im Token, beim eigenen
+  // Datensatz noch über Filter (eigenes Verwaltungskonto ohne Testkonto-Ausnahme)
+  const vier = 'sicherheitstest-f4@bsv.test'
+  const vierPw = 'Blaue Bank 7 im Park!'
+  await d.q(`delete from users where email=$1`, [vier])
+  r = await api(await login('admin@bsv.test'), 'POST', '/api/users', { email: vier, name: 'Test Vierer', password: vierPw, roles: ['redaktion'] })
+  if (r.s !== 201) pruefe('Konto für den 2FA-Rollen-Test angelegt', false, r)
+  else {
+    try {
+      const lr = await fetch(B + '/api/users/login', { method: 'POST', headers: { 'Content-Type': 'application/json', 'X-Real-IP': ip() }, body: JSON.stringify({ email: vier, password: vierPw }) })
+      const lj = await lr.json()
+      const token = JSON.parse(Buffer.from(String(lj.token).split('.')[1] ?? '', 'base64url').toString() || '{}')
+      pruefe('Login-Antwort vor 2FA: keine Rollen', lr.status === 200 && Array.isArray(lj.user?.roles) && lj.user.roles.length === 0, lj.user?.roles)
+      pruefe('Anmelde-Token enthält keine Rollen', !('roles' in token), Object.keys(token))
+      const vk = lr.headers.get('set-cookie')?.match(/payload-token=[^;]+/)?.[0]
+      const eigen = await api(vk, 'GET', `/api/users/${lj.user?.id}`)
+      pruefe('Eigener Datensatz vor 2FA: Rollen/Zusatzrechte/Teams ausgeblendet', eigen.s === 200 && eigen.j?.roles === undefined && eigen.j?.zusatzrechte === undefined && eigen.j?.teamsVerantwortlich === undefined, eigen.j && Object.keys(eigen.j))
+      const filter = await api(vk, 'GET', '/api/users?where[roles][contains]=redaktion')
+      pruefe('Filter nach Rollen vor 2FA → 400', filter.s === 400, filter.s)
+      // „Passwort zurücksetzen“ meldet ebenfalls an – auch dort keine Rollen
+      await api(null, 'POST', '/api/users/forgot-password', { email: vier }, { 'X-Real-IP': ip() })
+      const [rt] = await d.q('select reset_password_token from users where email=$1', [vier])
+      const rr = rt?.reset_password_token ? await api(null, 'POST', '/api/users/reset-password', { token: rt.reset_password_token, password: 'Gruenes Licht 6 blinkt!' }) : { s: 0 }
+      pruefe('Antwort auf „Passwort zurücksetzen“ vor 2FA: keine Rollen', rr.s === 200 && Array.isArray(rr.j?.user?.roles) && rr.j.user.roles.length === 0 && !rr.j.user.zusatzrechte?.news, rr.j?.user?.roles ?? rr)
+    } finally {
+      await d.q(`delete from users where email=$1`, [vier])
+    }
+  }
+
   // Zwei-Faktor (F-22, F-23, I-01): Testkonto über „Tunnel“-Kopfzeile wie ein echtes Verwaltungskonto behandeln
   const tunnel = { 'X-Forwarded-Host': 'tunnel.example.org', 'X-Real-IP': ip() }
   const [admin] = await d.q(`select id from users where email='admin@bsv.test'`)

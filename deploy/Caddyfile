@@ -10,6 +10,10 @@ www.buedericher-spielverein.de {
 		max_size 26MB
 	}
 
+	# „Erstes Konto anlegen“ gibt es live nur auf dem Server (pnpm konto:erstes) – im Browser zusätzlich hier gesperrt
+	@erstesKonto path /admin/create-first-user* /api/users/first-register*
+	respond @erstesKonto 403
+
 	reverse_proxy 127.0.0.1:3000 {
 		# WICHTIG: Die echte Besucher-Adresse selbst setzen – ein vom Besucher mitgeschickter Wert wird überschrieben.
 		# Darauf verlässt sich die Ratenbegrenzung (Login, Formulare, Registrierung) und die Besucherstatistik.
@@ -17,9 +21,8 @@ www.buedericher-spielverein.de {
 		header_up -X-Forwarded-For
 	}
 
-	# Bilder/Dateien dürfen Browser zwischenspeichern (geschützte Dateien setzen selbst „no-store“)
-	@medien path /api/media/file/*
-	header @medien Cache-Control "public, max-age=604800"
+	# Bilder: Zwischenspeichern regelt die Website selbst (kurz, damit gelöschte Bilder – z. B. nach Widerruf einer
+	# Foto-Einwilligung – schnell verschwinden; geschützte Dateien setzen „no-store“)
 
 	log {
 		output file /var/log/caddy/bsv.log {

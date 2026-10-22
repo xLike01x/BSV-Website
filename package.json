@@ -31,6 +31,7 @@
     "medien:exif": "tsx scripts/exif-entfernen.ts",
     "sicherung:entschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/entschluesseln.ts",
     "sicherung:alte-verschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/altVerschluesseln.ts",
+    "konto:erstes": "cross-env NODE_OPTIONS=--no-deprecation payload run src/auth/erstesKonto.ts",
     "schluessel:wechseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/schluesselWechseln.ts",
     "dateien:aufraeumen": "tsx --env-file=.env scripts/dateien-aufraeumen.ts"
   },

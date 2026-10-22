@@ -1,4 +1,5 @@
 import type { Payload } from 'payload'
+import { zeileAendern } from '@/utilities/zeileAendern'
 
 type Fristen = { passUnterlagenTage?: number | null; passAntragMonate?: number | null }
 
@@ -35,12 +36,7 @@ export async function passUnterlagenAufraeumen(payload: Payload) {
       overrideAccess: true,
     })
     n += r.docs.length
-    await payload.db.updateOne({
-      collection: 'passantraege',
-      id: a.id,
-      data: { unterlagenGeloeschtAm: new Date().toISOString(), ...Object.fromEntries(KURZ.map((k) => [k, null])) } as never,
-      returning: false,
-    })
+    await zeileAendern(payload, 'passantraege', a.id, { unterlagenGeloeschtAm: new Date().toISOString(), ...Object.fromEntries(KURZ.map((k) => [k, null])) })
   }
 
   // 2. Aufbewahrungsfrist abgelaufen: Antrag samt unterschriebenem Formular löschen

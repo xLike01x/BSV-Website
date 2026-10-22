@@ -117,6 +117,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Fotos von Kindern nur mit Einverständnis der Eltern hochladen.',
       'Die Bildbeschreibung hilft Menschen, die die Seite vorgelesen bekommen – und Google.',
       'Ein Bild löschen, das noch irgendwo benutzt wird, hinterlässt dort eine Lücke.',
+      'Widerruft jemand eine Foto-Einwilligung: Bild löschen (Papierkorb genügt). Es ist dann sofort nicht mehr über die Website abrufbar; Browser der Besucher können es höchstens noch 10 Minuten aus ihrem eigenen Zwischenspeicher zeigen.',
     ],
   },
 

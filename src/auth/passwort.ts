@@ -1,6 +1,6 @@
 import crypto from 'crypto'
-import type { CollectionBeforeChangeHook, CollectionBeforeOperationHook, Field, PayloadRequest } from 'payload'
-import { APIError } from 'payload'
+import type { CollectionAfterErrorHook, CollectionBeforeChangeHook, CollectionBeforeOperationHook, Field, PayloadRequest } from 'payload'
+import { APIError, AuthenticationError, LockedAuth } from 'payload'
 
 import { ratenGrenze } from '@/hooks/spamSchutz'
 
@@ -11,15 +11,17 @@ import { MAX_LAENGE, MIN_LAENGE, passwortFehler, passwortRegeln } from './passwo
  * - Regeln aus passwortRegeln.ts (10–200 Zeichen, Groß-/Kleinbuchstabe, Zahl, Sonderzeichen, keine häufigen Passwörter,
  *   keine Reihen, nicht Name/E-Mail) – überall (Registrierung, Zurücksetzen, Ändern, Anlegen durch die Verwaltung)
  * - Eigenes Passwort ändern nur mit dem aktuellen Passwort (sonst reicht eine fremde, offene Sitzung zur Übernahme)
- * - Anmelden: höchstens 20 Versuche je Adresse und 300 für alle in 10 Minuten (zusätzlich zur Kontosperre nach 5 Fehlversuchen)
- * - Anmelden mit unbekannter E-Mail dauert genauso lange wie mit falschem Passwort (verrät nicht, wer ein Konto hat)
+ * - Anmelden: höchstens 20 Versuche je Anschluss (IPv6: je /64-Netz) und 600 für alle in 10 Minuten
+ *   (zusätzlich zur Kontosperre nach 5 Fehlversuchen)
+ * - Anmelden mit unbekannter E-Mail oder gesperrtem Konto dauert genauso lange und meldet dasselbe wie ein falsches
+ *   Passwort (verrät nicht, wer ein Konto hat – siehe anmeldeFehlerEinheitlich)
  */
 
 const pbkdf2 = (pw: string, salt: string, it: number, len: number) =>
   new Promise<Buffer>((ok, fehler) => crypto.pbkdf2(pw, salt, it, len, 'sha256', (e, b) => (e ? fehler(e) : ok(b))))
 
 /** Gleiche Parameter wie Payload (aktuell: pbkdf2-sha256-v1, 600.000 Runden; ältere Hashes: 25.000 Runden) */
-async function passwortStimmt(pw: string, hash?: string | null, salt?: string | null): Promise<boolean> {
+export async function passwortStimmt(pw: string, hash?: string | null, salt?: string | null): Promise<boolean> {
   if (!hash || !salt) return false
   const neu = hash.startsWith('pbkdf2-sha256-v1:')
   const soll = Buffer.from(neu ? hash.slice('pbkdf2-sha256-v1:'.length) : hash, 'hex')
@@ -62,12 +64,14 @@ export const passwortUndLogin: CollectionBeforeOperationHook = async ({ args, op
   // Passwörter nur einzeln ändern – ein Sammel-Update (per where) umginge „aktuelles Passwort“
   if (operation === 'update' && a.id == null && typeof a.data?.password === 'string' && req.user) throw new APIError('Passwörter bitte nur einzeln ändern.', 400)
   if (operation === 'login' && req.headers) {
-    ratenGrenze(req, 'login', 20, 300)
+    ratenGrenze(req, 'login', 20, 600)
     const email = String(a.data?.email ?? '').toLowerCase().trim()
     const pw = String(a.data?.password ?? '')
-    const vorhanden = email ? await req.payload.db.findOne({ collection: 'users', where: { email: { equals: email } }, req }) : null
-    // Unbekannte E-Mail: einmal „umsonst“ rechnen, damit die Antwort nicht schneller kommt
-    if (!vorhanden) await pbkdf2(pw || 'x', crypto.randomBytes(32).toString('hex'), 600000, 32)
+    const vorhanden = (email ? await req.payload.db.findOne({ collection: 'users', where: { email: { equals: email } }, req }) : null) as { lockUntil?: string | null } | null
+    // Unbekannte E-Mail oder gesperrtes Konto: einmal „umsonst“ rechnen – Payload bricht dort ohne Passwortprüfung ab,
+    // die Antwort käme sonst schneller und verriete, dass es das Konto gibt
+    const gesperrt = Boolean(vorhanden?.lockUntil && new Date(vorhanden.lockUntil) > new Date())
+    if (!vorhanden || gesperrt) await pbkdf2(pw || 'x', crypto.randomBytes(32).toString('hex'), 600000, 32)
   }
   if (operation === 'forgotPassword' && req.headers) ratenGrenze(req, 'passwort-vergessen', 5, 50)
   // Hier läuft die Prüfung VOR der Rechteprüfung von Payload – deshalb ohne Daten fremder Konten (sonst ließen sich
@@ -101,4 +105,11 @@ export const aktuellesPasswortFeld: Field = {
   type: 'text',
   virtual: true,
   admin: { components: { Field: '@/components/Admin/AktuellesPasswort' } },
+}
+
+/** Gleiche Meldung für „falsches Passwort“, „unbekannte E-Mail“ und „Konto gesperrt“ (sonst verrät die Sperre, dass es das Konto gibt) */
+export const ANMELDEFEHLER = 'E-Mail oder Passwort stimmen nicht. Nach 5 Fehlversuchen ist die Anmeldung für 10 Minuten gesperrt.'
+export const anmeldeFehlerEinheitlich: CollectionAfterErrorHook = ({ error }) => {
+  // instanceof statt Klassenname (der kann im Produktions-Build verkürzt sein)
+  if (error instanceof LockedAuth || error instanceof AuthenticationError) return { response: { errors: [{ message: ANMELDEFEHLER }] }, status: 401 }
 }

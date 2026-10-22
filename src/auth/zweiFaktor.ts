@@ -56,8 +56,10 @@ export const zweiFaktorFelder: Field[] = [
     defaultValue: false,
     access: {
       create: () => false,
-      // Nur Admins dürfen zurücksetzen (Haken entfernen), z. B. bei verlorenem Handy
-      update: ({ req }) => Boolean((req.user as ZfUser | null)?.roles?.includes('admin')),
+      // Nur Admins dürfen zurücksetzen (Haken entfernen), z. B. bei verlorenem Handy – aber nie von Hand setzen:
+      // ohne Geheimnis wäre das Konto danach ausgesperrt (Audit 2026-10 F-7). Gesetzt wird er nur beim Einrichten.
+      update: ({ req, siblingData, doc }) =>
+        Boolean((req.user as ZfUser | null)?.roles?.includes('admin')) && ((siblingData as { zweiFaktorAktiv?: unknown } | undefined)?.zweiFaktorAktiv !== true || (doc as { zweiFaktorAktiv?: unknown } | undefined)?.zweiFaktorAktiv === true),
     },
     admin: {
       position: 'sidebar',
@@ -327,6 +329,26 @@ export const zweiFaktorZuruecksetzen = async ({
  * /api/users/me: Ohne bestätigten Code die herabgestuften Rollen zeigen (nicht die echten) –
  * wer nur das Passwort kennt, soll nicht erfahren, welche Rechte das Konto hätte (Audit I-01).
  */
+/** Für Feldrechte: echte Rollen/Rechte nur mit bestätigtem zweiten Faktor lesbar (Audit 2026-10 F-4) */
+export const ohneOffenenZweitenFaktor = ({ req }: { req: PayloadRequest }) => !(req.user as ZfUser | null)?._zweiFaktorOffen
+
+/**
+ * Antwort auf Anmeldung und „Passwort zurücksetzen“: Für Verwaltungskonten ist der zweite Faktor direkt danach noch offen
+ * (neue Sitzung) – deshalb auch hier keine echten Rollen zeigen.
+ */
+export const loginHerabgestuft = ({ operation, req, result }: { operation: string; req: PayloadRequest; result: unknown }) => {
+  // Auch „Passwort zurücksetzen“ meldet an und antwortet mit dem Konto – der zweite Faktor ist dort ebenso offen
+  if (operation !== 'login' && operation !== 'resetPassword') return result
+  const r = result as { user?: ZfUser & { teamsVerantwortlich?: unknown } } | null
+  const u = r?.user
+  if (u && !AUS() && !(Boolean(u.testkonto) && testkontenErlaubt(req.headers)) && istPersonal(u.roles, u.zusatzrechte)) {
+    u.roles = []
+    u.zusatzrechte = {}
+    u.teamsVerantwortlich = []
+  }
+  return result
+}
+
 export const meHerabgestuft = ({ req, response }: { req: PayloadRequest; response: unknown }) => {
   const u = req.user as ZfUser | null
   const r = response as { user?: { roles?: string[]; zusatzrechte?: unknown } } | null
