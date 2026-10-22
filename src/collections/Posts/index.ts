@@ -1,6 +1,6 @@
 import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { medienPruefen } from '@/hooks/medienPruefen'
-import { medienAuswahl, nurEinzelrechte } from '@/access/roles'
+import { istLeser, medienAuswahl, nurEinzelrechte } from '@/access/roles'
 import { hatRecht } from '@/access/einzelrechte'
 import { hinweisFeld } from '@/fields/hinweise'
 import type { CollectionConfig } from 'payload'
@@ -54,6 +54,8 @@ const newsAnlegen: Access = async ({ req }) => {
 }
 
 const istRedaktion = (user: unknown) => imBereich(user, 'news')
+/** Felder der Redaktion anzeigen – auch für „Nur ansehen“ (dort ohnehin schreibgeschützt) */
+const siehtRedaktionsfelder = (user: unknown) => istRedaktion(user) || istLeser(user)
 
 /** Team-News: nur für eigene Teams, Startseite entscheidet die Redaktion */
 const teamNewsPruefen: CollectionBeforeChangeHook = async ({ req, data, operation, originalDoc }) => {
@@ -188,7 +190,7 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Für Fortgeschrittene: Google-Vorschau und passende News (optional)',
       admin: {
         initCollapsed: true,
-        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        condition: (_data, _sibling, { user }) => siehtRedaktionsfelder(user),
         description: 'Musst du nicht ausfüllen – die Website erzeugt das automatisch aus Titel, Text und Titelbild.',
       },
       fields: [
@@ -243,7 +245,7 @@ export const Posts: CollectionConfig<'posts'> = {
       relationTo: 'categories',
       admin: {
         position: 'sidebar',
-        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        condition: (_data, _sibling, { user }) => siehtRedaktionsfelder(user),
         description: 'Filter auf der News-Seite, z. B. „Fußball“ oder „Kids“.',
       },
     },
@@ -255,7 +257,7 @@ export const Posts: CollectionConfig<'posts'> = {
       access: { create: bereichFeld('news'), update: bereichFeld('news') },
       admin: {
         position: 'sidebar',
-        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        condition: (_data, _sibling, { user }) => siehtRedaktionsfelder(user),
         description: 'Zeigt die News auch auf der Startseite und unter „News“. Entscheidet die Redaktion – Team-News erscheinen zunächst nur auf der Teamseite.',
       },
     },
@@ -280,7 +282,7 @@ export const Posts: CollectionConfig<'posts'> = {
           pickerAppearance: 'dayAndTime',
         },
         position: 'sidebar',
-        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        condition: (_data, _sibling, { user }) => siehtRedaktionsfelder(user),
         description: 'Leer = Zeitpunkt der Veröffentlichung.',
       },
       hooks: {
@@ -302,7 +304,7 @@ export const Posts: CollectionConfig<'posts'> = {
       defaultValue: ({ user }) => (user ? [user.id] : []),
       admin: {
         position: 'sidebar',
-        condition: (_data, _sibling, { user }) => istRedaktion(user),
+        condition: (_data, _sibling, { user }) => siehtRedaktionsfelder(user),
         description: 'Wird automatisch mit deinem Namen vorbelegt.',
       },
       hasMany: true,
@@ -336,7 +338,7 @@ export const Posts: CollectionConfig<'posts'> = {
       slugField({
         overrides: (feld) => ({
           ...feld,
-          admin: { ...feld.admin, condition: (_data: unknown, _sibling: unknown, { user }: { user: unknown }) => istRedaktion(user) },
+          admin: { ...feld.admin, condition: (_data: unknown, _sibling: unknown, { user }: { user: unknown }) => siehtRedaktionsfelder(user) },
         }),
       }),
       'posts',

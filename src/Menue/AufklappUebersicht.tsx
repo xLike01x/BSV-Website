@@ -1,4 +1,5 @@
 'use client'
+import { useDocumentInfo } from '@payloadcms/ui'
 import React, { useCallback, useEffect, useState } from 'react'
 
 import './aufklapp.scss'
@@ -36,6 +37,8 @@ function spalten(alle: Angebot[], menue: Menue): Spalte[] {
  * Gespeichert wird sofort in der „Reihenfolge“ der Teams & Kurse, denn die Einträge SIND die Teams & Kurse.
  */
 export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Menue }) {
+  // Ohne Recht zum Speichern (z. B. „Nur ansehen“): Reihenfolge nur anzeigen
+  const darf = Boolean((useDocumentInfo().docPermissions as { update?: unknown } | undefined)?.update)
   const [alle, setAlle] = useState<Angebot[] | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
   const [laeuft, setLaeuft] = useState(false)
@@ -100,7 +103,7 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
               {s.items.map((a, i) => (
                 <li
                   key={a.id}
-                  draggable={!laeuft}
+                  draggable={darf && !laeuft}
                   onDragStart={(e) => {
                     e.dataTransfer.effectAllowed = 'move'
                     setZiehe({ spalte: s.titel, index: i })
@@ -128,6 +131,7 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
                   <a href={`/admin/collections/angebote/${a.id}`} draggable={false}>
                     {a.title}
                   </a>
+                  {darf && (
                   <span className="bsv-aufklapp__pfeile">
                     <button type="button" aria-label={`${a.title} nach oben`} disabled={laeuft || i === 0} onClick={() => verschieben(s, i, i - 1)}>
                       ▲
@@ -136,6 +140,7 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
                       ▼
                     </button>
                   </span>
+                  )}
                 </li>
               ))}
             </ol>

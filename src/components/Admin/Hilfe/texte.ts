@@ -647,11 +647,11 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Zusatzrechte pro Rolle ein- oder ausschalten – nur für Web-Admins. Zu finden unter Einstellungen → „Rollen & Rechte“ → Reiter „Rechte anpassen“.',
     wozu: {
       text: 'Jede Rolle hat feste Grundrechte. Hier lassen sich einzelne Zusatzrechte passend zu eurem Verein ein- oder ausschalten.',
-      beispiele: ['Die Kasse soll Kontaktanfragen zu Beiträgen bearbeiten', 'Trainer sollen keine Mitgliederfotos sehen', 'Die Redaktion darf erledigte Anfragen löschen'],
+      beispiele: ['Die Kasse soll Kontaktanfragen zu Beiträgen bearbeiten', 'Trainer sollen keine Mitgliederfotos sehen', 'Die Redaktion darf erledigte Anfragen löschen', '„Nur ansehen“ (z. B. Kassenprüfung) soll keine Bankdaten oder Benutzerkonten sehen'],
     },
     tun: ['Häkchen bei der gewünschten Rolle setzen oder entfernen.', 'Oben rechts „Speichern“.', 'Zur Kontrolle: oben auf den Reiter „Übersicht“ → „Rechte je Rolle“.'],
-    wirkung: ['Gilt sofort für alle mit dieser Rolle (spätestens nach 30 Sekunden).', 'Admins sehen die Seite, ändern kann sie nur ein Web-Admin.'],
-    tipps: ['Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar – das schützt vor versehentlichen Freigaben.', 'Weitere Schalter baut der Web-Admin bei Bedarf dazu.'],
+    wirkung: ['Gilt sofort nach dem Speichern für alle mit dieser Rolle.', 'Bei „Nur ansehen“ schaltet ein entfernter Haken den ganzen Bereich für diese Rolle aus – er verschwindet auch aus der Seitenleiste.', 'Admins sehen die Seite, ändern kann sie nur ein Web-Admin.'],
+    tipps: ['Admin-Rechte sind bewusst nicht einstellbar – das schützt vor versehentlichen Freigaben. Benutzerkonten und Bankdaten gibt es nur als Lese-Haken für „Nur ansehen“.', 'Weitere Schalter baut der Web-Admin bei Bedarf dazu.'],
   },
 
   datenschutz: {

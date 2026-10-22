@@ -15,7 +15,7 @@ import { wartungLesen, wartungsHinweise } from './pruefen'
  * Kommt auch, wenn alles erledigt ist („Alles in Ordnung“) – so merkt man, dass der Versand funktioniert.
  * Technik-Teil (Sicherung, Speicher, Versionen) nur für Web-Admins. Nie an Testkonten.
  */
-const VERWALTUNG = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion']
+const VERWALTUNG = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'lesen']
 const UNBESTAETIGT_TAGE = 180
 
 type Konto = { id: number; name?: string | null; email: string; roles?: string[] | null; mailBenachrichtigung?: boolean | null; freigegeben?: boolean | null; testkonto?: boolean | null }

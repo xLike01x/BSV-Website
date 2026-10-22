@@ -9,7 +9,7 @@ export type Feld = { name: string; text: string }
 export type Faq = { frage: string; antwort: string; bereich?: string }
 
 /** Rollen-Schlüssel wie in den Benutzerkonten */
-export type RolleKey = 'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
+export type RolleKey = 'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'lesen' | 'mitglied'
 
 /* ------------------------------------------------------------------ */
 /* Schritt-für-Schritt-Anleitungen                                     */
@@ -985,6 +985,61 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 /* ------------------------------------------------------------------ */
 export const FAQ: Faq[] = [
   {
+    frage: 'Wie funktioniert die Familienmitgliedschaft?',
+    antwort: 'Im Mitgliedsantrag gibt es die Beitragsart „Familie“; dort trägt die antragstellende Person die weiteren Familienmitglieder ein. Wird der Antrag auf „Aufgenommen“ gesetzt, bekommt JEDE Person eine eigene Mitgliedschaft mit eigenem digitalen Ausweis – alle unter der E-Mail des Antrags. Wer sich mit dieser E-Mail anmeldet, sieht im Mitgliederbereich die Ausweise der ganzen Familie. Einen „Familien-Datensatz“ gibt es bewusst nicht: Trennen sich Eltern oder tritt ein Kind aus, endet nur die einzelne Mitgliedschaft (Datum „Gültig bis (Austritt)“), die anderen bleiben unberührt. Soll ein Kind seine Ausweise später selbst sehen, bei seiner Mitgliedschaft unter „Benutzerkonto“ das eigene Konto eintragen. Wer welchen Beitrag zahlt, führt weiter die Mitgliederverwaltung des Vereins (z. B. DFBnet).',
+    bereich: 'mitgliedschaften',
+  },
+  {
+    frage: 'Was passiert, wenn ein Mitglied austritt?',
+    antwort: 'Kündigen über die Website geht bewusst nicht – ein Austritt hat Fristen laut Satzung und betrifft Beitrag und Lastschrift. Das Mitglied meldet sich per Kontaktformular oder E-Mail bei Kasse bzw. Vorstand. Dann: 1. Mitglieder → Mitgliedschaften → Person öffnen → „Gültig bis (Austritt)“ eintragen → Speichern (bei Familien nur die Person, die austritt). 2. Ab dem Tag danach zeigt der digitale Ausweis „nicht mehr gültig“. 3. Nach 12 Monaten (einstellbar unter Einstellungen → Datenschutz-Fristen) ist die Mitgliedschaft „fällig“ und kommt beim Aufräumen in den Papierkorb, danach wird sie endgültig gelöscht. 4. Der Mitgliedsantrag mit der IBAN ist schon 3 Monate nach der Bearbeitung fällig; beim Löschen wird die IBAN sofort entfernt. 5. Das Benutzerkonto bleibt bestehen (Anmeldung geht weiter, der Ausweis ist ungültig). Nach 24 Monaten ohne Anmeldung erscheint es als Hinweis bei den Datenschutz-Fristen. Soll es sofort weg: Benutzer öffnen → Löschen. Die Mitgliederverwaltung des Vereins (z. B. DFBnet) pflegt die Kasse wie bisher.',
+    bereich: 'mitgliedschaften',
+  },
+  {
+    frage: 'Was passiert, wenn ich einem Mitglied nachträglich eine Verwaltungsrolle gebe (z. B. Admin oder Trainer)?',
+    antwort: 'Die Rolle gilt nach dem Speichern sofort – aber erst, wenn die Person die Zwei-Faktor-Anmeldung hat. Ohne 2FA hat sie beim nächsten Klick (auch in einer schon offenen Sitzung) vorübergehend gar keine Rechte, auch nicht im Mitgliederbereich, und wird zur Einrichtung geschickt: QR-Code mit einer Authenticator-App scannen, Code eingeben, Wiederherstellungscodes sichern – danach ist sie z. B. Admin. Hatte sie die 2FA als Mitglied schon freiwillig eingerichtet, fragt die Anmeldung höchstens nach dem Code. Tipp: der Person vorher Bescheid geben, damit sie sich gleich danach anmeldet und die 2FA selbst einrichtet (sonst könnte das jemand tun, der ihr Passwort kennt – eine Hinweis-Mail warnt sie dann).',
+    bereich: 'users',
+  },
+  {
+    frage: 'Was passiert, wenn ich jemandem eine Rolle wegnehme?',
+    antwort: 'Die Rechte gelten ab der nächsten Anfrage nicht mehr – auch in einer gerade offenen Sitzung, ein neues Anmelden ist nicht nötig. Bleibt nur „Mitglied“, sieht die Person wieder nur den Mitgliederbereich. Was sie geschrieben oder hochgeladen hat (News, Bilder, Termine), bleibt erhalten. Bei Trainern zusätzlich beim Team unter „Verantwortliche“ austragen (siehe „Ein Trainer hört auf – was muss ich tun?“).',
+    bereich: 'users',
+  },
+  {
+    frage: 'Was passiert, wenn ich ein Benutzerkonto lösche?',
+    antwort: 'Das Konto ist sofort und endgültig weg – Benutzerkonten haben keinen Papierkorb. Das Profilfoto wird mit gelöscht. Erhalten bleiben: News und Bilder der Person (ohne Autor:in), Mitgliedschaften und Ausweis-Daten (dann ohne verknüpftes Konto – niemand sieht den Ausweis, bis ein anderes Konto eingetragen ist) sowie Anträge und Anfragen. Bei Teams fällt die Person aus „Verantwortliche“ heraus. Admin- und Web-Admin-Konten kann nur ein Web-Admin löschen; der letzte Web-Admin lässt sich nicht löschen. Soll jemand nur vorübergehend nicht mehr in die Verwaltung: statt löschen die Rollen bis auf „Mitglied“ entfernen.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Was passiert, wenn ich ein Team oder einen Kurs ausblende oder lösche?',
+    antwort: 'Ausblenden (Haken „Aktiv (öffentlich sichtbar)“ entfernen): Das Angebot verschwindet von der Website, aus dem Menü, dem Angebotsfinder und dem Mitgliedsantrag – News, Bilder, Zeiten und Verantwortliche bleiben erhalten, Haken wieder setzen holt alles zurück. Löschen: Das Team kommt in den Papierkorb (30 Tage zurückholbar). Erst beim endgültigen Löschen gehen Trainingsausfälle, Probetraining-Anfragen und Passanträge dieses Teams mit – der Papierkorb zeigt vorher an, was noch damit verknüpft ist. Für eine Saisonpause ist Ausblenden fast immer die bessere Wahl.',
+    bereich: 'angebote',
+  },
+  {
+    frage: 'Was passiert, wenn ich eine Seite oder News lösche, die noch verlinkt ist?',
+    antwort: 'Sie kommt zuerst in den Papierkorb und ist sofort nicht mehr auf der Website. Links darauf (Menü, Fußzeile, Knöpfe auf anderen Seiten) führen dann ins Leere. Vor dem endgültigen Löschen zeigt der Papierkorb unter „⚠️ Vorsicht – noch verknüpft“, wo der Eintrag noch verwendet wird. Am besten zuerst den Link im Menü bzw. auf der anderen Seite entfernen und dann löschen. Aus Versehen gelöscht? Aus dem Papierkorb wiederherstellen.',
+    bereich: 'pages',
+  },
+  {
+    frage: 'Was passiert, wenn zwei Personen gleichzeitig denselben Eintrag bearbeiten?',
+    antwort: 'Wer einen Eintrag öffnet, „sperrt“ ihn für die Zeit der Bearbeitung. Öffnet ihn eine zweite Person, sieht sie, wer gerade daran arbeitet, und kann ihn nur ansehen – oder die Bearbeitung bewusst übernehmen (dann gehen nicht gespeicherte Änderungen der ersten Person verloren). Deshalb nach dem Bearbeiten immer speichern und den Eintrag schließen. Wer nur die Rolle „Nur ansehen“ hat, sperrt nichts.',
+    bereich: 'dashboard',
+  },
+  {
+    frage: 'Was passiert, wenn ich einen Mitgliedsantrag aufnehme oder ablehne?',
+    antwort: 'Im Kasten „Antrag prüfen“ stehen vorher Hinweise (Alter, Beitrag, doppelte Anträge, bestehende Mitgliedschaft). „Aufnehmen“ legt automatisch die Mitgliedschaft(en) mit digitalem Ausweis an – bei Familien eine je Person; die Mitgliedsnummer ergänzt die Kasse danach unter „Mitgliedschaften“. Aufgenommen ist endgültig; ein späterer Austritt läuft über „Gültig bis (Austritt)“ bei der Mitgliedschaft. „Ablehnen“ und „Rückfrage“ ändern nur den Status. Zu jeder Entscheidung lässt sich eine E-Mail an die antragstellende Person schicken – Betreff und Text sind vorausgefüllt und vor dem Senden änderbar. Drei Monate nach der Bearbeitung ist der Antrag mit der IBAN zum Löschen fällig (Datenschutz-Fristen).',
+    bereich: 'mitgliedsantraege',
+  },
+  {
+    frage: 'Was passiert, wenn ein Mitglied seine E-Mail-Adresse ändern möchte?',
+    antwort: 'Die Anmelde-E-Mail ändert nur ein Admin: Benutzer öffnen → E-Mail ändern → Speichern (bei Admin- und Web-Admin-Konten nur ein Web-Admin). Mitglieder selbst können sie absichtlich nicht ändern – sonst könnte jemand eine fremde Adresse eintragen. Ausweise hängen am Benutzerkonto, nicht an der E-Mail, und bleiben deshalb sichtbar. In der Mitgliedschaft steht zusätzlich eine E-Mail-Adresse (darüber werden Ausweise neuen Konten zugeordnet) – die bei Bedarf ebenfalls anpassen.',
+    bereich: 'users',
+  },
+  {
+    frage: 'Gibt es eine Rolle, die nur ansehen darf?',
+    antwort: 'Ja: „Nur ansehen“. Wer nur diese Rolle hat, sieht in der Verwaltung alles – News, Termine, Seiten, Teams, Bilder, Einstellungen, auch Entwürfe und frühere Versionen –, kann aber nichts anlegen, ändern, veröffentlichen oder löschen (die Formulare sind grau, Knöpfe zum Speichern fehlen; der Server lehnt Änderungen auch über direkte Aufrufe ab). Gedacht z. B. für Vorstand oder Kassenprüfung. Sensible Bereiche schaltet der Web-Admin unter Einstellungen → „Rollen & Rechte“ → Reiter „Rechte anpassen“ → „Nur ansehen“ einzeln ab, indem er den Haken entfernt: Posteingang, Passanträge, Mitgliedsanträge, Bankdaten (IBAN), Mitgliedschaften, Benutzerkonten (inkl. Registrierungen und Profilfotos) und Besucherstatistik. Ab Werk ist alles an. Nie sichtbar: Pass-Unterlagen (Ausweise, Fotos), Papierkorb, Datensicherung, Sicherheits-Einstellungen; Exporte (z. B. für die Kasse) und Datenschutz-Auskünfte gibt es für diese Rolle nicht. Das eigene Passwort und die Zwei-Faktor-Anmeldung kann die Person selbst ändern, die Zwei-Faktor-Anmeldung ist wie bei allen Verwaltungsrollen Pflicht. Hat jemand zusätzlich eine andere Rolle (z. B. Kasse), darf er dort weiter arbeiten und sieht den Rest zum Lesen.',
+    bereich: 'users',
+  },
+  {
     frage: 'Welche Regeln gelten für Passwörter?',
     antwort: 'Überall gleich (Registrierung, „Passwort vergessen“, Mein Konto, Anlegen durch die Verwaltung): 10 bis 200 Zeichen, mindestens ein Großbuchstabe, ein Kleinbuchstabe, eine Zahl und ein Sonderzeichen (auch ein Leerzeichen zählt). Abgelehnt werden außerdem leicht zu erratende Passwörter – ein Allerweltswort oder Vereinsbegriff mit Zahlen dahinter wie „Sommer2026!“, „Passwort123!“, „BSV1919bsv!“ (auch als „P@ssw0rt“) –, Reihen wie „12345“, „abcde“, „qwert“ oder „aaaaa“ und Passwörter mit dem eigenen Namen oder der E-Mail-Adresse. Unter dem Passwortfeld steht beim Tippen, was noch fehlt, mit einer Stärke-Anzeige. Bestehende Passwörter bleiben gültig, die Regeln gelten beim nächsten Ändern. Tipp: ein kurzer Satz wie „Mein Hund frisst 3 Äpfel!“ ist sicher und gut zu merken.',
     bereich: 'users',
@@ -1557,6 +1612,22 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
       'Was ist die „Passt noch?“-Mail?',
     ],
   },
+  lesen: {
+    label: 'Nur ansehen',
+    kurz: 'Du kannst dir in der Verwaltung alles ansehen, aber nichts ändern.',
+    darf: [
+      'News, Termine, Seiten, Teams, Bilder und Einstellungen ansehen – auch Entwürfe und frühere Versionen',
+      'Posteingang, Mitgliedsanträge, Mitgliedschaften und Benutzerkonten ansehen (sofern der Web-Admin das unter „Rollen-Rechte → Nur ansehen“ nicht abgeschaltet hat)',
+      'Dein eigenes Passwort und deine Zwei-Faktor-Anmeldung ändern',
+    ],
+    darfNicht: [
+      'Etwas anlegen, ändern, veröffentlichen oder löschen',
+      'Pass-Unterlagen (Ausweise, Fotos) und den Papierkorb sehen',
+      'Datensicherungen erstellen oder herunterladen, Daten exportieren',
+    ],
+    anleitungen: [['account', 'zwei-faktor-einrichten']],
+    faq: ['Wie melde ich mich ab oder wechsle in den Mitgliederbereich?', 'Ich habe mein Passwort vergessen.', 'Ich habe mein Handy verloren / eine neue Handy-Nummer.'],
+  },
   mitglied: {
     label: 'Mitglied',
     kurz: 'Du nutzt den Mitgliederbereich der Website.',
@@ -1566,7 +1637,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   },
 }
 
-export const ROLLEN_REIHENFOLGE: RolleKey[] = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion']
+export const ROLLEN_REIHENFOLGE: RolleKey[] = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'lesen']
 
 /** Wichtigste Rolle eines Kontos (für Begrüßung und Hinweise) */
 export function hauptRolle(rollen: string[] | undefined | null): RolleKey {

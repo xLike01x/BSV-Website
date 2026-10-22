@@ -8,6 +8,7 @@ import * as migration_20261020_173527_ohne_payload_ordner from './20261020_17352
 import * as migration_20261020_191522_wartung_saison from './20261020_191522_wartung_saison';
 import * as migration_20261021_071751_passt_noch from './20261021_071751_passt_noch';
 import * as migration_20261021_105048_zusatzrechte_bereiche from './20261021_105048_zusatzrechte_bereiche';
+import * as migration_20261022_192800_nur_ansehen from './20261022_192800_nur_ansehen';
 
 export const migrations = [
   {
@@ -58,6 +59,11 @@ export const migrations = [
   {
     up: migration_20261021_105048_zusatzrechte_bereiche.up,
     down: migration_20261021_105048_zusatzrechte_bereiche.down,
-    name: '20261021_105048_zusatzrechte_bereiche'
+    name: '20261021_105048_zusatzrechte_bereiche',
+  },
+  {
+    up: migration_20261022_192800_nur_ansehen.up,
+    down: migration_20261022_192800_nur_ansehen.down,
+    name: '20261022_192800_nur_ansehen'
   },
 ];

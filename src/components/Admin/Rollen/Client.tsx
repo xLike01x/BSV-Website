@@ -63,6 +63,12 @@ const ROLLEN: { key: string; label: string; farbe: string; text: string }[] = [
     text: 'News und Fotos für eigene Teams',
   },
   {
+    key: 'lesen',
+    label: 'Nur ansehen',
+    farbe: '#475569',
+    text: 'Alles lesen, nichts ändern – sensible Bereiche einzeln abschaltbar (Rechte anpassen)',
+  },
+  {
     key: 'mitglied',
     label: 'Mitglied',
     farbe: '#6e6e73',
@@ -105,6 +111,7 @@ const VERWALTUNG = [
   'passwesen',
   'uebungsleitung',
   'teamredaktion',
+  'lesen',
 ]
 const hatZugang = (p: { rollen: string[]; zusatzrechte?: string[] }) => p.rollen.some((r) => VERWALTUNG.includes(r)) || (p.zusatzrechte ?? []).length > 0
 
@@ -150,6 +157,7 @@ export default function RollenClient({
   test,
   rechte,
   webadmin,
+  nurAnsehen = false,
 }: {
   personen: Person[]
   teams: Team[]
@@ -157,6 +165,8 @@ export default function RollenClient({
   rechte: RechteMatrix
   /** Web-Admins sehen alles (Matrix, Testkonten, Zusatzrechte); Admins eine schlanke Ansicht */
   webadmin: boolean
+  /** Rolle „Nur ansehen“: keine Links zum Anlegen, „Ansehen“ statt „Bearbeiten“ */
+  nurAnsehen?: boolean
 }) {
   const [tab, setTab] = useState<Tab>('personen')
   const [suche, setSuche] = useState('')
@@ -208,13 +218,16 @@ export default function RollenClient({
         <div>
           <h1>Rollen & Rechte</h1>
           <p>
-            Wer darf was – und für welche Teams? Ändern kannst du Rollen beim Benutzer,
-            Team-Zuordnungen beim Team unter „Verantwortliche“.
+            {nurAnsehen
+              ? 'Wer darf was – und für welche Teams? Du kannst hier nur nachsehen; ändern kann ein Admin.'
+              : 'Wer darf was – und für welche Teams? Ändern kannst du Rollen beim Benutzer, Team-Zuordnungen beim Team unter „Verantwortliche“.'}
           </p>
         </div>
-        <a className="bsv-rollen__neu" href="/admin/collections/users/create">
-          + Konto anlegen
-        </a>
+        {!nurAnsehen && (
+          <a className="bsv-rollen__neu" href="/admin/collections/users/create">
+            + Konto anlegen
+          </a>
+        )}
       </header>
 
       {(webadmin || ohneVerantwortliche > 0 || ohne2fa > 0 || alteZugaenge > 0) && (
@@ -410,7 +423,7 @@ export default function RollenClient({
                       )}
                     </td>
                     <td>
-                      <a href={`/admin/collections/users/${p.id}`}>Bearbeiten ›</a>
+                      <a href={`/admin/collections/users/${p.id}`}>{nurAnsehen ? 'Ansehen ›' : 'Bearbeiten ›'}</a>
                     </td>
                   </tr>
                 )
@@ -429,7 +442,13 @@ export default function RollenClient({
             return (
               <div key={bk} className="bsv-rollen__bereich">
                 <h2>{bl}</h2>
-                <table className="bsv-rollen__tabelle">
+                {/* Feste Spaltenbreiten: alle Bereiche (Fußball, Kids, Erwachsene) stehen sauber untereinander */}
+                <table className="bsv-rollen__tabelle bsv-rollen__tabelle--fest">
+                  <colgroup>
+                    <col style={{ width: '32%' }} />
+                    <col />
+                    <col style={{ width: '120px' }} />
+                  </colgroup>
                   <thead>
                     <tr>
                       <th>Team / Kurs</th>
@@ -465,7 +484,7 @@ export default function RollenClient({
                           )}
                         </td>
                         <td>
-                          <a href={`/admin/collections/angebote/${t.id}`}>Zuordnen ›</a>
+                          <a href={`/admin/collections/angebote/${t.id}`}>{nurAnsehen ? 'Ansehen ›' : 'Zuordnen ›'}</a>
                         </td>
                       </tr>
                     ))}
@@ -632,7 +651,13 @@ function Testkonten({
             gruppen[g]?.length ? (
               <div key={g} className="bsv-rollen__bereich">
                 <h2>{g}</h2>
-                <table className="bsv-rollen__tabelle">
+                <table className="bsv-rollen__tabelle bsv-rollen__tabelle--fest">
+                  <colgroup>
+                    <col style={{ width: '34%' }} />
+                    <col style={{ width: '22%' }} />
+                    <col style={{ width: '18%' }} />
+                    <col />
+                  </colgroup>
                   <thead>
                     <tr>
                       <th>Anmeldung (E-Mail)</th>

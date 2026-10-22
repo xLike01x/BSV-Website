@@ -23,7 +23,9 @@ const idVon = (v: unknown) => (v && typeof v === 'object' ? ((v as { id?: number
  * Wer kümmert sich? · Antworten per E-Mail/Telefon · Notizen mit Name und Datum.
  */
 export default function PosteingangKopf() {
-  const { id, collectionSlug } = useDocumentInfo()
+  const { id, collectionSlug, docPermissions } = useDocumentInfo()
+  // Ohne Recht zum Bearbeiten (z. B. „Nur ansehen“): nur anzeigen – keine Knöpfe zum Übernehmen und keine Notizen
+  const darfBearbeiten = Boolean((docPermissions as { update?: unknown } | undefined)?.update)
   const { user } = useAuth<{ id: number; roles?: string[] }>()
   const zustaendigFeld = useField<number | null>({ path: 'zustaendig' })
   const f = useFormFields(([x]) => ({
@@ -106,50 +108,52 @@ export default function PosteingangKopf() {
           <strong>{stand === null ? '…' : ich ? 'Du' : (stand.zustaendigName ?? 'Noch niemand')}</strong>
         </div>
         <div className="bsv-posteingang__knoepfe">
-          {stand && !ich && (
+          {darfBearbeiten && stand && !ich && (
             <button type="button" className="bsv-posteingang__btn bsv-posteingang__btn--primaer" disabled={laeuft} onClick={() => zustaendigSetzen(true)}>
               🙋 Ich kümmere mich
             </button>
           )}
-          {ich && (
+          {darfBearbeiten && ich && (
             <button type="button" className="bsv-posteingang__btn" disabled={laeuft} onClick={() => zustaendigSetzen(false)}>
               Abgeben
             </button>
           )}
-          {mailto && (
+          {darfBearbeiten && mailto && (
             <a className="bsv-posteingang__btn" href={mailto}>
               ✉️ Antworten
             </a>
           )}
-          {tel.length >= 5 && (
+          {darfBearbeiten && tel.length >= 5 && (
             <a className="bsv-posteingang__btn" href={`tel:${tel}`}>
               📞 Anrufen
             </a>
           )}
         </div>
       </div>
-      {mailto && <p className="bsv-posteingang__klein">„Antworten“ öffnet dein E-Mail-Programm mit Adresse und Betreff. Danach hier kurz notieren, was du geschrieben hast.</p>}
+      {darfBearbeiten && mailto && <p className="bsv-posteingang__klein">„Antworten“ öffnet dein E-Mail-Programm mit Adresse und Betreff. Danach hier kurz notieren, was du geschrieben hast.</p>}
 
       <div className="bsv-posteingang__notizen">
-        <label className="bsv-posteingang__label" htmlFor="bsv-notiz">
+        <label className="bsv-posteingang__label" htmlFor={darfBearbeiten ? 'bsv-notiz' : undefined}>
           Notizen (nur intern)
         </label>
-        <div className="bsv-posteingang__eingabe">
-          <textarea
-            id="bsv-notiz"
-            rows={2}
-            maxLength={2000}
-            value={text}
-            placeholder="z. B. „Angerufen, meldet sich am Freitag“"
-            onChange={(e) => setText(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) void notizSpeichern()
-            }}
-          />
-          <button type="button" className="bsv-posteingang__btn bsv-posteingang__btn--primaer" disabled={laeuft || !text.trim()} onClick={notizSpeichern}>
-            Notiz speichern
-          </button>
-        </div>
+        {darfBearbeiten && (
+          <div className="bsv-posteingang__eingabe">
+            <textarea
+              id="bsv-notiz"
+              rows={2}
+              maxLength={2000}
+              value={text}
+              placeholder="z. B. „Angerufen, meldet sich am Freitag“"
+              onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) void notizSpeichern()
+              }}
+            />
+            <button type="button" className="bsv-posteingang__btn bsv-posteingang__btn--primaer" disabled={laeuft || !text.trim()} onClick={notizSpeichern}>
+              Notiz speichern
+            </button>
+          </div>
+        )}
         {fehler && (
           <p className="bsv-posteingang__fehler" role="alert">
             {fehler}
@@ -167,7 +171,7 @@ export default function PosteingangKopf() {
             ))}
           </ul>
         ) : (
-          stand && <p className="bsv-posteingang__klein">Noch keine Notizen. Notizen werden sofort gespeichert – mit deinem Namen und der Uhrzeit.</p>
+          stand && <p className="bsv-posteingang__klein">{darfBearbeiten ? 'Noch keine Notizen. Notizen werden sofort gespeichert – mit deinem Namen und der Uhrzeit.' : 'Noch keine Notizen.'}</p>
         )}
       </div>
     </section>

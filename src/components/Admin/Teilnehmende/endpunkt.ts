@@ -1,6 +1,7 @@
 import type { Endpoint } from 'payload'
 
 import { hatRecht } from '@/access/einzelrechte'
+import { leserHaken } from '@/access/nurAnsehen'
 import { eigeneAngebotIds, hasRole } from '@/access/roles'
 import { rechteLaden, schalter } from '@/access/rollenRechte'
 
@@ -14,7 +15,9 @@ export const teilnehmendeEndpunkt: Endpoint = {
     if (!user || !id) return Response.json({ fehler: 'Bitte anmelden.' }, { status: 401 })
     const verwaltung = hasRole(user as never, 'admin', 'redaktion', 'kasse') || hatRecht(user, 'teams')
     const trainer = hasRole(user as never, 'uebungsleitung') && (await eigeneAngebotIds(req)).includes(id)
-    if (!verwaltung && !trainer) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
+    // „Nur ansehen“ mit Haken „Benutzerkonten“ (dazu gehören auch die Profilfotos)
+    const leser = !verwaltung && !trainer && (await leserHaken(req, 'benutzer'))
+    if (!verwaltung && !trainer && !leser) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
     await rechteLaden(req.payload)
     const fotosFuerTrainer = schalter('uebungsleitung', 'mitgliederfotos')
     const r = await req.payload.find({
@@ -29,7 +32,7 @@ export const teilnehmendeEndpunkt: Endpoint = {
       personen: r.docs.map((u) => {
         const foto = u.profilbild && typeof u.profilbild === 'object' ? u.profilbild : null
         // Fotos nur für die, die sie auch öffnen dürfen (Admin, Kasse, Übungsleitung des Kurses)
-        const darfFoto = (trainer && fotosFuerTrainer) || hasRole(user as never, 'admin', 'kasse')
+        const darfFoto = (trainer && fotosFuerTrainer) || hasRole(user as never, 'admin', 'kasse') || leser
         return { id: u.id, name: u.name, foto: foto && darfFoto ? (foto.sizes?.klein?.url ?? foto.url ?? null) : null }
       }),
     })

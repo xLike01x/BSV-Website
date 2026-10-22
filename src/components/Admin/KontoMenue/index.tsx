@@ -13,6 +13,7 @@ const ROLLEN: Record<string, string> = {
   passwesen: 'Passwesen',
   uebungsleitung: 'Trainer',
   teamredaktion: 'Team-Redaktion',
+  lesen: 'Nur ansehen',
   mitglied: 'Mitglied',
 }
 

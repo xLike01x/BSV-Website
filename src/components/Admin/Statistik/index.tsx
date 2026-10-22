@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
+import { leserHaken } from '@/access/nurAnsehen'
 import { imBereich } from '@/access/roles'
 
 import { Verlauf } from './Verlauf'
@@ -56,7 +57,7 @@ export default async function StatistikSeite({ initPageResult, params, searchPar
   const { req, permissions, visibleEntities, locale } = initPageResult
   const user = req.user
   if (!user) redirect('/login?weiter=/admin/statistik')
-  if (!imBereich(user, 'statistik')) redirect('/admin')
+  if (!imBereich(user, 'statistik') && !(await leserHaken(req, 'statistik'))) redirect('/admin')
 
   const wahl = ZEITRAEUME.find((x) => x.key === String((searchParams as Record<string, unknown> | undefined)?.zeitraum ?? '')) ?? ZEITRAEUME[1]
   const d = await statistikLaden(req.payload, wahl.tage)

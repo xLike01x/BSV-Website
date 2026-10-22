@@ -5,6 +5,7 @@ import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
 import { einzelrechteVon, einzelrechtLabel } from '@/access/einzelrechte'
+import { leserHaken } from '@/access/nurAnsehen'
 import { hasRole } from '@/access/roles'
 
 import { TESTPASSWORT, testkontenErlaubt } from '@/auth/testkonten'
@@ -18,7 +19,9 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
   const { req, permissions, visibleEntities, locale } = initPageResult
   const user = req.user
   if (!user) redirect('/login?weiter=/admin/rollen')
-  if (!hasRole(user as never, 'admin')) redirect('/admin')
+  // Admins – oder „Nur ansehen“ mit Haken „Benutzerkonten“ (dann ohne Links zum Ändern)
+  const nurAnsehen = !hasRole(user as never, 'admin')
+  if (nurAnsehen && !(await leserHaken(req, 'benutzer'))) redirect('/admin')
   const webadmin = hasRole(user as never, 'webadmin')
 
   const [nutzer, angebote] = await Promise.all([
@@ -65,7 +68,7 @@ export default async function RollenUebersicht({ initPageResult, params, searchP
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(req.headers), passwort: TESTPASSWORT }} rechte={webadmin ? await rechteBerechnen(req) : {}} webadmin={webadmin} />
+        <RollenClient personen={personen} teams={teams} test={{ erlaubt: testkontenErlaubt(req.headers), passwort: TESTPASSWORT }} rechte={webadmin ? await rechteBerechnen(req) : {}} webadmin={webadmin} nurAnsehen={nurAnsehen} />
       </Gutter>
     </DefaultTemplate>
   )

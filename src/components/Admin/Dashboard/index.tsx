@@ -49,6 +49,7 @@ const ROLLEN_LABEL: Record<string, string> = {
   passwesen: 'Passwesen',
   uebungsleitung: 'Trainer',
   teamredaktion: 'Team-Redaktion',
+  lesen: 'Nur ansehen',
   mitglied: 'Mitglied',
 }
 
@@ -65,7 +66,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   const rollen = ((user as { roles?: string[] }).roles ?? []) as string[]
   // Nur über Einzelrechte hier (keine Verwaltungs-Rolle): schlankes Dashboard nur mit den freigegebenen Bereichen
   const nurZusatz = nurEinzelrechte(user)
-  const istTeamRolle = !nurZusatz && !rollen.some((r) => ['admin', 'redaktion', 'kasse', 'passwesen'].includes(r))
+  const istTeamRolle = !nurZusatz && !rollen.some((r) => ['admin', 'redaktion', 'kasse', 'passwesen', 'lesen'].includes(r))
   const vorname = ((user as { name?: string }).name || user.email || '').split(/[\s@]/)[0]
   const zaehle = (collection: CollectionSlug, where?: Where) =>
     sicher(async () => (await payload.count({ collection, where, user, overrideAccess: false, req })).totalDocs, 0)
@@ -194,7 +195,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
 
   // Erste Schritte: erste eigene News (bzw. Ausfall für Übungsleitungen)
   const ersteAufgabe =
-    rolle === 'kasse' || rolle === 'passwesen' || nurZusatz
+    rolle === 'kasse' || rolle === 'passwesen' || rolle === 'lesen' || nurZusatz
       ? undefined
       : rolle === 'uebungsleitung'
         ? {
@@ -296,7 +297,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
       <details className="bsv-dash__willkommen" open={!((user as { name?: string }).name)}>
         <summary>
           <strong>
-            Du bist {profil.label}
+            Du bist {rolle === 'lesen' ? 'zum Ansehen freigeschaltet' : profil.label}
             {teamNamen.length > 0 && <> für {teamNamen.join(', ')}</>}.
           </strong>{' '}
           <span>{profil.kurz}</span>
@@ -377,6 +378,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
       <div className="bsv-dash__raster">
         <section className="bsv-dash__box">
           <h2>Schnellzugriff</h2>
+          {aktionen.length === 0 && <p className="bsv-dash__leer">Hier gibt es für dich nichts anzulegen. Alle Bereiche zum Ansehen findest du unten.</p>}
           <div className="bsv-dash__aktionen">
             {aktionen.map((a) => (
               <a key={a.href} href={a.href} className={a.primaer ? 'bsv-dash__btn bsv-dash__btn--primaer' : 'bsv-dash__btn'}>

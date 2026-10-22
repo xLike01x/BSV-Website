@@ -35,7 +35,9 @@ const KNOPF: Record<Entscheidung, { text: string; klasse: string; folge: string 
 
 /** Prüfhilfe oben im Mitgliedsantrag – mit den drei Entscheidungs-Knöpfen */
 export default function AntragPruefung() {
-  const { id } = useDocumentInfo()
+  const { id, docPermissions } = useDocumentInfo()
+  // Ohne Recht zum Bearbeiten (z. B. „Nur ansehen“): Prüfhinweise ja, Entscheidungs-Knöpfe nein
+  const darf = Boolean((docPermissions as { update?: unknown } | undefined)?.update)
   const { user } = useAuth<{ name?: string; email?: string }>()
   const geaendert = useFormModified()
   const f = useFormFields(([x]) => ({
@@ -158,7 +160,7 @@ export default function AntragPruefung() {
   }
 
   // Aufgenommen ist endgültig (Ausweis existiert) – danach keine Knöpfe mehr
-  const moeglich = f.status === 'aufgenommen' ? [] : (['aufgenommen', 'rueckfrage', 'abgelehnt'] as Entscheidung[]).filter((e) => e !== f.status)
+  const moeglich = !darf || f.status === 'aufgenommen' ? [] : (['aufgenommen', 'rueckfrage', 'abgelehnt'] as Entscheidung[]).filter((e) => e !== f.status)
 
   return (
     <section className="bsv-pruefung" aria-label="Antrag prüfen">

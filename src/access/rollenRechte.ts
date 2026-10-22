@@ -4,7 +4,7 @@ import { hasRole } from './roles'
 
 /**
  * Zusatzrechte, die der Web-Admin pro Rolle ein- und ausschalten kann (Einstellungen → Rollen-Rechte).
- * Bewusst nur ausgewählte, ungefährliche Schalter – Benutzer, Admin-Rechte und Bankdaten bleiben fest.
+ * Bewusst nur ausgewählte Schalter – Admin-Rechte bleiben fest; Benutzer und Bankdaten nur als Lese-Schalter für „Nur ansehen“.
  */
 export const SCHALTER = {
   redaktion: [
@@ -22,6 +22,16 @@ export const SCHALTER = {
     { key: 'mitgliederfotos', label: 'Profilfotos der Mitglieder in den eigenen Teams sehen', standard: true },
   ],
   teamredaktion: [{ key: 'ausfaelle', label: 'Trainingsausfälle der eigenen Teams melden', standard: true }],
+  // „Nur ansehen“: Inhalte, Website-Aufbau, Teams und Einstellungen sieht die Rolle immer – diese Bereiche lassen sich abschalten
+  lesen: [
+    { key: 'posteingang', label: 'Kontaktanfragen, Probetraining-Anfragen und Formular-Eingänge ansehen', standard: true },
+    { key: 'passantraege', label: 'Passanträge ansehen (ohne Pass-Unterlagen)', standard: true },
+    { key: 'mitgliedsantraege', label: 'Mitgliedsanträge ansehen', standard: true },
+    { key: 'bankdaten', label: 'Bankdaten in Mitgliedsanträgen ansehen (IBAN, Kontoinhaber, SEPA)', standard: true },
+    { key: 'mitgliedschaften', label: 'Mitgliedschaften ansehen', standard: true },
+    { key: 'benutzer', label: 'Benutzerkonten, Registrierungen und Profilfotos ansehen', standard: true },
+    { key: 'statistik', label: 'Besucherstatistik ansehen', standard: true },
+  ],
 } as const
 
 export type SchalterRolle = keyof typeof SCHALTER
@@ -30,8 +40,18 @@ type Stand = Record<string, Record<string, boolean>>
 const standard = (): Stand =>
   Object.fromEntries(Object.entries(SCHALTER).map(([r, liste]) => [r, Object.fromEntries(liste.map((s) => [s.key, s.standard]))]))
 
-const g = globalThis as unknown as { __bsvRechte?: { stand: Stand; geladen: number; laeuft?: Promise<void> } }
+const g = globalThis as unknown as { __bsvRechte?: { stand: Stand; geladen: number; laeuft?: Promise<void>; gespeichert?: number } }
 const speicher = () => (g.__bsvRechte ??= { stand: standard(), geladen: 0 })
+
+const ausDokument = (doc: unknown): Stand => {
+  const d = doc as Record<string, Record<string, boolean | null> | undefined> | null | undefined
+  const neu = standard()
+  for (const [r, liste] of Object.entries(SCHALTER)) for (const sch of liste) {
+    const v = d?.[r]?.[sch.key]
+    if (typeof v === 'boolean') neu[r]![sch.key] = v
+  }
+  return neu
+}
 
 /** Gespeicherten Stand neu lesen (beim Start, nach dem Speichern und spätestens alle 30 Sekunden) */
 export async function rechteLaden(payload: Payload, erzwingen = false) {
@@ -40,14 +60,13 @@ export async function rechteLaden(payload: Payload, erzwingen = false) {
   if (s.laeuft) return s.laeuft
   s.laeuft = (async () => {
     try {
-      const doc = (await payload.findGlobal({ slug: 'rollenRechte' as never, depth: 0, overrideAccess: true })) as unknown as Record<string, Record<string, boolean | null> | undefined>
-      const neu = standard()
-      for (const [r, liste] of Object.entries(SCHALTER)) for (const sch of liste) {
-        const v = doc?.[r]?.[sch.key]
-        if (typeof v === 'boolean') neu[r]![sch.key] = v
+      const start = Date.now()
+      const doc = await payload.findGlobal({ slug: 'rollenRechte' as never, depth: 0, overrideAccess: true })
+      // Während des Lesens gespeichert? Dann ist der übernommene Stand aktueller als das Gelesene
+      if ((s.gespeichert ?? 0) < start) {
+        s.stand = ausDokument(doc)
+        s.geladen = Date.now()
       }
-      s.stand = neu
-      s.geladen = Date.now()
     } catch {
       // Tabelle evtl. noch nicht angelegt – Standardwerte gelten
     } finally {
@@ -55,6 +74,17 @@ export async function rechteLaden(payload: Payload, erzwingen = false) {
     }
   })()
   return s.laeuft
+}
+
+/**
+ * Stand aus einem gelesenen bzw. gerade gespeicherten Dokument übernehmen.
+ * Beim Speichern direkt aus dem Hook aufrufen: Ein erneutes Lesen liefe außerhalb der noch offenen Transaktion
+ * und sähe die alten Werte (dann gälten die Änderungen erst nach 30 Sekunden).
+ */
+export function rechteUebernehmen(doc: unknown) {
+  const s = speicher()
+  s.stand = ausDokument(doc)
+  s.geladen = s.gespeichert = Date.now()
 }
 
 /** Ist der Schalter für diese Rolle an? (synchron – nutzt den zuletzt geladenen Stand) */

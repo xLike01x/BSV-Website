@@ -1,10 +1,13 @@
 'use client'
+import { useDocumentInfo } from '@payloadcms/ui'
 import React, { useEffect, useState } from 'react'
 
 import type { Faellig } from './aufraeumen'
 
 /** Oben in „Datenschutz-Fristen“: Was ist gerade über der Frist? + Knopf zum Aufräumen */
 export default function Uebersicht() {
+  // Ohne Recht zum Speichern (z. B. „Nur ansehen“): nur anzeigen, kein Knopf „Jetzt aufräumen“
+  const darfAendern = Boolean((useDocumentInfo().docPermissions as { update?: unknown } | undefined)?.update)
   const [faellig, setFaellig] = useState<Faellig[] | null>(null)
   const [laeuft, setLaeuft] = useState(false)
   const [meldung, setMeldung] = useState<string | null>(null)
@@ -62,7 +65,7 @@ export default function Uebersicht() {
               </li>
             ))}
           </ul>
-          {faellig.some((f) => !f.hinweis) && (
+          {darfAendern && faellig.some((f) => !f.hinweis) && (
             <button type="button" onClick={los} disabled={laeuft}>
               {laeuft ? 'Wird aufgeräumt …' : '🧹 Jetzt aufräumen'}
             </button>

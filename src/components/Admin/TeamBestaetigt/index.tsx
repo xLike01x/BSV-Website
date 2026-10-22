@@ -11,7 +11,9 @@ const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 
  * Gespeichert wird sofort über einen eigenen Endpunkt – das Formular gilt danach nicht als „ungespeichert“.
  */
 export default function TeamBestaetigt() {
-  const { id } = useDocumentInfo()
+  const { id, docPermissions } = useDocumentInfo()
+  // Ohne Recht zum Bearbeiten (z. B. „Nur ansehen“): nur das Datum zeigen
+  const darf = Boolean((docPermissions as { update?: unknown } | undefined)?.update)
   const am = useField<string | null>({ path: 'bestaetigtAm' })
   const von = useField<string | null>({ path: 'bestaetigtVon' })
   const [laeuft, setLaeuft] = useState(false)
@@ -40,7 +42,7 @@ export default function TeamBestaetigt() {
     <div className={`bsv-bestaetigt${alt ? ' is-alt' : ''}`}>
       <span className="bsv-bestaetigt__label">Angaben zuletzt bestätigt</span>
       <strong>{am.value ? `${datum(am.value)}${von.value ? ` · ${von.value}` : ''}` : id ? 'noch nie' : 'beim ersten Speichern'}</strong>
-      {id && (
+      {id && darf && (
         <>
           <button type="button" onClick={bestaetigen} disabled={laeuft}>
             {laeuft ? 'Wird gespeichert …' : '✓ Alles noch aktuell'}

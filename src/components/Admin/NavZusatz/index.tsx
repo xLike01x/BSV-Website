@@ -38,9 +38,11 @@ export default function NavZusatz() {
   const { user } = useAuth<{ roles?: string[] }>()
   const pfad = usePathname()
   const rollen = user?.roles ?? []
-  const sichtbar = EINTRAEGE.filter((e) => eintragSichtbar(e, user))
   const [ziele, setZiele] = useState<Record<string, Element | null>>({})
   const [zahlen, setZahlen] = useState<Record<string, number>>({})
+  // „Nur ansehen“: Einträge, deren Haken unter Rollen-Rechte entfernt ist (kommt vom Server)
+  const [aus, setAus] = useState<string[]>([])
+  const sichtbar = EINTRAEGE.filter((e) => eintragSichtbar(e, user) && !aus.includes(e.key))
 
   // Container in den Gruppen anlegen – erneut prüfen, falls die Seitenleiste neu gezeichnet wird
   useEffect(() => {
@@ -74,7 +76,10 @@ export default function NavZusatz() {
   // Zähler laden: beim Seitenwechsel und jede Minute
   const laden = useCallback(async () => {
     const r = await fetch('/api/posteingang', { credentials: 'include', cache: 'no-store' }).catch(() => null)
-    if (r?.ok) setZahlen(await r.json())
+    if (!r?.ok) return
+    const { _aus, ...z } = (await r.json()) as Record<string, number> & { _aus?: string[] }
+    setZahlen(z)
+    setAus(Array.isArray(_aus) ? _aus : [])
   }, [])
   useEffect(() => {
     if (!user) return

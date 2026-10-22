@@ -1,5 +1,5 @@
 'use client'
-import { useFormFields, useFormModified, usePreferences } from '@payloadcms/ui'
+import { useDocumentInfo, useFormFields, useFormModified, usePreferences } from '@payloadcms/ui'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import { Ablauf } from '@/components/Admin/Hilfe/Zusammenhang'
@@ -27,6 +27,8 @@ const SCHRITTE = [
 /** Über „Menü & Fußzeile“: Ablauf + Live-Prüfung (unveröffentlichte Seiten, zu viele Einträge) */
 export default function MenueEinstieg() {
   const { getPreference, setPreference } = usePreferences()
+  // Ohne Recht zum Speichern (z. B. „Nur ansehen“): Hinweise ja, Knöpfe „+ In die Fußzeile“ nein
+  const darf = Boolean((useDocumentInfo().docPermissions as { update?: unknown } | undefined)?.update)
   const [zu, setZu] = useState<boolean | null>(null)
   const [entwuerfe, setEntwuerfe] = useState<string[]>([])
 
@@ -126,12 +128,16 @@ export default function MenueEinstieg() {
                 <a href={adresse} target="_blank" rel="noopener">
                   {label} ↗
                 </a>
-                <button type="button" onClick={() => eintragen(label, adresse, 'fusszeile')} disabled={Boolean(laeuft)}>
-                  {laeuft === adresse + 'fusszeile' ? '…' : '+ In die Fußzeile'}
-                </button>
-                <button type="button" onClick={() => eintragen(label, adresse, 'vereinMehr')} disabled={Boolean(laeuft)}>
-                  {laeuft === adresse + 'vereinMehr' ? '…' : '+ Ins Menü „Verein“'}
-                </button>
+                {darf && (
+                  <>
+                    <button type="button" onClick={() => eintragen(label, adresse, 'fusszeile')} disabled={Boolean(laeuft)}>
+                      {laeuft === adresse + 'fusszeile' ? '…' : '+ In die Fußzeile'}
+                    </button>
+                    <button type="button" onClick={() => eintragen(label, adresse, 'vereinMehr')} disabled={Boolean(laeuft)}>
+                      {laeuft === adresse + 'vereinMehr' ? '…' : '+ Ins Menü „Verein“'}
+                    </button>
+                  </>
+                )}
               </li>
             ))}
           </ul>

@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
+import { leserHaken } from '@/access/nurAnsehen'
 import { darfRegistrierungen, unbestaetigt, WARTEND } from '@/auth/registrierung'
 
 import RegistrierungenClient, { type Eintrag } from './Client'
@@ -14,7 +15,9 @@ export default async function Registrierungen({ initPageResult, params, searchPa
   const { req, permissions, visibleEntities, locale } = initPageResult
   if (!req.user) redirect('/login?weiter=/admin/registrierungen')
   // Echte Rollen zählen erst nach bestätigtem zweiten Faktor (die Sitzung ist sonst auf Mitglied herabgestuft)
-  if (!darfRegistrierungen(req.user)) redirect('/admin')
+  // „Nur ansehen“ (Haken „Benutzerkonten“): Liste ohne Freigeben/Ablehnen
+  const nurAnsehen = !darfRegistrierungen(req.user)
+  if (nurAnsehen && !(await leserHaken(req, 'benutzer'))) redirect('/admin')
   const r = await req.payload.find({ collection: 'users', where: WARTEND, sort: '-createdAt', limit: 200, depth: 1, overrideAccess: true })
   // Noch nicht bestätigt: erscheinen erst nach Klick auf den Link in der E-Mail
   const offen = (await req.payload.find({ collection: 'users', where: { and: [{ freigegeben: { equals: false } }, { registriertUeber: { equals: 'email' } }, { emailBestaetigt: { not_equals: true } }] }, limit: 0, depth: 0, overrideAccess: true })).totalDocs
@@ -61,7 +64,7 @@ export default async function Registrierungen({ initPageResult, params, searchPa
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <RegistrierungenClient eintraege={eintraege} angebote={alleAngebote} offen={offen} />
+        <RegistrierungenClient eintraege={eintraege} angebote={alleAngebote} offen={offen} nurAnsehen={nurAnsehen} />
       </Gutter>
     </DefaultTemplate>
   )

@@ -33,7 +33,7 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
       overrideAccess: true,
       where: {
         and: [
-          { roles: { in: ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion'] } },
+          { roles: { in: ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'lesen'] } },
           { testkonto: { not_equals: true } },
           { or: [{ letzteAnmeldung: { less_than: halbesJahr } }, { and: [{ letzteAnmeldung: { exists: false } }, { createdAt: { less_than: vorMonat } }] }] },
         ],

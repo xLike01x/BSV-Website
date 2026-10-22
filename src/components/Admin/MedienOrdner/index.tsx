@@ -1,7 +1,7 @@
 import type { Payload, TypedUser } from 'payload'
 import React from 'react'
 
-import { alleBilder, imBereich } from '@/access/roles'
+import { alleBilder, imBereich, istLeser } from '@/access/roles'
 
 import MedienOrdnerClient, { type Ordner } from './Client'
 import './ordner.scss'
@@ -18,7 +18,7 @@ const idVon = (v: unknown): number | null => (v == null ? null : typeof v === 'o
 export default async function MedienOrdner({ payload, user }: { payload: Payload; user: TypedUser | null }) {
   if (!user) return null
   // Alle Ordner sehen: Redaktion und Zusatzrechte mit Bildern; Bilder verschieben/zuordnen: nur Redaktion bzw. Zusatzrecht „medien“
-  const alle = alleBilder(user)
+  const alle = alleBilder(user) || istLeser(user)
   const redaktion = imBereich(user, 'medien')
 
   const [medien, angebote] = await Promise.all([

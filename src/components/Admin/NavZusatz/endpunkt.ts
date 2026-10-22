@@ -1,6 +1,9 @@
 import type { Endpoint, Where } from 'payload'
 
+import { leserHaken } from '@/access/nurAnsehen'
 import { hasRole } from '@/access/roles'
+import { rechteLaden } from '@/access/rollenRechte'
+import { EINTRAEGE, eintragSichtbar } from './eintraege'
 import { darfRegistrierungen, WARTEND } from '@/auth/registrierung'
 import { istPassVerwaltung } from '@/passantraege/zugriff'
 
@@ -32,8 +35,14 @@ export const posteingangEndpunkt: Endpoint = {
         if (r) zahlen[sammlung] = r.totalDocs
       }),
     )
-    if (darfRegistrierungen(user)) {
+    if (darfRegistrierungen(user) || (await leserHaken(req, 'benutzer'))) {
       zahlen.registrierungen = (await req.payload.count({ collection: 'users', where: WARTEND, overrideAccess: true, req })).totalDocs
+    }
+    // „Nur ansehen“: Sonderseiten, deren Haken der Web-Admin entfernt hat (der Browser kennt nur die Standardwerte)
+    if (hasRole(user as never, 'lesen')) {
+      await rechteLaden(req.payload)
+      const aus = EINTRAEGE.filter((e) => !eintragSichtbar(e, user)).map((e) => e.key)
+      return Response.json({ ...zahlen, _aus: aus }, { headers: { 'Cache-Control': 'no-store' } })
     }
     return Response.json(zahlen, { headers: { 'Cache-Control': 'no-store' } })
   },

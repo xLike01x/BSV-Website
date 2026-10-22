@@ -186,6 +186,15 @@
   }
 }
 
+/* Mehrere Tabellen untereinander mit gleichen Spalten (Breiten über <colgroup>) */
+.bsv-rollen__tabelle--fest {
+  table-layout: fixed;
+
+  td {
+    overflow-wrap: anywhere;
+  }
+}
+
 .bsv-rollen__klein {
   display: block;
   color: #6e6e73;

@@ -273,6 +273,9 @@ export function MedienHinweise() {
 /** Formular: Wo ist es eingebunden – und wie bindet man es ein? */
 function SeiteMitFormular({ id }: { id: number | string }) {
   const titel = useFormFields(([f]) => f?.title?.value as string | undefined)
+  // Nur wer Seiten anlegen darf, bekommt den Knopf (nicht z. B. „Nur ansehen“)
+  const { permissions } = useAuth()
+  const darfSeiten = Boolean((permissions as { collections?: Record<string, { create?: boolean }> } | undefined)?.collections?.pages?.create)
   const [laeuft, setLaeuft] = useState(false)
   const [fehler, setFehler] = useState(false)
   const anlegen = async () => {
@@ -293,6 +296,7 @@ function SeiteMitFormular({ id }: { id: number | string }) {
       setLaeuft(false)
     }
   }
+  if (!darfSeiten) return null
   return (
     <>
       <button type="button" className="bsv-hinweise__knopf" onClick={anlegen} disabled={laeuft}>

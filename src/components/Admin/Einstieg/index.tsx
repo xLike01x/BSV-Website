@@ -133,7 +133,7 @@ export default function Einstieg() {
         <div className={`bsv-einstieg__inhalt${links && grafik ? '' : ' is-einspaltig'}`}>
           {links && (
             <div>
-              {e.extra === 'ausfall-schnell' && <AusfallSchnell />}
+              {e.extra === 'ausfall-schnell' && darfAnlegen && <AusfallSchnell />}
               {vorlagen.length > 0 && (
                 <>
                   <h3>{e.vorlagenTitel ?? 'Mit einer Vorlage starten'}</h3>

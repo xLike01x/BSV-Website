@@ -6,6 +6,7 @@ import { seoPlugin } from '@payloadcms/plugin-seo'
 import { searchPlugin } from '@payloadcms/plugin-search'
 import { Plugin } from 'payload'
 import { zweistufigerPapierkorb } from '@/papierkorb/plugin'
+import { nurAnsehen } from '@/access/nurAnsehen'
 import { anyone } from '@/access/anyone'
 import { ausblendenAusser, ausblendenAusserBereich, ausblendenAusserMit, bereichFeld, bereichZugriff, isAdmin, isEditor, rolleOderRecht } from '@/access/roles'
 import { spamSchutz } from '@/hooks/spamSchutz'
@@ -148,6 +149,8 @@ export const plugins: Plugin[] = [
   keineUploadsPerAdresse,
   // Sortieren über die Schnittstelle nur nach eigenen Feldern (nicht über verknüpfte Konten)
   sortierenNurEigeneFelder,
+  // Rolle „Nur ansehen“: alles lesen, nichts ändern – nach allen Plugins, die Bereiche anlegen, und vor dem Papierkorb
+  nurAnsehen,
   // Muss als Letztes laufen: hängt sich an alle Bereiche mit Papierkorb (auch die der Plugins)
   zweistufigerPapierkorb,
 ]

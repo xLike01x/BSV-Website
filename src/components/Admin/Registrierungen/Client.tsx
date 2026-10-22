@@ -11,7 +11,7 @@ const BEREICHE: [string, string][] = [
   ['erwachsene', 'Erwachsene & Senioren'],
 ]
 
-function Karte({ e, angebote, laeuft, aktion }: { e: Eintrag; angebote: Angebot[]; laeuft: boolean; aktion: (art: 'freigeben' | 'ablehnen', auswahl: number[]) => void }) {
+function Karte({ e, angebote, laeuft, aktion, nurAnsehen }: { e: Eintrag; angebote: Angebot[]; laeuft: boolean; aktion: (art: 'freigeben' | 'ablehnen', auswahl: number[]) => void; nurAnsehen: boolean }) {
   const [auswahl, setAuswahl] = useState<number[]>(e.wuensche)
   const [alle, setAlle] = useState(false)
   const umschalten = (id: number) => setAuswahl((a) => (a.includes(id) ? a.filter((x) => x !== id) : [...a, id]))
@@ -35,7 +35,7 @@ function Karte({ e, angebote, laeuft, aktion }: { e: Eintrag; angebote: Angebot[
         </div>
       </div>
       <div className="bsv-reg__teams">
-        <strong>Teams & Kurse zuordnen</strong>
+        <strong>{nurAnsehen ? 'Gewünschte Teams & Kurse' : 'Teams & Kurse zuordnen'}</strong>
         <small>{wunschNamen.length ? `Angekreuzt bei der Registrierung: ${wunschNamen.join(', ')}. Schon vorausgewählt – Haken setzen oder entfernen.` : 'Bei der Registrierung nichts angekreuzt. Passende Teams & Kurse auswählen (geht auch später unter „Benutzer“).'}</small>
         {BEREICHE.map(([wert, titel]) => {
           const liste = sichtbar.filter((a) => a.bereich === wert)
@@ -45,7 +45,7 @@ function Karte({ e, angebote, laeuft, aktion }: { e: Eintrag; angebote: Angebot[
               <legend>{titel}</legend>
               {liste.map((a) => (
                 <label key={a.id} className={e.wuensche.includes(a.id) ? 'bsv-reg__wunsch' : undefined}>
-                  <input type="checkbox" checked={auswahl.includes(a.id)} onChange={() => umschalten(a.id)} />
+                  <input type="checkbox" checked={auswahl.includes(a.id)} disabled={nurAnsehen} onChange={() => umschalten(a.id)} />
                   {a.title}
                   {e.wuensche.includes(a.id) && <span> (Wunsch)</span>}
                 </label>
@@ -59,7 +59,8 @@ function Karte({ e, angebote, laeuft, aktion }: { e: Eintrag; angebote: Angebot[
           </button>
         )}
       </div>
-      <div className="bsv-reg__knoepfe">
+      {!nurAnsehen && (
+        <div className="bsv-reg__knoepfe">
         <button type="button" className="bsv-reg__ja" disabled={laeuft} onClick={() => aktion('freigeben', auswahl)}>
           {auswahl.length ? `Freigeben mit ${auswahl.length} ${auswahl.length === 1 ? 'Team/Kurs' : 'Teams/Kursen'}` : 'Freigeben (ohne Team/Kurs)'}
         </button>
@@ -67,11 +68,12 @@ function Karte({ e, angebote, laeuft, aktion }: { e: Eintrag; angebote: Angebot[
           Ablehnen
         </button>
       </div>
+      )}
     </li>
   )
 }
 
-export default function RegistrierungenClient({ eintraege, angebote, offen }: { eintraege: Eintrag[]; angebote: Angebot[]; offen: number }) {
+export default function RegistrierungenClient({ eintraege, angebote, offen, nurAnsehen = false }: { eintraege: Eintrag[]; angebote: Angebot[]; offen: number; nurAnsehen?: boolean }) {
   const router = useRouter()
   const [laeuft, setLaeuft] = useState<number | null>(null)
   const [fehler, setFehler] = useState<string | null>(null)
@@ -93,9 +95,15 @@ export default function RegistrierungenClient({ eintraege, angebote, offen }: { 
     <div className="bsv-reg">
       <h1>Registrierungen</h1>
       <p className="bsv-reg__intro">
-        Hier landen Personen, die sich auf der Website selbst ein Konto erstellt <strong>und ihre E-Mail-Adresse bestätigt</strong> haben. Erst nach deiner Freigabe sehen sie den Mitgliederbereich.
+        Hier landen Personen, die sich auf der Website selbst ein Konto erstellt <strong>und ihre E-Mail-Adresse bestätigt</strong> haben. Erst nach der Freigabe sehen sie den Mitgliederbereich.
         <br />
-        1. Teams & Kurse prüfen (die Wünsche der Person sind schon angehakt). 2. <strong>Freigeben</strong>, wenn die Person Mitglied ist – sie bekommt dann eine E-Mail. <strong>Ablehnen</strong> löscht das Konto.
+        {nurAnsehen ? (
+          'Du kannst hier nur nachsehen – freigeben oder ablehnen kann die Kasse oder ein Admin.'
+        ) : (
+          <>
+            1. Teams & Kurse prüfen (die Wünsche der Person sind schon angehakt). 2. <strong>Freigeben</strong>, wenn die Person Mitglied ist – sie bekommt dann eine E-Mail. <strong>Ablehnen</strong> löscht das Konto.
+          </>
+        )}
       </p>
       {offen > 0 && (
         <p className="bsv-reg__hinweis">
@@ -109,7 +117,7 @@ export default function RegistrierungenClient({ eintraege, angebote, offen }: { 
       ) : (
         <ul className="bsv-reg__liste">
           {eintraege.map((e) => (
-            <Karte key={e.id} e={e} angebote={angebote} laeuft={laeuft === e.id} aktion={(art, auswahl) => aktion(e, art, auswahl)} />
+            <Karte key={e.id} e={e} angebote={angebote} laeuft={laeuft === e.id} aktion={(art, auswahl) => aktion(e, art, auswahl)} nurAnsehen={nurAnsehen} />
           ))}
         </ul>
       )}

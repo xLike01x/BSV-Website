@@ -12,11 +12,12 @@ import { type EinzelrechtKey, hatEinzelrechte, hatRecht } from './einzelrechte'
  * - passwesen:      Fußball-Passanträge aller Teams (auch ohne eigenes Team)
  * - uebungsleitung: eigene Teams/Kurse pflegen, Ausfälle, Probetraining-Anfragen, Team-News und -Bilder
  * - teamredaktion:  eigene Teams/Kurse: News, Bilder, Zeiten, Ausfälle (z. B. Pressewart einer Mannschaft)
+ * - lesen:          „Nur ansehen“ – alles lesen, nichts ändern (siehe src/access/nurAnsehen.ts)
  * - mitglied:       nur Mitgliederbereich auf der Website
  *
  * „Eigene“ Teams sind die, bei denen die Person im Angebot unter „Verantwortliche“ eingetragen ist.
  */
-export const ROLES = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'mitglied'] as const
+export const ROLES = ['webadmin', 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'lesen', 'mitglied'] as const
 export type Role = (typeof ROLES)[number]
 
 export const ROLE_OPTIONS: { label: string; value: Role }[] = [
@@ -27,8 +28,14 @@ export const ROLE_OPTIONS: { label: string; value: Role }[] = [
   { label: 'Passwesen (Spielerpässe Fußball)', value: 'passwesen' },
   { label: 'Trainer', value: 'uebungsleitung' },
   { label: 'Team-Redaktion', value: 'teamredaktion' },
+  { label: 'Nur ansehen (alles lesen, nichts ändern)', value: 'lesen' },
   { label: 'Mitglied', value: 'mitglied' },
 ]
+
+/** Rollen, mit denen jemand in die Verwaltung kommt (Web-Admin hat immer auch „admin“) */
+export const VERWALTUNGS_ROLLEN: Role[] = ['admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'lesen']
+/** Rollen, die in der Verwaltung etwas ändern dürfen (alle außer „Nur ansehen“) */
+export const SCHREIB_ROLLEN: Role[] = ['admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion']
 
 /** Rollen mit Rechten für „eigene“ Teams und Kurse */
 export const TEAM_ROLLEN: Role[] = ['uebungsleitung', 'teamredaktion']
@@ -95,8 +102,16 @@ export const isEditorField: FieldAccess = ({ req }) => hasRole(userOf(req), 'adm
 export const isFinance: Access = ({ req }) => hasRole(userOf(req), 'admin', 'kasse')
 
 /** Wer darf das Admin-Panel unter /admin öffnen? Mitglieder nutzen nur die Website. */
-export const canUseAdminPanel = ({ req }: { req: PayloadRequest }): boolean =>
-  hasRole(userOf(req), 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(req.user)
+export const canUseAdminPanel = ({ req }: { req: PayloadRequest }): boolean => istVerwaltung(req.user)
+
+/** Verwaltungs-Zugang: eine Verwaltungsrolle oder mindestens ein Einzelrecht */
+export const istVerwaltung = (user: unknown): boolean => hasRole(user as MaybeUser, ...VERWALTUNGS_ROLLEN) || hatEinzelrechte(user)
+
+/** „Nur ansehen“ (darf alles lesen – was genau, steuern die Haken unter Rollen-Rechte) */
+export const istLeser = (user: unknown): boolean => hasRole(user as MaybeUser, 'lesen')
+
+/** NUR „Nur ansehen“ – ohne weitere Rolle und ohne Einzelrechte: darf nirgends etwas ändern (außer am eigenen Konto) */
+export const nurLeser = (user: unknown): boolean => istLeser(user) && !hasRole(user as MaybeUser, ...SCHREIB_ROLLEN) && !hatEinzelrechte(user)
 
 /** Medien hochladen: alle mit Inhaltsrechten (Rolle oder Zusatzrecht für einen Bereich mit Bildern). */
 const BILDER_BEREICHE = ['news', 'seiten', 'medien', 'sponsoren', 'teams'] as const
@@ -178,7 +193,7 @@ export const ausblendenAusser =
 
 /** Nur über Einzelrechte in der Verwaltung (keine Verwaltungs-Rolle)? Dann Bereiche ohne passendes Recht ausblenden. */
 export const nurEinzelrechte = (user: unknown): boolean =>
-  hatEinzelrechte(user) && !hasRole(user as MaybeUser, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion')
+  hatEinzelrechte(user) && !hasRole(user as MaybeUser, ...VERWALTUNGS_ROLLEN)
 
 /** Für Personen, die nur über Einzelrechte hier sind, ausblenden (z. B. News, Mediathek, die sie nur lesen könnten) */
 export const ausblendenBeiNurEinzelrechten = ({ user }: { user: unknown }): boolean => nurEinzelrechte(user)
@@ -202,7 +217,8 @@ export const rolleOderRecht =
  */
 export const medienSichtbar = async (req: PayloadRequest): Promise<Where | null> => {
   const user = userOf(req)
-  if (!user || alleBilder(user)) return null
+  // „Nur ansehen“ sieht alle Ordner (wählen oder zuordnen kann die Rolle ohnehin nichts)
+  if (!user || alleBilder(user) || istLeser(user)) return null
   const ids = await eigeneAngebotIds(req)
   return { or: [...(ids.length ? [{ team: { in: ids } }] : []), { allgemein: { equals: true } }] }
 }

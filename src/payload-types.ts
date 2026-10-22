@@ -277,7 +277,15 @@ export interface User {
    */
   name: string;
   roles: (
-    'webadmin' | 'admin' | 'redaktion' | 'kasse' | 'passwesen' | 'uebungsleitung' | 'teamredaktion' | 'mitglied'
+    | 'webadmin'
+    | 'admin'
+    | 'redaktion'
+    | 'kasse'
+    | 'passwesen'
+    | 'uebungsleitung'
+    | 'teamredaktion'
+    | 'lesen'
+    | 'mitglied'
   )[];
   /**
    * Diese Teams darf die Person verwalten – als Trainer (Zeiten, Ausfälle, News, Bilder, Probetraining, Passanträge) oder als Team-Redaktion (News, Bilder, Zeiten, Ausfälle), je nach Rolle oben. Ohne eine dieser Rollen wird beim Speichern „Trainer“ gesetzt. Kasse, Passwesen und Redaktion brauchen hier nichts – sie gelten für alle Teams.
@@ -3917,7 +3925,7 @@ export interface Hilfe {
   createdAt?: string | null;
 }
 /**
- * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Benutzerverwaltung, Admin-Rechte und Bankdaten sind bewusst nicht einstellbar. Wie sich das auswirkt, zeigt der Reiter „Übersicht“ unter „Was darf welche Rolle?“.
+ * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Admin-Rechte sind bewusst nicht einstellbar. Bei „Nur ansehen“ schaltet ein entfernter Haken den Bereich für diese Rolle ganz aus. Wie sich das auswirkt, zeigt der Reiter „Übersicht“ unter „Was darf welche Rolle?“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rollenRechte".
@@ -3942,6 +3950,15 @@ export interface RollenRechte {
   };
   teamredaktion?: {
     ausfaelle?: boolean | null;
+  };
+  lesen?: {
+    posteingang?: boolean | null;
+    passantraege?: boolean | null;
+    mitgliedsantraege?: boolean | null;
+    bankdaten?: boolean | null;
+    mitgliedschaften?: boolean | null;
+    benutzer?: boolean | null;
+    statistik?: boolean | null;
   };
   updatedAt?: string | null;
   createdAt?: string | null;
@@ -4543,6 +4560,17 @@ export interface RollenRechteSelect<T extends boolean = true> {
     | T
     | {
         ausfaelle?: T;
+      };
+  lesen?:
+    | T
+    | {
+        posteingang?: T;
+        passantraege?: T;
+        mitgliedsantraege?: T;
+        bankdaten?: T;
+        mitgliedschaften?: T;
+        benutzer?: T;
+        statistik?: T;
       };
   updatedAt?: T;
   createdAt?: T;

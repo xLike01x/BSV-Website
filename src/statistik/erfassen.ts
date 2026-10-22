@@ -1,8 +1,7 @@
 import { createHash, randomBytes } from 'crypto'
 import type { Payload } from 'payload'
 
-import { hatEinzelrechte } from '@/access/einzelrechte'
-import { hasRole } from '@/access/roles'
+import { istVerwaltung } from '@/access/roles'
 import { ratenGrenze } from '@/hooks/spamSchutz'
 import { clientIp } from '@/utilities/clientIp'
 
@@ -92,7 +91,7 @@ export const pfadSaeubern = (p?: string) => {
 export async function erfassen(payload: Payload, headers: Headers, user: unknown, e: Ereignis) {
   const ua = headers.get('user-agent') ?? ''
   if (!ua || BOT.test(ua)) return
-  if (hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(user)) return
+  if (istVerwaltung(user)) return
   let pfad = pfadSaeubern(e.pfad)
   if (pfad && !(await gueltigePfade(payload)).has(pfad)) pfad = null
   if (e.art === 'aufruf' && !pfad) return

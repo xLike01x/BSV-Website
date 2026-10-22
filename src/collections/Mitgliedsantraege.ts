@@ -179,7 +179,8 @@ export const Mitgliedsantraege: CollectionConfig = {
     {
       type: 'collapsible',
       label: 'SEPA-Lastschriftmandat',
-      admin: { condition: (_d, _s, { user }) => hasRole(user as never, 'admin', 'kasse') },
+      // „Nur ansehen“ sieht den Kasten ebenfalls – die Felder selbst bleiben ohne Haken „Bankdaten“ leer
+      admin: { condition: (_d, _s, { user }) => hasRole(user as never, 'admin', 'kasse', 'lesen') },
       fields: [
         { name: 'kontoinhaber', label: 'Kontoinhaber/in', type: 'text', required: true, maxLength: 120, access: { read: nurKasse, update: nurKasse } },
         {

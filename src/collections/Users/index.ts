@@ -5,8 +5,8 @@ import { webadminLoeschSchutz, webadminSchutz } from './webadminSchutz'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
 
-import { EINZELRECHTE, hatEinzelrechte } from '../../access/einzelrechte'
-import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
+import { EINZELRECHTE } from '../../access/einzelrechte'
+import { canUseAdminPanel, hasRole, isAdmin, isAdminField, isAdminOrSelf, istVerwaltung, istWebAdminField, ROLE_OPTIONS } from '../../access/roles'
 import { testkontenEndpunkte, testkontenErlaubt, testkontoFeld } from '../../auth/testkonten'
 import { APIError } from 'payload'
 import { aktuellesPasswortFeld, anmeldeFehlerEinheitlich, anmeldungGeklappt, passwortNichtPersoenlich, passwortUndLogin } from '../../auth/passwort'
@@ -284,5 +284,4 @@ export const Users: CollectionConfig = {
   timestamps: true,
 }
 
-export const isStaffUser = (user: unknown) =>
-  hasRole(user as never, 'admin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion') || hatEinzelrechte(user)
+export const isStaffUser = (user: unknown) => istVerwaltung(user)

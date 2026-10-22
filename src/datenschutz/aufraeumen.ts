@@ -52,7 +52,7 @@ const regeln = (f: Fristen): Regel[] => {
       link: '/admin/rollen',
       where: (g): Where => ({
         and: [
-          { roles: { not_in: ['admin', 'webadmin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion'] } },
+          { roles: { not_in: ['admin', 'webadmin', 'redaktion', 'kasse', 'passwesen', 'uebungsleitung', 'teamredaktion', 'lesen'] } },
           { testkonto: { not_equals: true } },
           { or: [{ letzteAnmeldung: { less_than: g } }, { and: [{ letzteAnmeldung: { exists: false } }, { createdAt: { less_than: g } }] }] },
         ],
@@ -114,8 +114,10 @@ export const datenschutzEndpunkte: Endpoint[] = [
     method: 'get',
     handler: async (req) => {
       const rollen = ((req.user as { roles?: string[] } | null)?.roles ?? []) as string[]
-      if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user)) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
-      return Response.json({ faellig: await faellige(req.payload, mitZusatzrecht(req.user) ? undefined : rollen) })
+      // „Nur ansehen“ sieht, was fällig ist (aufräumen kann die Rolle nicht – siehe /datenschutz/aufraeumen)
+      const leser = hasRole(req.user as never, 'lesen')
+      if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user) && !leser) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
+      return Response.json({ faellig: await faellige(req.payload, mitZusatzrecht(req.user) || leser ? undefined : rollen) })
     },
   },
   {

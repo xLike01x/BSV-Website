@@ -68,7 +68,7 @@ import { rechtstexteUebernehmen } from './utilities/rechtstexte'
 const filename = fileURLToPath(import.meta.url)
 const dirname = path.dirname(filename)
 
-import { canUseAdminPanel, hasRole } from './access/roles'
+import { canUseAdminPanel, hasRole, nurLeser } from './access/roles'
 
 // E-Mail-Versand (Bestätigung bei Registrierung, „Passwort vergessen“, Benachrichtigungen).
 // Nur aktiv mit SMTP_HOST in der .env – sonst stehen die Mails beim Entwickeln im Server-Fenster.
@@ -329,7 +329,9 @@ export default konfiguration.then((c) => {
   const sperren = c.collections.find((x) => x.slug === 'payload-locked-documents')
   if (sperren) {
     const nurVerwaltung = ({ req }: { req: Parameters<typeof canUseAdminPanel>[0]['req'] }) => canUseAdminPanel({ req })
-    sperren.access = { ...sperren.access, read: nurVerwaltung, create: nurVerwaltung, update: nurVerwaltung, delete: nurVerwaltung }
+    // „Nur ansehen“ sieht Sperren, legt aber keine an und hebt keine auf (sonst könnte die Rolle andere beim Bearbeiten blockieren)
+    const nurMitSchreibrecht = ({ req }: { req: Parameters<typeof canUseAdminPanel>[0]['req'] }) => canUseAdminPanel({ req }) && !nurLeser(req.user)
+    sperren.access = { ...sperren.access, read: nurVerwaltung, create: nurMitSchreibrecht, update: nurMitSchreibrecht, delete: nurMitSchreibrecht }
     // Eine Sperre gehört immer dem, der sie anlegt oder übernimmt – nie im Namen anderer (Audit 2026-10)
     const eigeneSperre: CollectionBeforeChangeHook = ({ data, req }) => {
       if (req.user) data.user = { relationTo: req.user.collection ?? 'users', value: req.user.id }
