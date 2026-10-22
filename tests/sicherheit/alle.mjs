@@ -16,8 +16,9 @@ import statistik from './statistik.mjs'
 import uploads from './uploads.mjs'
 import wartung from './wartung.mjs'
 import zusatzrechte from './zusatzrechte.mjs'
+import zweifaktor from './zweifaktor.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung, zusatzrechte, registrierung, haertung }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung, zusatzrechte, registrierung, haertung, zweifaktor }
 
 // Einzelne Bereiche: pnpm test:sicherheit -- posteingang
 const nur = process.argv.slice(2)

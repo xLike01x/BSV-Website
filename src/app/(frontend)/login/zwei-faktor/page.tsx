@@ -14,7 +14,7 @@ export default function ZweiFaktorSeite() {
             🔐
           </span>
           <p className="kicker" style={{ fontSize: 17, marginTop: 8 }}>
-            Sicher in die Verwaltung
+            Sichere Anmeldung
           </p>
         </div>
         <Suspense fallback={<div className="form" style={{ minHeight: 280 }} />}>

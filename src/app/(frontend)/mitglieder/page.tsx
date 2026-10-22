@@ -11,6 +11,7 @@ import React from 'react'
 import { AbmeldenButton } from '@/bsv/components/AbmeldenButton'
 import { Profilfoto } from '@/bsv/components/Profilfoto'
 import { AusweisKarten } from '@/bsv/components/AusweisKarte'
+import { ZweiFaktorKonto } from '@/bsv/components/ZweiFaktorKonto'
 import { ausweiseFuer } from '@/mitgliedschaften/ausweise'
 import { aktuellerBenutzer, getAusfaelle, getTermine, getVerein, payload } from '@/bsv/data'
 import { bildUrl, datum, farbe, kurzZeit, uhrzeit } from '@/bsv/lib'
@@ -350,6 +351,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
           <Link href="/kontakt?thema=Änderung meiner Mitgliedsdaten" className="link-more">
             Änderung mitteilen ›
           </Link>
+          <ZweiFaktorKonto />
         </div>
       </section>
     </div>

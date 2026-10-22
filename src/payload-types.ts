@@ -401,7 +401,7 @@ export interface User {
    */
   mailBenachrichtigung?: boolean | null;
   /**
-   * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.
+   * Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück (z. B. bei verlorenem Handy). Verwaltungszugänge richten sie beim nächsten Login neu ein; bei Mitgliedern (freiwillig) ist sie danach aus.
    */
   zweiFaktorAktiv?: boolean | null;
   zweiFaktorGeheimnis?: string | null;

@@ -886,7 +886,7 @@ export const FELDER: Record<string, Feld[]> = {
   ],
   rollen: [
     { name: 'Verantwortlich für', text: 'Teams, die die Person pflegen darf. Ändern: beim Benutzer unter „Team-Berechtigungen“ oder beim Team unter „Verantwortliche“.' },
-    { name: 'Zwei-Faktor', text: 'Ob die Handy-App für die Anmeldung eingerichtet ist. Pflicht für alle außer „Mitglied“.' },
+    { name: 'Zwei-Faktor', text: 'Ob die Handy-App für die Anmeldung eingerichtet ist. Pflicht für alle außer „Mitglied“; Mitglieder können sie freiwillig einschalten.' },
     { name: '⚠️', text: 'Hier fehlt etwas: z. B. ein Trainer ohne Team oder ein Team ohne Verantwortliche.' },
     { name: 'Verwaltung', text: 'Ob die Person überhaupt in die Verwaltung kommt (Rolle außer „Mitglied“ oder ein Zusatzrecht).' },
     { name: 'Zuletzt da', text: 'Wann sich die Person zuletzt angemeldet hat. Lange nicht da? Rechte prüfen.' },
@@ -895,7 +895,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Name', text: 'Erscheint in der Verwaltung und als Autor:in von News.' },
     { name: 'E-Mail', text: 'Damit meldet sich die Person an.' },
     { name: 'Rollen', text: 'Was die Person darf. Mehrere Rollen sind möglich.' },
-    { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy).' },
+    { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy). Bei Mitgliedern (freiwillig) ist sie danach aus.' },
     { name: 'Teams & Kurse', text: 'In welchen Angeboten die Person selbst mitmacht (als Mitglied). Gibt keine Bearbeitungsrechte.' },
     { name: 'Freigegeben', text: 'Ohne Haken: selbst registriert und wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“. Nur Admins.' },
     { name: 'E-Mail-Benachrichtigungen', text: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für die eigenen Teams, alle 3 Monate „Passt noch?“ für die eigenen Teams, (Kasse) bei neuem Mitgliedsantrag und (Admins) einmal im Monat der Monatsbericht. Haken entfernen = keine Mails.' },
@@ -1022,6 +1022,12 @@ export const FAQ: Faq[] = [
     frage: 'Der ENCRYPTION_KEY ist vielleicht bekannt geworden (z. B. Laptop gestohlen). Was tun?',
     antwort: 'Nicht einfach austauschen – sonst sind IBANs, Zwei-Faktor und alle Sicherungen unlesbar. Stattdessen mit „pnpm schluessel:wechseln“ auf einen neuen Schlüssel umstellen: Die Anleitung Schritt für Schritt steht in deploy/README.md unter „Schlüssel wechseln“. Erst ein Probelauf, dann „ausfuehren“. Lag auch die Datenbank offen, zusätzlich „zwei-faktor-neu“. Danach den alten Schlüssel (ENCRYPTION_KEY_ALT) aus der .env löschen. Steht die ganze .env offen: auch PAYLOAD_SECRET und das E-Mail-Passwort wechseln.',
     bereich: 'sicherung',
+  },
+  {
+    frage: 'Müssen Mitglieder die Zwei-Faktor-Anmeldung einrichten?',
+    antwort:
+      'Nein – für Mitglieder ist sie freiwillig: im Mitgliederbereich unter „Mein Konto“ → „Einschalten“ (Passwort, QR-Code scannen, Code eingeben, Wiederherstellungscodes sichern). Ausschalten geht dort nur mit Passwort und Code. Für alle mit Zugang zur Verwaltung (jede Rolle außer „Mitglied“ oder ein Zusatzrecht) ist sie Pflicht und lässt sich nicht abschalten – auch nicht von Admins oder Web-Admins. Hat jemand das Handy verloren: Wiederherstellungscode nutzen, sonst setzt ein Admin sie zurück (Haken „Zwei-Faktor-Anmeldung eingerichtet“ entfernen).',
+    bereich: 'users',
   },
   {
     frage: 'Wie lege ich auf einem neuen Server das erste Konto an?',

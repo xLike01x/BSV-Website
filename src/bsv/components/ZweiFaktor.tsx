@@ -4,7 +4,7 @@ import { sicheresZiel } from '@/bsv/sicheresZiel'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useEffect, useRef, useState } from 'react'
 
-type Status = { angemeldet: boolean; personal?: boolean; eingerichtet?: boolean; offen?: boolean; abgeschaltet?: boolean }
+type Status = { angemeldet: boolean; personal?: boolean; eingerichtet?: boolean; offen?: boolean; abgeschaltet?: boolean; freiwillig?: boolean }
 
 const post = async (pfad: string, body?: unknown) => {
   const res = await fetch(`/api/users/zwei-faktor/${pfad}`, {
@@ -21,7 +21,7 @@ const post = async (pfad: string, body?: unknown) => {
 export function ZweiFaktor() {
   const router = useRouter()
   const sp = useSearchParams()
-  const ziel = sicheresZiel(sp.get('weiter'), '/admin')
+  const zielRoh = sicheresZiel(sp.get('weiter'), '/admin')
   const [status, setStatus] = useState<Status | null>(null)
   const [einrichtung, setEinrichtung] = useState<{ qr: string; geheimnis: string } | null>(null)
   const [codes, setCodes] = useState<string[] | null>(null)
@@ -31,17 +31,19 @@ export function ZweiFaktor() {
   const [laedt, setLaedt] = useState(false)
   const [kopiert, setKopiert] = useState(false)
   const eingabe = useRef<HTMLInputElement>(null)
+  // Mitglieder (freiwillige Zwei-Faktor-Anmeldung) landen im Mitgliederbereich, nicht in der Verwaltung
+  const ziel = status && !status.personal && zielRoh.startsWith('/admin') ? '/mitglieder' : zielRoh
 
   useEffect(() => {
     fetch('/api/users/zwei-faktor/status', { credentials: 'same-origin' })
       .then((r) => r.json())
       .then((s: Status) => {
         setStatus(s)
-        if (!s.angemeldet) router.replace(`/login?weiter=${encodeURIComponent(ziel)}`)
-        else if (!s.offen) router.replace(s.personal ? ziel : '/mitglieder')
+        if (!s.angemeldet) router.replace(`/login?weiter=${encodeURIComponent(zielRoh)}`)
+        else if (!s.offen) router.replace(s.personal ? zielRoh : '/mitglieder')
       })
       .catch(() => setFehler('Keine Verbindung.'))
-  }, [router, ziel])
+  }, [router, zielRoh])
 
   // Einrichtung starten, sobald klar ist, dass noch keine App verbunden ist
   useEffect(() => {
@@ -158,7 +160,7 @@ export function ZweiFaktor() {
           autoComplete="one-time-code"
           placeholder={modusCode === 'app' ? '123456' : 'ABCD-EFGH'}
           required
-          style={{ fontSize: 26, letterSpacing: '0.3em', textAlign: 'center', fontVariantNumeric: 'tabular-nums' }}
+          style={{ fontSize: 26, letterSpacing: '0.3em', textAlign: 'center', fontVariantNumeric: 'tabular-nums', width: '100%', minWidth: 0, boxSizing: 'border-box' }}
         />
       </label>
       {fehler && (

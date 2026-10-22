@@ -4,13 +4,15 @@ import { JWTAuthentication } from 'payload'
 import QRCode from 'qrcode'
 
 import { mailHtml, mailSenden } from './mail'
+import { passwortStimmt } from './passwort'
 
 import { decrypt, encrypt } from '../utilities/crypto'
 import { testkontenErlaubt } from './testkonten'
 import { codePasst, hashCode, neueWiederherstellungscodes, neuesGeheimnis, otpauthUri, pruefeCode } from './totp'
 
 /**
- * Zwei-Faktor-Anmeldung (Authenticator-App) für alle Rollen außer „Mitglied“.
+ * Zwei-Faktor-Anmeldung (Authenticator-App): Pflicht für alle Rollen außer „Mitglied“ (und für Zusatzrechte),
+ * freiwillig für Mitglieder (unter „Mein Konto“ im Mitgliederbereich ein- und ausschaltbar).
  *
  * Funktionsweise: Nach dem Passwort-Login ist die Sitzung zunächst nur auf
  * Mitglieds-Niveau. Erst wenn für genau diese Sitzung ein gültiger Code
@@ -45,6 +47,9 @@ type ZfUser = {
 const istPersonal = (roles?: string[] | null, zusatz?: Record<string, unknown> | null) =>
   (roles ?? []).some((r) => r !== 'mitglied') || Object.values(zusatz ?? {}).some((v) => v === true)
 
+/** Code nötig: Pflicht fürs Personal – oder freiwillig eingeschaltet (dann auch für Mitglieder) */
+const brauchtCode = (u: ZfUser) => istPersonal(u.roles, u.zusatzrechte) || Boolean(u.zweiFaktorAktiv)
+
 /** Felder, die nie über die API sichtbar oder änderbar sind */
 const geheim = { read: () => false, create: () => false, update: () => false }
 
@@ -63,7 +68,8 @@ export const zweiFaktorFelder: Field[] = [
     },
     admin: {
       position: 'sidebar',
-      description: 'Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück. Die Person richtet sie beim nächsten Login neu ein.',
+      description:
+        'Haken entfernen setzt die Zwei-Faktor-Anmeldung zurück (z. B. bei verlorenem Handy). Verwaltungszugänge richten sie beim nächsten Login neu ein; bei Mitgliedern (freiwillig) ist sie danach aus.',
     },
   },
   { name: 'zweiFaktorGeheimnis', type: 'text', access: geheim, admin: { hidden: true } },
@@ -106,7 +112,7 @@ export const zweiFaktorStrategie: AuthStrategy = {
     try {
       // Testkonten (nur lokal) brauchen keinen zweiten Faktor
       const testOhne2fa = Boolean(u.testkonto) && testkontenErlaubt(args.headers)
-      if (!AUS() && !testOhne2fa && istPersonal(u.roles, u.zusatzrechte)) {
+      if (!AUS() && !testOhne2fa && brauchtCode(u)) {
         const jetzt = Date.now()
         const sitzungen = Array.isArray(u.zweiFaktorSitzungen) ? u.zweiFaktorSitzungen : []
         const ok = Boolean(u._sid && sitzungen.some((s) => s?.sid === u._sid && new Date(s.bis).getTime() > jetzt))
@@ -191,6 +197,29 @@ const sitzungFreischalten = async (req: PayloadRequest, u: ZfUser, extra: Record
   })
 }
 
+/** Passwort des Kontos prüfen (für Ein-/Ausschalten durch Mitglieder) */
+const passwortRichtig = async (req: PayloadRequest, id: number, pw: unknown) => {
+  if (typeof pw !== 'string' || !pw) return false
+  const k = (await req.payload.db.findOne({ collection: 'users', where: { id: { equals: id } }, req })) as { hash?: string; salt?: string } | null
+  return passwortStimmt(pw, k?.hash, k?.salt)
+}
+
+/** Code aus der App oder Wiederherstellungscode prüfen und verbrauchen */
+const codeRichtig = async (req: PayloadRequest, u: ZfUser, eingabeRoh: unknown) => {
+  const eingabe = String(eingabeRoh ?? '').trim()
+  if (!u.zweiFaktorGeheimnis) return false
+  if (/^\d{6}$/.test(eingabe.replace(/\s/g, ''))) {
+    const schritt = pruefeCode(decrypt(u.zweiFaktorGeheimnis), eingabe, u.zweiFaktorLetzterSchritt ?? 0)
+    return Boolean(schritt && (await schrittVerbrauchen(req, u.id, schritt)))
+  }
+  const codes = u.zweiFaktorCodes ?? []
+  const h = codes.find((c) => codePasst(eingabe, c))
+  return Boolean(h && (await codeVerbrauchen(req, u.id, codes, codes.filter((c) => c !== h))))
+}
+
+const GEHEIMNISSE_LEEREN = { zweiFaktorGeheimnis: null, zweiFaktorCodes: null, zweiFaktorSitzungen: null, zweiFaktorLetzterSchritt: null, zweiFaktorFehler: null, zweiFaktorFehlerSeit: null, zweiFaktorEinrichtungSeit: null }
+const ZURUECKSETZEN = { zweiFaktorAktiv: false, ...GEHEIMNISSE_LEEREN }
+
 export const zweiFaktorEndpunkte: Endpoint[] = [
   {
     path: '/zwei-faktor/status',
@@ -203,6 +232,8 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
         angemeldet: true,
         personal: istPersonal(rollen, u._zusatzrechte ?? u.zusatzrechte),
         eingerichtet: Boolean(u.zweiFaktorAktiv),
+        // Mitglieder dürfen die Zwei-Faktor-Anmeldung selbst ein- und ausschalten
+        freiwillig: !istPersonal(rollen, u._zusatzrechte ?? u.zusatzrechte),
         offen: Boolean(u._zweiFaktorOffen),
         abgeschaltet: AUS() || (Boolean(u.testkonto) && testkontenErlaubt(req.headers)),
       })
@@ -215,8 +246,16 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
     handler: async (req) => {
       const u = await ladeVoll(req)
       if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
-      if (!istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) return json({ fehler: 'Nur für Zugänge zur Verwaltung nötig.' }, 400)
       if (u.zweiFaktorAktiv) return json({ fehler: 'Die Zwei-Faktor-Anmeldung ist bereits eingerichtet.' }, 400)
+      // Freiwillig (Mitglieder): nur mit dem Passwort – sonst könnte jemand an einem offen gelassenen Rechner
+      // seine eigene App verbinden und den Inhaber damit aussperren
+      if (!istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) {
+        if ((req.user as { _wartetAufFreigabe?: boolean } | null)?._wartetAufFreigabe) return json({ fehler: 'Erst nach der Freischaltung durch die Verwaltung möglich.' }, 400)
+        if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+        const body = (await req.json?.().catch(() => ({}))) as { passwort?: unknown }
+        if (!(await passwortRichtig(req, u.id, body?.passwort))) return json({ fehler: 'Das Passwort stimmt nicht.' }, 400)
+        await versuchFreigeben(req, u.id)
+      }
       // Läuft schon eine Einrichtung (z. B. in einem anderen Fenster)? Dann kein neues Geheimnis – sonst könnte jemand
       // mit dem Passwort die Einrichtung des echten Inhabers überschreiben.
       const seit = (u as { zweiFaktorEinrichtungSeit?: string | null }).zweiFaktorEinrichtungSeit
@@ -297,6 +336,32 @@ export const zweiFaktorEndpunkte: Endpoint[] = [
       return json({ fehler: 'Der Code stimmt nicht.' }, 400)
     },
   },
+  {
+    // Freiwillige Zwei-Faktor-Anmeldung ausschalten (nur Mitglieder) – mit Passwort UND Code
+    path: '/zwei-faktor/ausschalten',
+    method: 'post',
+    handler: async (req) => {
+      const u = await ladeVoll(req)
+      if (!u || !u._sid) return json({ fehler: 'Bitte zuerst anmelden.' }, 401)
+      if (istPersonal(u._rollen ?? u.roles, u._zusatzrechte ?? u.zusatzrechte)) return json({ fehler: 'Für Zugänge zur Verwaltung ist die Zwei-Faktor-Anmeldung Pflicht.' }, 403)
+      if ((req.user as ZfUser | null)?._zweiFaktorOffen) return json({ fehler: 'Bitte zuerst mit dem Code anmelden.' }, 403)
+      if (!u.zweiFaktorAktiv) return json({ fehler: 'Die Zwei-Faktor-Anmeldung ist nicht eingeschaltet.' }, 400)
+      if (!(await versuchReservieren(req, u.id))) return json({ fehler: 'Zu viele Fehlversuche. Bitte in 10 Minuten erneut versuchen.' }, 429)
+      const body = (await req.json?.().catch(() => ({}))) as { passwort?: unknown; code?: unknown }
+      if (!(await passwortRichtig(req, u.id, body?.passwort))) return json({ fehler: 'Das Passwort stimmt nicht.' }, 400)
+      if (!(await codeRichtig(req, u, body?.code))) return json({ fehler: 'Der Code stimmt nicht.' }, 400)
+      await req.payload.update({ collection: 'users', id: u.id, data: ZURUECKSETZEN as never, overrideAccess: true, context: { zweiFaktorIntern: true }, req })
+      if (u.email) {
+        const absaetze = [
+          `Für dein Konto wurde am ${new Date().toLocaleString('de-DE', { timeZone: 'Europe/Berlin' })} die Zwei-Faktor-Anmeldung ausgeschaltet.`,
+          'Warst du das? Dann ist alles in Ordnung.',
+          'Warst du das NICHT, ändere bitte sofort dein Passwort („Passwort vergessen?“ auf der Anmeldeseite) und melde dich beim Verein.',
+        ]
+        await mailSenden(req.payload, { an: u.email, betreff: 'Zwei-Faktor-Anmeldung ausgeschaltet – BSV 1919', text: absaetze.join('\n\n'), html: mailHtml({ titel: 'Zwei-Faktor-Anmeldung ausgeschaltet', absaetze }) }).catch(() => {})
+      }
+      return json({ ok: true })
+    },
+  },
 ]
 
 /** Admin entfernt den Haken → alles zurücksetzen */
@@ -316,7 +381,7 @@ export const zweiFaktorZuruecksetzen = async ({
     await req.payload.update({
       collection: 'users',
       id: doc.id,
-      data: { zweiFaktorGeheimnis: null, zweiFaktorCodes: null, zweiFaktorSitzungen: null, zweiFaktorLetzterSchritt: null, zweiFaktorFehler: null, zweiFaktorFehlerSeit: null, zweiFaktorEinrichtungSeit: null } as never,
+      data: GEHEIMNISSE_LEEREN as never,
       overrideAccess: true,
       context: { zweiFaktorIntern: true },
       req,
@@ -341,7 +406,7 @@ export const loginHerabgestuft = ({ operation, req, result }: { operation: strin
   if (operation !== 'login' && operation !== 'resetPassword') return result
   const r = result as { user?: ZfUser & { teamsVerantwortlich?: unknown } } | null
   const u = r?.user
-  if (u && !AUS() && !(Boolean(u.testkonto) && testkontenErlaubt(req.headers)) && istPersonal(u.roles, u.zusatzrechte)) {
+  if (u && !AUS() && !(Boolean(u.testkonto) && testkontenErlaubt(req.headers)) && brauchtCode(u)) {
     u.roles = []
     u.zusatzrechte = {}
     u.teamsVerantwortlich = []
