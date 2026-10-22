@@ -1191,6 +1191,7 @@ export interface Page {
    * Name der Seite – steht im Browser-Tab und ergibt die Adresse, z. B. „Sommerfest 2027“ → /sommerfest-2027.
    */
   title: string;
+  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   hero: {
     /**
      * Groß mit Bild, mittel mit Bild, schlicht nur Text – oder gar keiner.
@@ -1240,7 +1241,6 @@ export interface Page {
       | null;
     media?: (number | null) | Media;
   };
-  layout: (CallToActionBlock | ContentBlock | MediaBlock | ArchiveBlock | FormBlock)[];
   meta?: {
     title?: string | null;
     /**
@@ -2471,6 +2471,15 @@ export interface GesucheSelect<T extends boolean = true> {
  */
 export interface PagesSelect<T extends boolean = true> {
   title?: T;
+  layout?:
+    | T
+    | {
+        cta?: T | CallToActionBlockSelect<T>;
+        content?: T | ContentBlockSelect<T>;
+        mediaBlock?: T | MediaBlockSelect<T>;
+        archive?: T | ArchiveBlockSelect<T>;
+        formBlock?: T | FormBlockSelect<T>;
+      };
   hero?:
     | T
     | {
@@ -2492,15 +2501,6 @@ export interface PagesSelect<T extends boolean = true> {
               id?: T;
             };
         media?: T;
-      };
-  layout?:
-    | T
-    | {
-        cta?: T | CallToActionBlockSelect<T>;
-        content?: T | ContentBlockSelect<T>;
-        mediaBlock?: T | MediaBlockSelect<T>;
-        archive?: T | ArchiveBlockSelect<T>;
-        formBlock?: T | FormBlockSelect<T>;
       };
   meta?:
     | T

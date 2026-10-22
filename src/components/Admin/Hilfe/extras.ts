@@ -855,7 +855,7 @@ export const FELDER: Record<string, Feld[]> = {
   pages: [
     { name: 'Titel', text: 'Name der Seite, steht auch im Browser-Tab. Daraus entsteht die Adresse.' },
     { name: 'Reiter „Kopfbereich“', text: 'Der große Bereich ganz oben. Art wählen: groß mit Bild (bildschirmfüllend), mittel mit Bild, schlicht nur Text – oder kein Kopfbereich. Dazu Überschrift, Einleitung und bis zu zwei Buttons.' },
-    { name: 'Reiter „Inhalt (Bausteine)“', text: 'Die Seite besteht aus Bausteinen untereinander. „Baustein hinzufügen“ → Art wählen. Mit dem Griff links verschieben, über die drei Punkte kopieren oder löschen.' },
+    { name: 'Reiter „Inhalt (Bausteine)“', text: 'Öffnet zuerst – hier steht der Text der Seite (z. B. bei Datenschutz und Impressum). Die Seite besteht aus Bausteinen untereinander, alle aufgeklappt. „Baustein hinzufügen“ → Art wählen. Mit dem Griff links verschieben, über die drei Punkte kopieren oder löschen, mit dem Pfeil rechts zuklappen.' },
     { name: 'Baustein „Text (in Spalten)“', text: 'Normaler Text – auch nebeneinander in Spalten (volle, halbe, Drittel-Breite). Pro Spalte optional ein Link.' },
     { name: 'Baustein „Bild oder Video“', text: 'Ein Bild oder Video aus der Mediathek in voller Breite.' },
     { name: 'Baustein „Hinweis-Kasten mit Button“', text: 'Ein hervorgehobener Kasten mit kurzem Text und ein bis zwei Buttons, z. B. „Jetzt anmelden“.' },

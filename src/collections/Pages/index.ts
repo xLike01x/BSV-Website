@@ -77,11 +77,6 @@ export const Pages: CollectionConfig<'pages'> = {
       type: 'tabs',
       tabs: [
         {
-          fields: [hero],
-          label: 'Kopfbereich',
-          description: 'Der große Bereich ganz oben auf der Seite.',
-        },
-        {
           fields: [
             {
               name: 'layout',
@@ -90,13 +85,20 @@ export const Pages: CollectionConfig<'pages'> = {
               type: 'blocks',
               blocks: [CallToAction, Content, MediaBlock, Archive, FormBlock],
               required: true,
+              // Aufgeklappt: Die meisten Seiten haben nur wenige Bausteine – so steht der Text gleich da
               admin: {
-                initCollapsed: true,
+                initCollapsed: false,
               },
             },
           ],
+          // Zuerst: hier steht der Text der Seite
           label: 'Inhalt (Bausteine)',
-          description: 'Die Seite besteht aus Bausteinen untereinander. Mit „Baustein hinzufügen“ fügst du Text, Bilder, Buttons, News-Listen oder Formulare ein.',
+          description: 'Die Seite besteht aus Bausteinen untereinander. Mit „Baustein hinzufügen“ fügst du Text, Bilder, Buttons, News-Listen oder Formulare ein. Mit dem Pfeil rechts an einem Baustein klappst du ihn zu.',
+        },
+        {
+          fields: [hero],
+          label: 'Kopfbereich',
+          description: 'Der große Bereich ganz oben auf der Seite (optional).',
         },
         {
           name: 'meta',

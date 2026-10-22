@@ -78,7 +78,7 @@ export const Content: Block = {
       labels: { singular: 'Spalte', plural: 'Spalten' },
       type: 'array',
       admin: {
-        initCollapsed: true,
+        initCollapsed: false,
       },
       fields: columnFields,
     },
