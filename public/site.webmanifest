@@ -1,0 +1,23 @@
+{
+  "id": "/",
+  "name": "Büdericher SV 1919",
+  "short_name": "BSV 1919",
+  "description": "Termine, News, Trainingszeiten und Ausfälle des Büdericher SV 1919",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#157a43",
+  "lang": "de",
+  "icons": [
+    { "src": "/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    { "name": "Trainingszeiten", "url": "/trainingszeiten" },
+    { "name": "Termine", "url": "/termine" },
+    { "name": "News", "url": "/news" },
+    { "name": "Mitgliederbereich", "url": "/mitglieder" }
+  ]
+}

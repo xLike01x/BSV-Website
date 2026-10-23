@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html className={cn(GeistSans.variable)} lang="de" data-theme="light" suppressHydrationWarning>
       <head>
         <link href="/favicon.png" rel="icon" type="image/png" />
-        <link href="/bsv-logo.png" rel="apple-touch-icon" />
+        <link href="/app-icon-180.png" rel="apple-touch-icon" />
       </head>
       <body className="bsv" suppressHydrationWarning>
         <Providers>
@@ -59,6 +59,9 @@ export const metadata: Metadata = {
     'Fußball, Tanzen, Turnen, Fitness, Yoga und Walking für alle von 1 bis 99 Jahren. Über 1.000 Mitglieder im Kutscher-Remy-Sportpark in Wesel-Büderich.',
   openGraph: mergeOpenGraph(),
   twitter: { card: 'summary_large_image' },
+  // Web-App (Startbildschirm): Name, Symbol, Farbe – siehe public/site.webmanifest und public/sw.js
+  manifest: '/site.webmanifest',
+  appleWebApp: { capable: true, title: 'BSV 1919', statusBarStyle: 'default' },
 }
 
 export const viewport: Viewport = {

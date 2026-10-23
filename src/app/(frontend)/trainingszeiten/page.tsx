@@ -4,7 +4,8 @@ import { seite } from '@/bsv/seo'
 import React from 'react'
 
 import { Wochenplan, type PlanEintrag, type OhneZeit } from '@/bsv/components/Wochenplan'
-import { getAngebote } from '@/bsv/data'
+import { WebApp } from '@/bsv/components/WebApp'
+import { getAngebote, getTexte } from '@/bsv/data'
 import { farbe } from '@/bsv/lib'
 
 export const revalidate = 60
@@ -13,7 +14,7 @@ export const metadata: Metadata = seite('Trainingszeiten', 'Wochenplan aller Tra
 const TAGE = ['Montag', 'Dienstag', 'Mittwoch', 'Donnerstag', 'Freitag', 'Samstag', 'Sonntag']
 
 export default async function Trainingszeiten() {
-  const angebote = await getAngebote()
+  const [angebote, tx] = await Promise.all([getAngebote(), getTexte()])
   const eintraege: PlanEintrag[] = []
   const ohne: OhneZeit[] = []
   for (const a of angebote) {
@@ -43,6 +44,7 @@ export default async function Trainingszeiten() {
         <p className="lead in2" style={{ margin: '14px 0 0', maxWidth: 760 }}>
           Alle Trainings und Kurse auf einen Blick – von Montag bis Sonntag. Ein Klick aufs Team zeigt alle Infos und das Probetraining.
         </p>
+        <WebApp art="zeile" texte={tx.webApp} />
       </section>
       <section className="sec-soft" style={{ padding: '48px 0 110px' }}>
         <div className="wrap-narrow">

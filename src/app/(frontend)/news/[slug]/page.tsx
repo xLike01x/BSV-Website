@@ -12,7 +12,7 @@ import { JsonLd } from '@/bsv/components/JsonLd'
 import { absolut, brotkrumen } from '@/bsv/seo'
 import { getNews, getNewsArtikel } from '@/bsv/data'
 import { datum, lesezeit, lexicalText } from '@/bsv/lib'
-import type { Category } from '@/payload-types'
+import type { Category, Post } from '@/payload-types'
 import { generateMeta } from '@/utilities/generateMeta'
 
 export const revalidate = 60
@@ -36,7 +36,12 @@ export default async function Artikel({ params }: Args) {
   const post = await getNewsArtikel(decodeURIComponent(slug), draft)
   if (!post) notFound()
 
-  const weitere = (await getNews(4)).docs.filter((n) => n.id !== post.id).slice(0, 3)
+  // „Passende News“ aus der Verwaltung (nur veröffentlichte, nicht im Papierkorb); sonst die neuesten drei
+  const gewaehlt = (post.relatedPosts ?? []).filter(
+    (n): n is Post => typeof n === 'object' && n !== null && n.id !== post.id && n._status === 'published' && !n.deletedAt,
+  )
+  const weitere = gewaehlt.length ? gewaehlt.slice(0, 3) : (await getNews(4)).docs.filter((n) => n.id !== post.id).slice(0, 3)
+  const weitereTitel = gewaehlt.length ? 'Passend dazu' : 'Weitere News'
   const team = typeof post.team === 'object' && post.team ? post.team : null
   const kat = team?.title ?? post.categories?.find((c): c is Category => typeof c === 'object')?.title ?? 'Verein'
   const minuten = lesezeit(lexicalText(post.content))
@@ -111,7 +116,7 @@ export default async function Artikel({ params }: Args) {
         <section className="sec-soft" style={{ padding: '80px 22px' }}>
           <div className="wrap-narrow" style={{ padding: 0 }}>
             <h2 className="t-3 rv" style={{ marginBottom: 24 }}>
-              Weitere News
+              {weitereTitel}
             </h2>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 300px), 1fr))', gap: 20 }}>
               {weitere.map((n) => (

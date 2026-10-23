@@ -85,6 +85,14 @@ const nextConfig: NextConfig = {
           { key: 'Strict-Transport-Security', value: 'max-age=31536000; includeSubDomains' },
         ],
       },
+      {
+        // Web-App: Browser fragen bei jedem Start nach einer neuen Version des Service Workers
+        source: '/sw.js',
+        headers: [
+          { key: 'Cache-Control', value: 'no-cache' },
+          { key: 'Service-Worker-Allowed', value: '/' },
+        ],
+      },
     ]
   },
   redirects,

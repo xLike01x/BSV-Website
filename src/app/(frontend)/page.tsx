@@ -10,6 +10,7 @@ import { AgeFinder, type Vorschlag } from '@/bsv/components/home/AgeFinder'
 import { CountUp } from '@/bsv/components/home/CountUp'
 import { OfferFinder, type FinderItem } from '@/bsv/components/OfferFinder'
 import { T } from '@/bsv/components/Text'
+import { WebApp } from '@/bsv/components/WebApp'
 import { getAngebote, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, datum, farbe } from '@/bsv/lib'
 
@@ -240,6 +241,9 @@ export default async function Startseite() {
                 </div>
               </div>
             </div>
+
+            {/* Web-App: für alle Besucher, in der installierten App ausgeblendet */}
+            <WebApp art="kachel" texte={tx.webApp} />
           </div>
         </div>
       </section>

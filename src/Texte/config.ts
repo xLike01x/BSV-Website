@@ -187,6 +187,21 @@ export const Texte: GlobalConfig = {
             gruppe('fusszeile', 'Fußzeile (unten auf jeder Seite)', [
               { type: 'row', fields: [text('sponsor', 'Text vor dem Sponsor-Logo', 'Hauptsponsor'), text('sponsorLink', 'Link „Sponsor werden“', 'Sponsor werden ›')] },
             ]),
+            {
+              type: 'group',
+              name: 'webApp',
+              label: 'Web-App (für alle Besucher)',
+              admin: {
+                hideGutter: true,
+                description: 'Hinweise zum Installieren der Website als App: Kachel auf der Startseite, Zeile bei den Trainingszeiten und Link in der Fußzeile. In der installierten App werden sie automatisch ausgeblendet.',
+              },
+              fields: [
+                { type: 'row', fields: [text('label', 'Kachel: Kleine Überschrift', 'Web-App'), text('titel', 'Kachel: Titel', 'Der BSV auf\ndeinem Startbildschirm.', true)] },
+                text('text', 'Kachel: Text', 'Trainingszeiten, Termine und News mit einem Tipp – kostenlos, ohne App-Store und ohne Anmeldung. Benachrichtigungen bei Ausfällen folgen in Kürze.', true),
+                { type: 'row', fields: [text('knopf', 'Kachel: Knopf', 'App installieren'), text('fusszeile', 'Link in der Fußzeile', 'Als App installieren')] },
+                text('trainingszeiten', 'Zeile bei den Trainingszeiten', 'Immer griffbereit: Trainingszeiten als App auf dem Startbildschirm.'),
+              ],
+            },
             gruppe('news', 'News', [
               text('titel', 'Überschrift', 'Newsroom'),
               text('text', 'Text', 'Was im BSV los ist – auf dem Platz, in der Halle, im Verein.'),

@@ -191,6 +191,32 @@
 .bsv .foot a:hover { color: var(--bsv-green); }
 .foot-bottom { margin: 0; padding-top: 14px; border-top: 1px solid var(--bsv-line); }
 .bsv .foot-bottom a { display: inline; }
+/* Web-App: Installieren-Hinweise (Fußzeile, Trainingszeiten, Kachel auf der Startseite) */
+.webapp-link { font: inherit; font-weight: 600; color: var(--bsv-green); background: none; border: 0; padding: 0; cursor: pointer; }
+.webapp-link:hover { color: var(--bsv-green-dark); }
+.webapp-link:focus-visible { outline: 2px solid var(--bsv-green); outline-offset: 2px; border-radius: 2px; }
+.webapp-link--fuss { font-weight: inherit; color: var(--bsv-ink-2); }
+.webapp-link--fuss:hover { color: var(--bsv-green); }
+.webapp-zeile { margin: 14px 0 0; font-size: 16px; color: var(--bsv-ink-2); }
+.tile.webapp-kachel { grid-column: 1 / -1; background: var(--bsv-lavender-tint); padding: 44px; flex-direction: row; flex-wrap: wrap; gap: 32px; align-items: center; justify-content: space-between; }
+.tile.webapp-kachel:hover { transform: none; }
+.webapp-symbole { flex: 0 0 auto; margin: 0 auto; display: grid; grid-template-columns: repeat(4, 64px); gap: 22px 18px; padding: 28px 24px; border-radius: 32px; background: #fff; box-shadow: 0 14px 34px rgba(0, 0, 0, 0.06); }
+.webapp-symbol { width: 64px; height: 64px; border-radius: 16px; background: var(--bsv-soft); position: relative; }
+.webapp-symbol--bsv { background: none; }
+.webapp-symbol--bsv img { display: block; width: 64px; height: 64px; border-radius: 16px; box-shadow: 0 6px 16px rgba(21, 122, 67, 0.25); }
+.webapp-symbol--bsv small { position: absolute; left: -8px; right: -8px; top: 68px; text-align: center; font-size: 11px; font-weight: 600; color: var(--bsv-ink); }
+@media (max-width: 760px) { .tile.webapp-kachel { padding: 26px; } .webapp-symbole { grid-template-columns: repeat(4, 52px); gap: 20px 14px; padding: 22px 18px; } .webapp-symbol, .webapp-symbol--bsv img { width: 52px; height: 52px; border-radius: 13px; } .webapp-symbol--bsv small { top: 55px; } }
+@media (prefers-reduced-motion: no-preference) { .webapp-symbol--bsv img { animation: webapp-hupf 2.4s var(--bsv-ease) 0.6s 2 both; } }
+@keyframes webapp-hupf { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px) scale(1.06); } 60% { transform: translateY(0); } }
+.webapp-dialog { border: 0; border-radius: 18px; padding: 0; width: min(440px, calc(100vw - 32px)); color: var(--bsv-ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2); }
+.webapp-dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
+.webapp-dialog-inner { padding: 24px; font-size: 15px; line-height: 1.5; }
+.webapp-dialog h2 { font-size: 20px; margin: 0 0 8px; }
+.webapp-dialog p { margin: 0 0 16px; color: var(--bsv-ink-2); }
+.webapp-dialog dl { margin: 0 0 20px; }
+.webapp-dialog dt { font-weight: 600; margin-top: 12px; }
+.webapp-dialog dd { margin: 2px 0 0; color: var(--bsv-ink-2); }
+.webapp-dialog form { margin: 0; text-align: right; }
 
 /* Startseite */
 .hero { position: relative; overflow: hidden; background: var(--bsv-warm); }

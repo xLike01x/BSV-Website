@@ -123,6 +123,10 @@ export const Posts: CollectionConfig<'posts'> = {
   defaultPopulate: {
     title: true,
     slug: true,
+    // für „Passende News“ unter dem Artikel: Datum anzeigen, nur veröffentlichte und nicht gelöschte
+    publishedAt: true,
+    _status: true,
+    deletedAt: true,
     categories: true,
     meta: {
       image: true,
@@ -203,10 +207,11 @@ export const Posts: CollectionConfig<'posts'> = {
           name: 'relatedPosts',
           label: 'Passende News (unter dem Artikel)',
           type: 'relationship',
-          filterOptions: ({ id }) => ({ id: { not_in: [id] } }),
+          filterOptions: ({ id }): Where => ({ and: [{ id: { not_in: [id] } }, { _status: { equals: 'published' } }] }),
           hasMany: true,
+          maxRows: 3,
           relationTo: 'posts',
-          admin: { description: 'Leer lassen = keine Empfehlungen unter dem Artikel.' },
+          admin: { description: 'Bis zu 3 News, die unter dem Artikel als „Passend dazu“ erscheinen. Leer lassen = automatisch die 3 neuesten News.' },
         },
         {
           name: 'meta',

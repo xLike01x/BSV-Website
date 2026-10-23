@@ -5,6 +5,7 @@ import { getHauptsponsoren, getMenue, getTexte, getVerein } from '@/bsv/data'
 
 import { zuLinks, type MenueEintrag } from './menueLinks'
 import { SponsorLogo } from './SponsorLogo'
+import { WebApp } from './WebApp'
 
 export async function Footer() {
   const [v, hauptsponsoren, menue, tx] = await Promise.all([getVerein(), getHauptsponsoren(), getMenue(), getTexte()])
@@ -76,6 +77,7 @@ export async function Footer() {
         <p className="foot-bottom">
           © {v.name} · Postanschrift: {(v.postanschrift ?? '').replace(/\n/g, ', ')} · <Link href="/kontakt">Kontakt</Link> ·{' '}
           <Link href="/impressum">Impressum</Link> · <Link href="/datenschutz">Datenschutz</Link>
+          <WebApp art="fuss" texte={tx.webApp} />
           <span style={{ display: 'block', marginTop: 4 }}>Konzept, Design und Umsetzung der Website © {new Date().getFullYear()} <a href="mailto:kontakt.thomas.wilms@gmail.com" style={{ color: 'inherit', textDecoration: 'underline', textUnderlineOffset: 2 }}>Thomas Wilms</a></span>
         </p>
       </div>

@@ -815,7 +815,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Veröffentlicht am (nur Redaktion)', text: 'Das Datum über der News. Leer = Zeitpunkt der Veröffentlichung. Ein Datum in der Zukunft plant die News nicht automatisch ein – dafür gibt es „Veröffentlichungsplanung“ im Pfeil neben „Veröffentlichen“.' },
     { name: 'Autor:in (nur Redaktion)', text: 'Wer die News geschrieben hat. Wird automatisch mit deinem Namen vorbelegt.' },
     { name: 'Slug (nur Redaktion)', text: 'Der Teil der Adresse, z. B. /news/f1-gewinnt. Entsteht automatisch aus dem Titel. Mit „Entsperren“ kannst du ihn ändern – nach dem Veröffentlichen besser nicht mehr.' },
-    { name: 'Für Fortgeschrittene (nur Redaktion)', text: 'Eingeklappt unten: „Passende News“ (Empfehlungen unter dem Artikel) und die Google-Vorschau. Beides musst du nicht ausfüllen.' },
+    { name: 'Für Fortgeschrittene (nur Redaktion)', text: 'Eingeklappt unten: „Passende News“ (bis zu 3 News unter dem Artikel, leer = die 3 neuesten) und die Google-Vorschau. Beides musst du nicht ausfüllen.' },
     { name: 'Google-Vorschau (SEO)', text: 'Titel, Beschreibung und Bild, die Google und WhatsApp & Co. beim Teilen anzeigen. Wird automatisch aus Titel, Text und Titelbild erzeugt. Nur ändern, wenn du einen anderen Text möchtest.' },
   ],
   angebote: [
@@ -1448,7 +1448,26 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Kann ich die Verwaltung auch am Handy benutzen?',
-    antwort: 'Ja. Die Seitenleiste öffnest du über das Menü-Symbol oben links. Für längere Texte ist ein Computer angenehmer.',
+    antwort: 'Ja. Die Seitenleiste öffnest du über das Menü-Symbol oben links. Für längere Texte ist ein Computer angenehmer. Tipp: Die Verwaltung lässt sich als eigenes Symbol „BSV Verwaltung“ auf den Startbildschirm legen – genauso wie die Website-App (siehe „Gibt es die Website als App?“), nur während du in der Verwaltung bist.',
+  },
+  {
+    frage: 'Was ist „Für Fortgeschrittene: Google-Vorschau und passende News“ bei einer News?',
+    antwort:
+      'Ein eingeklappter Bereich ganz unten beim Schreiben einer News. Nur Redaktion und Admins sehen ihn. Alles darin ist freiwillig – wer nichts einträgt, bekommt sinnvolle Werte automatisch.\n\n'
+      + '• Passende News: bis zu 3 andere News, die unter dem Artikel als „Passend dazu“ erscheinen. Leer = unter dem Artikel stehen die 3 neuesten News („Weitere News“). Zur Auswahl stehen nur veröffentlichte News.\n'
+      + '• Google-Vorschau: Titel, Beschreibung und Bild, die Google in den Suchergebnissen und WhatsApp, Facebook & Co. beim Teilen eines Links zeigen. Die Vorschau im Bereich zeigt, wie das aussieht. Leer = Titel und Titelbild der News, die Beschreibung entsteht beim Speichern aus dem Anfang des Textes. Die Beschreibung steht außerdem groß als Einleitung unter der Überschrift des Artikels.\n\n'
+      + 'Beispiel 1 – Wenn du über das Pokalspiel und am nächsten Tag über die Feier danach schreibst – dann wähle bei der Feier unter „Passende News“ das Pokalspiel aus. Leser finden so den Spielbericht direkt darunter.\n\n'
+      + 'Beispiel 2 – Wenn beim Teilen in WhatsApp nur ein abgeschnittener Satz wie „Am Samstag trafen sich …“ erscheint – dann schreib unter Google-Vorschau eine eigene Beschreibung, z. B. „F1-Jugend gewinnt das Hallenturnier in Xanten“. Die erscheint dann auch als Einleitung im Artikel.',
+    bereich: 'posts',
+  },
+  {
+    frage: 'Gibt es die Website als App?',
+    antwort:
+      'Ja, als sogenannte Web-App: kostenlos, ohne App-Store und ohne Anmeldung. Wer sie installiert, hat das Vereinswappen auf dem Startbildschirm und die Website öffnet sich in einem eigenen Fenster ohne Browser-Leiste. Inhalte sind immer dieselben wie auf der Website – es gibt nichts extra zu pflegen.\n\n'
+      + 'So geht’s: auf der Startseite in der Kachel „Mitgliederbereich“ auf „App installieren ›“ oder ganz unten auf der Website auf „Als App installieren“ tippen. Chrome, Edge und Android öffnen dann direkt den Installieren-Dialog; auf dem iPhone erscheint eine kurze Anleitung (Teilen → „Zum Home-Bildschirm“). In der installierten App sind beide Hinweise ausgeblendet. Die Texte änderst du unter Website-Aufbau → Texte & Bilder: Reiter „Startseite“ → Kachel Mitgliederbereich (Hinweis und Link-Text) und Reiter „Weitere Seiten“ → Fußzeile. Sobald es Benachrichtigungen gibt, passt du dort den Satz „… folgen in Kürze“ an.\n\n'
+      + 'Ohne Internet zeigt die App eine freundliche Seite „Gerade keine Verbindung“ statt einer Fehlermeldung. Dabei werden keine Seiten oder Daten auf dem Gerät gespeichert – nur diese eine Hinweisseite. Mitgliederbereich und Ausweis brauchen also immer eine Verbindung. Benachrichtigungen aufs Handy (z. B. bei Trainingsausfall) gibt es noch nicht; sie sind für später geplant.\n\n'
+      + 'Beispiel 1 – Wenn ein Elternteil fragt, wie es schnell an die Trainingszeiten kommt – dann: Website am Handy öffnen, unten „Als App installieren“. Ein langes Drücken auf das Symbol zeigt Abkürzungen zu Trainingszeiten, Terminen, News und Mitgliederbereich (Android).\n\n'
+      + 'Beispiel 2 – Wenn beim Tippen auf „Als App installieren“ nur die Anleitung erscheint statt des Dialogs – dann unterstützt der Browser das direkte Installieren nicht (z. B. Safari oder Firefox) oder die App ist schon installiert. Einfach der Anleitung folgen.',
   },
 ]
 

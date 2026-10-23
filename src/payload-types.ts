@@ -950,7 +950,7 @@ export interface Post {
     [k: string]: unknown;
   };
   /**
-   * Leer lassen = keine Empfehlungen unter dem Artikel.
+   * Bis zu 3 News, die unter dem Artikel als „Passend dazu“ erscheinen. Leer lassen = automatisch die 3 neuesten News.
    */
   relatedPosts?: (number | Post)[] | null;
   /**
@@ -3487,6 +3487,17 @@ export interface Texte {
     sponsor?: string | null;
     sponsorLink?: string | null;
   };
+  /**
+   * Hinweise zum Installieren der Website als App: Kachel auf der Startseite, Zeile bei den Trainingszeiten und Link in der Fußzeile. In der installierten App werden sie automatisch ausgeblendet.
+   */
+  webApp?: {
+    label?: string | null;
+    titel?: string | null;
+    text?: string | null;
+    knopf?: string | null;
+    fusszeile?: string | null;
+    trainingszeiten?: string | null;
+  };
   news?: {
     titel?: string | null;
     text?: string | null;
@@ -4256,6 +4267,16 @@ export interface TexteSelect<T extends boolean = true> {
     | {
         sponsor?: T;
         sponsorLink?: T;
+      };
+  webApp?:
+    | T
+    | {
+        label?: T;
+        titel?: T;
+        text?: T;
+        knopf?: T;
+        fusszeile?: T;
+        trainingszeiten?: T;
       };
   news?:
     | T
