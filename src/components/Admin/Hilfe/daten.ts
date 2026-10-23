@@ -80,6 +80,7 @@ export function ansichtAus(pfad: string): Ansicht {
   if (teile[0] === 'rollen') return { schluessel: 'rollen', art: 'seite' }
   if (teile[0] === 'sicherung') return { schluessel: 'sicherung', art: 'seite' }
   if (teile[0] === 'statistik') return { schluessel: 'statistik', art: 'seite' }
+  if (teile[0] === 'updates') return { schluessel: 'updates', art: 'seite' }
   if (teile[0] === 'papierkorb') return { schluessel: 'papierkorb', art: 'seite' }
   if (teile[0] === 'registrierungen') return { schluessel: 'registrierungen', art: 'seite' }
   if (teile[0] === 'saisonwechsel') return { schluessel: 'saisonwechsel', art: 'seite' }

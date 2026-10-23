@@ -13,6 +13,7 @@ export const EINTRAEGE: Eintrag[] = [
   { key: 'statistik', gruppe: 'Einstellungen', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'], recht: 'statistik', lesen: 'statistik' },
   { key: 'papierkorb', gruppe: 'Einstellungen', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'], recht: 'papierkorb' },
   { key: 'sicherung', gruppe: 'Einstellungen', href: '/admin/sicherung', label: 'Datensicherung', rollen: ['webadmin'] },
+  { key: 'updates', gruppe: 'Einstellungen', href: '/admin/updates', label: 'Updates & Sicherheit', rollen: ['webadmin'] },
 ]
 
 /**
@@ -26,7 +27,7 @@ export const eintragSichtbar = (e: Eintrag, user: unknown) => {
 }
 
 /** Feste Reihenfolge innerhalb der Gruppen (wie nav-zusatz.scss); alles andere folgt danach */
-export const REIHENFOLGE = ['statistik', 'papierkorb', 'verein', 'rollen', 'datenschutz', 'sicherung', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
+export const REIHENFOLGE = ['statistik', 'papierkorb', 'verein', 'rollen', 'datenschutz', 'sicherung', 'updates', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
 
 /** Nicht als eigener Eintrag zeigen – erreichbar über „Rollen & Rechte“ */
 export const VERSTECKT = ['rollenRechte']

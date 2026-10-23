@@ -6,7 +6,7 @@ import React from 'react'
 
 import { hasRole } from '@/access/roles'
 import { sicherungenAuflisten } from '@/sicherung/kern'
-import { paketStand } from '@/wartung/pakete'
+import { updateStand, updateZusammenfassung } from '@/wartung/updates'
 import { codeStand, nodeLaufzeit, postgresLaufzeit, schluesselwechselOffen, speicherplatz, wartungLesen } from '@/wartung/pruefen'
 
 import SicherungClient from './Client'
@@ -25,7 +25,10 @@ export default async function Sicherung({ initPageResult, params, searchParams }
     speicher: speicherplatz(),
     code,
     schluesselwechsel: schluesselwechselOffen(),
-    pakete: paketStand(),
+    updates: (() => {
+      const z = updateZusammenfassung()
+      return { sicherheit: z.sicherheit.length, updates: z.updates.length, geprueftAm: updateStand().geprueftAm }
+    })(),
   }
   return (
     <DefaultTemplate

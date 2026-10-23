@@ -2,7 +2,7 @@ import { execFile } from 'child_process'
 import fs from 'fs'
 import type { Payload } from 'payload'
 
-import { paketPruefungAus, paketStand } from './pakete'
+import { updatePruefungAus, updateStand, updateZusammenfassung } from './updates'
 
 /**
  * Wartungs-Prüfungen für Web-Admins (Dashboard-Hinweise, Datensicherungs-Seite, tägliches Protokoll):
@@ -87,7 +87,8 @@ export async function wartungsHinweise(payload: Payload): Promise<Hinweis[]> {
       symbol: '📭',
       text: 'Automatische Mails sind abgeschaltet (BSV_ERINNERUNGEN=aus in der .env, z. B. von der Generalprobe): keine „Passt noch?“-Mails, kein Monatsbericht. Für den echten Betrieb Zeile löschen und neu starten.',
     })
-  for (const l of [nodeLaufzeit(), await postgresLaufzeit(payload)]) {
+  // Laufzeitende aus der eingebauten Tabelle – nur solange die Online-Prüfung (updates.ts) noch kein Ergebnis hat
+  for (const l of updateStand().geprueftAm ? [] : [nodeLaufzeit(), await postgresLaufzeit(payload)]) {
     if (!l?.ende || l.tage === null || l.tage > VORLAUF_TAGE) continue
     const wann = new Date(`${l.ende}T00:00:00Z`).toLocaleDateString('de-DE', { month: 'long', year: 'numeric' })
     h.push({
@@ -97,27 +98,18 @@ export async function wartungsHinweise(payload: Payload): Promise<Hinweis[]> {
       text: l.tage < 0 ? `${l.name} ${l.version} bekommt seit ${wann} keine Sicherheits-Updates mehr – bitte aktualisieren.` : `${l.name} ${l.version} bekommt ab ${wann} keine Sicherheits-Updates mehr – Wechsel einplanen.`,
     })
   }
-  // Sicherheitsmeldungen und neue Versionen (tägliche Paket-Prüfung, src/wartung/pakete.ts)
-  const p = paketStand()
-  if (p.meldungen.length) {
-    const kritisch = p.meldungen.some((m) => m.schwere === 'critical')
-    const pakete = [...new Set(p.meldungen.map((m) => `${m.paket} ${m.version}`))].join(', ')
-    h.push({
-      key: 'sicherheitsmeldung',
-      art: 'warn',
-      symbol: '🚨',
-      text: `${kritisch ? 'Kritische' : 'Hohe'} Sicherheitslücke in ${pakete} bekannt (${p.meldungen.length} ${p.meldungen.length === 1 ? 'Meldung' : 'Meldungen'}). Bitte zeitnah aktualisieren – Details unter „Wartung“.`,
-    })
+  // Updates & Sicherheit (tägliche Prüfung, src/wartung/updates.ts) – Details auf /admin/updates
+  const u = updateStand()
+  const { sicherheit, updates, auslaufend } = updateZusammenfassung(u)
+  for (const e of auslaufend) h.push({ key: `laufzeit-${e.name}`, art: 'warn', symbol: '⏳', text: `${e.name} ${e.installiert}: ${e.text}` })
+  if (sicherheit.length) {
+    const namen = sicherheit.map((e) => (e.installiert && e.installiert !== '–' ? `${e.name} ${e.installiert}` : e.name)).join(', ')
+    h.push({ key: 'updates-sicherheit', art: 'warn', symbol: '🚨', text: `${sicherheit.length === 1 ? 'Sicherheitsupdate nötig' : `${sicherheit.length} Sicherheitsupdates nötig`}: ${namen}. Bitte zeitnah erledigen.` })
   }
-  for (const u of p.updates)
-    h.push({
-      key: `update-${u.paket}`,
-      art: 'info',
-      symbol: '⬆️',
-      text: `${u.hauptversion ? 'Neue Hauptversion' : 'Update verfügbar'}: ${u.name} ${u.neu} (installiert ${u.installiert}).${u.hauptversion ? ' Größerer Umbau – nur mit Tests einplanen.' : ' Beim nächsten Update-Tag mitnehmen.'}`,
-    })
-  if (!paketPruefungAus() && p.fehlerSeit && Date.now() - new Date(p.fehlerSeit).getTime() > 3 * 86400000)
-    h.push({ key: 'paketpruefung', art: 'info', symbol: '📡', text: 'Die Prüfung auf Sicherheitsmeldungen klappt seit mehreren Tagen nicht (keine Verbindung zu registry.npmjs.org?).' })
+  if (updates.length)
+    h.push({ key: 'updates', art: 'info', symbol: '⬆️', text: `${updates.length === 1 ? '1 Update verfügbar' : `${updates.length} Updates verfügbar`} (${updates.slice(0, 3).map((e) => e.name).join(', ')}${updates.length > 3 ? ' …' : ''}). Beim nächsten Update-Tag mitnehmen.` })
+  if (!updatePruefungAus() && u.fehlerSeit && Date.now() - new Date(u.fehlerSeit).getTime() > 3 * 86400000)
+    h.push({ key: 'updates-fehler', art: 'info', symbol: '📡', text: `Die Update-Prüfung klappt seit mehreren Tagen nicht vollständig (nicht erreichbar: ${u.quellenFehler.join(', ') || 'unbekannt'}).` })
 
   const code = await codeStand()
   const codeTage = code ? Math.floor((Date.now() - new Date(code).getTime()) / 86400000) : null

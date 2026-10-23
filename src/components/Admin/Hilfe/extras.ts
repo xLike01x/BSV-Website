@@ -1034,8 +1034,8 @@ export const FAQ: Faq[] = [
     bereich: 'users',
   },
   {
-    frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload)?',
-    antwort: 'Die Website prüft jeden Tag (und kurz nach jedem Start) alle Pakete, die live laufen, gegen die Sicherheitsdatenbank von npm. Gibt es eine hohe oder kritische Lücke, sehen Web-Admins oben im Dashboard „🚨 Sicherheitslücke …“; Details stehen unter Datensicherung → Wartung (Schweregrad, betroffene Versionen, Link zur Beschreibung). Neue Versionen von Next.js und Payload erscheinen als „⬆️ Update verfügbar“. Zusätzlich prüft GitHub täglich und schickt bei Fund eine E-Mail; die Warnung steht auch im Monatsbericht. Was tun: Update in Auftrag geben (aktualisieren und testen) und auf dem Server deploy/update.sh ausführen – die Sicherung davor macht das Skript selbst. Übertragen werden dabei nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
+    frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload, Node.js, Datenbank)?',
+    antwort: 'Alles steht an einem Ort: Einstellungen → „Updates & Sicherheit“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server (bzw. BSV-Website-Update.bat am PC); die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
     bereich: 'sicherung',
   },
   {

@@ -235,7 +235,10 @@ Vorher immer `pnpm audit --prod` im Blick haben (Sicherheitsmeldungen zu Paketen
 
 ### Sicherheitsmeldungen zu Paketen
 
-- GitHub prüft **jeden Montag** automatisch (`.github/workflows/sicherheit-woechentlich.yml`) und bei jedem Push. Bei einer hohen oder
+- Die Website selbst prüft täglich Node.js, PostgreSQL, die direkt genutzten Pakete und (live) die Server-Updates. Ergebnis:
+  Verwaltung → Einstellungen → **„Updates & Sicherheit“** (nur Web-Admin), Hinweise im Dashboard und im Monatsbericht.
+  Abschalten mit `BSV_PAKETPRUEFUNG=aus`.
+- GitHub prüft **jeden Morgen** automatisch (`.github/workflows/sicherheit-woechentlich.yml`) und bei jedem Push. Bei einer hohen oder
   kritischen Lücke in einem Live-Paket schlägt die Prüfung fehl und GitHub schickt eine E-Mail. Dann: Update einspielen
   (`pnpm update <paket>` bzw. Payload/Next-Update), testen, `./deploy/update.sh`.
 - Zusätzlich empfohlen: im Repository unter *Settings → Code security* „Dependabot alerts“ einschalten.

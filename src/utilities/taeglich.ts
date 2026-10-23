@@ -5,7 +5,7 @@ import { passUnterlagenAufraeumen } from '@/passantraege/aufraeumen'
 import { datenschutzAutomatisch } from '@/datenschutz/aufraeumen'
 import { statistikAufraeumen } from '@/statistik/aufraeumen'
 import { sicherungErstellen, type Pool } from '@/sicherung/kern'
-import { paketePruefen } from '@/wartung/pakete'
+import { updatesPruefen } from '@/wartung/updates'
 import { restAufraeumen } from '@/sicherung/umschluesseln'
 import { alteAdressenEntfernen, erinnerungenVerschicken } from '@/sport/bestaetigung'
 import { monatsberichtVerschicken } from '@/wartung/monatsbericht'
@@ -90,8 +90,8 @@ export function taeglicheAufgaben(payload: Payload) {
   if (g.__bsvTaeglich) clearInterval(g.__bsvTaeglich)
   const lauf = async () => {
     await einmalAufraeumen(payload)
-    // Sicherheitsmeldungen und neue Versionen (Next.js, Payload) – Hinweis für Web-Admins im Dashboard
-    await paketePruefen(payload)
+    // Updates & Sicherheit (Node.js, PostgreSQL, Pakete, Server) – Hinweis für Web-Admins, Seite /admin/updates
+    await updatesPruefen(payload)
     if (process.env.NODE_ENV === 'production' && process.env.BSV_SICHERUNG !== 'aus') {
       await sicherungErstellen(
         (payload.db as unknown as { pool: Pool }).pool,

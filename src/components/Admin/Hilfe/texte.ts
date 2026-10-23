@@ -613,6 +613,27 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Nur Admins und Web-Admins sehen diese Seite.'],
   },
 
+  updates: {
+    titel: 'Updates & Sicherheit',
+    kurz: 'Alles, was aktualisiert werden kann, an einem Ort: Node.js, Datenbank, Website-Pakete und Server – nur für Web-Admins.',
+    wozu: {
+      text: 'Software bekommt laufend Fehler- und Sicherheitskorrekturen. Hier siehst du auf einen Blick, ob etwas zu tun ist – und was.',
+      beispiele: ['Next.js meldet eine kritische Sicherheitslücke', 'Node.js hat ein Sicherheitsupdate', 'Der Server braucht nach Updates einen Neustart'],
+    },
+    tun: [
+      'Oben steht, ob etwas zu tun ist: 🚨 Sicherheitsupdate (zeitnah), ⬆️ Update (beim nächsten Update-Tag), 🧭 neue Hauptversion (größerer Umbau, planen), ✓ aktuell.',
+      'In der Tabelle „Zu erledigen“ steht bei jedem Eintrag unter „So geht’s“, was zu tun ist – je nachdem, ob die Seite am PC oder auf dem Server läuft.',
+      '„🔄 Jetzt prüfen“ prüft sofort (sonst täglich und nach jedem Start; höchstens einmal pro Minute).',
+      'Website-Pakete (Next.js, Payload …) nicht selbst aktualisieren: Update in Auftrag geben, testen lassen, dann BSV-Website-Update.bat bzw. ./deploy/update.sh.',
+    ],
+    wirkung: ['Die Seite zeigt nur an – sie installiert nichts von selbst.', 'Sicherheitsupdates erscheinen zusätzlich oben im Dashboard und im Monatsbericht.'],
+    tipps: [
+      'Übertragen werden nur Paketnamen und Versionsnummern an npm, endoflife.date und nodejs.org – keine Daten des Vereins.',
+      'Abschalten (z. B. ohne Internet): BSV_PAKETPRUEFUNG=aus in der .env.',
+      'Indirekt genutzte Pakete prüft zusätzlich GitHub jeden Tag und schickt bei Funden eine E-Mail.',
+    ],
+  },
+
   sicherung: {
     titel: 'Datensicherung',
     kurz: 'Alle Inhalte und alle Bilder in einer einzigen Datei sichern – und im Notfall zurückholen.',
@@ -625,7 +646,7 @@ export const HILFE: Record<string, HilfeText> = {
       '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
       'Zurückholen: Anleitung unten auf der Seite (Befehl „pnpm sicherung:einspielen“).',
       'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (am besten am PC), danach „✓ Heute erfolgreich getestet“ klicken.',
-      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln.',
+      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter „Updates & Sicherheit“.',
     ],
     wirkung: [
       'Die Sicherung ändert nichts an der Website.',

@@ -19,7 +19,13 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
     if (tage === null) a.push({ key: 'sicherung', art: 'warn', symbol: '💾', text: 'Es gibt noch keine Datensicherung.', href: '/admin/sicherung', link: 'Jetzt sichern' })
     else if (tage > 7) a.push({ key: 'sicherung', art: 'warn', symbol: '💾', text: `Die letzte Datensicherung ist ${tage} Tage alt.`, href: '/admin/sicherung', link: 'Jetzt sichern' })
     // Wartung: Speicherplatz, Schlüsselwechsel, auslaufende Versionen, Update-Tag, Wiederherstellungs-Test
-    const ziel: Record<string, [string, string]> = { speicher: ['/admin/collections/media', 'Mediathek'], wiederherstellung: ['/admin/sicherung#wartung', 'Anleitung'] }
+    const ziel: Record<string, [string, string]> = {
+      speicher: ['/admin/collections/media', 'Mediathek'],
+      wiederherstellung: ['/admin/sicherung#wartung', 'Anleitung'],
+      'updates-sicherheit': ['/admin/updates', 'Ansehen'],
+      updates: ['/admin/updates', 'Ansehen'],
+      'updates-fehler': ['/admin/updates', 'Ansehen'],
+    }
     for (const w of await wartungsHinweise(req.payload).catch(() => [])) {
       const [href, link] = ziel[w.key] ?? ['/admin/sicherung#wartung', 'Details']
       a.push({ ...w, key: `wartung-${w.key}`, href, link })

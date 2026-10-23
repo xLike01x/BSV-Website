@@ -1,4 +1,5 @@
 import { rechteVorschauEndpunkt } from '@/components/Admin/WasDarf/endpunkt'
+import { updatesEndpunkt } from '@/wartung/updatesEndpunkt'
 import { Statistik } from './statistik/Statistik'
 import { statistikEndpunkt } from './statistik/endpunkt'
 import { papierkorbEndpunkte } from './papierkorb/endpunkt'
@@ -92,7 +93,7 @@ const email = process.env.SMTP_HOST
 
 const konfiguration = buildConfig({
   email,
-  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt, ...papierkorbEndpunkte, gesundEndpunkt, cspBerichtEndpunkt],
+  endpoints: [...sicherungEndpunkte, ...datenschutzEndpunkte, vorstandFotoEndpunkt, posteingangEndpunkt, rechteVorschauEndpunkt, statistikEndpunkt, updatesEndpunkt, ...papierkorbEndpunkte, gesundEndpunkt, cspBerichtEndpunkt],
   // Tägliche Aufgaben: Papierkorb nach 30 Tagen leeren, Datenschutz-Fristen (falls automatisch)
   onInit: async (payload) => {
     // Nur die eigene Prüfung (mit zweitem Faktor) meldet Benutzer an. Payloads eingebaute Token-Prüfung läuft sonst
@@ -145,6 +146,8 @@ const konfiguration = buildConfig({
         registrierungen: { Component: '@/components/Admin/Registrierungen', path: '/registrierungen', exact: true },
         // Besucherstatistik ohne Cookies (nur Web-Admin)
         statistik: { Component: '@/components/Admin/Statistik', path: '/statistik', exact: true },
+        // Alle möglichen Updates an einem Ort (Node.js, PostgreSQL, Pakete, Server) – nur Web-Admin
+        updates: { Component: '@/components/Admin/Updates', path: '/updates', exact: true },
         // Zentraler Papierkorb (beide Stufen, alle Bereiche) – nur Web-Admin
         papierkorb: { Component: '@/components/Admin/Papierkorb', path: '/papierkorb', exact: true },
         // Einmal im Jahr alle Teams durchgehen (Admin und Redaktion)

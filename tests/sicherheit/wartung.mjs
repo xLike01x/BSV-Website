@@ -10,6 +10,21 @@ export default async function wartung(d) {
   const trainer = await login('trainer-f1-jugend@bsv.test')
   const admin = await login('admin@bsv.test')
   try {
+    // Updates & Sicherheit: nur Web-Admins, nur JSON, höchstens einmal pro Minute
+    pruefe('Ohne Anmeldung: Update-Prüfung → 403', (await api(null, 'POST', '/api/updates/pruefen', {})).s === 403)
+    pruefe('Kasse: Update-Prüfung → 403', (await api(kasse, 'POST', '/api/updates/pruefen', {})).s === 403)
+    pruefe('Admin (ohne Web-Admin): Update-Prüfung → 403', (await api(admin, 'POST', '/api/updates/pruefen', {})).s === 403)
+    pruefe('Nur ansehen: Update-Prüfung → 403', (await api(await login('lesen@bsv.test'), 'POST', '/api/updates/pruefen', {})).s === 403)
+    await mitWebAdmin(d, 'admin@bsv.test', async () => {
+      const w = await login('admin@bsv.test')
+      const plain = await fetch(B + '/api/updates/pruefen', { method: 'POST', headers: { Cookie: w, 'Content-Type': 'text/plain' }, body: '{}' })
+      pruefe('Web-Admin ohne JSON → 415', plain.status === 415, plain.status)
+      const erst = await api(w, 'POST', '/api/updates/pruefen', {})
+      const nochmal = await api(w, 'POST', '/api/updates/pruefen', {})
+      pruefe('Web-Admin: Update-Prüfung läuft (oder ist gerade gelaufen)', erst.s === 200 || erst.s === 429, erst)
+      pruefe('Sofort nochmal → 429 (höchstens einmal pro Minute)', nochmal.s === 429, nochmal.s)
+    })
+
     // Saisonwechsel
     pruefe('Ohne Anmeldung: Saison-Aktion → 403', (await api(null, 'POST', '/api/globals/wartung/saison', { aktion: 'start' })).s === 403)
     pruefe('Kasse: Saison-Aktion → 403', (await api(kasse, 'POST', '/api/globals/wartung/saison', { aktion: 'start' })).s === 403)
