@@ -1131,6 +1131,12 @@ export const FAQ: Faq[] = [
     antwort: 'Oben rechts auf dein Symbol (Foto oder Anfangsbuchstaben) klicken. Im Menü: „Mein Konto“ (Name, E-Mail, Passwort, Benachrichtigungen), „Zum Mitgliederbereich“ (Ausfälle, Ausweis, Downloads – so, wie Mitglieder die Website sehen), „Website ansehen“, „Hilfe-Center“ und „Abmelden“.',
   },
   {
+    frage: 'Was bedeutet „Vorzeigen genügt · QR-Code prüft live“ auf dem Mitgliedsausweis?',
+    antwort:
+      'Der Satz richtet sich an die Person, die den Ausweis kontrolliert (z. B. am Eingang eines Festes oder bei einem Rabatt).\n\n„Vorzeigen genügt“: Der Ausweis auf dem Handy reicht. Dass er echt ist und kein Screenshot, sieht man an der laufenden Uhrzeit unten links (die Sekunden zählen mit) und am schimmernden Streifen.\n\n„QR-Code prüft live“: Wer den QR-Code mit der Handy-Kamera scannt, landet auf einer Seite der Website, die in diesem Moment zeigt, ob die Mitgliedschaft gültig ist – ✅ „Gültige Mitgliedschaft“ mit Vorname, Anfangsbuchstabe des Nachnamens, Mitgliedsnummer, Art und Eintrittsjahr, oder ❌ „nicht mehr gültig“. Ist jemand ausgetreten („Gültig bis“ ist vorbei), zeigt der QR-Code das sofort – auch auf einem alten Screenshot oder Ausdruck. Der Code ist nicht fälschbar und nicht erratbar; mehr Daten (Adresse, Geburtsdatum, IBAN) zeigt die Prüfseite nie.',
+    bereich: 'mitgliedschaften',
+  },
+  {
     frage: 'Warum sieht ein Mitglied keinen Ausweis?',
     antwort: 'Der Ausweis erscheint im Konto, das bei der Mitgliedschaft unter „Benutzerkonto“ eingetragen ist. Prüfe unter „Mitgliedschaften“, ob es einen Eintrag gibt und das Konto verknüpft ist (bei Kindern das der Eltern). Verknüpft wird automatisch bei der Freigabe einer Registrierung mit gleicher E-Mail.',
     bereich: 'mitgliedschaften',
