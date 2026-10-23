@@ -5,6 +5,7 @@ import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
 import { hasRole } from '@/access/roles'
+import { GRUPPEN, PAKETE, type Programm, SYSTEM } from '@/wartung/programme'
 import { updatePruefungAus, updateStand, type Art, type Eintrag } from '@/wartung/updates'
 
 import JetztPruefen from './JetztPruefen'
@@ -16,8 +17,12 @@ const ART: Record<Art, { symbol: string; titel: string; klasse: string }> = {
   auslaufend: { symbol: '⏳', titel: 'Läuft aus', klasse: 'is-warn' },
   update: { symbol: '⬆️', titel: 'Update', klasse: 'is-update' },
   hauptversion: { symbol: '🧭', titel: 'Neue Hauptversion', klasse: 'is-info' },
+  gesperrt: { symbol: '🔒', titel: 'Gesperrt', klasse: 'is-info' },
   aktuell: { symbol: '✓', titel: 'Aktuell', klasse: 'is-ok' },
 }
+/** Erklärung zum Eintrag (programme.ts) */
+const programm = (e: Eintrag): Programm | undefined =>
+  e.key.startsWith('pkt-') ? PAKETE[e.key.slice(4)] : e.key === 'server-os' || e.key === 'server-neustart' ? SYSTEM.server : SYSTEM[e.key]
 const wann = (iso: string) => new Date(iso).toLocaleString('de-DE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Europe/Berlin' })
 
 function Zeile({ e, ohneTun }: { e: Eintrag; ohneTun?: boolean }) {
@@ -27,7 +32,10 @@ function Zeile({ e, ohneTun }: { e: Eintrag; ohneTun?: boolean }) {
       <td className="bsv-upd__art">
         <span aria-hidden="true">{a.symbol}</span> {a.titel}
       </td>
-      <th scope="row">{e.name}</th>
+      <th scope="row">
+        {e.name}
+        {programm(e) && <small className="bsv-upd__info">{programm(e)!.text}</small>}
+      </th>
       <td className="bsv-upd__version">
         {e.installiert}
         {e.verfuegbar && e.verfuegbar !== e.installiert && e.art !== 'aktuell' ? ` → ${e.verfuegbar}` : ''}
@@ -61,7 +69,7 @@ function Zeile({ e, ohneTun }: { e: Eintrag; ohneTun?: boolean }) {
 function Gruppe({ titel, eintraege }: { titel: string; eintraege: Eintrag[] }) {
   if (!eintraege.length) return null
   // Bei Website-Paketen ist der Weg immer derselbe – einmal unter der Tabelle statt in jeder Zeile
-  const paketTun = eintraege.find((e) => e.gruppe === 'Website-Pakete' && e.tun)?.tun
+  const paketTun = eintraege.find((e) => e.gruppe === 'Website-Pakete' && e.art !== 'gesperrt' && e.tun)?.tun
   return (
     <section className="bsv-upd__box">
       <h2>{titel}</h2>
@@ -82,7 +90,7 @@ function Gruppe({ titel, eintraege }: { titel: string; eintraege: Eintrag[] }) {
         </thead>
         <tbody>
           {eintraege.map((e) => (
-            <Zeile key={e.key} e={e} ohneTun={e.gruppe === 'Website-Pakete'} />
+            <Zeile key={e.key} e={e} ohneTun={e.gruppe === 'Website-Pakete' && e.art !== 'gesperrt'} />
           ))}
         </tbody>
       </table>
@@ -101,7 +109,7 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
   if (!req.user) redirect('/login?weiter=/admin/updates')
   if (!hasRole(req.user as never, 'webadmin')) redirect('/admin')
   const s = updateStand()
-  const offen = s.eintraege.filter((e) => e.art !== 'aktuell')
+  const offen = s.eintraege.filter((e) => e.art !== 'aktuell' && e.art !== 'gesperrt')
   const pakete = s.eintraege.filter((e) => e.gruppe === 'Website-Pakete')
   const anzahl = { sicherheit: s.eintraege.filter((e) => e.art === 'sicherheit').length, offen: offen.length }
   // Ohne Daten einer Quelle keine Entwarnung („keine Sicherheitslücken“, „alles aktuell“)
@@ -153,6 +161,7 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
           </div>
 
           <Gruppe titel="Zu erledigen" eintraege={offen} />
+          <Gruppe titel="Wartet auf andere Pakete" eintraege={s.eintraege.filter((e) => e.art === 'gesperrt')} />
           <Gruppe titel="System" eintraege={s.eintraege.filter((e) => e.gruppe === 'System' && e.art === 'aktuell')} />
           {s.geprueftAm && (
             <section className="bsv-upd__box">
@@ -169,20 +178,41 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
           )}
 
           <section className="bsv-upd__box bsv-upd__klein">
-            <h2>Gut zu wissen</h2>
-            <ul>
-              <li>
-                <strong>Website-Pakete</strong> (Next.js, Payload …) aktualisiert man nicht einzeln von Hand: Update in Auftrag geben, alle Tests laufen lassen, dann am PC <code>BSV-Website-Update.bat</code> bzw. auf dem
-                Server <code>./deploy/update.sh</code> (macht vorher eine Sicherung und fällt bei Fehlern zurück).
-              </li>
-              <li>
-                <strong>Neue Hauptversionen</strong> sind größere Umbauten – nur geplant und mit ausführlichen Tests.
-              </li>
-              <li>
-                <strong>Server:</strong> Sicherheitsupdates des Betriebssystems installieren die automatischen Updates nachts von selbst. Steht hier „Server-Neustart“, zu einer ruhigen Zeit neu starten.
-              </li>
-              <li>Für die Prüfung werden nur Paketnamen und Versionsnummern an npm, endoflife.date und nodejs.org übertragen – keine Daten des Vereins.</li>
-            </ul>
+            <h2>Was ist was?</h2>
+            <p className="bsv-upd__einleitung">Die Website besteht aus vielen fertigen Bausteinen, die andere entwickeln und pflegen. Hier steht, wofür jeder gebraucht wird.</p>
+            {GRUPPEN.map((gr) => {
+              const liste = gr.key === 'System' ? Object.entries(SYSTEM) : Object.entries(PAKETE).filter(([, p]) => p.gruppe === gr.key)
+              if (!liste.length) return null
+              const inhalt = (
+                <>
+                  <p className="bsv-upd__gruppentext">{gr.text}</p>
+                  <dl className="bsv-upd__programme">
+                    {liste.map(([key, p]) => (
+                      <div key={key}>
+                        <dt>
+                          {p.name}
+                          {gr.key !== 'System' && s.versionen?.[key] && <span className="bsv-upd__version"> {s.versionen[key]}</span>}
+                        </dt>
+                        <dd>{p.text}</dd>
+                      </div>
+                    ))}
+                  </dl>
+                </>
+              )
+              return gr.key === 'System' ? (
+                <div key={gr.key} className="bsv-upd__gruppe">
+                  <h3>{gr.titel}</h3>
+                  {inhalt}
+                </div>
+              ) : (
+                <details key={gr.key} className="bsv-upd__gruppe">
+                  <summary>
+                    {gr.titel} <span>({liste.length})</span>
+                  </summary>
+                  {inhalt}
+                </details>
+              )
+            })}
           </section>
         </div>
       </Gutter>

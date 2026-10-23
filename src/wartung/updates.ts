@@ -2,6 +2,7 @@ import fs from 'fs'
 import { createRequire } from 'module'
 import path from 'path'
 import type { Payload } from 'payload'
+import { satisfies, validRange } from 'semver'
 
 import { NODE_ENDE, POSTGRES_ENDE } from './pruefen'
 
@@ -20,7 +21,7 @@ import { NODE_ENDE, POSTGRES_ENDE } from './pruefen'
  * keine Daten des Vereins. Abschalten: BSV_PAKETPRUEFUNG=aus in der .env.
  */
 
-export type Art = 'sicherheit' | 'update' | 'hauptversion' | 'auslaufend' | 'aktuell'
+export type Art = 'sicherheit' | 'update' | 'hauptversion' | 'gesperrt' | 'auslaufend' | 'aktuell'
 export type Meldung = { schwere: 'high' | 'critical'; titel: string; url: string | null; betroffen: string }
 export type Eintrag = {
   key: string
@@ -37,7 +38,7 @@ export type Eintrag = {
  * quellenFehler: beim letzten Lauf nicht erreichbar (dafür gelten die Angaben vom letzten erfolgreichen Abruf).
  * ohneDaten: nicht erreichbar und noch nie erfolgreich abgerufen – das Ergebnis ist unvollständig, also keine Entwarnung.
  */
-export type UpdateStand = { geprueftAm: string | null; fehlerSeit: string | null; quellenFehler: string[]; ohneDaten: string[]; eintraege: Eintrag[]; paketeGesamt: number }
+export type UpdateStand = { geprueftAm: string | null; fehlerSeit: string | null; quellenFehler: string[]; ohneDaten: string[]; eintraege: Eintrag[]; paketeGesamt: number; versionen: Record<string, string> }
 
 /** Rohdaten des letzten erfolgreichen Abrufs je Quelle – Ersatz, wenn eine Quelle ausfällt */
 type Roh = {
@@ -53,8 +54,11 @@ const VORLAUF_TAGE = 180
 /** Pakete mit eigenem, verständlichem Namen in der Übersicht */
 const NAMEN: Record<string, string> = { next: 'Next.js', payload: 'Payload', react: 'React', 'react-dom': 'React DOM', sharp: 'sharp (Bildbearbeitung)' }
 
+/** Name für Hinweise: alle Payload-Pakete heißen einfach „Payload“ */
+const anzeigeName = (p: string) => (p === 'payload' || p.startsWith('@payloadcms/') ? 'Payload' : (NAMEN[p] ?? p))
+
 const g = globalThis as unknown as { __bsvUpdates?: UpdateStand; __bsvUpdatesLaeuft?: Promise<UpdateStand>; __bsvUpdatesRoh?: Partial<Roh> }
-const stand = (): UpdateStand => (g.__bsvUpdates ??= { geprueftAm: null, fehlerSeit: null, quellenFehler: [], ohneDaten: [], eintraege: [], paketeGesamt: 0 })
+const stand = (): UpdateStand => (g.__bsvUpdates ??= { geprueftAm: null, fehlerSeit: null, quellenFehler: [], ohneDaten: [], eintraege: [], paketeGesamt: 0, versionen: {} })
 
 /** Letztes Ergebnis */
 export const updateStand = (): UpdateStand => stand()
@@ -72,14 +76,19 @@ const lesenJson = (datei: string): Record<string, unknown> | null => {
   }
 }
 
-function installiert(paket: string): string | null {
+/** package.json eines installierten Pakets */
+function paketJson(paket: string): Record<string, unknown> | null {
   try {
-    const v = lesenJson(createRequire(path.join(wurzel(), 'package.json')).resolve(`${paket}/package.json`))?.version
-    if (typeof v === 'string') return v
+    const j = lesenJson(createRequire(path.join(wurzel(), 'package.json')).resolve(`${paket}/package.json`))
+    if (j) return j
   } catch {
     // ohne exportierte package.json: direkt nachsehen
   }
-  const v = lesenJson(path.join(wurzel(), 'node_modules', paket, 'package.json'))?.version
+  return lesenJson(path.join(wurzel(), 'node_modules', paket, 'package.json'))
+}
+
+function installiert(paket: string): string | null {
+  const v = paketJson(paket)?.version
   return typeof v === 'string' ? v : null
 }
 
@@ -100,6 +109,19 @@ export function istHauptversion(neu: string, alt: string): boolean {
   const b = teile(alt)
   return (a[0] ?? 0) !== (b[0] ?? 0) || ((a[0] ?? 0) === 0 && (a[1] ?? 0) !== (b[1] ?? 0))
 }
+export type Anforderung = { von: string; bereich: string }
+/**
+ * Passt `neu` zu dem, was die anderen installierten Pakete verlangen (peerDependencies)?
+ * Liefert die erste Anforderung, die `neu` ausschließt – z. B. Payload verlangt graphql ^16.8.1, neu ist 17.0.2.
+ */
+export function sperre(neu: string, anforderungen: Anforderung[]): Anforderung | null {
+  for (const a of anforderungen) {
+    if (!validRange(a.bereich)) continue
+    if (!satisfies(neu, a.bereich)) return a
+  }
+  return null
+}
+
 /** URL-Pfad für ein Paket in der Registry (@scope/name → @scope%2Fname) */
 export const registryPfad = (p: string) => (p.startsWith('@') ? `@${encodeURIComponent(p.slice(1))}` : encodeURIComponent(p))
 const tageBis = (iso: string) => Math.ceil((new Date(`${iso.slice(0, 10)}T00:00:00Z`).getTime() - Date.now()) / 86400000)
@@ -258,6 +280,13 @@ export async function updatesPruefen(payload?: Payload): Promise<UpdateStand> {
         const v = installiert(d)
         if (v) versionen[d] = v
       }
+      // Was verlangen die installierten Pakete voneinander? (peerDependencies, z. B. Payload → graphql ^16.8.1)
+      const anforderungen: Record<string, Anforderung[]> = {}
+      for (const von of Object.keys(versionen)) {
+        const peers = paketJson(von)?.peerDependencies
+        if (!peers || typeof peers !== 'object') continue
+        for (const [p, bereich] of Object.entries(peers as Record<string, unknown>)) if (versionen[p] && typeof bereich === 'string') (anforderungen[p] ??= []).push({ von, bereich })
+      }
       const ignorieren = new Set(((pkg.pnpm as { auditConfig?: { ignoreGhsas?: string[] } } | undefined)?.auditConfig?.ignoreGhsas ?? []).filter((x) => typeof x === 'string'))
       const nodeIst = process.versions.node
       const pgIst = await postgresVersion(payload)
@@ -322,6 +351,20 @@ export async function updatesPruefen(payload?: Payload): Promise<UpdateStand> {
         if (m?.length)
           eintraege.push({ key: `pkt-${p}`, gruppe: 'Website-Pakete', name, installiert: ist, verfuegbar: neu, art: 'sicherheit', text: `${m.some((x) => x.schwere === 'critical') ? 'Kritische' : 'Hohe'} Sicherheitslücke bekannt – zeitnah aktualisieren.`, tun, meldungen: m })
         else if (neu && istNeuer(neu, ist)) {
+          const gesperrt = sperre(neu, anforderungen[p] ?? [])
+          if (gesperrt) {
+            eintraege.push({
+              key: `pkt-${p}`,
+              gruppe: 'Website-Pakete',
+              name,
+              installiert: ist,
+              verfuegbar: neu,
+              art: 'gesperrt',
+              text: `Passt noch nicht: ${anzeigeName(gesperrt.von)} verlangt ${name} ${gesperrt.bereich}. Möglich, sobald ${anzeigeName(gesperrt.von)} umstellt.`,
+              tun: 'Nichts zu tun – die Übersicht meldet es, sobald das Update passt.',
+            })
+            continue
+          }
           const gross = istHauptversion(neu, ist)
           eintraege.push({
             key: `pkt-${p}`,
@@ -337,10 +380,10 @@ export async function updatesPruefen(payload?: Payload): Promise<UpdateStand> {
       }
 
       eintraege.push(...serverEintraege())
-      const rang: Record<Art, number> = { sicherheit: 0, auslaufend: 1, update: 2, hauptversion: 3, aktuell: 4 }
+      const rang: Record<Art, number> = { sicherheit: 0, auslaufend: 1, update: 2, hauptversion: 3, gesperrt: 4, aktuell: 5 }
       eintraege.sort((a, b) => rang[a.art] - rang[b.art] || a.gruppe.localeCompare(b.gruppe) || a.name.localeCompare(b.name))
       const alt = stand()
-      g.__bsvUpdates = { geprueftAm: new Date().toISOString(), fehlerSeit: fehler.length ? (alt.fehlerSeit ?? new Date().toISOString()) : null, quellenFehler: fehler, ohneDaten, eintraege, paketeGesamt: Object.keys(versionen).length }
+      g.__bsvUpdates = { geprueftAm: new Date().toISOString(), fehlerSeit: fehler.length ? (alt.fehlerSeit ?? new Date().toISOString()) : null, quellenFehler: fehler, ohneDaten, eintraege, paketeGesamt: Object.keys(versionen).length, versionen }
       if (fehler.length) payload?.logger.warn(`Update-Prüfung: nicht erreichbar: ${fehler.join(', ')}`)
     } catch (e) {
       stand().fehlerSeit ??= new Date().toISOString()

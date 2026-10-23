@@ -202,6 +202,74 @@
   font-size: 14px;
 }
 
+.bsv-upd__info {
+  display: block;
+  margin-top: 2px;
+  font-weight: 400;
+  font-size: 12.5px;
+  line-height: 1.4;
+  color: #6e6e73;
+}
+
+.bsv-upd__einleitung {
+  margin: 0 0 12px !important;
+}
+
+.bsv-upd__gruppe {
+  border-top: 1px solid #ececf0;
+  padding: 10px 0;
+
+  h3,
+  summary {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    color: #1d1d1f;
+  }
+
+  summary {
+    cursor: pointer;
+
+    span {
+      font-weight: 400;
+      color: #6e6e73;
+    }
+  }
+}
+
+.bsv-upd__gruppentext {
+  margin: 4px 0 8px !important;
+  color: #6e6e73 !important;
+}
+
+.bsv-upd__programme {
+  margin: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 8px;
+
+  dt {
+    font-weight: 700;
+  }
+
+  dd {
+    margin: 1px 0 0;
+    color: #3a3a3c;
+  }
+
+  .bsv-upd__version {
+    font-weight: 400;
+    color: #6e6e73;
+  }
+}
+
+@media (min-width: 900px) {
+  .bsv-upd__programme {
+    grid-template-columns: 1fr 1fr;
+    column-gap: 28px;
+  }
+}
+
 /* Handy: Zeilen untereinander statt Tabelle */
 @media (max-width: 760px) {
   .bsv-upd__tabelle {

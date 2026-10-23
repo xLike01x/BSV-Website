@@ -1,6 +1,9 @@
+import fs from 'fs'
+import path from 'path'
 import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { istHauptversion, istNeuer, meldungenAus, nodeSicherheit, registryPfad, ubuntuUpdates, updatesPruefen, zyklus } from '@/wartung/updates'
+import { GRUPPEN, PAKETE } from '@/wartung/programme'
+import { sperre, istHauptversion, istNeuer, meldungenAus, nodeSicherheit, registryPfad, ubuntuUpdates, updatesPruefen, zyklus } from '@/wartung/updates'
 
 describe('Update-Prüfung: Versionen', () => {
   it.each([
@@ -28,6 +31,30 @@ describe('Update-Prüfung: Versionen', () => {
     expect(registryPfad('next')).toBe('next')
     expect(registryPfad('@payloadcms/next')).toBe('@payloadcms%2Fnext')
     expect(registryPfad('../x?y')).toBe('..%2Fx%3Fy')
+  })
+})
+
+describe('Update-Prüfung: gesperrte Updates', () => {
+  it('neue Version außerhalb der Anforderung eines anderen Pakets ist gesperrt', () => {
+    expect(sperre('17.0.2', [{ von: 'payload', bereich: '^16.8.1' }])).toEqual({ von: 'payload', bereich: '^16.8.1' })
+    expect(sperre('16.14.3', [{ von: 'payload', bereich: '^16.8.1' }])).toBeNull()
+    expect(sperre('19.3.1', [{ von: '@payloadcms/ui', bereich: '^19.0.1 || ^19.1.2 || ^19.2.1' }])).toBeNull()
+    expect(sperre('20.0.0', [{ von: '@payloadcms/ui', bereich: '^19.0.1 || ^19.1.2 || ^19.2.1' }])?.von).toBe('@payloadcms/ui')
+    expect(sperre('17.0.0', [{ von: 'payload', bereich: '>=16.3.3 <17.0.0' }])?.von).toBe('payload')
+    expect(sperre('1.0.0', [{ von: 'x', bereich: 'kein gültiger Bereich' }])).toBeNull()
+    expect(sperre('1.0.0', [])).toBeNull()
+  })
+})
+
+describe('Update-Prüfung: Erklärungen', () => {
+  it('jedes Paket aus package.json ist erklärt (und nichts darüber hinaus)', () => {
+    const pkg = JSON.parse(fs.readFileSync(path.join(process.cwd(), 'package.json'), 'utf8')) as { dependencies: Record<string, string> }
+    expect(Object.keys(PAKETE).sort()).toEqual(Object.keys(pkg.dependencies).sort())
+    const gruppen = new Set(GRUPPEN.map((g) => g.key))
+    for (const p of Object.values(PAKETE)) {
+      expect(gruppen.has(p.gruppe)).toBe(true)
+      expect(p.text.length).toBeGreaterThan(10)
+    }
   })
 })
 

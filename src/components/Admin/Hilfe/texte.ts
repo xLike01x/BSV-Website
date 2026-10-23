@@ -621,7 +621,8 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Next.js meldet eine kritische Sicherheitslücke', 'Node.js hat ein Sicherheitsupdate', 'Der Server braucht nach Updates einen Neustart'],
     },
     tun: [
-      'Oben steht, ob etwas zu tun ist: 🚨 Sicherheitsupdate (zeitnah), ⬆️ Update (beim nächsten Update-Tag), 🧭 neue Hauptversion (größerer Umbau, planen), ✓ aktuell.',
+      'Oben steht, ob etwas zu tun ist: 🚨 Sicherheitsupdate (zeitnah), ⬆️ Update (beim nächsten Update-Tag), 🧭 neue Hauptversion (größerer Umbau, planen), 🔒 gesperrt (passt noch nicht zu einem anderen Paket, z. B. Payload – nichts zu tun), ✓ aktuell.',
+      'Unter jedem Namen steht in grau, wofür das Programm oder Paket da ist; „Was ist was?“ ganz unten erklärt alle – zum Aufklappen nach Bereichen.',
       'In der Tabelle „Zu erledigen“ steht unter „So geht’s“, was zu tun ist – je nachdem, ob die Seite am PC oder auf dem Server läuft (für alle Website-Pakete einmal unter der Tabelle).',
       '„⚠️ Prüfung unvollständig“: Eine Quelle war nicht erreichbar und wurde noch nie abgerufen – dann gibt es bewusst keine Entwarnung. Ist eine Quelle nur gerade nicht erreichbar, gelten ihre Angaben vom letzten erfolgreichen Abruf.',
       '„🔄 Jetzt prüfen“ prüft sofort (sonst täglich und nach jedem Start; höchstens einmal pro Minute).',
