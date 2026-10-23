@@ -13,11 +13,14 @@ export const Sicherheit: GlobalConfig = {
   },
   admin: {
     group: 'Einstellungen',
+    // In der Seitenleiste ausgeblendet (CSS) – erreichbar über „Sicherheit“ (/admin/updates) → Reiter „Einstellungen“
     hidden: ({ user }) => !hasRole(user as never, 'webadmin'),
     description:
       'Automatisches Abmelden und Aufbewahrung im Web-Admin-Papierkorb. Wer in der Verwaltung eine Weile nichts tut (kein Klick, keine Taste, kein Scrollen), wird automatisch abgemeldet – wichtig an gemeinsam genutzten Computern, z. B. im Vereinsheim. Vorher erscheint eine Warnung mit „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren.',
   },
   fields: [
+    // Reiter „Updates · Einstellungen“ – zurück zur Update-Übersicht
+    { name: 'reiter', type: 'ui', admin: { components: { Field: '@/components/Admin/Updates/Reiter' } } },
     {
       type: 'row',
       fields: [

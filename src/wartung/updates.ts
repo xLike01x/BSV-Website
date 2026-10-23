@@ -6,7 +6,7 @@ import type { Payload } from 'payload'
 import { NODE_ENDE, POSTGRES_ENDE } from './pruefen'
 
 /**
- * Zentrale Update-Prüfung für Web-Admins (Seite „Updates & Sicherheit“, Dashboard, Monatsbericht).
+ * Zentrale Update-Prüfung für Web-Admins (Seite „Sicherheit“ → Reiter „Updates“, Dashboard, Monatsbericht).
  * Läuft täglich und kurz nach dem Start, zusätzlich per Knopf „Jetzt prüfen“.
  *
  * Geprüft wird:

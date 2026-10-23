@@ -463,7 +463,7 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Was jemand außer dir endgültig löscht oder 30 Tage im normalen Papierkorb lag, landet hier – für alle anderen ist es weg.',
-      'Endgültig gelöscht wird automatisch: persönliche Daten nach der Frist unter Einstellungen → „Datenschutz-Fristen“ (Standard 30 Tage), alles andere nach der Frist unter „Sicherheit“ (Standard 1 Jahr).',
+      'Endgültig gelöscht wird automatisch: persönliche Daten nach der Frist unter Einstellungen → „Datenschutz-Fristen“ (Standard 30 Tage), alles andere nach der Frist unter „Sicherheit“ → Reiter „Einstellungen“ (Standard 1 Jahr).',
     ],
     tipps: ['Was du selbst endgültig löschst, ist sofort weg.', 'Anträge und Anfragen enthalten persönliche Daten – nicht unnötig lange aufheben.'],
   },
@@ -491,8 +491,8 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   sicherheit: {
-    titel: 'Sicherheit',
-    kurz: 'Automatisches Abmelden nach Inaktivität und wie lange der Web-Admin-Papierkorb Einträge aufhebt – nur für Web-Admins.',
+    titel: 'Sicherheit: Einstellungen',
+    kurz: 'Automatisches Abmelden nach Inaktivität und wie lange der Web-Admin-Papierkorb Einträge aufhebt – nur für Web-Admins. Der Reiter „Updates“ daneben zeigt alle verfügbaren Updates.',
     wozu: {
       text: 'Schützt, wenn jemand vergisst, sich abzumelden – z. B. am Computer im Vereinsheim.',
       beispiele: ['Nach 30 Minuten abmelden', '5 Minuten vorher warnen'],
@@ -614,8 +614,8 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   updates: {
-    titel: 'Updates & Sicherheit',
-    kurz: 'Alles, was aktualisiert werden kann, an einem Ort: Node.js, Datenbank, Website-Pakete und Server – nur für Web-Admins.',
+    titel: 'Sicherheit: Updates',
+    kurz: 'Alles, was aktualisiert werden kann, an einem Ort: Node.js, Datenbank, Website-Pakete und Server – nur für Web-Admins. Der Reiter „Einstellungen“ daneben regelt automatisches Abmelden und die Papierkorb-Frist.',
     wozu: {
       text: 'Software bekommt laufend Fehler- und Sicherheitskorrekturen. Hier siehst du auf einen Blick, ob etwas zu tun ist – und was.',
       beispiele: ['Next.js meldet eine kritische Sicherheitslücke', 'Node.js hat ein Sicherheitsupdate', 'Der Server braucht nach Updates einen Neustart'],
@@ -647,7 +647,7 @@ export const HILFE: Record<string, HilfeText> = {
       '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
       'Zurückholen: Anleitung unten auf der Seite (Befehl „pnpm sicherung:einspielen“).',
       'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (am besten am PC), danach „✓ Heute erfolgreich getestet“ klicken.',
-      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter „Updates & Sicherheit“.',
+      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter Einstellungen → „Sicherheit“ (Reiter „Updates“).',
     ],
     wirkung: [
       'Die Sicherung ändert nichts an der Website.',

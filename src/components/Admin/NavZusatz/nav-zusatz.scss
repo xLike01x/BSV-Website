@@ -75,12 +75,10 @@
 #nav-hilfe-feedback {
   order: -5;
 }
+// Rollen-Rechte öffnet man über „Rollen & Rechte“ (Reiter „Rechte anpassen“),
+// die Sicherheits-Einstellungen über „Sicherheit“ (Reiter „Einstellungen“)
+#nav-global-rollenRechte,
 #nav-global-sicherheit {
-  order: -7;
-}
-
-// Rollen-Rechte öffnet man über „Rollen & Rechte“ (Reiter „Rechte anpassen“)
-#nav-global-rollenRechte {
   display: none !important;
 }
 

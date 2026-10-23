@@ -173,10 +173,10 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
               <td>Spätestens alle 3 Monate aktualisieren (Update-Tag). Sicherheitsmeldungen prüfen die Website und GitHub täglich.</td>
             </tr>
             <tr className={wartung.updates.sicherheit || wartung.updates.unvollstaendig ? 'is-warn' : undefined}>
-              <th>Updates &amp; Sicherheit</th>
+              <th>Updates</th>
               <td>{wartung.updates.sicherheit ? `⚠️ ${wartung.updates.sicherheit} Sicherheitsupdate${wartung.updates.sicherheit === 1 ? '' : 's'}` : wartung.updates.unvollstaendig ? 'Prüfung unvollständig' : wartung.updates.updates ? `${wartung.updates.updates} verfügbar` : wartung.updates.geprueftAm ? 'alles aktuell' : 'noch nicht geprüft'}</td>
               <td>
-                Node.js, PostgreSQL, Website-Pakete und Server an einem Ort: <a href="/admin/updates">Updates &amp; Sicherheit ansehen ›</a>
+                Node.js, PostgreSQL, Website-Pakete und Server an einem Ort: <a href="/admin/updates">Sicherheit → Updates ansehen ›</a>
                 {wartung.updates.geprueftAm && ` Zuletzt geprüft: ${wann(wartung.updates.geprueftAm)}.`}
               </td>
             </tr>

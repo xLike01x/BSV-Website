@@ -8,6 +8,7 @@ import { hasRole } from '@/access/roles'
 import { updatePruefungAus, updateStand, type Art, type Eintrag } from '@/wartung/updates'
 
 import JetztPruefen from './JetztPruefen'
+import SicherheitReiter from './Reiter'
 import './updates.scss'
 
 const ART: Record<Art, { symbol: string; titel: string; klasse: string }> = {
@@ -94,7 +95,7 @@ function Gruppe({ titel, eintraege }: { titel: string; eintraege: Eintrag[] }) {
   )
 }
 
-/** /admin/updates – alle möglichen Updates an einem Ort (nur Web-Admins) */
+/** /admin/updates – „Sicherheit“, Reiter „Updates“: alle möglichen Updates an einem Ort (nur Web-Admins) */
 export default async function UpdatesSeite({ initPageResult, params, searchParams }: AdminViewServerProps) {
   const { req, permissions, visibleEntities, locale } = initPageResult
   if (!req.user) redirect('/login?weiter=/admin/updates')
@@ -124,14 +125,15 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
         <div className="bsv-upd">
           <header className="bsv-upd__kopf">
             <div>
-              <h1>Updates &amp; Sicherheit</h1>
+              <h1>Sicherheit</h1>
               <p>
-                Alles, was aktualisiert werden kann – Node.js, Datenbank, Website-Pakete und Server. Wird täglich und nach jedem Start geprüft. Sicherheitsupdates zeitnah erledigen, alles andere beim Update-Tag
-                (alle 3 Monate).
+                Updates: alles, was aktualisiert werden kann – Node.js, Datenbank, Website-Pakete und Server. Wird täglich und nach jedem Start geprüft. Sicherheitsupdates zeitnah erledigen, alles andere beim
+                Update-Tag (alle 3 Monate).
               </p>
             </div>
             <JetztPruefen aus={updatePruefungAus()} />
           </header>
+          <SicherheitReiter aktiv="updates" />
 
           <div className={`bsv-upd__stand ${anzahl.sicherheit || unvollstaendig ? 'is-sicherheit' : anzahl.offen ? 'is-update' : 'is-ok'}`}>
             <strong>

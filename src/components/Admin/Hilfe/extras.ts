@@ -1035,7 +1035,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload, Node.js, Datenbank)?',
-    antwort: 'Alles steht an einem Ort: Einstellungen → „Updates & Sicherheit“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server (bzw. BSV-Website-Update.bat am PC); die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
+    antwort: 'Alles steht an einem Ort: Einstellungen → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server (bzw. BSV-Website-Update.bat am PC); die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
     bereich: 'sicherung',
   },
   {
@@ -1264,7 +1264,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Warum wurde ich automatisch abgemeldet?',
-    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Einstellungen → „Sicherheit“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
+    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Einstellungen → „Sicherheit“ → Reiter „Einstellungen“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
     bereich: 'dashboard',
   },
   {

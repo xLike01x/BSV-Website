@@ -54,6 +54,7 @@ import { default as default_dcec8d0f4a86291f22ff050ef8209c59 } from '@/Verein/Do
 import { default as default_ee61798dbac84d4559f918344d524ea7 } from '@/datenschutz/Uebersicht'
 import { default as default_b53cfac6c89f90ae49c091341d2f0ac2 } from '@/datenschutz/Auskunft'
 import { default as default_131c4bce84432ab9c48ee70453daef26 } from '@/components/Admin/Rollen/Reiter'
+import { default as default_024acba0536a39f062b1f712afa3634b } from '@/components/Admin/Updates/Reiter'
 import { default as default_e26d2ce2fb829c050970d592e6488485 } from '@/components/Admin/Icon'
 import { default as default_1519062be06c6f010a03d3cd4e40f8fb } from '@/components/Admin/Logo'
 import { default as default_c66ce2d59c6901b2c1019a8078c24b55 } from '@/components/Admin/KontoMenue'
@@ -134,6 +135,7 @@ export const importMap = {
   "@/datenschutz/Uebersicht#default": default_ee61798dbac84d4559f918344d524ea7,
   "@/datenschutz/Auskunft#default": default_b53cfac6c89f90ae49c091341d2f0ac2,
   "@/components/Admin/Rollen/Reiter#default": default_131c4bce84432ab9c48ee70453daef26,
+  "@/components/Admin/Updates/Reiter#default": default_024acba0536a39f062b1f712afa3634b,
   "@/components/Admin/Icon#default": default_e26d2ce2fb829c050970d592e6488485,
   "@/components/Admin/Logo#default": default_1519062be06c6f010a03d3cd4e40f8fb,
   "@/components/Admin/KontoMenue#default": default_c66ce2d59c6901b2c1019a8078c24b55,
