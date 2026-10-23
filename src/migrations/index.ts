@@ -9,6 +9,7 @@ import * as migration_20261020_191522_wartung_saison from './20261020_191522_war
 import * as migration_20261021_071751_passt_noch from './20261021_071751_passt_noch';
 import * as migration_20261021_105048_zusatzrechte_bereiche from './20261021_105048_zusatzrechte_bereiche';
 import * as migration_20261022_192800_nur_ansehen from './20261022_192800_nur_ansehen';
+import * as migration_20261023_071149_hilfe_updates from './20261023_071149_hilfe_updates';
 
 export const migrations = [
   {
@@ -64,6 +65,11 @@ export const migrations = [
   {
     up: migration_20261022_192800_nur_ansehen.up,
     down: migration_20261022_192800_nur_ansehen.down,
-    name: '20261022_192800_nur_ansehen'
+    name: '20261022_192800_nur_ansehen',
+  },
+  {
+    up: migration_20261023_071149_hilfe_updates.up,
+    down: migration_20261023_071149_hilfe_updates.down,
+    name: '20261023_071149_hilfe_updates'
   },
 ];
