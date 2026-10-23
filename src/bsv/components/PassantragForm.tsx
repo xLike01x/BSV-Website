@@ -107,7 +107,7 @@ export function PassantragForm({ teams, unterlagen, vorher, vorlage }: { teams: 
   }
 
   return (
-    <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
+    <form method="post" className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
       {vorher?.hinweis && (
         <p className="notice" role="status" style={{ margin: 0 }}>
           <strong>Hinweis vom Verein:</strong> {vorher.hinweis}

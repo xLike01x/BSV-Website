@@ -20,7 +20,7 @@ export default async function Registrierungen({ initPageResult, params, searchPa
   if (nurAnsehen && !(await leserHaken(req, 'benutzer'))) redirect('/admin')
   const r = await req.payload.find({ collection: 'users', where: WARTEND, sort: '-createdAt', limit: 200, depth: 1, overrideAccess: true })
   // Noch nicht bestätigt: erscheinen erst nach Klick auf den Link in der E-Mail
-  const offen = (await req.payload.find({ collection: 'users', where: { and: [{ freigegeben: { equals: false } }, { registriertUeber: { equals: 'email' } }, { emailBestaetigt: { not_equals: true } }] }, limit: 0, depth: 0, overrideAccess: true })).totalDocs
+  const offen = (await req.payload.count({ collection: 'users', where: { and: [{ freigegeben: { equals: false } }, { registriertUeber: { equals: 'email' } }, { emailBestaetigt: { not_equals: true } }] }, overrideAccess: true })).totalDocs
   const alleAngebote = (await req.payload.find({ collection: 'angebote', sort: ['reihenfolge', 'title'], limit: 300, depth: 0, pagination: false, overrideAccess: true, select: { title: true, bereich: true, aktiv: true } as never })).docs.map((d) => {
     const a = d as unknown as { id: number; title: string; bereich?: string; aktiv?: boolean | null }
     return {

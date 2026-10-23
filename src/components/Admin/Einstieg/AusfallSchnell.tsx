@@ -63,7 +63,7 @@ export default function AusfallSchnell() {
   }
 
   return (
-    <form className="bsv-ausfall" onSubmit={melden}>
+    <form method="post" className="bsv-ausfall" onSubmit={melden}>
       <h3>Schnell melden</h3>
       <label>
         Team / Kurs

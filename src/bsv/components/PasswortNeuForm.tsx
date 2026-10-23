@@ -45,7 +45,7 @@ export function PasswortNeuForm() {
   }
 
   return (
-    <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
+    <form method="post" className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
       <label className="field">
         Neues Passwort
         <input name="passwort" type="password" required minLength={10} maxLength={200} autoComplete="new-password" autoFocus aria-describedby="passwort-hinweis" onChange={(e) => setEingabe(e.target.value)} />

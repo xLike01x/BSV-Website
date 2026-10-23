@@ -14,7 +14,7 @@ import { ZweiFaktorKonto } from '@/bsv/components/ZweiFaktorKonto'
 import { ausweiseFuer } from '@/mitgliedschaften/ausweise'
 import { aktuellerBenutzer, getAusfaelle, getTermine, getVerein, payload } from '@/bsv/data'
 import { bildUrl, datum, farbe, kurzZeit, uhrzeit } from '@/bsv/lib'
-import type { Angebote } from '@/payload-types'
+import type { Angebote, User } from '@/payload-types'
 
 export const dynamic = 'force-dynamic'
 export const metadata: Metadata = { title: 'Mein BSV', robots: { index: false } }
@@ -50,8 +50,11 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
 
   const p = await payload()
   const vorname0 = (user.name ?? '').split(' ')[0]
+  // Die Anmeldung lädt das Konto ohne verknüpfte Einträge – Profilfoto und Kurse hier gezielt nachladen
+  const ergaenzt = (await p.findByID({ collection: 'users', id: user.id, depth: 1, overrideAccess: true, select: { profilbild: true, angebote: true } as never }).catch(() => null)) as Pick<User, 'profilbild' | 'angebote'> | null
+  const konto = { ...user, profilbild: ergaenzt?.profilbild ?? null, angebote: ergaenzt?.angebote ?? [] } as User
   // Profilfoto (eigenes – darf das Mitglied immer sehen)
-  const fotoDoc = user.profilbild && typeof user.profilbild === 'object' ? user.profilbild : null
+  const fotoDoc = konto.profilbild && typeof konto.profilbild === 'object' ? konto.profilbild : null
   const foto = fotoDoc ? (fotoDoc.sizes?.klein?.url ?? fotoDoc.url ?? null) : null
   const fotoGross = fotoDoc?.url ?? null
 
@@ -98,7 +101,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
   // Knopf „Zur Verwaltung“ nur für Rollen, die die Verwaltung auch öffnen dürfen (gleiche Liste wie canUseAdminPanel)
   const istStaff = istVerwaltung(user)
   const zweiFaktorOffen = Boolean(zf._zweiFaktorOffen)
-  const meine = (user.angebote ?? []).filter((a): a is Angebote => typeof a === 'object')
+  const meine = (konto.angebote ?? []).filter((a): a is Angebote => typeof a === 'object')
   const geleitet = rollen.includes('uebungsleitung') || rollen.includes('teamredaktion')
     ? (await p.find({ collection: 'angebote', where: { leitung: { contains: user.id } }, depth: 0, limit: 50, overrideAccess: true })).docs
     : []
@@ -112,7 +115,7 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
       .find({ collection: 'passantraege', where: { antragsteller: { equals: user.id } }, sort: '-createdAt', limit: 20, depth: 1, user, overrideAccess: false })
       .catch(() => ({ docs: [] }))
   ).docs
-  const ausweise = await ausweiseFuer(user).catch(() => [])
+  const ausweise = await ausweiseFuer(konto).catch(() => [])
   const [ausfaelle, termine, verein, anfragen] = await Promise.all([
     alleIds.length ? getAusfaelle(alleIds) : Promise.resolve([]),
     getTermine(6),

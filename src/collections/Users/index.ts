@@ -35,6 +35,10 @@ export const Users: CollectionConfig = {
     useAsTitle: 'name',
   },
   auth: {
+    // Bei jeder Anfrage wird das angemeldete Konto geladen – ohne verknüpfte Einträge (Teams, Profilfoto).
+    // Ohne diese Zeile gälte Tiefe 2: 5–10 zusätzliche Datenbank-Abfragen bei JEDER Anfrage.
+    // Wer verknüpfte Daten braucht (Mitgliederbereich), lädt sie gezielt nach.
+    depth: 0,
     tokenExpiration: 60 * 60 * 8, // 8 Stunden
     // Ganze Konto-Sperre erst nach 100 Fehlversuchen von überall (verteiltes Raten). Die eigentliche Bremse ist die
     // Sperre je Konto UND Anschluss nach 5 Fehlversuchen (src/auth/passwort.ts) – so kann niemand Fremdes ein Konto

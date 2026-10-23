@@ -87,7 +87,7 @@ export function LoginForm() {
   }
 
   return (
-    <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={modus === 'login' ? login : vergessen}>
+    <form method="post" className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={modus === 'login' ? login : vergessen}>
       {abgemeldet && modus === 'login' && !fehler && (
         <p role="status" style={{ margin: 0, padding: '10px 14px', borderRadius: 14, background: '#e8f6ee', color: '#0f3d24', fontSize: 15 }}>
           {inaktiv ? '⏳ Du wurdest wegen Inaktivität automatisch abgemeldet. Bitte melde dich neu an.' : '✓ Du bist abgemeldet.'}

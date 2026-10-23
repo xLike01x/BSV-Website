@@ -72,7 +72,7 @@ export function EmailBestaetigen() {
     )
   if (status === 'passwort')
     return (
-      <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
+      <form method="post" className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
         <h2 className="t-2" style={{ fontSize: 26, margin: 0 }}>
           Fast geschafft: dein Passwort
         </h2>

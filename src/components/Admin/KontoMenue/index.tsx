@@ -19,6 +19,24 @@ const ROLLEN: Record<string, string> = {
 
 type Nutzer = { id: number; name?: string; email: string; roles?: string[] }
 
+const fotoGemerkt = new Map<number, Promise<string | null>>()
+const fotoLaden = (id: number): Promise<string | null> => {
+  const da = fotoGemerkt.get(id)
+  if (da) return da
+  const p = fetch(`/api/profilbilder?where[besitzer][equals]=${id}&limit=1&depth=0`, { credentials: 'include' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => {
+      const b = d?.docs?.[0]
+      return b ? ((b.sizes?.klein?.url ?? b.url ?? null) as string | null) : null
+    })
+    .catch(() => {
+      fotoGemerkt.delete(id)
+      return null
+    })
+  fotoGemerkt.set(id, p)
+  return p
+}
+
 /** Klick auf das Personen-Symbol oben rechts: Konto, Mitgliederbereich, Website, Hilfe, Abmelden */
 export default function KontoMenue() {
   const { user } = useAuth<Nutzer>()
@@ -27,16 +45,14 @@ export default function KontoMenue() {
   const [abmelden, setAbmelden] = useState(false)
   const box = useRef<HTMLDivElement>(null)
 
-  // Profilfoto einmal nachladen (liegt geschützt unter „Profilbilder“)
+  // Profilfoto einmal nachladen (liegt geschützt unter „Profilbilder“) – pro Person gemerkt, nicht bei jeder Seite neu
   useEffect(() => {
     if (!user?.id) return
-    fetch(`/api/profilbilder?where[besitzer][equals]=${user.id}&limit=1&depth=0`, { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => {
-        const b = d?.docs?.[0]
-        if (b) setFoto(b.sizes?.klein?.url ?? b.url ?? null)
-      })
-      .catch(() => {})
+    let aktiv = true
+    fotoLaden(user.id).then((f) => aktiv && f && setFoto(f))
+    return () => {
+      aktiv = false
+    }
   }, [user?.id])
 
   // Schließen bei Klick daneben oder Esc

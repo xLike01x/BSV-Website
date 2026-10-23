@@ -68,13 +68,10 @@ const fristen = (payload: Payload) => payload.findGlobal({ slug: 'datenschutz' a
 /** Wie viele Einträge sind über der Frist? (nur Bereiche, die die Rollen betreffen) */
 export async function faellige(payload: Payload, rollen?: string[]): Promise<Faellig[]> {
   const f = await fristen(payload)
-  const raus: Faellig[] = []
-  for (const r of regeln(f)) {
-    if (rollen && !r.rollen.some((x) => rollen.includes(x))) continue
-    const { totalDocs } = await payload.count({ collection: r.slug as CollectionSlug, where: r.where(vor(r.monate)), overrideAccess: true }).catch(() => ({ totalDocs: 0 }))
-    if (totalDocs) raus.push({ id: r.id, slug: r.slug, label: r.label, anzahl: totalDocs, monate: r.monate, rollen: r.rollen, hinweis: r.hinweis, link: r.link })
-  }
-  return raus
+  // Alle Zählungen gleichzeitig (vorher nacheinander), Reihenfolge der Regeln bleibt erhalten
+  const passend = regeln(f).filter((r) => !rollen || r.rollen.some((x) => rollen.includes(x)))
+  const zahlen = await Promise.all(passend.map((r) => payload.count({ collection: r.slug as CollectionSlug, where: r.where(vor(r.monate)), overrideAccess: true }).then((x) => x.totalDocs, () => 0)))
+  return passend.flatMap((r, i) => (zahlen[i] ? [{ id: r.id, slug: r.slug, label: r.label, anzahl: zahlen[i], monate: r.monate, rollen: r.rollen, hinweis: r.hinweis, link: r.link }] : []))
 }
 
 /** Fällige Einträge in den Papierkorb verschieben (Passanträge: direkt löschen; Hinweise: nie automatisch) */

@@ -26,6 +26,8 @@ export const teilnehmendeEndpunkt: Endpoint = {
       sort: 'name',
       limit: 300,
       depth: 1,
+      // Nur Name und Profilfoto – sonst würden auch Teams, Wunschkurse usw. jeder Person mitgeladen
+      select: { name: true, profilbild: true },
       overrideAccess: true,
     })
     return Response.json({

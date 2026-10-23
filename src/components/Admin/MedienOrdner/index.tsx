@@ -1,7 +1,9 @@
+import { sql } from '@payloadcms/db-postgres'
 import type { Payload, TypedUser } from 'payload'
 import React from 'react'
 
 import { alleBilder, imBereich, nurLeser } from '@/access/roles'
+import { ausfuehren } from '@/papierkorb/plugin'
 
 import MedienOrdnerClient, { type Ordner } from './Client'
 import './ordner.scss'
@@ -21,8 +23,12 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
   const alle = alleBilder(user) || nurLeser(user)
   const redaktion = imBereich(user, 'medien')
 
-  const [medien, angebote] = await Promise.all([
-    payload.find({ collection: 'media', limit: 10000, depth: 0, pagination: false, select: { team: true, allgemein: true, sponsoren: true, personen: true }, overrideAccess: true }),
+  // Gezählt wird in der Datenbank (GROUP BY) – vorher wurden dafür alle Bilder geladen
+  const [zaehlung, angebote] = await Promise.all([
+    ausfuehren(
+      { payload },
+      sql`select team_id, coalesce(allgemein, false) as allgemein, coalesce(sponsoren, false) as sponsoren, count(*)::int as anzahl, (count(*) filter (where personen is null))::int as ohne from media where deleted_at is null group by 1, 2, 3`,
+    ),
     payload.find({
       collection: 'angebote',
       limit: 500,
@@ -40,13 +46,16 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
   let sponsoren = 0
   let offen = 0
   let ohneEinwilligung = 0
-  for (const m of medien.docs as unknown as { team?: unknown; allgemein?: boolean | null; sponsoren?: boolean | null; personen?: string | null }[]) {
-    if (!m.personen) ohneEinwilligung++
-    const t = idVon(m.team)
-    if (t) proTeam.set(t, (proTeam.get(t) ?? 0) + 1)
-    else if (m.sponsoren) sponsoren++
-    else if (m.allgemein) allgemein++
-    else offen++
+  let gesamt = 0
+  for (const z of zaehlung.rows as { team_id: number | null; allgemein: boolean; sponsoren: boolean; anzahl: number; ohne: number }[]) {
+    ohneEinwilligung += Number(z.ohne)
+    const n = Number(z.anzahl)
+    gesamt += n
+    const t = idVon(z.team_id)
+    if (t) proTeam.set(t, (proTeam.get(t) ?? 0) + n)
+    else if (z.sponsoren) sponsoren += n
+    else if (z.allgemein) allgemein += n
+    else offen += n
   }
 
   const gruppen = BEREICHE.map(([key, label]) => ({
@@ -58,7 +67,7 @@ export default async function MedienOrdner({ payload, user }: { payload: Payload
 
   const eigeneSumme = gruppen.reduce((s, g) => s + g.ordner.reduce((x, o) => x + o.anzahl, 0), 0)
   const oben: Ordner[] = [
-    { key: 'alle', titel: alle ? 'Alle Bilder' : 'Alle meine Bilder', anzahl: alle ? medien.docs.length : eigeneSumme + allgemein + sponsoren, query: '', symbol: '🗂️' },
+    { key: 'alle', titel: alle ? 'Alle Bilder' : 'Alle meine Bilder', anzahl: alle ? gesamt : eigeneSumme + allgemein + sponsoren, query: '', symbol: '🗂️' },
     { key: 'allgemein', titel: 'Verein allgemein', anzahl: allgemein, query: 'where[and][0][allgemein][equals]=true&where[and][1][sponsoren][not_equals]=true&where[and][2][team][exists]=false', symbol: '🏟️', ziel: redaktion ? { art: 'allgemein' } : undefined },
     { key: 'sponsoren', titel: 'Sponsoren', anzahl: sponsoren, query: 'where[and][0][sponsoren][equals]=true&where[and][1][team][exists]=false', symbol: '🤝', ziel: redaktion ? { art: 'sponsoren' } : undefined },
     ...(redaktion

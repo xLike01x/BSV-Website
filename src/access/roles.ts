@@ -131,26 +131,60 @@ export const isAdminOrSelf: Access = ({ req }) => {
 }
 
 /**
- * IDs der Teams/Kurse, für die die Person verantwortlich ist.
- * Wird pro Anfrage einmal geladen und zwischengespeichert.
+ * Zwischenspeicher „Wer leitet welche Teams?“ über Anfragen hinweg – eine Verwaltungsseite löst bei Trainern sonst
+ * 30–40 gleiche Abfragen aus (jede Anfrage, jede Rechte-Prüfung). Liegt auf globalThis, damit alle Kopien dieses
+ * Moduls (Next.js lädt Server-Code in mehreren Bündeln) denselben Stand sehen.
+ * Wird geleert, sobald sich ein Team ändert (Hook in Angebote.ts) – zusätzlich 2 s später, weil die Änderung erst
+ * nach dem Abschluss der Transaktion für andere Anfragen sichtbar ist – und gilt höchstens 30 s.
  */
+type LeitungEintrag = { version: number; zeit: number; ids: Promise<number[]> }
+type LeitungSpeicher = { version: number; eintraege: Map<string, LeitungEintrag> }
+const leitungSpeicher = (): LeitungSpeicher => ((globalThis as { __bsvLeitung?: LeitungSpeicher }).__bsvLeitung ??= { version: 0, eintraege: new Map() })
+const LEITUNG_GUELTIG_MS = 30_000
+export const leitungGeaendert = () => {
+  const leeren = () => {
+    const sp = leitungSpeicher()
+    sp.version++
+    sp.eintraege.clear()
+  }
+  leeren()
+  const t = setTimeout(leeren, 2000)
+  ;(t as { unref?: () => void }).unref?.()
+}
+
+/**
+ * IDs der Teams/Kurse, für die die Person verantwortlich ist.
+ * Zwischengespeichert je Anfrage (WeakMap – nicht req.context, das ersetzt Payloads Local API bei jeder inneren
+ * Abfrage) und kurz über Anfragen hinweg (siehe oben). req.context._eigeneAngebote bleibt als Vorgabe nutzbar
+ * (Simulation in „Rollen & Rechte“).
+ */
+const eigeneAngeboteCache = new WeakMap<PayloadRequest, { uid: number | string; ids: Promise<number[]> }>()
 export const eigeneAngebotIds = async (req: PayloadRequest): Promise<number[]> => {
   const user = userOf(req)
   if (!user?.id || !hasRole(user, ...TEAM_ROLLEN)) return []
-  const ctx = req.context as { _eigeneAngebote?: number[] }
-  if (ctx._eigeneAngebote) return ctx._eigeneAngebote
-  const res = await req.payload.find({
-    collection: 'angebote',
-    where: { leitung: { contains: user.id } },
-    depth: 0,
-    limit: 200,
-    pagination: false,
-    overrideAccess: true,
-    select: {},
-    req,
-  })
-  ctx._eigeneAngebote = res.docs.map((d) => d.id as number)
-  return ctx._eigeneAngebote
+  const vorgabe = (req.context as { _eigeneAngebote?: number[] } | undefined)?._eigeneAngebote
+  if (vorgabe) return vorgabe
+  const gemerkt = eigeneAngeboteCache.get(req)
+  if (gemerkt && gemerkt.uid === user.id) return gemerkt.ids
+  const sp = leitungSpeicher()
+  const schluessel = String(user.id)
+  const global = sp.eintraege.get(schluessel)
+  let ids: Promise<number[]>
+  if (global && global.version === sp.version && Date.now() - global.zeit < LEITUNG_GUELTIG_MS) {
+    ids = global.ids
+  } else {
+    ids = req.payload
+      .find({ collection: 'angebote', where: { leitung: { contains: user.id } }, depth: 0, limit: 200, pagination: false, overrideAccess: true, select: {}, req })
+      .then((res) => res.docs.map((d) => d.id as number))
+    sp.eintraege.set(schluessel, { version: sp.version, zeit: Date.now(), ids })
+    // Fehlgeschlagen: nirgends merken
+    ids.catch(() => {
+      eigeneAngeboteCache.delete(req)
+      if (sp.eintraege.get(schluessel)?.ids === ids) sp.eintraege.delete(schluessel)
+    })
+  }
+  eigeneAngeboteCache.set(req, { uid: user.id, ids })
+  return ids
 }
 
 /** Zugriff „alles“ für Redaktion (bzw. Zusatzrecht des Bereichs), „nur eigene Teams“ (über ein Feld) für Team-Rollen */

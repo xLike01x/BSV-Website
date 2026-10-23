@@ -60,7 +60,7 @@ export function KontaktForm({ anliegen, direkt = [] }: { anliegen: string[]; dir
   }
 
   return (
-    <form className="form" onSubmit={onSubmit}>
+    <form method="post" className="form" onSubmit={onSubmit}>
       <div className="hp" aria-hidden="true">
         <label>
           Website <input type="text" name="website" tabIndex={-1} autoComplete="off" />

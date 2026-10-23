@@ -82,14 +82,28 @@ const schreibenMitFilter =
     return und(r, NICHT_ENTFERNT)
   }
 
+/** Einträge im Web-Admin-Papierkorb – einmal pro Anfrage und Bereich (die Rechte-Prüfung läuft pro Seite mehrfach) */
+const entfernteCache = new WeakMap<PayloadRequest, Map<string, Promise<number[]>>>()
+const entfernteIds = (req: PayloadRequest, slug: string): Promise<number[]> => {
+  let m = entfernteCache.get(req)
+  if (!m) entfernteCache.set(req, (m = new Map()))
+  let ids = m.get(slug)
+  if (!ids) {
+    ids = ausfuehren(req, sql`select id from ${sql.identifier(tabelle(slug))} where endgueltig_am is not null`)
+      .then((res) => (res?.rows ?? []).map((x) => Number(x.id)).filter(Boolean))
+      .catch(() => [])
+    m.set(slug, ids)
+  }
+  return ids
+}
+
 /** Versionen (News, Seiten): Versionen von Einträgen im Web-Admin-Papierkorb nur für Web-Admins */
 const versionenMitFilter =
   (slug: string, orig: Access | undefined): Access =>
   async (args) => {
     const r = orig ? await orig(args) : Boolean(args.req.user)
     if (r === false || istWebAdminReq(args.req)) return r
-    const res = await ausfuehren(args.req, sql`select id from ${sql.identifier(tabelle(slug))} where endgueltig_am is not null`).catch(() => null)
-    const ids = (res?.rows ?? []).map((x) => Number(x.id)).filter(Boolean)
+    const ids = await entfernteIds(args.req, slug)
     return ids.length ? und(r, { parent: { not_in: ids } }) : r
   }
 

@@ -25,13 +25,29 @@ const schreiben = (t: number) => {
   }
 }
 
+/** Zeiten für die automatische Abmeldung – für 5 Minuten gemerkt, damit nicht jede Seite sie neu abfragt */
+type Zeiten = { minuten: number; warnen: number; aus: boolean }
+let sicherheitGemerkt: { zeit: number; daten: Promise<Zeiten> } | null = null
+const sicherheitLaden = (): Promise<Zeiten> => {
+  if (sicherheitGemerkt && Date.now() - sicherheitGemerkt.zeit < 5 * 60_000) return sicherheitGemerkt.daten
+  const daten = fetch('/api/globals/sicherheit?depth=0', { credentials: 'include' })
+    .then((r) => (r.ok ? r.json() : null))
+    .then((d) => ({ minuten: Number(d?.minuten) || 30, warnen: Number(d?.warnenMinuten) || 5, aus: Boolean(d?.aus) }))
+    .catch(() => {
+      sicherheitGemerkt = null
+      return { minuten: 30, warnen: 5, aus: false }
+    })
+  sicherheitGemerkt = { zeit: Date.now(), daten }
+  return daten
+}
+
 /**
  * Meldet nach X Minuten ohne Klick, Taste oder Scrollen automatisch ab – vorher Warnung mit Countdown.
  * Gilt für alle Tabs gemeinsam (letzte Aktivität im Browser-Speicher). Zeiten: Technik → „Sicherheit“ → Reiter „Einstellungen“.
  */
 export default function AutoAbmelden({ children }: { children?: React.ReactNode }) {
   const { user } = useAuth()
-  const [zeiten, setZeiten] = useState<{ minuten: number; warnen: number; aus: boolean } | null>(null)
+  const [zeiten, setZeiten] = useState<Zeiten | null>(null)
   const [rest, setRest] = useState<number | null>(null) // Sekunden bis zur Abmeldung, wenn die Warnung sichtbar ist
   const letzte = useRef(Date.now())
   const geschrieben = useRef(0)
@@ -49,14 +65,16 @@ export default function AutoAbmelden({ children }: { children?: React.ReactNode 
     return () => k.close()
   }, [])
 
-  // Einstellungen laden
+  // Einstellungen laden – einmal pro angemeldeter Person (nicht bei jeder Aktualisierung des Benutzer-Objekts)
+  const uid = (user as { id?: number | string } | null)?.id
   useEffect(() => {
-    if (!user) return
-    fetch('/api/globals/sicherheit?depth=0', { credentials: 'include' })
-      .then((r) => (r.ok ? r.json() : null))
-      .then((d) => setZeiten({ minuten: Number(d?.minuten) || 30, warnen: Number(d?.warnenMinuten) || 5, aus: Boolean(d?.aus) }))
-      .catch(() => setZeiten({ minuten: 30, warnen: 5, aus: false }))
-  }, [user])
+    if (!uid) return
+    let aktiv = true
+    sicherheitLaden().then((z) => aktiv && setZeiten(z))
+    return () => {
+      aktiv = false
+    }
+  }, [uid])
 
   const abmelden = useCallback(async () => {
     if (laeuft.current) return

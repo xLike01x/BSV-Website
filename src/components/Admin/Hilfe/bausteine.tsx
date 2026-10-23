@@ -98,7 +98,7 @@ export function Feedback({ bereich }: { bereich: string }) {
   if (status === 'danke') return <p className="bsv-hilfe__feedback">Danke für deine Rückmeldung! 💚</p>
   if (status === 'kommentar')
     return (
-      <form
+      <form method="post"
         className="bsv-hilfe__feedback bsv-hilfe__feedback--form"
         onSubmit={async (e) => {
           e.preventDefault()
@@ -160,7 +160,7 @@ export function FrageAnAdmin({ bereich, bereichTitel }: { bereich: string; berei
     return <p className="bsv-hilfe__ok">Deine Frage ist angekommen. Ein Admin meldet sich bei dir (an {user?.email}).</p>
 
   return (
-    <form
+    <form method="post"
       className="bsv-hilfe__frage"
       onSubmit={async (e) => {
         e.preventDefault()

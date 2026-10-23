@@ -11,7 +11,7 @@ import { slugField } from 'payload'
 import { FixedToolbarFeature, HeadingFeature, InlineToolbarFeature, lexicalEditor, OrderedListFeature, UnorderedListFeature } from '@payloadcms/richtext-lexical'
 
 import { anyone } from '../access/anyone'
-import { bereichFeld, bereichZugriff, canEditAngebot, hasRole, imBereich } from '../access/roles'
+import { bereichFeld, bereichZugriff, canEditAngebot, hasRole, imBereich, leitungGeaendert } from '../access/roles'
 import { slugFromTitle } from '../hooks/slugFromTitle'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
 
@@ -67,7 +67,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
   },
   endpoints: [teilnehmendeEndpunkt, reihenfolgeEndpunkt, bestaetigenEndpunkt, bestaetigenLinkEndpunkt],
   hooks: {
-    beforeChange: [medienPruefen, zeitenBestaetigen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
+    beforeChange: [medienPruefen, zeitenBestaetigen], beforeValidate: [slugFromTitle], afterChange: [revalidateAllesNachAenderung, ({ doc }) => (leitungGeaendert(), doc)], afterDelete: [revalidateAllesNachLoeschen, () => leitungGeaendert()] },
   fields: [
     { name: 'title', label: 'Name', type: 'text', required: true, admin: { description: 'So heißt das Team oder der Kurs überall auf der Website.' } },
     {

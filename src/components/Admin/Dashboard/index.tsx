@@ -67,6 +67,9 @@ export default async function Dashboard(props: AdminViewServerProps) {
   // Nur über Einzelrechte hier (keine Verwaltungs-Rolle): schlankes Dashboard nur mit den freigegebenen Bereichen
   const nurZusatz = nurEinzelrechte(user)
   const istTeamRolle = !nurZusatz && !rollen.some((r) => ['admin', 'redaktion', 'kasse', 'passwesen', 'lesen'].includes(r))
+  // Aufgaben (viele Zählungen) gleich starten – laufen parallel zum Rest des Dashboards
+  const aufgabenVersprechen = aufgabenFuer(req, rollen)
+  aufgabenVersprechen.catch(() => {}) // Fehler erst unten beim Warten melden, nicht als „unbehandelt“
   const vorname = ((user as { name?: string }).name || user.email || '').split(/[\s@]/)[0]
   const zaehle = (collection: CollectionSlug, where?: Where) =>
     sicher(async () => (await payload.count({ collection, where, user, overrideAccess: false, req })).totalDocs, 0)
@@ -265,7 +268,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
   }
 
   // Wichtige Aufgaben (Datensicherung, Datenschutz, alte Zugänge) – je nach Rolle
-  const aufgaben = await aufgabenFuer(req, rollen)
+  const aufgaben = await aufgabenVersprechen
 
   return (
     <div className="bsv-dash gutter--left gutter--right">

@@ -41,6 +41,9 @@ const lesen: FieldHook = async ({ data, req }) => {
   // die Teams werden erst danach (afterChange) aktualisiert
   const neu = (req.context as Ctx).bsvTeamsNeu
   if (neu) return neu
+  // Anmeldeprüfung (läuft bei JEDER Anfrage, req.user ist dann noch leer): Teams werden dort nicht gebraucht –
+  // spart zwei Datenbank-Abfragen pro Anfrage. Lesbar ist das Feld ohnehin nur für Angemeldete.
+  if (!req.user) return []
   return (await karte(req)).get(id) ?? []
 }
 

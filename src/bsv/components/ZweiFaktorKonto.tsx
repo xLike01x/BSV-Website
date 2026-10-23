@@ -142,7 +142,7 @@ export function ZweiFaktorKonto() {
         ))}
 
       {schritt === 'passwort' && (
-        <form onSubmit={einschalten} style={{ display: 'grid', gap: 10 }}>
+        <form method="post" onSubmit={einschalten} style={{ display: 'grid', gap: 10 }}>
           <label className="field">
             Zur Sicherheit: dein Passwort
             <input type="password" value={passwort} onChange={(e) => setPasswort(e.target.value)} autoComplete="current-password" required autoFocus />
@@ -160,7 +160,7 @@ export function ZweiFaktorKonto() {
       )}
 
       {schritt === 'scannen' && einrichtung && (
-        <form onSubmit={bestaetigen} style={{ display: 'grid', gap: 10 }}>
+        <form method="post" onSubmit={bestaetigen} style={{ display: 'grid', gap: 10 }}>
           <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 4, fontSize: 15 }}>
             <li>In der App „Konto hinzufügen“ bzw. „QR-Code scannen“ wählen.</li>
             <li>Diesen QR-Code scannen.</li>
@@ -216,7 +216,7 @@ export function ZweiFaktorKonto() {
       )}
 
       {schritt === 'aus' && (
-        <form onSubmit={ausschalten} style={{ display: 'grid', gap: 10 }}>
+        <form method="post" onSubmit={ausschalten} style={{ display: 'grid', gap: 10 }}>
           <p className="muted" style={{ margin: 0, fontSize: 15 }}>
             Zum Ausschalten brauchst du dein Passwort und einen Code aus der App (oder einen Wiederherstellungscode).
           </p>

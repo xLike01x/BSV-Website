@@ -144,7 +144,7 @@ describe('Web-App: Manifest', () => {
     for (const i of m.icons)
       expect(fs.existsSync(path.resolve(process.cwd(), 'public' + i.src)), i.src).toBe(true)
     expect(
-      m.icons.some((i: { sizes: string }) => i.sizes === '512x512' && i.purpose === 'any'),
+      m.icons.some((i: { sizes: string; purpose: string }) => i.sizes === '512x512' && i.purpose === 'any'),
     ).toBe(true)
     expect(m.icons.some((i: { purpose: string }) => i.purpose === 'maskable')).toBe(true)
     expect(fs.existsSync(path.resolve(process.cwd(), 'public/offline.html'))).toBe(true)

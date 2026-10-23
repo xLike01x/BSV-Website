@@ -61,7 +61,7 @@ export function ProbetrainingForm({ angebotId, angebotName, ansprechperson, istK
   }
 
   return (
-    <form className="form" onSubmit={onSubmit} noValidate={false}>
+    <form method="post" className="form" onSubmit={onSubmit} noValidate={false}>
       <input type="hidden" name="angebot" value={angebotName} />
       <div className="hp" aria-hidden="true">
         <label>

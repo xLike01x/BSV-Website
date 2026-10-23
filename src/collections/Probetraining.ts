@@ -1,7 +1,7 @@
 import type { Access, CollectionConfig } from 'payload'
 
 import { anyone } from '../access/anyone'
-import { hasRole, isEditorField } from '../access/roles'
+import { eigeneAngebotIds, hasRole, isEditorField } from '../access/roles'
 import { hatRecht } from '../access/einzelrechte'
 import { darf, rechteLaden } from '../access/rollenRechte'
 import { spamSchutz } from '../hooks/spamSchutz'
@@ -17,16 +17,8 @@ const readAnfragen: Access = async ({ req }) => {
   if (!user) return false
   if (hasRole(user as never, 'admin', 'redaktion') || hatRecht(user, 'probetraining')) return true
   await rechteLaden(req.payload)
-  if (darf(user, 'uebungsleitung', 'probetraining')) {
-    const eigene = await req.payload.find({
-      collection: 'angebote',
-      where: { leitung: { contains: user.id } },
-      depth: 0,
-      limit: 100,
-      overrideAccess: true,
-    })
-    return { angebot: { in: eigene.docs.map((d) => d.id) } }
-  }
+  // Eigene Teams aus dem Zwischenspeicher der Anfrage (eine Abfrage statt einer je Rechte-Prüfung)
+  if (darf(user, 'uebungsleitung', 'probetraining')) return { angebot: { in: await eigeneAngebotIds(req) } }
   return false
 }
 

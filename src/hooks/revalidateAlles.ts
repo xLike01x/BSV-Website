@@ -7,7 +7,9 @@ import { revalidatePath, revalidateTag } from 'next/cache'
  * neu aufgebaut – bei einer Vereinsseite dauert das nur Sekundenbruchteile.
  */
 const alles = (context: Record<string, unknown>) => {
-  if (context.disableRevalidate) return
+  // Massenänderungen (Datenschutz-Aufräumen, Bilder zuordnen, Testkonten) setzen „ohneRevalidierung“ – sonst würde
+  // die ganze Website für jeden einzelnen Eintrag neu aufgebaut (Seiten aktualisieren sich ohnehin spätestens nach 60 s)
+  if (context.disableRevalidate || context.ohneRevalidierung) return
   try {
     revalidatePath('/', 'layout')
     // Sitemap enthält Teams & Kurse und Alben

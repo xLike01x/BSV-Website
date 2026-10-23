@@ -1,7 +1,7 @@
 'use client'
 import { useAuth } from '@payloadcms/ui'
 import { usePathname } from 'next/navigation'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
 
 import { EINTRAEGE, type Eintrag, eintragSichtbar } from './eintraege'
@@ -73,8 +73,13 @@ export default function NavZusatz() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user, rollen.join(','), sichtbar.length])
 
-  // Zähler laden: beim Seitenwechsel und jede Minute
-  const laden = useCallback(async () => {
+  // Zähler laden: beim Seitenwechsel (höchstens alle 15 Sekunden), jede Minute und beim Zurückkehren in den Tab.
+  // Im Hintergrund-Tab wird nicht abgefragt – spart Anfragen, wenn die Verwaltung den ganzen Tag offen ist.
+  const zuletzt = useRef(0)
+  const laden = useCallback(async (immer = false) => {
+    if (document.hidden) return
+    if (!immer && Date.now() - zuletzt.current < 15_000) return
+    zuletzt.current = Date.now()
     const r = await fetch('/api/posteingang', { credentials: 'include', cache: 'no-store' }).catch(() => null)
     if (!r?.ok) return
     const { _aus, ...z } = (await r.json()) as Record<string, number> & { _aus?: string[] }
@@ -83,10 +88,21 @@ export default function NavZusatz() {
   }, [])
   useEffect(() => {
     if (!user) return
-    void laden()
-    const t = setInterval(laden, 60_000)
-    return () => clearInterval(t)
+    const t = setTimeout(() => void laden(), 0)
+    return () => clearTimeout(t)
   }, [user, pfad, laden])
+  useEffect(() => {
+    if (!user) return
+    const t = setInterval(() => void laden(true), 60_000)
+    const sichtbar = () => {
+      if (!document.hidden && Date.now() - zuletzt.current > 60_000) void laden(true)
+    }
+    document.addEventListener('visibilitychange', sichtbar)
+    return () => {
+      clearInterval(t)
+      document.removeEventListener('visibilitychange', sichtbar)
+    }
+  }, [user, laden])
 
   // Zähler an die Links der Payload-Seitenleiste hängen
   useEffect(() => {

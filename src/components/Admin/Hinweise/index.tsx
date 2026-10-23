@@ -327,7 +327,7 @@ export function FormularHinweise() {
         )
       })
       .catch(() => aktiv && setSeiten([]))
-    fetch(`/api/form-submissions?depth=0&limit=0&where[form][equals]=${id}`, { credentials: 'include' })
+    fetch(`/api/form-submissions?depth=0&limit=1&select[id]=true&where[form][equals]=${id}`, { credentials: 'include' })
       .then((r) => (r.ok ? r.json() : null))
       .then((d) => aktiv && setEingaenge(d?.totalDocs ?? null))
       .catch(() => {})

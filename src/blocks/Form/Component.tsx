@@ -125,7 +125,7 @@ export const FormBlock: React.FC<
           {isLoading && !hasSubmitted && <p>Wird gesendet …</p>}
           {error && <div role="alert" style={{ color: '#b42318' }}>Das hat leider nicht geklappt. Bitte versuche es noch einmal.</div>}
           {!hasSubmitted && (
-            <form id={formID} onSubmit={handleSubmit(onSubmit)}>
+            <form method="post" id={formID} onSubmit={handleSubmit(onSubmit)}>
               <div className="mb-4 last:mb-0">
                 {formFromProps &&
                   formFromProps.fields &&

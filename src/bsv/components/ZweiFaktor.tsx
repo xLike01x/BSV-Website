@@ -114,7 +114,7 @@ export function ZweiFaktor() {
   }
 
   return (
-    <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
+    <form method="post" className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
       {!status.eingerichtet ? (
         <>
           <h2 className="t-2" style={{ fontSize: 26 }}>

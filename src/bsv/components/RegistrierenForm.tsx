@@ -133,7 +133,7 @@ export function RegistrierenForm({ angebote }: { angebote: AngebotWahl[] }) {
   const gruppen = BEREICHE.map(([wert, titel]) => ({ titel, liste: angebote.filter((a) => a.bereich === wert) })).filter((g) => g.liste.length)
 
   return (
-    <form className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
+    <form method="post" className="form" style={{ gridTemplateColumns: '1fr' }} onSubmit={absenden}>
       <label className="field">
         Vor- und Nachname
         <input name="name" required autoComplete="name" maxLength={120} onChange={(e) => setEingabe((x) => ({ ...x, name: e.target.value }))} />
