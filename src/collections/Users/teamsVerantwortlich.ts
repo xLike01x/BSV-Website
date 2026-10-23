@@ -8,19 +8,30 @@ import { hasRole, isAdminField } from '@/access/roles'
  * zweite, bequemere Tür dazu. So bleibt es egal, ob man die Zuordnung beim Benutzer oder beim Team macht.
  */
 const TEAM_ROLLEN = ['uebungsleitung', 'teamredaktion']
-type Ctx = { bsvTeamsNeu?: number[]; bsvLeitungKarte?: Map<number, number[]> }
+type Ctx = { bsvTeamsNeu?: number[] }
 
 const idVon = (x: unknown) => Number(typeof x === 'object' && x ? (x as { id: unknown }).id : x)
 
-/** Einmal pro Anfrage: welcher Benutzer ist bei welchen Teams verantwortlich (für Listen mit vielen Benutzern) */
-async function karte(req: PayloadRequest): Promise<Map<number, number[]>> {
-  const ctx = req.context as Ctx
-  if (ctx.bsvLeitungKarte) return ctx.bsvLeitungKarte
-  const r = await req.payload.find({ collection: 'angebote', where: { leitung: { exists: true } }, select: { leitung: true } as never, depth: 0, limit: 0, pagination: false, overrideAccess: true, req })
-  const m = new Map<number, number[]>()
-  for (const a of r.docs as { id: number; leitung?: unknown[] }[]) for (const u of a.leitung ?? []) m.set(idVon(u), [...(m.get(idVon(u)) ?? []), a.id])
-  ctx.bsvLeitungKarte = m
-  return m
+/**
+ * Einmal pro Anfrage: welcher Benutzer ist bei welchen Teams verantwortlich (für Listen mit vielen Benutzern).
+ * Gemerkt wird das Versprechen pro Anfrage-Objekt, nicht in req.context: Payload ruft den Hook für alle Benutzer
+ * einer Liste gleichzeitig auf, und die innere Abfrage ersetzt req.context – sonst startete jeder Benutzer eine
+ * eigene Abfrage (bei 50 Benutzern 50 Abfragen, „Rollen & Rechte“ brauchte dadurch 15–45 Sekunden).
+ */
+const leitungKarten = new WeakMap<PayloadRequest, Promise<Map<number, number[]>>>()
+function karte(req: PayloadRequest): Promise<Map<number, number[]>> {
+  const gemerkt = leitungKarten.get(req)
+  if (gemerkt) return gemerkt
+  const neu = (async () => {
+    const r = await req.payload.find({ collection: 'angebote', where: { leitung: { exists: true } }, select: { leitung: true } as never, depth: 0, limit: 0, pagination: false, overrideAccess: true, req })
+    const m = new Map<number, number[]>()
+    for (const a of r.docs as { id: number; leitung?: unknown[] }[]) for (const u of a.leitung ?? []) m.set(idVon(u), [...(m.get(idVon(u)) ?? []), a.id])
+    return m
+  })()
+  // Fehlgeschlagen: nicht für den Rest der Anfrage merken
+  neu.catch(() => leitungKarten.delete(req))
+  leitungKarten.set(req, neu)
+  return neu
 }
 
 const lesen: FieldHook = async ({ data, req }) => {
@@ -79,6 +90,6 @@ export const teamsNachher: CollectionAfterChangeHook = async ({ doc, req }) => {
     if (soll.length === jetzt.length && soll.every((x) => jetzt.includes(x))) continue
     await req.payload.update({ collection: 'angebote', id: a.id, data: { leitung: soll } as never, overrideAccess: true, req })
   }
-  delete ctx.bsvLeitungKarte
+  leitungKarten.delete(req)
   return doc
 }

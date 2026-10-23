@@ -25,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html className={cn(GeistSans.variable)} lang="de" data-theme="light" suppressHydrationWarning>
       <head>
         <link href="/favicon.png" rel="icon" type="image/png" />
-        <link href="/app-icon-180.png" rel="apple-touch-icon" />
+        <link href="/app-symbol-180.png" rel="apple-touch-icon" />
       </head>
       <body className="bsv" suppressHydrationWarning>
         <Providers>

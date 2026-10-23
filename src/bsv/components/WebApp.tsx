@@ -113,7 +113,7 @@ export function WebApp({ art, texte }: { art: 'kachel' | 'zeile' | 'fuss'; texte
             {[0, 1, 2, 3, 4, 5, 6, 7].map((i) =>
               i === 5 ? (
                 <span key={i} className="webapp-symbol webapp-symbol--bsv">
-                  <img src="/app-icon-192.png" alt="" width={64} height={64} />
+                  <img src="/app-symbol-180.png" alt="" width={64} height={64} />
                   <small>BSV 1919</small>
                 </span>
               ) : (

@@ -10,9 +10,9 @@
   "theme_color": "#157a43",
   "lang": "de",
   "icons": [
-    { "src": "/app-icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
-    { "src": "/app-icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    { "src": "/app-symbol-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/app-symbol-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "/app-symbol-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
   ],
   "shortcuts": [
     { "name": "Trainingszeiten", "url": "/trainingszeiten" },
