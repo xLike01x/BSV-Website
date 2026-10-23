@@ -176,6 +176,8 @@ const konfiguration = buildConfig({
     avatar: 'default',
     meta: {
       titleSuffix: ' – BSV Verwaltung',
+      // Vereinswappen als Tab-Symbol (sonst fragt der Browser /favicon.ico an)
+      icons: [{ rel: 'icon', type: 'image/png', url: '/favicon.png' }],
     },
     livePreview: {
       breakpoints: [
