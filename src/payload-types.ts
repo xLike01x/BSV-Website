@@ -1649,7 +1649,7 @@ export interface Ausfaelle {
    */
   hinweis?: string | null;
   /**
-   * Kommt mit dem E-Mail-Versand – aktuell wird noch nichts verschickt.
+   * Kommt mit E-Mail-Versand und Push-Nachrichten (nach der Generalprobe) – aktuell wird noch nichts verschickt. Haken raus = nur auf der Website eintragen.
    */
   benachrichtigen?: boolean | null;
   endgueltigAm?: string | null;

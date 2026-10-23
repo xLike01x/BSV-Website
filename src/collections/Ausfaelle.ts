@@ -58,7 +58,7 @@ export const Ausfaelle: CollectionConfig = {
       options: ['Krankheit', 'Halle belegt', 'Ferien / Feiertag', 'Wetter', 'Sonstiges'].map((g) => ({ label: g, value: g })),
     },
     { name: 'hinweis', label: 'Hinweis an die Teilnehmenden', type: 'textarea', admin: { description: 'Optional, z. B. „Nachholtermin am Freitag“.' } },
-    { name: 'benachrichtigen', label: 'Teilnehmende per E-Mail/Push benachrichtigen', type: 'checkbox', defaultValue: true, admin: { description: 'Kommt mit dem E-Mail-Versand – aktuell wird noch nichts verschickt.' } },
+    { name: 'benachrichtigen', label: 'Teilnehmende per E-Mail/Push benachrichtigen', type: 'checkbox', defaultValue: true, admin: { description: 'Kommt mit E-Mail-Versand und Push-Nachrichten (nach der Generalprobe) – aktuell wird noch nichts verschickt. Haken raus = nur auf der Website eintragen.' } },
   ],
   hooks: {
     afterChange: [revalidateAllesNachAenderung],

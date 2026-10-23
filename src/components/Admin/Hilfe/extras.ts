@@ -882,7 +882,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Datum', text: 'An welchem Tag. Danach verschwindet der Hinweis automatisch.' },
     { name: 'Grund', text: 'Zur Auswahl: Krankheit, Halle belegt, Ferien / Feiertag, Wetter, Sonstiges.' },
     { name: 'Hinweis an die Teilnehmenden', text: 'Optionaler Zusatz, z. B. ein Nachholtermin.' },
-    { name: 'Teilnehmende per E-Mail/Push benachrichtigen', text: 'Ist schon angehakt. Sobald der E-Mail-Versand eingerichtet ist, bekommen die Teilnehmenden Bescheid – bis dahin wird noch nichts verschickt.' },
+    { name: 'Teilnehmende per E-Mail/Push benachrichtigen', text: 'Ist schon angehakt. Sobald E-Mail-Versand und Push-Nachrichten eingerichtet sind (nach der Generalprobe), bekommen alle Bescheid, die dieses Team in der App gewählt haben – bis dahin wird noch nichts verschickt. Haken raus = nur auf der Website eintragen, ohne Nachricht. Siehe auch „Was löst eine Push-Nachricht auf dem Handy aus?“.' },
   ],
   rollen: [
     { name: 'Verantwortlich für', text: 'Teams, die die Person pflegen darf. Ändern: beim Benutzer unter „Team-Berechtigungen“ oder beim Team unter „Verantwortliche“.' },
@@ -1461,11 +1461,31 @@ export const FAQ: Faq[] = [
     bereich: 'posts',
   },
   {
+    frage: 'Was löst eine Push-Nachricht auf dem Handy aus?',
+    antwort:
+      'Stand jetzt: noch nichts. Push-Nachrichten kommen mit dem nächsten Ausbau der Web-App nach der Generalprobe, weil sie eine sichere Verbindung (https) brauchen. Bis dahin wird nichts verschickt – auch nicht, wenn bei einem Trainingsausfall „Teilnehmende per E-Mail/Push benachrichtigen“ angehakt ist.\n\n'
+      + 'Geplant ist eine Push-Nachricht bei:\n'
+      + '• Trainingsausfall – wenn du unter „Trainingsausfälle“ einen Ausfall speicherst und „Teilnehmende per E-Mail/Push benachrichtigen“ angehakt ist (Standard). Inhalt: Team, Datum, Grund und dein Hinweis, z. B. „F1-Jugend: Training fällt heute aus (Halle belegt)“.\n'
+      + '• Team-News – wenn eine News mit einem Team veröffentlicht wird. Inhalt: Titel der News; Antippen öffnet den Artikel.\n'
+      + '• Eigene Nachricht – Admin und Redaktion schreiben unter „Push-Nachricht senden“ selbst Titel, kurzen Text und optional einen Link, z. B. „Sommerfest heute wegen Gewitter abgesagt“. Empfänger: alle oder nur bestimmte Teams/Bereiche. Vor dem Senden gibt es eine Vorschau wie auf dem Handy und die Rückfrage „An … Geräte senden?“; alle gesendeten Nachrichten stehen im Verlauf (wer, wann, an wen). Höchstens 3 eigene Nachrichten an alle pro Tag, damit niemand die Benachrichtigungen genervt abschaltet.\n\n'
+      + 'Eine Nachricht bekommt nur, wer die App installiert, Benachrichtigungen erlaubt und genau dieses Team ausgewählt hat. Alle anderen merken nichts davon.\n\n'
+      + 'Keine Push-Nachricht gibt es bei: Änderungen an Terminen, Trainingszeiten oder Seiten, Entwürfen, gespeicherten Änderungen an einer schon veröffentlichten News, Mitgliedsanträgen, Kontaktanfragen und allem in der Verwaltung. Für die Verwaltung bleibt es bei E-Mails und dem Posteingang.\n\n'
+      + 'Außerdem geplant:\n'
+      + '• Ohne Konto und ohne Namen: Gespeichert werden nur die technische Push-Adresse des Handys und die gewählten Teams.\n'
+      + '• Abbestellen geht jederzeit – in der App oder in den Handy-Einstellungen.\n'
+      + '• iPhone: erst ab iOS 16.4 und nur, wenn die Web-App auf dem Home-Bildschirm installiert ist (Vorgabe von Apple). Android: auch im Browser möglich.\n'
+      + '• Ein Ausfall, der nachträglich gelöscht wird, holt die schon verschickte Nachricht nicht zurück. Bei einem Fehler deshalb einen korrigierten Ausfall speichern und den Hinweis entsprechend formulieren.\n\n'
+      + 'Beispiel 1 – Wenn die Halle am Dienstag belegt ist und du den Ausfall für die F1-Jugend mit Haken speicherst – dann bekommen alle, die in der App „F1-Jugend“ gewählt haben, sofort eine Nachricht. Der Hinweis steht außerdem wie bisher auf der Teamseite.\n\n'
+      + 'Beispiel 2 – Wenn kurzfristig der Platz gesperrt ist, aber kein einzelnes Training betroffen ist – dann unter „Push-Nachricht senden“ eine eigene Nachricht an „Fußball“ schreiben, statt für jedes Team einen Ausfall einzutragen.\n\n'
+      + 'Beispiel 3 – Wenn du einen Ausfall nur zur Übersicht einträgst (z. B. Ferien, alle wissen Bescheid) – dann nimm den Haken „benachrichtigen“ raus. Der Ausfall steht auf der Website, aber niemand bekommt eine Nachricht.',
+    bereich: 'ausfaelle',
+  },
+  {
     frage: 'Gibt es die Website als App?',
     antwort:
       'Ja, als sogenannte Web-App: kostenlos, ohne App-Store und ohne Anmeldung. Wer sie installiert, hat das Vereinswappen auf dem Startbildschirm und die Website öffnet sich in einem eigenen Fenster ohne Browser-Leiste. Inhalte sind immer dieselben wie auf der Website – es gibt nichts extra zu pflegen.\n\n'
       + 'So geht’s: auf der Startseite in der Kachel „Mitgliederbereich“ auf „App installieren ›“ oder ganz unten auf der Website auf „Als App installieren“ tippen. Chrome, Edge und Android öffnen dann direkt den Installieren-Dialog; auf dem iPhone erscheint eine kurze Anleitung (Teilen → „Zum Home-Bildschirm“). In der installierten App sind beide Hinweise ausgeblendet. Die Texte änderst du unter Website-Aufbau → Texte & Bilder: Reiter „Startseite“ → Kachel Mitgliederbereich (Hinweis und Link-Text) und Reiter „Weitere Seiten“ → Fußzeile. Sobald es Benachrichtigungen gibt, passt du dort den Satz „… folgen in Kürze“ an.\n\n'
-      + 'Ohne Internet zeigt die App eine freundliche Seite „Gerade keine Verbindung“ statt einer Fehlermeldung. Dabei werden keine Seiten oder Daten auf dem Gerät gespeichert – nur diese eine Hinweisseite. Mitgliederbereich und Ausweis brauchen also immer eine Verbindung. Benachrichtigungen aufs Handy (z. B. bei Trainingsausfall) gibt es noch nicht; sie sind für später geplant.\n\n'
+      + 'Ohne Internet zeigt die App eine freundliche Seite „Gerade keine Verbindung“ statt einer Fehlermeldung. Dabei werden keine Seiten oder Daten auf dem Gerät gespeichert – nur diese eine Hinweisseite. Mitgliederbereich und Ausweis brauchen also immer eine Verbindung. Benachrichtigungen aufs Handy (z. B. bei Trainingsausfall) gibt es noch nicht; sie sind für später geplant – was sie auslösen wird, steht unter „Was löst eine Push-Nachricht auf dem Handy aus?“.\n\n'
       + 'Beispiel 1 – Wenn ein Elternteil fragt, wie es schnell an die Trainingszeiten kommt – dann: Website am Handy öffnen, unten „Als App installieren“. Ein langes Drücken auf das Symbol zeigt Abkürzungen zu Trainingszeiten, Terminen, News und Mitgliederbereich (Android).\n\n'
       + 'Beispiel 2 – Wenn beim Tippen auf „Als App installieren“ nur die Anleitung erscheint statt des Dialogs – dann unterstützt der Browser das direkte Installieren nicht (z. B. Safari oder Firefox) oder die App ist schon installiert. Einfach der Anleitung folgen.',
   },
