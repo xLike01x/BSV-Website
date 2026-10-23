@@ -1265,6 +1265,12 @@ export const FAQ: Faq[] = [
     bereich: 'pages',
   },
   {
+    frage: 'Wo ändere ich die Überschrift der News-Seite („Newsroom“), von Termine oder Kontakt?',
+    antwort:
+      'Website-Aufbau → „Texte & Bilder“ → Reiter „Weitere Seiten“. Dort gibt es je einen Abschnitt für News, Termine, Kontakt, Mitgliedsantrag, Probetraining und die Fußzeile – jeweils mit „Überschrift“ und „Text“ darunter. Ändern, oben rechts „Speichern“, fertig: Die Website zeigt es sofort.\n\nDie Überschriften von Startseite, Fußball, Breitensport und Verein stehen in den gleichnamigen Reitern davor. Die Einträge im Menü oben (z. B. „News“) sind etwas anderes – die änderst du unter Menü & Fußzeile.',
+    bereich: 'texte',
+  },
+  {
     frage: 'Wo ändere ich die Mitgliedsbeiträge?',
     antwort: 'Einstellungen → Vereinsdaten → „Mitgliedsbeiträge“: je Mitgliedsart den Betrag „€ pro Quartal“ eintragen und speichern. Alles andere rechnet sich automatisch: die Beitrags-Kacheln auf der Vereinsseite (inkl. „entspricht … € im Monat“), die Überschrift „Ab … € im Monat“ (günstigster Beitrag für aktive Mitglieder, passiv zählt nicht), der Online-Antrag und der Platzhalter {abMonat} in „Texte & Bilder“. Bei jedem neuen Antrag wird der Betrag, der beim Absenden galt, unter „Beitrag laut Antrag“ festgehalten. Eine Aufnahmegebühr gibt es auf der Website nicht.',
     bereich: 'verein',

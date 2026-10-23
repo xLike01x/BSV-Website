@@ -41,7 +41,7 @@ const L = (s: string) => `/admin/collections/${s}`
 export const EINSTIEGE: Record<string, Einstieg> = {
   posts: {
     titel: 'Wozu sind News da?',
-    text: 'News erzählen, was im Verein passiert: Spielberichte, Ankündigungen, Rückblicke. Vereins-News erscheinen im Newsroom und auf der Startseite.',
+    text: 'News erzählen, was im Verein passiert: Spielberichte, Ankündigungen, Rückblicke. Vereins-News erscheinen im Newsroom und auf der Startseite. Die Überschrift „Newsroom“ und den Satz darunter änderst du unter Texte & Bilder → Reiter „Weitere Seiten“ → News.',
     textTeam: 'Deine Team-News erscheinen auf der Seite deines Teams. Soll eine auch auf die Startseite, hakst du rechts „Für die Startseite vorschlagen“ an – die Redaktion entscheidet.',
     ablauf: [
       { key: 'schreiben', titel: 'Schreiben', text: 'Titel und Text – kurz und konkret.', wo: 'News → Neu erstellen' },
