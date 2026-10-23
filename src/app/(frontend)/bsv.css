@@ -208,10 +208,10 @@
 @media (max-width: 760px) { .tile.webapp-kachel { padding: 26px; } .webapp-symbole { grid-template-columns: repeat(4, 52px); gap: 20px 14px; padding: 22px 18px; } .webapp-symbol, .webapp-symbol--bsv img { width: 52px; height: 52px; border-radius: 13px; } .webapp-symbol--bsv small { top: 55px; } }
 @media (prefers-reduced-motion: no-preference) { .webapp-symbol--bsv img { animation: webapp-hupf 2.4s var(--bsv-ease) 0.6s 2 both; } }
 @keyframes webapp-hupf { 0%, 100% { transform: translateY(0); } 40% { transform: translateY(-8px) scale(1.06); } 60% { transform: translateY(0); } }
-.webapp-dialog { border: 0; border-radius: 18px; padding: 0; width: min(440px, calc(100vw - 32px)); color: var(--bsv-ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2); }
+.webapp-dialog { position: fixed; inset: 0; margin: auto; height: fit-content; max-height: calc(100dvh - 32px); overflow: auto; border: 0; border-radius: 18px; padding: 0; width: min(440px, calc(100vw - 32px)); color: var(--bsv-ink); box-shadow: 0 24px 60px rgba(0, 0, 0, 0.2); }
 .webapp-dialog::backdrop { background: rgba(0, 0, 0, 0.4); }
 .webapp-dialog-inner { padding: 24px; font-size: 15px; line-height: 1.5; }
-.webapp-dialog h2 { font-size: 20px; margin: 0 0 8px; }
+.webapp-dialog h2 { font-size: 22px; font-weight: 700; letter-spacing: -0.02em; margin: 0 0 8px; }
 .webapp-dialog p { margin: 0 0 16px; color: var(--bsv-ink-2); }
 .webapp-dialog dl { margin: 0 0 20px; }
 .webapp-dialog dt { font-weight: 600; margin-top: 12px; }
