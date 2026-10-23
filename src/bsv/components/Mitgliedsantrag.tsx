@@ -72,7 +72,11 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
     setArtRoh(a < 18 ? 'jugend' : 'aktiv')
   }, [p.geburtsdatum]) // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Beim Schrittwechsel nach oben zu den Schritten – nicht schon beim Öffnen der Seite (sonst springt sie an der Einleitung vorbei)
+  const vorherigerSchritt = useRef(schritt)
   useEffect(() => {
+    if (vorherigerSchritt.current === schritt) return
+    vorherigerSchritt.current = schritt
     kopf.current?.scrollIntoView({ behavior: 'smooth', block: 'start' })
   }, [schritt])
 
@@ -149,7 +153,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
   const prozent = schritt >= 4 ? 100 : ((schritt - 0.5) / 3) * 100
 
   return (
-    <section className="wrap-narrow" style={{ paddingTop: 16, paddingBottom: 100 }} ref={kopf}>
+    <section className="wrap-narrow" style={{ paddingTop: 16, paddingBottom: 100, scrollMarginTop: 80 }} ref={kopf}>
       {schritt < 4 && (
         <>
           <ol aria-label="Fortschritt" style={{ listStyle: 'none', margin: '0 auto 12px', padding: 0, maxWidth: 760, display: 'grid', gridTemplateColumns: 'repeat(3, minmax(0, 1fr))', fontSize: 14 }}>

@@ -3,10 +3,11 @@ import { useAuth } from '@payloadcms/ui'
 import React, { useEffect, useState } from 'react'
 
 const GRUENDE = ['Krankheit', 'Halle belegt', 'Ferien / Feiertag', 'Wetter', 'Sonstiges']
+/** Datum in einigen Tagen als JJJJ-MM-TT – in Ortszeit (toISOString wäre UTC: nachts bis 1–2 Uhr der Vortag) */
 const tag = (plus: number) => {
   const d = new Date()
   d.setDate(d.getDate() + plus)
-  return d.toISOString().slice(0, 10)
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`
 }
 
 /** Ausfall in drei Klicks melden: Team, Tag, Grund */

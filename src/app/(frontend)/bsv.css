@@ -37,8 +37,9 @@
   line-height: 1.47;
   -webkit-font-smoothing: antialiased;
 }
-.bsv a { color: var(--bsv-green); }
-.bsv a:hover { color: var(--bsv-green-dark); }
+/* Links grün – außer Knöpfe der Seiten-Bausteine (Farbe kommt dort vom Knopf selbst) */
+.bsv a:where(:not([data-slot='button'])) { color: var(--bsv-green); }
+.bsv a:where(:not([data-slot='button'])):hover { color: var(--bsv-green-dark); }
 .bsv img { max-width: 100%; }
 .bsv :focus-visible { outline: 3px solid var(--bsv-coral); outline-offset: 2px; border-radius: 6px; }
 

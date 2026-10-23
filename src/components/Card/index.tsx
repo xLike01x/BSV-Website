@@ -27,7 +27,8 @@ export const Card: React.FC<{
   const hasCategories = categories && Array.isArray(categories) && categories.length > 0
   const titleToUse = titleFromProps || title
   const sanitizedDescription = description?.replace(/\s/g, ' ') // replace non-breaking space with white space
-  const href = `/${relationTo}/${slug}`
+  // News liegen unter /news (/posts leitet nur weiter)
+  const href = relationTo === 'posts' ? `/news/${slug}` : `/${relationTo}/${slug}`
 
   return (
     <article
@@ -38,7 +39,13 @@ export const Card: React.FC<{
       ref={card.ref}
     >
       <div className="relative w-full ">
-        {!metaImage && <div className="">No image</div>}
+        {!metaImage && (
+          // Ohne Bild: ruhige Fläche mit Vereinswappen statt eines leeren Kastens
+          <div className="flex aspect-[16/9] items-center justify-center bg-[#e8f3ec]" aria-hidden="true">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src="/favicon.png" alt="" width={48} height={48} className="opacity-60" />
+          </div>
+        )}
         {metaImage && typeof metaImage !== 'string' && <Media resource={metaImage} size="33vw" />}
       </div>
       <div className="p-4">
@@ -48,7 +55,7 @@ export const Card: React.FC<{
               if (typeof category === 'object') {
                 const { title: titleFromCategory } = category
 
-                const categoryTitle = titleFromCategory || 'Untitled category'
+                const categoryTitle = titleFromCategory || 'Ohne Kategorie'
 
                 const isLast = index === categories.length - 1
 

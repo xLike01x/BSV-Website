@@ -4,9 +4,6 @@ import React, { createContext, useCallback, use, useEffect, useState } from 'rea
 
 import type { Theme, ThemeContextType } from './types'
 
-import canUseDOM from '@/utilities/canUseDOM'
-import { defaultTheme, getImplicitPreference, themeLocalStorageKey } from './shared'
-import { themeIsValid } from './types'
 
 const initialContext: ThemeContextType = {
   setTheme: () => null,
@@ -15,40 +12,21 @@ const initialContext: ThemeContextType = {
 
 const ThemeContext = createContext(initialContext)
 
-export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-  const [theme, setThemeState] = useState<Theme | undefined>(
-    canUseDOM ? (document.documentElement.getAttribute('data-theme') as Theme) : undefined,
-  )
+/**
+ * Die Website ist nur hell gestaltet (bsv.css). Ein Dunkelmodus des Betriebssystems oder eine in der Verwaltung
+ * gewählte dunkle Darstellung (gleicher Speicher-Schlüssel „payload-theme“) darf die Bausteine der Seiten nicht
+ * umfärben – sonst werden Überschriften unsichtbar und Kästen schwarz. Deshalb immer „light“.
+ */
+const FEST: Theme = 'light'
 
-  const setTheme = useCallback((themeToSet: Theme | null) => {
-    if (themeToSet === null) {
-      window.localStorage.removeItem(themeLocalStorageKey)
-      const implicitPreference = getImplicitPreference()
-      document.documentElement.setAttribute('data-theme', implicitPreference || '')
-      if (implicitPreference) setThemeState(implicitPreference)
-    } else {
-      setThemeState(themeToSet)
-      window.localStorage.setItem(themeLocalStorageKey, themeToSet)
-      document.documentElement.setAttribute('data-theme', themeToSet)
-    }
+export const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
+  const [theme] = useState<Theme | undefined>(FEST)
+  const setTheme = useCallback((_themeToSet: Theme | null) => {
+    document.documentElement.setAttribute('data-theme', FEST)
   }, [])
 
   useEffect(() => {
-    let themeToSet: Theme = defaultTheme
-    const preference = window.localStorage.getItem(themeLocalStorageKey)
-
-    if (themeIsValid(preference)) {
-      themeToSet = preference
-    } else {
-      const implicitPreference = getImplicitPreference()
-
-      if (implicitPreference) {
-        themeToSet = implicitPreference
-      }
-    }
-
-    document.documentElement.setAttribute('data-theme', themeToSet)
-    setThemeState(themeToSet)
+    document.documentElement.setAttribute('data-theme', FEST)
   }, [])
 
   return <ThemeContext value={{ setTheme, theme }}>{children}</ThemeContext>

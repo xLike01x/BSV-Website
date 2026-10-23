@@ -48,41 +48,13 @@
 }
 
 @layer utilities {
+  /* Bausteine der Seiten (Kopfbereich, News-Liste, Aufruf, Formular …) so breit wie .wrap-narrow in bsv.css –
+     sonst stehen sie nicht bündig mit den Text-Spalten */
   .container {
     width: 100%;
+    max-width: 1180px;
     margin-inline: auto;
-    padding-inline: 1rem;
-  }
-
-  @variant sm {
-    .container {
-      max-width: var(--breakpoint-sm);
-    }
-  }
-
-  @variant md {
-    .container {
-      max-width: var(--breakpoint-md);
-      padding-inline: 2rem;
-    }
-  }
-
-  @variant lg {
-    .container {
-      max-width: var(--breakpoint-lg);
-    }
-  }
-
-  @variant xl {
-    .container {
-      max-width: var(--breakpoint-xl);
-    }
-  }
-
-  @variant 2xl {
-    .container {
-      max-width: var(--breakpoint-2xl);
-    }
+    padding-inline: 22px;
   }
 }
 
@@ -93,8 +65,9 @@
   --card-foreground: oklch(14.5% 0 0deg);
   --popover: oklch(100% 0 0deg);
   --popover-foreground: oklch(14.5% 0 0deg);
-  --primary: oklch(20.5% 0 0deg);
-  --primary-foreground: oklch(98.5% 0 0deg);
+  /* Vereinsgrün (wie --bsv-green) für Knöpfe und Ankreuzfelder der Seiten-Bausteine */
+  --primary: #157a43;
+  --primary-foreground: #fff;
   --secondary: oklch(97% 0 0deg);
   --secondary-foreground: oklch(20.5% 0 0deg);
   --muted: oklch(97% 0 0deg);
