@@ -646,7 +646,7 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       '„Sicherung jetzt erstellen“ klicken – nach etwa einer Minute ist sie fertig.',
       '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
-      'Zurückholen: Anleitung unten auf der Seite (Befehl „pnpm sicherung:einspielen“).',
+      'Zurückholen: Anleitung unten auf der Seite „Sicherung wieder einspielen“ – die Befehle passen dazu, ob die Website am PC oder auf dem Live-Server läuft; die andere Variante steht zum Aufklappen darunter.',
       'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (am besten am PC), danach „✓ Heute erfolgreich getestet“ klicken.',
       'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter Einstellungen → „Sicherheit“ (Reiter „Updates“).',
     ],

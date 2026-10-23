@@ -15,12 +15,15 @@ export type WartungDaten = {
   schluesselwechsel: boolean
   updates: { sicherheit: number; updates: number; geprueftAm: UpdateStand['geprueftAm']; unvollstaendig: boolean }
 }
+/** Wo läuft diese Website? live = Server (Linux), sonst PC (Windows) – für die passenden Anleitungen */
+export type Umgebung = { live: boolean; ordner: string; projekt: string }
+
 const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
 
 const mb = (b: number) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`)
 const wann = (iso: string) => new Date(iso).toLocaleString('de-DE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
-export default function SicherungClient({ sicherungen, wartung }: { sicherungen: SicherungInfo[]; wartung: WartungDaten }) {
+export default function SicherungClient({ sicherungen, wartung, umgebung }: { sicherungen: SicherungInfo[]; wartung: WartungDaten; umgebung: Umgebung }) {
   const router = useRouter()
   const [laeuft, setLaeuft] = useState(false)
   const [meldung, setMeldung] = useState<{ ok: boolean; text: string } | null>(null)
@@ -108,7 +111,9 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
             </tbody>
           </table>
         )}
-        <p className="bsv-sicherung__klein">Die Dateien liegen auf dem Server im Projektordner unter <code>backups</code>.</p>
+        <p className="bsv-sicherung__klein">
+          Die Dateien liegen {umgebung.live ? 'auf dem Server' : 'auf diesem PC'} im Ordner <code>{umgebung.ordner}</code>.
+        </p>
       </section>
 
       <section className="bsv-sicherung__box">
@@ -135,8 +140,9 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
           <div>
             <strong>🧪 Wiederherstellung getestet: {getestet.am ? `${datum(getestet.am)}${getestet.von ? ` (${getestet.von})` : ''}` : 'noch nie'}</strong>
             <span>
-              Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt – am besten auf einem PC, nicht auf der Live-Website: neueste
-              Sicherung herunterladen, wie unten beschrieben einspielen, kurz durchklicken. Danach hier bestätigen.
+              {umgebung.live
+                ? 'Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt – am PC, nicht hier auf der Live-Website: neueste Sicherung herunterladen, am PC einspielen (Anleitung unten „Am PC“), kurz durchklicken. Danach am PC den vorherigen Stand zurückholen, damit keine echten Mitgliederdaten auf dem PC bleiben. Dann hier bestätigen.'
+                : 'Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt: Sicherung einspielen (Anleitung unten), kurz durchklicken, danach hier bestätigen. Nach dem Livegang mit einer Sicherung der Live-Website testen.'}
             </span>
           </div>
           <button type="button" onClick={testVermerken} disabled={testLaeuft}>
@@ -195,17 +201,86 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
 
       <section className="bsv-sicherung__box">
         <h2>Sicherung wieder einspielen</h2>
-        <p>Das ersetzt alle aktuellen Inhalte durch den Stand der Sicherung. Vorher wird automatisch der jetzige Stand gesichert.</p>
-        <ol>
-          <li>Die Sicherungsdatei in den Ordner <code>backups</code> im Projektordner legen (falls sie nicht schon dort ist).</li>
-          <li>Das Server-Fenster schließen.</li>
-          <li>
-            Im Projektordner eine PowerShell öffnen und eingeben: <code>pnpm sicherung:einspielen bsv-sicherung_…tar.gz.enc</code> (ohne Dateiname wird die neueste genommen).
-          </li>
-          <li>„JA“ eintippen und warten, bis „Fertig“ erscheint.</li>
-          <li>Die Website wie gewohnt mit <code>BSV-Website-Update.bat</code> starten. Abgelaufene Fristen (Datenschutz, Papierkorb) werden beim Einspielen sofort wieder angewendet.</li>
-        </ol>
+        <p>Das ersetzt alle aktuellen Inhalte durch den Stand der Sicherung. Vorher wird automatisch der jetzige Stand gesichert. Abgelaufene Fristen (Datenschutz, Papierkorb) werden danach sofort wieder angewendet.</p>
+        {umgebung.live ? (
+          <>
+            <EinspielenServer projekt={umgebung.projekt} />
+            <details className="bsv-sicherung__mehr">
+              <summary>Am PC einspielen (z. B. für den jährlichen Test)</summary>
+              <EinspielenPc />
+            </details>
+          </>
+        ) : (
+          <>
+            <EinspielenPc projekt={umgebung.projekt} />
+            <details className="bsv-sicherung__mehr">
+              <summary>Auf dem Live-Server einspielen (Notfall)</summary>
+              <EinspielenServer />
+            </details>
+          </>
+        )}
       </section>
     </div>
+  )
+}
+
+/** Anleitung für den PC (Windows): Server-Fenster, Eingabeaufforderung, BSV-Website-Update.bat */
+function EinspielenPc({ projekt }: { projekt?: string }) {
+  const ordner = projekt && /^[A-Za-z]:\\/.test(projekt) ? projekt : 'F:\\BSV-Website\\app'
+  return (
+    <>
+      <h3>Am PC</h3>
+      <ol>
+        <li>
+          Die Sicherungsdatei in den Ordner <code>backups</code> legen (falls sie nicht schon dort ist) – also <code>{ordner}\backups</code>.
+        </li>
+        <li>Das schwarze Server-Fenster schließen. Docker Desktop läuft weiter (dort liegt die Datenbank).</li>
+        <li>
+          Eingabeaufforderung oder PowerShell öffnen und eingeben: <code>cd /d {ordner}</code>, dann <code>pnpm sicherung:einspielen bsv-sicherung_…tar.gz.enc</code> (ohne Dateiname wird die neueste genommen).
+        </li>
+        <li>„JA“ eintippen und warten, bis „Fertig“ erscheint.</li>
+        <li>
+          Die Website wie gewohnt mit <code>BSV-Website-Update.bat</code> starten.
+        </li>
+      </ol>
+      <p className="bsv-sicherung__klein">
+        Eine Sicherung der Live-Website lässt sich am PC nur öffnen, wenn in der <code>.env</code> am PC derselbe <code>ENCRYPTION_KEY</code> steht wie auf dem Server. Danach stehen echte
+        Mitgliederdaten auf dem PC – nach dem Test die Datei wieder einspielen, die beim Einspielen automatisch angelegt wurde („Zur Sicherheit wurde der jetzige Stand gesichert: …“).
+      </p>
+    </>
+  )
+}
+
+/** Anleitung für den Live-Server (Linux): per SSH anmelden, Dienst anhalten, als Nutzer bsv einspielen, starten */
+function EinspielenServer({ projekt }: { projekt?: string }) {
+  const ordner = projekt && projekt.startsWith('/') ? projekt : '/srv/bsv'
+  return (
+    <>
+      <h3>Auf dem Live-Server</h3>
+      <ol>
+        <li>Per SSH am Server anmelden (wie beim Einrichten).</li>
+        <li>
+          Liegt die Datei noch nicht auf dem Server: vom PC hochladen mit <code>scp bsv-sicherung_….tar.gz.enc nutzer@server:/tmp/</code>, dann auf dem Server{' '}
+          <code>
+            sudo mv /tmp/bsv-sicherung_*.tar.gz.enc {ordner}/backups/ && sudo chown bsv:bsv {ordner}/backups/*
+          </code>
+          .
+        </li>
+        <li>
+          Website anhalten: <code>sudo systemctl stop bsv</code>
+        </li>
+        <li>
+          Einspielen:{' '}
+          <code>
+            sudo -u bsv -H bash -c &apos;cd {ordner} && NODE_ENV=production pnpm sicherung:einspielen bsv-sicherung_….tar.gz.enc&apos;
+          </code>{' '}
+          – „JA“ eintippen und warten, bis „Fertig“ erscheint.
+        </li>
+        <li>
+          Website starten: <code>sudo systemctl start bsv</code> – nach etwa einer Minute ist sie wieder erreichbar.
+        </li>
+      </ol>
+      <p className="bsv-sicherung__klein">Ganze Anleitung inklusive Zurück auf eine ältere Website-Version: deploy/README.md, „Zurück auf eine Sicherung“.</p>
+    </>
   )
 }

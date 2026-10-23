@@ -210,3 +210,26 @@
     }
   }
 }
+
+// Anleitung „Sicherung wieder einspielen“: zweite Umgebung (PC bzw. Server) zum Aufklappen
+.bsv-sicherung__box h3 {
+  margin: 14px 0 6px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.bsv-sicherung__mehr {
+  margin-top: 14px;
+  border-top: 1px solid #ececf0;
+  padding-top: 10px;
+
+  summary {
+    cursor: pointer;
+    font-weight: 600;
+    color: #157a43;
+  }
+}
+
+.bsv-sicherung__box code {
+  overflow-wrap: anywhere;
+}

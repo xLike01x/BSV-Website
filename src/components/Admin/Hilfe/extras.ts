@@ -579,11 +579,11 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'sicherung-einspielen',
       titel: 'Eine Sicherung zurückholen (Notfall)',
       schritte: [
-        'Die Sicherungsdatei in den Ordner „backups“ im Projektordner legen.',
-        'Das Server-Fenster schließen.',
-        'Im Projektordner PowerShell öffnen: pnpm sicherung:einspielen DATEINAME (ohne Namen wird die neueste genommen).',
-        '„JA“ eintippen und warten, bis „Fertig“ erscheint. Der vorherige Stand wird vorher automatisch gesichert.',
-        'Die Website wie gewohnt mit BSV-Website-Update.bat starten.',
+        'Live-Website (Server): per SSH anmelden. Die Datei muss im Ordner /srv/bsv/backups liegen (vom PC hochladen: scp …, siehe Seite „Datensicherung“).',
+        'Live-Website: anhalten mit sudo systemctl stop bsv, einspielen mit sudo -u bsv -H bash -c \'cd /srv/bsv && NODE_ENV=production pnpm sicherung:einspielen DATEINAME\', danach sudo systemctl start bsv.',
+        'Am PC: Datei in den Ordner „backups“ im Projektordner legen, das schwarze Server-Fenster schließen, Eingabeaufforderung öffnen: cd /d F:\\BSV-Website\\app, dann pnpm sicherung:einspielen DATEINAME. Danach BSV-Website-Update.bat starten.',
+        'In beiden Fällen: „JA“ eintippen und warten, bis „Fertig“ erscheint. Der vorherige Stand wird vorher automatisch gesichert; ohne Dateinamen wird die neueste Sicherung genommen.',
+        'Die genauen Befehle für diese Website stehen unten auf der Seite „Datensicherung“ – dort passend dazu, ob sie am PC oder auf dem Server läuft.',
       ],
     },
     {
@@ -591,9 +591,10 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Einmal im Jahr: Wiederherstellung testen',
       schritte: [
         'Auf der Live-Website unter „Datensicherung“ die neueste Sicherung herunterladen.',
-        'Am PC die Datei in den Ordner „backups“ im Projektordner legen.',
-        'Wie bei „Eine Sicherung zurückholen“ einspielen (am PC – nicht auf der Live-Website).',
+        'Am PC die Datei in den Ordner „backups“ im Projektordner legen (in der .env am PC muss derselbe ENCRYPTION_KEY stehen wie auf dem Server).',
+        'Wie bei „Eine Sicherung zurückholen“ am PC einspielen – nicht auf der Live-Website.',
         'Website am PC starten und kurz durchklicken: Sind News, Teams und Bilder da? Lässt sich eine IBAN in einem Mitgliedsantrag anzeigen?',
+        'Danach am PC den vorherigen Stand zurückholen (die Datei, die beim Einspielen automatisch angelegt wurde) – so bleiben keine echten Mitgliederdaten auf dem PC.',
         'Auf der Live-Website unter „Datensicherung“ im Kasten „Wartung“ auf „✓ Heute erfolgreich getestet“ klicken.',
       ],
     },
@@ -1168,7 +1169,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie richte ich den E-Mail-Versand ein?',
-    antwort: 'Nötig für Registrierung, „Passwort vergessen“ und Benachrichtigungen. In die .env eintragen (Daten vom E-Mail-Anbieter, z. B. SiteGround → Site Tools → E-Mail → Konten → „Mail-Konfiguration“): SMTP_HOST=… (Postausgangsserver), SMTP_PORT=465, SMTP_USER=website@eure-domain.de, SMTP_PASS=… (Passwort des Postfachs), SMTP_FROM=website@eure-domain.de. Danach die Website neu starten (BSV-Website-Update.bat). Ohne diese Einträge stehen die Mails beim Ausprobieren auf dem eigenen PC nur im schwarzen Server-Fenster (mit Link zum Anklicken); auf der Live-Website ist die Registrierung dann gesperrt.',
+    antwort: 'Nötig für Registrierung, „Passwort vergessen“ und Benachrichtigungen. In die .env eintragen (Daten vom E-Mail-Anbieter, z. B. SiteGround → Site Tools → E-Mail → Konten → „Mail-Konfiguration“): SMTP_HOST=… (Postausgangsserver), SMTP_PORT=465, SMTP_USER=website@eure-domain.de, SMTP_PASS=… (Passwort des Postfachs), SMTP_FROM=website@eure-domain.de. Danach die Website neu starten – auf dem Server mit sudo systemctl restart bsv, am PC mit BSV-Website-Update.bat. Ohne diese Einträge stehen die Mails beim Ausprobieren auf dem eigenen PC nur im schwarzen Server-Fenster (mit Link zum Anklicken); auf der Live-Website ist die Registrierung dann gesperrt.',
     bereich: 'users',
   },
 

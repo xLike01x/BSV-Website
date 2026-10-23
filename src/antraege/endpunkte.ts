@@ -63,7 +63,7 @@ const entscheidung: Endpoint = {
         }
         const vermerk =
           versand === 'gesendet'
-            ? `E-Mail „${mail.betreff}“ an die Antragsteller/in gesendet${emailAktiv() ? '' : ' (nur Anzeige im Server-Fenster)'}`
+            ? `E-Mail „${mail.betreff}“ an die Antragsteller/in gesendet${emailAktiv() ? '' : process.env.NODE_ENV === 'production' ? ' (E-Mail-Versand nicht eingerichtet – nur im Server-Protokoll)' : ' (nur Anzeige im Server-Fenster)'}`
             : versand === 'nicht-eingerichtet'
               ? 'E-Mail nicht gesendet: Versand ist noch nicht eingerichtet'
               : 'E-Mail konnte nicht gesendet werden'

@@ -26,7 +26,8 @@ export const sicherungEndpunkte: Endpoint[] = [
         return Response.json(info)
       } catch (e) {
         req.payload.logger.error({ err: e }, 'Sicherung fehlgeschlagen')
-        return Response.json({ fehler: 'Die Sicherung ist fehlgeschlagen. Details stehen im Server-Fenster.' }, { status: 500 })
+        const wo = process.env.NODE_ENV === 'production' ? 'im Server-Protokoll (sudo journalctl -u bsv -n 50)' : 'im schwarzen Server-Fenster'
+        return Response.json({ fehler: `Die Sicherung ist fehlgeschlagen. Details stehen ${wo}.` }, { status: 500 })
       }
     },
   },

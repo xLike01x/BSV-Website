@@ -177,7 +177,7 @@ Auf dem PC in der Verwaltung: **Einstellungen → Datensicherung → „Jetzt si
 scp bsv-sicherung_*.tar.gz.enc <dein-nutzer>@<server>:/tmp/
 sudo mv /tmp/bsv-sicherung_*.tar.gz.enc /srv/bsv/backups/ && sudo chown bsv:bsv /srv/bsv/backups/*
 sudo systemctl stop bsv
-sudo -u bsv -H bash -c 'cd /srv/bsv && pnpm sicherung:einspielen bsv-sicherung_<datum>.tar.gz.enc'
+sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production pnpm sicherung:einspielen bsv-sicherung_<datum>.tar.gz.enc'
 sudo systemctl start bsv
 ```
 
@@ -210,7 +210,18 @@ Damit ein Serverausfall nicht auch die Sicherungen mitnimmt, zusätzlich extern 
 `deploy/sicherung-extern.sh` (Hetzner Storage Box / netcup Storage, `rclone`).
 
 **Einmal im Quartal Wiederherstellung testen:** neueste Sicherung auf dem PC einspielen (`pnpm sicherung:einspielen <datei>`)
-und kurz durchklicken. Datum in der Go-Live-Checkliste notieren.
+und kurz durchklicken. Dafür muss in der `.env` am PC derselbe `ENCRYPTION_KEY` stehen wie auf dem Server. Danach am PC die
+automatisch angelegte Sicherung vom Stand davor wieder einspielen, damit keine echten Mitgliederdaten auf dem PC bleiben.
+In der Verwaltung der Live-Website unter Datensicherung → Wartung „✓ Heute erfolgreich getestet“ klicken.
+
+**Notfall auf dem Server einspielen** (z. B. nach versehentlichem Löschen): die Befehle stehen auch in der Verwaltung unter
+Datensicherung → „Sicherung wieder einspielen“:
+
+```bash
+sudo systemctl stop bsv
+sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production pnpm sicherung:einspielen bsv-sicherung_<datum>.tar.gz.enc'
+sudo systemctl start bsv
+```
 
 `ENCRYPTION_KEY` zusätzlich im Passwortmanager des Vorstands ablegen – ohne ihn ist jede Sicherung wertlos.
 
@@ -253,7 +264,7 @@ Vorher immer `pnpm audit --prod` im Blick haben (Sicherheitsmeldungen zu Paketen
 
 ```bash
 sudo systemctl stop bsv
-sudo -u bsv -H bash -c 'cd /srv/bsv && git checkout <alter-commit> && pnpm install --frozen-lockfile --prod=false && pnpm sicherung:einspielen <datei>'
+sudo -u bsv -H bash -c 'cd /srv/bsv && git checkout <alter-commit> && pnpm install --frozen-lockfile --prod=false && NODE_ENV=production pnpm sicherung:einspielen <datei>'
 sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production BSV_DIST_DIR=$(sed -n "s/^BSV_DIST_DIR=//p" .build-env) pnpm build'
 sudo systemctl start bsv
 ```

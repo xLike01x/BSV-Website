@@ -53,5 +53,9 @@ await einmalAufraeumen(payload)
 console.log('Aufräum-Regeln (Datenschutz-Fristen, Papierkorb) wurden angewendet.')
 const test = await payload.count({ collection: 'users', where: { testkonto: { equals: true } }, overrideAccess: true })
 if (test.totalDocs && process.env.NODE_ENV === 'production') console.log(`⚠ ${test.totalDocs} Testkonten aus der Sicherung übernommen – bitte unter Rollen & Rechte → „Alle Testkonten löschen“ entfernen.`)
-console.log('\n✅ Fertig. Bitte die Website neu starten – am PC: Server-Fenster schließen und BSV-Website-Update.bat erneut starten; auf dem Server: sudo systemctl start bsv.')
+console.log(
+  process.platform === 'win32'
+    ? '\n✅ Fertig. Jetzt die Website wie gewohnt mit BSV-Website-Update.bat starten.'
+    : '\n✅ Fertig. Jetzt die Website starten: sudo systemctl start bsv (am PC: BSV-Website-Update.bat).',
+)
 process.exit(0)
