@@ -8,6 +8,7 @@ import { hinweisFeld } from '@/fields/hinweise'
 import { bestaetigenEndpunkt, bestaetigenLinkEndpunkt } from '@/sport/bestaetigung'
 import type { CollectionBeforeChangeHook, CollectionConfig, FieldAccess } from 'payload'
 import { slugField } from 'payload'
+import { FixedToolbarFeature, HeadingFeature, InlineToolbarFeature, lexicalEditor, OrderedListFeature, UnorderedListFeature } from '@payloadcms/richtext-lexical'
 
 import { anyone } from '../access/anyone'
 import { bereichFeld, bereichZugriff, canEditAngebot, hasRole, imBereich } from '../access/roles'
@@ -116,7 +117,23 @@ export const Angebote: CollectionConfig<'angebote'> = {
       ],
     },
     { name: 'kurzbeschreibung', label: 'Kurzbeschreibung', type: 'textarea', maxLength: 240, admin: { description: 'Ein Satz für Übersichtskarten (höchstens 240 Zeichen).' } },
-    { name: 'beschreibung', label: 'Beschreibung', type: 'richText', admin: { description: 'Ausführlicher Text auf der Seite des Teams.' } },
+    {
+      name: 'beschreibung',
+      label: 'Beschreibung',
+      type: 'richText',
+      // Zwischenüberschriften und Aufzählungen – die übernommenen Texte der alten Website enthalten Überschriften (h3)
+      editor: lexicalEditor({
+        features: ({ rootFeatures }) => [
+          ...rootFeatures,
+          HeadingFeature({ enabledHeadingSizes: ['h3', 'h4'] }),
+          UnorderedListFeature(),
+          OrderedListFeature(),
+          FixedToolbarFeature(),
+          InlineToolbarFeature(),
+        ],
+      }),
+      admin: { description: 'Ausführlicher Text auf der Seite des Teams. Zwischenüberschriften und Aufzählungen über die Leiste oben.' },
+    },
     { name: 'bild', label: 'Titelbild', type: 'upload', relationTo: 'media', filterOptions: medienAuswahl, admin: { description: 'Großes Bild oben auf der Teamseite und auf Karten.' } },
     {
       type: 'collapsible',

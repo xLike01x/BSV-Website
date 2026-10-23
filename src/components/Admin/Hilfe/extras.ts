@@ -1233,6 +1233,11 @@ export const FAQ: Faq[] = [
     bereich: 'dashboard',
   },
   {
+    frage: 'Im Textfeld steht „Something went wrong“ oder „parseEditorState … not found“ – was tun?',
+    antwort: 'Dann enthält der gespeicherte Text einen Baustein (z. B. eine Aufzählung oder Zwischenüberschrift), den dieser Editor nicht kennt. Das ist ein Fehler der Website, nicht deiner: nichts löschen und nicht weiter bearbeiten, sondern dem Web-Admin melden (Bereich, Eintrag, Screenshot). Der Text selbst ist nicht verloren. Ein automatischer Test prüft alle Vorlagen und gespeicherten Texte darauf, damit das nicht wieder vorkommt.',
+    bereich: 'dashboard',
+  },
+  {
     frage: 'Was bedeutet die orange Zahl in der Seitenleiste?',
     antwort: 'So viele neue Einträge warten im Posteingang, z. B. 2 neue Kontaktanfragen. Die Zahl steht am Bereich und an der Überschrift „Posteingang“ (auch wenn die Gruppe zugeklappt ist). Sie verschwindet, sobald du den Status änderst, z. B. auf „In Bearbeitung“ oder „Erledigt“. Du siehst nur Zahlen für Einträge, die du auch öffnen darfst – Trainer z. B. nur für ihre Teams.',
     bereich: 'dashboard',

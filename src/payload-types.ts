@@ -502,7 +502,7 @@ export interface Angebote {
    */
   kurzbeschreibung?: string | null;
   /**
-   * Ausführlicher Text auf der Seite des Teams.
+   * Ausführlicher Text auf der Seite des Teams. Zwischenüberschriften und Aufzählungen über die Leiste oben.
    */
   beschreibung?: {
     root: {
@@ -932,7 +932,7 @@ export interface Post {
    */
   heroImage?: (number | null) | Media;
   /**
-   * Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren.
+   * Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren; Aufzählungen über die Leiste oben.
    */
   content: {
     root: {

@@ -44,7 +44,7 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Oben in der Liste eine Vorlage wählen (Spielbericht, Ankündigung, Rückblick) – die News wird als Entwurf angelegt und geöffnet.',
-      '„Neu erstellen“ anklicken. Alles steht auf einer Seite: Titel, Titelbild, Text.',
+      '„Neu erstellen“ anklicken. Alles steht auf einer Seite: Titel, Titelbild, Text. Zwischenüberschriften und Aufzählungen gibt es über die Leiste über dem Text.',
       'Rechts das Team oder den Kurs wählen – wer nur ein Team betreut, hat es schon vorausgewählt. Leer = Vereins-News.',
       'Rechts im Kasten „Vor dem Veröffentlichen“ stehen Hinweise: fehlt ein Titelbild, ist der Text sehr kurz, steht der Titel in GROSSBUCHSTABEN? Rot unterstrichene Wörter mit der rechten Maustaste anklicken – der Browser schlägt die richtige Schreibweise vor.',
       'Trainer und Team-Redaktion: Soll die News auch auf die Startseite, rechts „Für die Startseite vorschlagen“ anhaken.',
@@ -197,7 +197,7 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['„E-Jugend“ mit Trainingszeiten', 'Kurs „Rückenfit“', '„Tanzmäuse“'],
     },
     tun: [
-      'Name, Altersangabe, Beschreibung und Titelbild pflegen.',
+      'Name, Altersangabe, Beschreibung und Titelbild pflegen. In der Beschreibung gehen auch Zwischenüberschriften und Aufzählungen (Leiste über dem Text).',
       'Unter „Trainingszeiten“ Tag, Uhrzeit und Ort eintragen.',
       'Unter „Verantwortliche“ die Benutzerkonten auswählen, die dieses Team pflegen dürfen (Admin und Redaktion; Admins auch beim Benutzer unter „Team-Berechtigungen“).',
       'Kurzer Hinweis oben auf der Teamseite (z. B. „Heute in Halle 2“): „Hinweis-Banner auf der Teamseite“.',

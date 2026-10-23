@@ -1,6 +1,7 @@
 import type { Block, Field } from 'payload'
 
 import {
+  BlockquoteFeature,
   FixedToolbarFeature,
   HeadingFeature,
   InlineToolbarFeature,
@@ -47,6 +48,8 @@ const columnFields: Field[] = [
           // Aufzählungen (z. B. in Impressum/Datenschutz)
           UnorderedListFeature(),
           OrderedListFeature(),
+          // Zitat – auch, damit ältere Versionen von Impressum/Datenschutz (mit „quote“) lesbar und wiederherstellbar bleiben
+          BlockquoteFeature(),
           FixedToolbarFeature(),
           InlineToolbarFeature(),
         ]

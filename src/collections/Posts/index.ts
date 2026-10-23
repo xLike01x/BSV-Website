@@ -11,6 +11,8 @@ import {
   HeadingFeature,
   HorizontalRuleFeature,
   InlineToolbarFeature,
+  OrderedListFeature,
+  UnorderedListFeature,
   lexicalEditor,
 } from '@payloadcms/richtext-lexical'
 
@@ -178,11 +180,14 @@ export const Posts: CollectionConfig<'posts'> = {
             FixedToolbarFeature(),
             InlineToolbarFeature(),
             HorizontalRuleFeature(),
+            // Aufzählungen (auch in den Vorlagen „Ankündigung“, „Neues Angebot“ … genutzt)
+            UnorderedListFeature(),
+            OrderedListFeature(),
           ]
         },
       }),
       required: true,
-      admin: { description: 'Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren.' },
+      admin: { description: 'Einfach losschreiben. Markierter Text lässt sich fett, kursiv oder als Link formatieren; Aufzählungen über die Leiste oben.' },
     },
     {
       // Nur für Redaktion/Admin – alles hier füllt sich sonst automatisch
