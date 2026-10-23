@@ -130,7 +130,16 @@ export default function NavZusatz() {
     <>
       {sichtbar.filter((e) => ziele[e.gruppe]).length > 0 &&
         [...new Set(sichtbar.map((e) => e.gruppe))].map((g) => (ziele[g] ? <React.Fragment key={g}>{createPortal(sichtbar.filter((e) => e.gruppe === g).map(link), ziele[g]!)}</React.Fragment> : null))}
-      {ohneGruppe.length > 0 && <div className="bsv-nav-zusatz bsv-nav-zusatz--lose">{ohneGruppe.map(link)}</div>}
+      {ohneGruppe.length > 0 && (
+        <div className="bsv-nav-zusatz bsv-nav-zusatz--lose">
+          {[...new Set(ohneGruppe.map((e) => e.gruppe))].map((g) => (
+            <React.Fragment key={g}>
+              <div className="bsv-nav-lose-titel">{g}</div>
+              {ohneGruppe.filter((e) => e.gruppe === g).map(link)}
+            </React.Fragment>
+          ))}
+        </div>
+      )}
     </>
   )
 }

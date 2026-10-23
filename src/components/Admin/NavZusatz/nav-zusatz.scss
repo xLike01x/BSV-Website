@@ -48,37 +48,57 @@
   flex-direction: column;
 }
 
-#nav-statistik {
+// Mitglieder: Benutzer, Rollen & Rechte, dann der Rest
+#nav-users {
   order: -12;
 }
-#nav-papierkorb {
+#nav-rollen {
   order: -11;
 }
-#nav-global-verein {
-  order: -10;
-}
-#nav-rollen {
-  order: -9;
-}
-#nav-global-datenschutz {
-  order: -8;
-}
+
+// Technik (nur Web-Admin): Datensicherung, Sicherheit, Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen
 #nav-sicherung {
-  order: -7;
+  order: -12;
 }
 #nav-updates {
+  order: -11;
+}
+#nav-papierkorb {
+  order: -10;
+}
+#nav-statistik {
+  order: -9;
+}
+#nav-search {
+  order: -8;
+}
+#nav-redirects {
   order: -7;
 }
+
+// Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen
+#nav-global-verein {
+  order: -12;
+}
+#nav-global-datenschutz {
+  order: -11;
+}
+#nav-global-mailVorlagen {
+  order: -10;
+}
 #nav-global-hilfe {
-  order: -6;
+  order: -9;
 }
 #nav-hilfe-feedback {
-  order: -5;
+  order: -8;
 }
+
 // Rollen-Rechte öffnet man über „Rollen & Rechte“ (Reiter „Rechte anpassen“),
-// die Sicherheits-Einstellungen über „Sicherheit“ (Reiter „Einstellungen“)
+// die Sicherheits-Einstellungen über „Sicherheit“ (Reiter „Einstellungen“),
+// die Pass-Unterlagen direkt im Passantrag
 #nav-global-rollenRechte,
-#nav-global-sicherheit {
+#nav-global-sicherheit,
+#nav-passdokumente {
   display: none !important;
 }
 
@@ -127,4 +147,21 @@ html[data-theme='dark'] .nav-group__toggle {
 }
 html[data-theme='dark'] .nav-group__toggle svg path {
   stroke: #5fd39a;
+}
+
+// Gruppen, die es für eine Rolle sonst nicht gäbe (z. B. „Technik“ nur mit Zusatzrecht Papierkorb)
+// Ohne eigene Gruppe gilt die Reihenfolge der Einträge (Überschrift vor den Links), nicht die der Gruppen oben
+.bsv-nav-zusatz--lose > * {
+  order: 0 !important;
+}
+.bsv-nav-lose-titel {
+  margin: 14px 0 4px;
+  padding-left: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--theme-elevation-100);
+  color: #157a43;
+  font-size: 15px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
 }

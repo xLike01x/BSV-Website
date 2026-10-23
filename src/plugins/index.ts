@@ -38,7 +38,7 @@ export const plugins: Plugin[] = [
     collections: ['pages', 'posts'],
     overrides: {
       labels: { singular: 'Weiterleitung', plural: 'Weiterleitungen' },
-      admin: { group: 'Website-Aufbau', hidden: ausblendenAusser('webadmin') },
+      admin: { group: 'Technik', hidden: ausblendenAusser('webadmin') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
@@ -138,7 +138,7 @@ export const plugins: Plugin[] = [
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       labels: { singular: 'Suchindex-Eintrag', plural: 'Suchindex' },
-      admin: { group: 'Einstellungen', hidden: ausblendenAusser('webadmin') },
+      admin: { group: 'Technik', hidden: ausblendenAusser('webadmin') },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
         return [...defaultFields, ...searchFields]

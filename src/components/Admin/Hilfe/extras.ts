@@ -410,7 +410,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'antrag-vorlagen',
       titel: 'Die Texte der Antwort-Mails ändern',
       schritte: [
-        'Links unter „Einstellungen“ auf „E-Mail-Vorlagen Mitgliedsanträge“.',
+        'Links unter „Einstellungen“ auf „E-Mail-Vorlagen“.',
         'Für „Aufgenommen“, „Rückfrage“ und „Abgelehnt“ Betreff und Text anpassen.',
         'Platzhalter wie {vorname} stehen lassen – sie werden automatisch ersetzt. Stellen in [ECKIGEN KLAMMERN] füllt man später im Antrag aus.',
         'Speichern.',
@@ -523,7 +523,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'zurueckholen',
       titel: 'Etwas aus dem Web-Admin-Papierkorb zurückholen',
       schritte: [
-        'Links unter „Einstellungen“ auf „Papierkorb“.',
+        'Links unter „Technik“ auf „Papierkorb“.',
         'Oben „🗑️ Im Papierkorb“ oder „🔒 Nur Web-Admin“ wählen, dazu nach Bereich, Person oder Titel filtern.',
         '„↩ Wiederherstellen“ – der Eintrag ist wieder an seiner Stelle.',
         'Wirklich weg haben: „Endgültig löschen“. Das lässt sich nicht rückgängig machen.',
@@ -569,7 +569,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'sicherung-erstellen',
       titel: 'Eine Sicherung erstellen und aufbewahren',
       schritte: [
-        'Links unter „Einstellungen“ auf „Datensicherung“ klicken.',
+        'Links unter „Technik“ auf „Datensicherung“ klicken.',
         '„Sicherung jetzt erstellen“ – etwa eine Minute warten.',
         'Bei der neuen Sicherung „Herunterladen“ klicken.',
         'Die Datei zusätzlich auf einen USB-Stick oder in eine Cloud kopieren.',
@@ -640,7 +640,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'rollen-pruefen',
       titel: 'Prüfen, wer für ein Team zuständig ist',
       schritte: [
-        'Links unter „Einstellungen“ auf „Rollen & Rechte“ klicken.',
+        'Links unter „Mitglieder“ auf „Rollen & Rechte“ klicken.',
         'Reiter „Nach Team“ wählen oder den Teamnamen oben ins Suchfeld tippen.',
         'Neben dem Team stehen die Verantwortlichen mit ihren Rollen.',
         'Niemand eingetragen? Auf „Zuordnen“ klicken und die Person unter „Verantwortliche“ auswählen. Speichern.',
@@ -798,7 +798,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
   ],
 }
 
-// Die Vorlagen-Anleitung auch auf der Seite „E-Mail-Vorlagen Mitgliedsanträge“ selbst zeigen
+// Die Vorlagen-Anleitung auch auf der Seite „E-Mail-Vorlagen“ selbst zeigen
 ANLEITUNGEN.mailVorlagen = ANLEITUNGEN.mitgliedsantraege!.filter((a) => a.id === 'antrag-vorlagen')
 
 /* ------------------------------------------------------------------ */
@@ -1042,12 +1042,12 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload, Node.js, Datenbank)?',
-    antwort: 'Alles steht an einem Ort: Einstellungen → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server; die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
+    antwort: 'Alles steht an einem Ort: Technik → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server; die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
     bereich: 'sicherung',
   },
   {
     frage: 'Gibt es eine Rolle, die nur ansehen darf?',
-    antwort: 'Ja: „Nur ansehen“. Wer nur diese Rolle hat, sieht in der Verwaltung alles – News, Termine, Seiten, Teams, Bilder, Einstellungen, auch Entwürfe und frühere Versionen –, kann aber nichts anlegen, ändern, veröffentlichen oder löschen (die Formulare sind grau, Knöpfe zum Speichern fehlen; der Server lehnt Änderungen auch über direkte Aufrufe ab). Gedacht z. B. für Vorstand oder Kassenprüfung. Sensible Bereiche schaltet der Web-Admin unter Einstellungen → „Rollen & Rechte“ → Reiter „Rechte anpassen“ → „Nur ansehen“ einzeln ab, indem er den Haken entfernt: Posteingang, Passanträge, Mitgliedsanträge, Bankdaten (IBAN), Mitgliedschaften, Benutzerkonten (inkl. Registrierungen und Profilfotos) und Besucherstatistik. Ab Werk ist alles an. Nie sichtbar: Pass-Unterlagen (Ausweise, Fotos), Papierkorb, Datensicherung, Sicherheits-Einstellungen; Exporte (z. B. für die Kasse) und Datenschutz-Auskünfte gibt es für diese Rolle nicht. Das eigene Passwort und die Zwei-Faktor-Anmeldung kann die Person selbst ändern, die Zwei-Faktor-Anmeldung ist wie bei allen Verwaltungsrollen Pflicht. Auf der Website gilt sie wie alle anderen: Kontaktformular und Mitgliedsantrag gehen, und mit der Rolle „Mitglied“ dazu nutzt sie den Mitgliederbereich ganz normal (Ausweis, Profilfoto, Passantrag). Hat jemand zusätzlich eine andere Rolle (z. B. Kasse), darf er dort weiter arbeiten und sieht den Rest zum Lesen. Vergeben und entziehen kann die Rolle nur ein Web-Admin, weil sie auch Bereiche öffnet, die sonst nur Web-Admins sehen (z. B. Besucherstatistik).',
+    antwort: 'Ja: „Nur ansehen“. Wer nur diese Rolle hat, sieht in der Verwaltung alles – News, Termine, Seiten, Teams, Bilder, Einstellungen, auch Entwürfe und frühere Versionen –, kann aber nichts anlegen, ändern, veröffentlichen oder löschen (die Formulare sind grau, Knöpfe zum Speichern fehlen; der Server lehnt Änderungen auch über direkte Aufrufe ab). Gedacht z. B. für Vorstand oder Kassenprüfung. Sensible Bereiche schaltet der Web-Admin unter Mitglieder → „Rollen & Rechte“ → Reiter „Rechte anpassen“ → „Nur ansehen“ einzeln ab, indem er den Haken entfernt: Posteingang, Passanträge, Mitgliedsanträge, Bankdaten (IBAN), Mitgliedschaften, Benutzerkonten (inkl. Registrierungen und Profilfotos) und Besucherstatistik. Ab Werk ist alles an. Nie sichtbar: Pass-Unterlagen (Ausweise, Fotos), Papierkorb, Datensicherung, Sicherheits-Einstellungen; Exporte (z. B. für die Kasse) und Datenschutz-Auskünfte gibt es für diese Rolle nicht. Das eigene Passwort und die Zwei-Faktor-Anmeldung kann die Person selbst ändern, die Zwei-Faktor-Anmeldung ist wie bei allen Verwaltungsrollen Pflicht. Auf der Website gilt sie wie alle anderen: Kontaktformular und Mitgliedsantrag gehen, und mit der Rolle „Mitglied“ dazu nutzt sie den Mitgliederbereich ganz normal (Ausweis, Profilfoto, Passantrag). Hat jemand zusätzlich eine andere Rolle (z. B. Kasse), darf er dort weiter arbeiten und sieht den Rest zum Lesen. Vergeben und entziehen kann die Rolle nur ein Web-Admin, weil sie auch Bereiche öffnet, die sonst nur Web-Admins sehen (z. B. Besucherstatistik).',
     bereich: 'users',
   },
   {
@@ -1204,7 +1204,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie sichere ich alle Daten?',
-    antwort: 'Links unter „Einstellungen“ auf „Datensicherung“ (nur Web-Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
+    antwort: 'Links unter „Technik“ auf „Datensicherung“ (nur Web-Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
   },
   {
     frage: 'Warum muss ich beim Hochladen angeben, ob Personen zu erkennen sind?',
@@ -1242,7 +1242,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Kategorien (nur Admins), Formulare, Menü & Fußzeile, Texte & Bilder. Sport: Teams & Kurse, Trainingsausfälle, Pass-Unterlagen, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Rollen & Rechte, Datenschutz-Fristen, E-Mail-Vorlagen Mitgliedsanträge, Hilfe-Texte, Hilfe-Rückmeldungen – Web-Admins zusätzlich Besucherstatistik, Papierkorb, Sicherheit und Datensicherung. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {
@@ -1257,7 +1257,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
-    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen fast alle Bereiche: Posteingang (Kontaktanfragen, Probetraining und Passanträge aller Teams, Registrierungen, Formular-Eingänge), Inhalte (News aller Teams, Termine, Ehrenamt, Bilder/Galerie/Dokumente, Sponsoren), Website-Aufbau (Seiten, Menü, Texte & Bilder, Formulare), Sport (alle Teams & Kurse, Ausfälle aller Teams, Saisonwechsel), Mitglieder (Mitgliedsanträge ohne Bankdaten, Mitgliedschaften nur lesen) und Einstellungen (Vereinsdaten, Datenschutz-Fristen, Besucherstatistik, Papierkorb nur wiederherstellen, Hilfe-Texte). Ein Bereichsrecht gibt genau die Rechte, die die zuständige Rolle dort hat – z. B. „News aller Teams“ = wie die Redaktion, aber nur für News. Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Bewusst nie einzeln vergebbar: Benutzerverwaltung, Admin-Rechte, Bankdaten (IBAN, Kontoinhaber, Export für die Kasse) und Datensicherung – dafür gibt es die Rollen Admin, Kasse und Web-Admin. Alle Personen mit Zusatzrechten auf einen Blick: Einstellungen → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
+    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen fast alle Bereiche: Posteingang (Kontaktanfragen, Probetraining und Passanträge aller Teams, Registrierungen, Formular-Eingänge), Inhalte (News aller Teams, Termine, Ehrenamt, Bilder/Galerie/Dokumente, Sponsoren), Website-Aufbau (Seiten, Menü, Texte & Bilder, Formulare), Sport (alle Teams & Kurse, Ausfälle aller Teams, Saisonwechsel), Mitglieder (Mitgliedsanträge ohne Bankdaten, Mitgliedschaften nur lesen) Einstellungen (Vereinsdaten, Datenschutz-Fristen, Hilfe-Texte) und Technik (Besucherstatistik, Papierkorb nur wiederherstellen). Ein Bereichsrecht gibt genau die Rechte, die die zuständige Rolle dort hat – z. B. „News aller Teams“ = wie die Redaktion, aber nur für News. Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Bewusst nie einzeln vergebbar: Benutzerverwaltung, Admin-Rechte, Bankdaten (IBAN, Kontoinhaber, Export für die Kasse) und Datensicherung – dafür gibt es die Rollen Admin, Kasse und Web-Admin. Alle Personen mit Zusatzrechten auf einen Blick: Mitglieder → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
     bereich: 'users',
   },
   {
@@ -1297,7 +1297,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Warum wurde ich automatisch abgemeldet?',
-    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Einstellungen → „Sicherheit“ → Reiter „Einstellungen“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
+    antwort: 'Zur Sicherheit meldet die Verwaltung dich nach 30 Minuten ohne Klick, Taste oder Scrollen ab – wichtig an gemeinsam genutzten Computern. 5 Minuten vorher erscheint „Bist du noch da?“ mit dem Knopf „Angemeldet bleiben“. Ungespeicherte Änderungen gehen beim Abmelden verloren, also zwischendurch speichern. Die Zeiten stellt der Web-Admin unter Technik → „Sicherheit“ → Reiter „Einstellungen“ ein. Arbeitest du in mehreren Tabs, zählt die Aktivität in allen zusammen.',
     bereich: 'dashboard',
   },
   {
@@ -1307,7 +1307,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wo sehe ich, wie viele Menschen die Website besuchen?',
-    antwort: 'Einstellungen → „Besucherstatistik“ (nur Web-Admins). Dort: Besuche und Seitenaufrufe mit Vergleich zum Zeitraum davor, Verlauf pro Tag/Woche/Monat, beliebteste Seiten, Herkunft (Google, Instagram, direkt …), Handy oder Computer, meistgesehene Teams & Kurse, wie weit Interessierte im Mitgliedsantrag kommen und was gesucht wurde – auch ohne Treffer. Gezählt wird ohne Cookies und ohne Google; angemeldete Mitarbeitende zählen nicht mit.',
+    antwort: 'Technik → „Besucherstatistik“ (nur Web-Admins). Dort: Besuche und Seitenaufrufe mit Vergleich zum Zeitraum davor, Verlauf pro Tag/Woche/Monat, beliebteste Seiten, Herkunft (Google, Instagram, direkt …), Handy oder Computer, meistgesehene Teams & Kurse, wie weit Interessierte im Mitgliedsantrag kommen und was gesucht wurde – auch ohne Treffer. Gezählt wird ohne Cookies und ohne Google; angemeldete Mitarbeitende zählen nicht mit.',
     bereich: 'dashboard',
   },
   {
@@ -1337,7 +1337,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
-    antwort: 'Unter Einstellungen → „Rollen & Rechte“ (Admins und Web-Admins): Reiter „Nach Person“ und „Nach Team“. Web-Admins sehen zusätzlich „Nach Rolle“, „Rechte je Rolle“ und „Testkonten“.',
+    antwort: 'Unter Mitglieder → „Rollen & Rechte“ (Admins und Web-Admins): Reiter „Nach Person“ und „Nach Team“. Web-Admins sehen zusätzlich „Nach Rolle“, „Rechte je Rolle“ und „Testkonten“.',
     bereich: 'users',
   },
   {

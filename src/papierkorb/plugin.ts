@@ -12,7 +12,7 @@ import { verknuepfteMitloeschen } from './verknuepfungen'
  * 1. Löschen → normaler Papierkorb (Payload, Feld deletedAt). Nach 30 Tagen automatisch weiter zu Stufe 2.
  * 2. „Endgültig löschen“ durch alle außer Web-Admin → Web-Admin-Papierkorb: Der Eintrag bleibt vollständig erhalten
  *    (mit Bildern, Dateien, Verknüpfungen), ist aber nur noch für Web-Admins sichtbar (Feld endgueltigAm).
- *    Wiederherstellen oder wirklich löschen: Einstellungen → „Web-Admin-Papierkorb“.
+ *    Wiederherstellen oder wirklich löschen: Technik → „Papierkorb“.
  *    Nach der eingestellten Frist wird er automatisch endgültig gelöscht.
  * Was ein Web-Admin endgültig löscht, ist sofort weg.
  *

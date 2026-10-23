@@ -12,7 +12,7 @@ export const Sicherheit: GlobalConfig = {
     update: ({ req }) => hasRole(req.user as never, 'webadmin'),
   },
   admin: {
-    group: 'Einstellungen',
+    group: 'Technik',
     // In der Seitenleiste ausgeblendet (CSS) – erreichbar über „Sicherheit“ (/admin/updates) → Reiter „Einstellungen“
     hidden: ({ user }) => !hasRole(user as never, 'webadmin'),
     description:

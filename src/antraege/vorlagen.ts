@@ -22,7 +22,7 @@ const vorlage = (name: Entscheidung): Field => ({
  */
 export const MailVorlagen: GlobalConfig = {
   slug: 'mailVorlagen',
-  label: 'E-Mail-Vorlagen Mitgliedsanträge',
+  label: 'E-Mail-Vorlagen',
   access: {
     // Lesen (Vorlage beim Antworten einsetzen) auch mit Zusatzrecht „antraege“; ändern nur Kasse/Admin
     read: ({ req }) => hasRole(req.user as never, 'admin', 'kasse') || hatRecht(req.user, 'antraege'),

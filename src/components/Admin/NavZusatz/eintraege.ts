@@ -9,11 +9,11 @@ export type Eintrag = { key: string; gruppe: string; href: string; label: string
 export const EINTRAEGE: Eintrag[] = [
   { key: 'registrierungen', gruppe: 'Posteingang', href: '/admin/registrierungen', label: 'Registrierungen', rollen: ['admin', 'kasse'], recht: 'registrierungen', zaehler: 'registrierungen', lesen: 'benutzer' },
   { key: 'saisonwechsel', gruppe: 'Sport', href: '/admin/saisonwechsel', label: 'Saisonwechsel', rollen: ['admin', 'redaktion'], recht: 'saisonwechsel' },
-  { key: 'rollen', gruppe: 'Einstellungen', href: '/admin/rollen', label: 'Rollen & Rechte', rollen: ['admin'], auch: ['/admin/globals/rollenRechte'], lesen: 'benutzer' },
-  { key: 'statistik', gruppe: 'Einstellungen', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'], recht: 'statistik', lesen: 'statistik' },
-  { key: 'papierkorb', gruppe: 'Einstellungen', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'], recht: 'papierkorb' },
-  { key: 'sicherung', gruppe: 'Einstellungen', href: '/admin/sicherung', label: 'Datensicherung', rollen: ['webadmin'] },
-  { key: 'updates', gruppe: 'Einstellungen', href: '/admin/updates', label: 'Sicherheit', rollen: ['webadmin'], auch: ['/admin/globals/sicherheit'] },
+  { key: 'rollen', gruppe: 'Mitglieder', href: '/admin/rollen', label: 'Rollen & Rechte', rollen: ['admin'], auch: ['/admin/globals/rollenRechte'], lesen: 'benutzer' },
+  { key: 'statistik', gruppe: 'Technik', href: '/admin/statistik', label: 'Besucherstatistik', rollen: ['webadmin'], recht: 'statistik', lesen: 'statistik' },
+  { key: 'papierkorb', gruppe: 'Technik', href: '/admin/papierkorb', label: 'Papierkorb', rollen: ['webadmin'], recht: 'papierkorb' },
+  { key: 'sicherung', gruppe: 'Technik', href: '/admin/sicherung', label: 'Datensicherung', rollen: ['webadmin'] },
+  { key: 'updates', gruppe: 'Technik', href: '/admin/updates', label: 'Sicherheit', rollen: ['webadmin'], auch: ['/admin/globals/sicherheit'] },
 ]
 
 /**
@@ -27,7 +27,7 @@ export const eintragSichtbar = (e: Eintrag, user: unknown) => {
 }
 
 /** Feste Reihenfolge innerhalb der Gruppen (wie nav-zusatz.scss); alles andere folgt danach */
-export const REIHENFOLGE = ['statistik', 'papierkorb', 'verein', 'rollen', 'datenschutz', 'sicherung', 'updates', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
+export const REIHENFOLGE = ['users', 'rollen', 'sicherung', 'updates', 'papierkorb', 'statistik', 'search', 'redirects', 'verein', 'datenschutz', 'mailVorlagen', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
 
-/** Nicht als eigener Eintrag zeigen – erreichbar über „Rollen & Rechte“ bzw. „Sicherheit“ (Reiter) */
-export const VERSTECKT = ['rollenRechte', 'sicherheit']
+/** Nicht als eigener Eintrag zeigen – erreichbar über „Rollen & Rechte“ bzw. „Sicherheit“ (Reiter) bzw. im Passantrag */
+export const VERSTECKT = ['rollenRechte', 'sicherheit', 'passdokumente']

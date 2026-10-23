@@ -20,7 +20,7 @@ export const Statistik: CollectionConfig = {
     update: () => false,
     delete: ({ req }) => hasRole(req.user as never, 'webadmin'),
   },
-  admin: { hidden: true, group: 'Einstellungen' },
+  admin: { hidden: true, group: 'Technik' },
   fields: [
     { name: 'tag', type: 'text', index: true, required: true },
     {

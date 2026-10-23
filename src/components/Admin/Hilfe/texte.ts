@@ -274,7 +274,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Neue Anträge melden sich per E-Mail bei der Kasse (nur ein Link, keine Daten in der Mail) und oben auf der Übersicht.',
       'Notizen, Statuswechsel, gesendete E-Mails und Exporte stehen mit Name und Uhrzeit im Verlauf – nachträglich nicht änderbar.',
       'Exportierte Anträge bekommen „Für die Kasse exportiert am …“ und landen beim nächsten Export nicht noch einmal in der Datei („alle aufgenommenen“ holt sie trotzdem).',
-      'Die Texte der E-Mails änderst du unter Einstellungen → „E-Mail-Vorlagen Mitgliedsanträge“.',
+      'Die Texte der E-Mails änderst du unter Einstellungen → „E-Mail-Vorlagen“.',
     ],
     tipps: [
       'Hier stehen Bankdaten. Nur Kasse und Vorstand haben Zugriff – bitte nichts ausdrucken oder weiterleiten.',
@@ -357,7 +357,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Oben steht „🔎 Was darf diese Person?“: in Klartext, was die Person bearbeiten und ansehen darf – live berechnet, sobald du Rollen anklickst. So siehst du vor dem Speichern, was passiert.',
       'Rollen wählst du per Kachel mit Häkchen. Jede Kachel erklärt in einer Zeile, wofür die Rolle gedacht ist.',
       'Neue Konten anlegen und Rollen vergeben.',
-      'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Einstellungen“ → „Rollen & Rechte“.',
+      'Schnell sehen, wer welche Rolle für welches Team hat: links unter „Mitglieder“ → „Rollen & Rechte“.',
       'Einzelne Rechte nur für diese Person: beim Benutzer unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen – Häkchen setzen, speichern. Vergeben kann das nur ein Web-Admin; Admins sehen den Abschnitt nur, wenn die Person schon Zusatzrechte hat. Es gibt sie für fast jeden Bereich (z. B. nur News, nur Sponsoren, nur Vereinsdaten, Mitgliedsanträge ohne Bankdaten) – nie für Benutzerverwaltung, Admin-Rechte, Bankdaten und Datensicherung.',
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: Technik, Admin-Konten, Datensicherung · Admin: alles im Verein außer Admin-Rechte',
@@ -648,7 +648,7 @@ export const HILFE: Record<string, HilfeText> = {
       '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
       'Zurückholen: Anleitung unten auf der Seite „Sicherung wieder einspielen“ (Befehle für den Server).',
       'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (auf einem Testrechner, nicht auf der Live-Website), danach „✓ Heute erfolgreich getestet“ klicken.',
-      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter Einstellungen → „Sicherheit“ (Reiter „Updates“).',
+      'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter Technik → „Sicherheit“ (Reiter „Updates“).',
     ],
     wirkung: [
       'Die Sicherung ändert nichts an der Website.',
@@ -667,7 +667,7 @@ export const HILFE: Record<string, HilfeText> = {
 
   rollenRechte: {
     titel: 'Rollen-Rechte',
-    kurz: 'Zusatzrechte pro Rolle ein- oder ausschalten – nur für Web-Admins. Zu finden unter Einstellungen → „Rollen & Rechte“ → Reiter „Rechte anpassen“.',
+    kurz: 'Zusatzrechte pro Rolle ein- oder ausschalten – nur für Web-Admins. Zu finden unter Mitglieder → „Rollen & Rechte“ → Reiter „Rechte anpassen“.',
     wozu: {
       text: 'Jede Rolle hat feste Grundrechte. Hier lassen sich einzelne Zusatzrechte passend zu eurem Verein ein- oder ausschalten.',
       beispiele: ['Die Kasse soll Kontaktanfragen zu Beiträgen bearbeiten', 'Trainer sollen keine Mitgliederfotos sehen', 'Die Redaktion darf erledigte Anfragen löschen', '„Nur ansehen“ (z. B. Kassenprüfung) soll keine Bankdaten oder Benutzerkonten sehen'],
@@ -695,7 +695,7 @@ export const HILFE: Record<string, HilfeText> = {
   },
 
   mailVorlagen: {
-    titel: 'E-Mail-Vorlagen Mitgliedsanträge',
+    titel: 'E-Mail-Vorlagen',
     kurz: 'Die Texte, die beim Aufnehmen, Nachfragen oder Ablehnen eines Mitgliedsantrags vorgeschlagen werden.',
     wozu: {
       text: 'Damit die Kasse nicht jedes Mal neu formulieren muss – und alle Antworten gleich freundlich klingen.',

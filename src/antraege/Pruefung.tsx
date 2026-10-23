@@ -198,7 +198,7 @@ export default function AntragPruefung() {
               <textarea aria-label="Text der E-Mail" value={text} maxLength={5000} onChange={(e) => setText(e.target.value)} />
               {offenText.length > 0 && <span className="is-warn">⚠️ Bitte noch ausfüllen: {offenText.join(', ')}</span>}
               {daten && !daten.mailAktiv && <span className="is-warn">ℹ️ Der E-Mail-Versand ist noch nicht eingerichtet – du kannst die Mail danach in deinem E-Mail-Programm öffnen.</span>}
-              <span className="bsv-posteingang__klein">Antworten der Person gehen an deine E-Mail-Adresse. Den Text für alle Anträge änderst du unter Einstellungen → „E-Mail-Vorlagen Mitgliedsanträge“.</span>
+              <span className="bsv-posteingang__klein">Antworten der Person gehen an deine E-Mail-Adresse. Den Text für alle Anträge änderst du unter Einstellungen → „E-Mail-Vorlagen“.</span>
             </>
           )}
           <div className="bsv-pruefung__knoepfe">

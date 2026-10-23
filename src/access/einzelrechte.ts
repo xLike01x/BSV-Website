@@ -26,8 +26,8 @@ export const EINZELRECHTE = [
   { key: 'mitgliedschaften', gruppe: 'Mitglieder', label: 'Mitgliedschaften ansehen – nur lesen', text: 'Mitgliedsnummer, Eintritt, Abteilungen (ohne Bankdaten).' },
   { key: 'verein', gruppe: 'Einstellungen', label: 'Vereinsdaten bearbeiten', text: 'Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular, Downloads.' },
   { key: 'datenschutz', gruppe: 'Einstellungen', label: 'Datenschutz-Fristen einstellen', text: 'Fristen ansehen und verlängern, Fälliges in den Papierkorb verschieben. Kürzer als der Standard nur Admins; nichts wird direkt gelöscht.' },
-  { key: 'statistik', gruppe: 'Einstellungen', label: 'Besucherstatistik ansehen', text: 'Seitenaufrufe und Suchbegriffe der Website – ohne Cookies und ohne IP-Adressen.' },
-  { key: 'papierkorb', gruppe: 'Einstellungen', label: 'Papierkorb: Gelöschtes wiederherstellen', text: 'Nur der normale Papierkorb, ohne Bereiche mit persönlichen Daten; Bilder nur mit „Bilder“, Teams nur mit „Alle Teams“. Endgültig löschen bleibt dem Web-Admin.' },
+  { key: 'statistik', gruppe: 'Technik', label: 'Besucherstatistik ansehen', text: 'Seitenaufrufe und Suchbegriffe der Website – ohne Cookies und ohne IP-Adressen.' },
+  { key: 'papierkorb', gruppe: 'Technik', label: 'Papierkorb: Gelöschtes wiederherstellen', text: 'Nur der normale Papierkorb, ohne Bereiche mit persönlichen Daten; Bilder nur mit „Bilder“, Teams nur mit „Alle Teams“. Endgültig löschen bleibt dem Web-Admin.' },
   { key: 'hilfe', gruppe: 'Einstellungen', label: 'Hilfe-Texte ergänzen und Rückmeldungen lesen', text: 'Eigene Tipps in der Hilfe, Rückmeldungen aus „War das hilfreich?“ (ohne Namen).' },
 ] as const
 

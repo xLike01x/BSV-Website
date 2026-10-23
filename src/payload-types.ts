@@ -372,11 +372,11 @@ export interface User {
      */
     datenschutz?: boolean | null;
     /**
-     * Einstellungen · Seitenaufrufe und Suchbegriffe der Website – ohne Cookies und ohne IP-Adressen.
+     * Technik · Seitenaufrufe und Suchbegriffe der Website – ohne Cookies und ohne IP-Adressen.
      */
     statistik?: boolean | null;
     /**
-     * Einstellungen · Nur der normale Papierkorb, ohne Bereiche mit persönlichen Daten; Bilder nur mit „Bilder“, Teams nur mit „Alle Teams“. Endgültig löschen bleibt dem Web-Admin.
+     * Technik · Nur der normale Papierkorb, ohne Bereiche mit persönlichen Daten; Bilder nur mit „Bilder“, Teams nur mit „Alle Teams“. Endgültig löschen bleibt dem Web-Admin.
      */
     papierkorb?: boolean | null;
     /**
@@ -436,7 +436,7 @@ export interface User {
   zweiFaktorFehlerSeit?: string | null;
   zweiFaktorEinrichtungSeit?: string | null;
   /**
-   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Einstellungen → Rollen & Rechte → „Alle Testkonten löschen“.
+   * Zum Ausprobieren der Rechte. Funktioniert nur auf dem lokalen Server. Löschen: Mitglieder → Rollen & Rechte → „Alle Testkonten löschen“.
    */
   testkonto?: boolean | null;
   /**
@@ -3754,7 +3754,7 @@ export interface Datenschutz {
    */
   kontenMonate?: number | null;
   /**
-   * Für Mitgliedsanträge, Mitgliedschaften, Kontakt- und Probetraining-Anfragen und Formular-Eingänge. Andere Inhalte (News, Seiten, Bilder …) bleiben so lange, wie unter Einstellungen → Sicherheit eingestellt.
+   * Für Mitgliedsanträge, Mitgliedschaften, Kontakt- und Probetraining-Anfragen und Formular-Eingänge. Andere Inhalte (News, Seiten, Bilder …) bleiben so lange, wie unter Technik → Sicherheit eingestellt.
    */
   personenPapierkorbTage?: number | null;
   /**

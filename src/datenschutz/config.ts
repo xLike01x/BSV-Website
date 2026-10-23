@@ -162,7 +162,7 @@ export const Datenschutz: GlobalConfig = {
       defaultValue: 30,
       admin: {
         description:
-          'Für Mitgliedsanträge, Mitgliedschaften, Kontakt- und Probetraining-Anfragen und Formular-Eingänge. Andere Inhalte (News, Seiten, Bilder …) bleiben so lange, wie unter Einstellungen → Sicherheit eingestellt.',
+          'Für Mitgliedsanträge, Mitgliedschaften, Kontakt- und Probetraining-Anfragen und Formular-Eingänge. Andere Inhalte (News, Seiten, Bilder …) bleiben so lange, wie unter Technik → Sicherheit eingestellt.',
       },
     },
     {

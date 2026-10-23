@@ -21,7 +21,7 @@ export const RollenRechte: GlobalConfig = {
     update: ({ req }) => hasRole(req.user as never, 'webadmin'),
   },
   admin: {
-    group: 'Einstellungen',
+    group: 'Mitglieder',
     // In der Seitenleiste ausgeblendet (CSS) – erreichbar über „Rollen & Rechte“ → Reiter „Rechte anpassen“
     hidden: ({ user }) => !hasRole(user as never, 'admin'),
     description:
