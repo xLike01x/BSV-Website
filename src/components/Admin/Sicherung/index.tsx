@@ -5,13 +5,11 @@ import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
 import { hasRole } from '@/access/roles'
-import path from 'path'
-
-import { SICHERUNGS_ORDNER, sicherungenAuflisten } from '@/sicherung/kern'
+import { sicherungenAuflisten } from '@/sicherung/kern'
 import { updateStand, updateZusammenfassung } from '@/wartung/updates'
 import { codeStand, nodeLaufzeit, postgresLaufzeit, schluesselwechselOffen, speicherplatz, wartungLesen } from '@/wartung/pruefen'
 
-import SicherungClient, { type Umgebung } from './Client'
+import SicherungClient from './Client'
 import './sicherung.scss'
 
 /** /admin/sicherung – Datensicherung erstellen und herunterladen (nur Admins) */
@@ -32,8 +30,6 @@ export default async function Sicherung({ initPageResult, params, searchParams }
       return { sicherheit: z.sicherheit.length, updates: z.updates.length, geprueftAm: updateStand().geprueftAm, unvollstaendig: updateStand().ohneDaten.length > 0 }
     })(),
   }
-  // Anleitungen passend zur Umgebung: Live-Server (Linux, systemd) oder PC (Windows, BSV-Website-Update.bat)
-  const umgebung: Umgebung = { live: process.env.NODE_ENV === 'production', ordner: SICHERUNGS_ORDNER, projekt: path.dirname(SICHERUNGS_ORDNER) }
   return (
     <DefaultTemplate
       i18n={req.i18n}
@@ -47,7 +43,7 @@ export default async function Sicherung({ initPageResult, params, searchParams }
       visibleEntities={visibleEntities}
     >
       <Gutter>
-        <SicherungClient sicherungen={sicherungenAuflisten()} wartung={wartung} umgebung={umgebung} />
+        <SicherungClient sicherungen={sicherungenAuflisten()} wartung={wartung} />
       </Gutter>
     </DefaultTemplate>
   )

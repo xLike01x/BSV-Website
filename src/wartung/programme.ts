@@ -10,7 +10,7 @@ export type Programm = { gruppe: ProgrammGruppe; name: string; text: string }
 
 /** Reihenfolge und Überschriften der Gruppen in der Übersicht */
 export const GRUPPEN: { key: ProgrammGruppe; titel: string; text: string }[] = [
-  { key: 'System', titel: 'System', text: 'Die Programme, auf denen alles läuft – auf dem PC bzw. dem Server installiert, nicht Teil der Website selbst.' },
+  { key: 'System', titel: 'System', text: 'Die Programme, auf denen alles läuft – auf dem Server installiert, nicht Teil der Website selbst.' },
   { key: 'Grundgerüst', titel: 'Grundgerüst der Website', text: 'Ohne diese Pakete läuft nichts. Updates hier immer mit allen Tests.' },
   { key: 'Verwaltung', titel: 'Verwaltung (Payload)', text: 'Die Verwaltung, in der News, Termine, Seiten und Mitgliederdaten gepflegt werden, und ihre Erweiterungen.' },
   { key: 'Darstellung', titel: 'Aussehen & Bedienung', text: 'Schriften, Symbole und Bausteine für Knöpfe, Auswahllisten und Formulare.' },
@@ -21,9 +21,8 @@ export const GRUPPEN: { key: ProgrammGruppe; titel: string; text: string }[] = [
 /** System-Programme (Schlüssel wie in updates.ts) */
 export const SYSTEM: Record<string, Programm> = {
   node: { gruppe: 'System', name: 'Node.js', text: 'Die Laufzeitumgebung: führt die Website aus, so wie Windows ein Programm ausführt. Bekommt regelmäßig Sicherheitsupdates; jede Hauptversion (z. B. 24) wird etwa drei Jahre lang gepflegt.' },
-  postgres: { gruppe: 'System', name: 'PostgreSQL', text: 'Die Datenbank: speichert alle Inhalte und Daten – News, Termine, Teams, Benutzer, Anträge. Am PC läuft sie in Docker, auf dem Server direkt.' },
-  docker: { gruppe: 'System', name: 'Docker (nur am PC)', text: 'Startet die Datenbank am PC in einem abgeschotteten „Container“, damit nichts auf Windows installiert werden muss. Updates über Docker Desktop.' },
-  server: { gruppe: 'System', name: 'Ubuntu (nur auf dem Server)', text: 'Das Betriebssystem des Live-Servers. Sicherheitsupdates installiert es nachts von selbst; manchmal ist danach ein Neustart nötig.' },
+  postgres: { gruppe: 'System', name: 'PostgreSQL', text: 'Die Datenbank: speichert alle Inhalte und Daten – News, Termine, Teams, Benutzer, Anträge.' },
+  server: { gruppe: 'System', name: 'Ubuntu (Betriebssystem des Servers)', text: 'Das Betriebssystem des Live-Servers. Sicherheitsupdates installiert es nachts von selbst; manchmal ist danach ein Neustart nötig.' },
 }
 
 /** Website-Pakete (Name wie in package.json) */

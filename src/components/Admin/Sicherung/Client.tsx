@@ -15,15 +15,12 @@ export type WartungDaten = {
   schluesselwechsel: boolean
   updates: { sicherheit: number; updates: number; geprueftAm: UpdateStand['geprueftAm']; unvollstaendig: boolean }
 }
-/** Wo läuft diese Website? live = Server (Linux), sonst PC (Windows) – für die passenden Anleitungen */
-export type Umgebung = { live: boolean; ordner: string; projekt: string }
-
 const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
 
 const mb = (b: number) => (b > 1024 * 1024 ? `${(b / 1024 / 1024).toFixed(1)} MB` : `${Math.max(1, Math.round(b / 1024))} KB`)
 const wann = (iso: string) => new Date(iso).toLocaleString('de-DE', { weekday: 'short', day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })
 
-export default function SicherungClient({ sicherungen, wartung, umgebung }: { sicherungen: SicherungInfo[]; wartung: WartungDaten; umgebung: Umgebung }) {
+export default function SicherungClient({ sicherungen, wartung }: { sicherungen: SicherungInfo[]; wartung: WartungDaten }) {
   const router = useRouter()
   const [laeuft, setLaeuft] = useState(false)
   const [meldung, setMeldung] = useState<{ ok: boolean; text: string } | null>(null)
@@ -112,7 +109,7 @@ export default function SicherungClient({ sicherungen, wartung, umgebung }: { si
           </table>
         )}
         <p className="bsv-sicherung__klein">
-          Die Dateien liegen {umgebung.live ? 'auf dem Server' : 'auf diesem PC'} im Ordner <code>{umgebung.ordner}</code>.
+          Die Dateien liegen auf dem Server im Ordner <code>backups</code> der Website.
         </p>
       </section>
 
@@ -120,7 +117,7 @@ export default function SicherungClient({ sicherungen, wartung, umgebung }: { si
         <h2>Gut zu wissen</h2>
         <ul>
           <li>
-            <strong>Zweiter Ort:</strong> Eine Sicherung auf demselben PC hilft nicht, wenn die Festplatte kaputtgeht. Lade sie herunter und speichere sie zusätzlich auf einem USB-Stick oder in einer Cloud.
+            <strong>Zweiter Ort:</strong> Eine Sicherung nur auf dem Server hilft nicht, wenn der Server ausfällt. Deshalb spiegelt der Server sie jeden Morgen zusätzlich auf einen externen Speicher (wird beim Einrichten des Servers aktiviert). Einzelne Sicherungen kannst du außerdem herunterladen und sicher aufbewahren.
           </li>
           <li>
             <strong>Verschlüsselt:</strong> Die Datei (Endung <code>.tar.gz.enc</code>) ist komplett verschlüsselt und lässt sich nur mit dem <code>ENCRYPTION_KEY</code> aus der Datei <code>.env</code> öffnen. Der Schlüssel ist absichtlich nicht in der Sicherung – bewahre ihn getrennt auf (z. B. im Passwortmanager des Vorstands). Ohne ihn ist jede Sicherung wertlos.
@@ -129,7 +126,7 @@ export default function SicherungClient({ sicherungen, wartung, umgebung }: { si
             <strong>Persönliche Daten:</strong> Trotz Verschlüsselung nicht per E-Mail verschicken und nicht öffentlich ablegen. Ältere, unverschlüsselte Sicherungen verschlüsselt der Befehl <code>pnpm sicherung:alte-verschluesseln</code>.
           </li>
           <li>
-            <strong>Wie oft?</strong> Auf der Live-Website automatisch jeden Tag (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Am eigenen PC mindestens einmal pro Woche und vor größeren Änderungen – nach 7 Tagen erinnert das Dashboard.
+            <strong>Wie oft?</strong> Automatisch jeden Tag (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Vor größeren Änderungen zusätzlich „Sicherung jetzt erstellen“. Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.
           </li>
         </ul>
       </section>
@@ -140,9 +137,8 @@ export default function SicherungClient({ sicherungen, wartung, umgebung }: { si
           <div>
             <strong>🧪 Wiederherstellung getestet: {getestet.am ? `${datum(getestet.am)}${getestet.von ? ` (${getestet.von})` : ''}` : 'noch nie'}</strong>
             <span>
-              {umgebung.live
-                ? 'Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt – am PC, nicht hier auf der Live-Website: neueste Sicherung herunterladen, am PC einspielen (Anleitung unten „Am PC“), kurz durchklicken. Danach am PC den vorherigen Stand zurückholen, damit keine echten Mitgliederdaten auf dem PC bleiben. Dann hier bestätigen.'
-                : 'Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt: Sicherung einspielen (Anleitung unten), kurz durchklicken, danach hier bestätigen. Nach dem Livegang mit einer Sicherung der Live-Website testen.'}
+              Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt – auf einem Testrechner, nicht auf der Live-Website: neueste Sicherung herunterladen, dort einspielen,
+              kurz durchklicken, danach die Testdaten wieder entfernen. Dann hier bestätigen.
             </span>
           </div>
           <button type="button" onClick={testVermerken} disabled={testLaeuft}>
@@ -202,65 +198,21 @@ export default function SicherungClient({ sicherungen, wartung, umgebung }: { si
       <section className="bsv-sicherung__box">
         <h2>Sicherung wieder einspielen</h2>
         <p>Das ersetzt alle aktuellen Inhalte durch den Stand der Sicherung. Vorher wird automatisch der jetzige Stand gesichert. Abgelaufene Fristen (Datenschutz, Papierkorb) werden danach sofort wieder angewendet.</p>
-        {umgebung.live ? (
-          <>
-            <EinspielenServer projekt={umgebung.projekt} />
-            <details className="bsv-sicherung__mehr">
-              <summary>Am PC einspielen (z. B. für den jährlichen Test)</summary>
-              <EinspielenPc />
-            </details>
-          </>
-        ) : (
-          <>
-            <EinspielenPc projekt={umgebung.projekt} />
-            <details className="bsv-sicherung__mehr">
-              <summary>Auf dem Live-Server einspielen (Notfall)</summary>
-              <EinspielenServer />
-            </details>
-          </>
-        )}
+        <EinspielenServer />
       </section>
     </div>
   )
 }
 
-/** Anleitung für den PC (Windows): Server-Fenster, Eingabeaufforderung, BSV-Website-Update.bat */
-function EinspielenPc({ projekt }: { projekt?: string }) {
-  const ordner = projekt && /^[A-Za-z]:\\/.test(projekt) ? projekt : 'F:\\BSV-Website\\app'
-  return (
-    <>
-      <h3>Am PC</h3>
-      <ol>
-        <li>
-          Die Sicherungsdatei in den Ordner <code>backups</code> legen (falls sie nicht schon dort ist) – also <code>{ordner}\backups</code>.
-        </li>
-        <li>Das schwarze Server-Fenster schließen. Docker Desktop läuft weiter (dort liegt die Datenbank).</li>
-        <li>
-          Eingabeaufforderung oder PowerShell öffnen und eingeben: <code>cd /d {ordner}</code>, dann <code>pnpm sicherung:einspielen bsv-sicherung_…tar.gz.enc</code> (ohne Dateiname wird die neueste genommen).
-        </li>
-        <li>„JA“ eintippen und warten, bis „Fertig“ erscheint.</li>
-        <li>
-          Die Website wie gewohnt mit <code>BSV-Website-Update.bat</code> starten.
-        </li>
-      </ol>
-      <p className="bsv-sicherung__klein">
-        Eine Sicherung der Live-Website lässt sich am PC nur öffnen, wenn in der <code>.env</code> am PC derselbe <code>ENCRYPTION_KEY</code> steht wie auf dem Server. Danach stehen echte
-        Mitgliederdaten auf dem PC – nach dem Test die Datei wieder einspielen, die beim Einspielen automatisch angelegt wurde („Zur Sicherheit wurde der jetzige Stand gesichert: …“).
-      </p>
-    </>
-  )
-}
-
 /** Anleitung für den Live-Server (Linux): per SSH anmelden, Dienst anhalten, als Nutzer bsv einspielen, starten */
-function EinspielenServer({ projekt }: { projekt?: string }) {
-  const ordner = projekt && projekt.startsWith('/') ? projekt : '/srv/bsv'
+function EinspielenServer() {
+  const ordner = '/srv/bsv'
   return (
     <>
-      <h3>Auf dem Live-Server</h3>
       <ol>
         <li>Per SSH am Server anmelden (wie beim Einrichten).</li>
         <li>
-          Liegt die Datei noch nicht auf dem Server: vom PC hochladen mit <code>scp bsv-sicherung_….tar.gz.enc nutzer@server:/tmp/</code>, dann auf dem Server{' '}
+          Liegt die Datei noch nicht auf dem Server: hochladen mit <code>scp bsv-sicherung_….tar.gz.enc nutzer@server:/tmp/</code>, dann auf dem Server{' '}
           <code>
             sudo mv /tmp/bsv-sicherung_*.tar.gz.enc {ordner}/backups/ && sudo chown bsv:bsv {ordner}/backups/*
           </code>

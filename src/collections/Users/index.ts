@@ -228,7 +228,7 @@ export const Users: CollectionConfig = {
     // Testkonten (ohne Zwei-Faktor) nur auf dem lokalen Server
     beforeLogin: [
       ({ user, req }) => {
-        if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt(req?.headers)) throw new APIError('Testkonten gehen nur lokal auf dem eigenen PC (nicht über einen Tunnel oder die Live-Website).', 403)
+        if ((user as { testkonto?: boolean }).testkonto && !testkontenErlaubt(req?.headers)) throw new APIError('Testkonten gehen nur lokal (nicht über einen Tunnel oder die Live-Website).', 403)
         // Selbst registriert: erst nach Klick auf den Link in der Bestätigungs-E-Mail (Passwort wurde da schon geprüft)
         if (unbestaetigt(user as never)) throw new APIError('E-Mail noch nicht bestätigt: Bitte klicke zuerst auf den Link in der E-Mail, die wir dir geschickt haben.', 403)
         return user

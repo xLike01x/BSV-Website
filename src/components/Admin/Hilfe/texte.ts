@@ -623,10 +623,10 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       'Oben steht, ob etwas zu tun ist: 🚨 Sicherheitsupdate (zeitnah), ⬆️ Update (beim nächsten Update-Tag), 🧭 neue Hauptversion (größerer Umbau, planen), 🔒 gesperrt (passt noch nicht zu einem anderen Paket, z. B. Payload – nichts zu tun), ✓ aktuell.',
       'Unter jedem Namen steht in grau, wofür das Programm oder Paket da ist; „Was ist was?“ ganz unten erklärt alle – zum Aufklappen nach Bereichen.',
-      'In der Tabelle „Zu erledigen“ steht unter „So geht’s“, was zu tun ist – je nachdem, ob die Seite am PC oder auf dem Server läuft (für alle Website-Pakete einmal unter der Tabelle).',
+      'In der Tabelle „Zu erledigen“ steht unter „So geht’s“, was zu tun ist – für alle Website-Pakete einmal unter der Tabelle.',
       '„⚠️ Prüfung unvollständig“: Eine Quelle war nicht erreichbar und wurde noch nie abgerufen – dann gibt es bewusst keine Entwarnung. Ist eine Quelle nur gerade nicht erreichbar, gelten ihre Angaben vom letzten erfolgreichen Abruf.',
       '„🔄 Jetzt prüfen“ prüft sofort (sonst täglich und nach jedem Start; höchstens einmal pro Minute).',
-      'Website-Pakete (Next.js, Payload …) nicht selbst aktualisieren: Update in Auftrag geben, testen lassen, dann BSV-Website-Update.bat bzw. ./deploy/update.sh.',
+      'Website-Pakete (Next.js, Payload …) nicht selbst aktualisieren: Update in Auftrag geben, testen lassen, dann auf dem Server ./deploy/update.sh.',
     ],
     wirkung: ['Die Seite zeigt nur an – sie installiert nichts von selbst.', 'Sicherheitsupdates erscheinen zusätzlich oben im Dashboard und im Monatsbericht.'],
     tipps: [
@@ -646,8 +646,8 @@ export const HILFE: Record<string, HilfeText> = {
     tun: [
       '„Sicherung jetzt erstellen“ klicken – nach etwa einer Minute ist sie fertig.',
       '„Herunterladen“ und an einem zweiten Ort speichern (USB-Stick, Cloud).',
-      'Zurückholen: Anleitung unten auf der Seite „Sicherung wieder einspielen“ – die Befehle passen dazu, ob die Website am PC oder auf dem Live-Server läuft; die andere Variante steht zum Aufklappen darunter.',
-      'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (am besten am PC), danach „✓ Heute erfolgreich getestet“ klicken.',
+      'Zurückholen: Anleitung unten auf der Seite „Sicherung wieder einspielen“ (Befehle für den Server).',
+      'Kasten „Wartung“: Einmal im Jahr ausprobieren, ob sich eine Sicherung wirklich einspielen lässt (auf einem Testrechner, nicht auf der Live-Website), danach „✓ Heute erfolgreich getestet“ klicken.',
       'In der Tabelle darunter steht, bis wann Node.js und PostgreSQL Sicherheits-Updates bekommen, wie voll der Speicher ist und wie alt die installierte Version ist. Orange heißt: bald handeln. Alle verfügbaren Updates stehen unter Einstellungen → „Sicherheit“ (Reiter „Updates“).',
     ],
     wirkung: [

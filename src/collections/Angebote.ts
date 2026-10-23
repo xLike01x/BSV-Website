@@ -240,7 +240,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
           type: 'text',
           admin: {
             description:
-              'Bei FuPa im Widget-Builder auf „Speichern“ klicken und den kompletten Code hier einfügen – die Website liest die ID automatisch heraus. Wichtig: Bei FuPa als „URL der Webseite“ die echte Vereinsadresse eintragen; auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an.',
+              'Bei FuPa im Widget-Builder auf „Speichern“ klicken und den kompletten Code hier einfügen – die Website liest die ID automatisch heraus. Wichtig: Bei FuPa als „URL der Webseite“ die echte Vereinsadresse eintragen.',
           },
           // Aus dem kompletten FuPa-Code nur die ID behalten (z. B. 3Kuku8Auad7WJFmIvEpH7zFzfAK)
           hooks: { beforeValidate: [({ value }) => fupaId(value)] },

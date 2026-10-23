@@ -732,8 +732,7 @@ function KeinZugang() {
           kann sofort entsperren).
         </li>
         <li>
-          <strong>Testkonten außerhalb des eigenen PCs</strong> – sie funktionieren nur lokal, nie
-          auf der Live-Website.
+          <strong>Testkonten</strong> – sie funktionieren nie auf der Live-Website.
         </li>
         <li>
           <strong>Besucher ohne Konto</strong> – sie können nur Formulare abschicken (Kontakt,

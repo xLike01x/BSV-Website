@@ -579,11 +579,11 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'sicherung-einspielen',
       titel: 'Eine Sicherung zurückholen (Notfall)',
       schritte: [
-        'Live-Website (Server): per SSH anmelden. Die Datei muss im Ordner /srv/bsv/backups liegen (vom PC hochladen: scp …, siehe Seite „Datensicherung“).',
-        'Live-Website: anhalten mit sudo systemctl stop bsv, einspielen mit sudo -u bsv -H bash -c \'cd /srv/bsv && NODE_ENV=production pnpm sicherung:einspielen DATEINAME\', danach sudo systemctl start bsv.',
-        'Am PC: Datei in den Ordner „backups“ im Projektordner legen, das schwarze Server-Fenster schließen, Eingabeaufforderung öffnen: cd /d F:\\BSV-Website\\app, dann pnpm sicherung:einspielen DATEINAME. Danach BSV-Website-Update.bat starten.',
-        'In beiden Fällen: „JA“ eintippen und warten, bis „Fertig“ erscheint. Der vorherige Stand wird vorher automatisch gesichert; ohne Dateinamen wird die neueste Sicherung genommen.',
-        'Die genauen Befehle für diese Website stehen unten auf der Seite „Datensicherung“ – dort passend dazu, ob sie am PC oder auf dem Server läuft.',
+        'Per SSH am Server anmelden. Die Datei muss im Ordner /srv/bsv/backups liegen (hochladen mit scp, siehe Seite „Datensicherung“).',
+        'Website anhalten: sudo systemctl stop bsv',
+        'Einspielen: sudo -u bsv -H bash -c \'cd /srv/bsv && NODE_ENV=production pnpm sicherung:einspielen DATEINAME\' – „JA“ eintippen und warten, bis „Fertig“ erscheint. Der vorherige Stand wird vorher automatisch gesichert; ohne Dateinamen wird die neueste Sicherung genommen.',
+        'Website starten: sudo systemctl start bsv',
+        'Die Befehle stehen auch unten auf der Seite „Datensicherung“.',
       ],
     },
     {
@@ -591,10 +591,9 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Einmal im Jahr: Wiederherstellung testen',
       schritte: [
         'Auf der Live-Website unter „Datensicherung“ die neueste Sicherung herunterladen.',
-        'Am PC die Datei in den Ordner „backups“ im Projektordner legen (in der .env am PC muss derselbe ENCRYPTION_KEY stehen wie auf dem Server).',
-        'Wie bei „Eine Sicherung zurückholen“ am PC einspielen – nicht auf der Live-Website.',
-        'Website am PC starten und kurz durchklicken: Sind News, Teams und Bilder da? Lässt sich eine IBAN in einem Mitgliedsantrag anzeigen?',
-        'Danach am PC den vorherigen Stand zurückholen (die Datei, die beim Einspielen automatisch angelegt wurde) – so bleiben keine echten Mitgliederdaten auf dem PC.',
+        'Auf einem Testrechner einspielen – nicht auf der Live-Website. Der Testrechner braucht denselben ENCRYPTION_KEY wie der Server.',
+        'Kurz durchklicken: Sind News, Teams und Bilder da? Lässt sich eine IBAN in einem Mitgliedsantrag anzeigen?',
+        'Danach die Testdaten auf dem Testrechner wieder entfernen – dort sollen keine echten Mitgliederdaten bleiben.',
         'Auf der Live-Website unter „Datensicherung“ im Kasten „Wartung“ auf „✓ Heute erfolgreich getestet“ klicken.',
       ],
     },
@@ -835,7 +834,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Verantwortliche', text: 'Benutzerkonten, die dieses Team pflegen dürfen (News, Bilder, Ausfälle). Ändern dürfen das Admin und Redaktion; Admins auch beim Benutzer unter „Team-Berechtigungen“.' },
     { name: 'Trainer- und Betreuerteam', text: 'Nur zur Anzeige auf der Teamseite (Name, Rolle, optional Foto). Wer bearbeiten darf, steht bei „Verantwortliche“.' },
     { name: 'Kursplätze', text: 'Eingeklappt: Haken „Plätze begrenzt (Reservierung im Mitgliederbereich)“ setzen und bei „Max. Plätze“ die Höchstzahl eintragen.' },
-    { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse, FuPa-Widget und FUSSBALL.DE-Nummer (Spielplan/Tabelle). FuPa: im Widget-Builder auf fupa.net das Widget zusammenstellen (Kader, Tabelle, Spielplan), als „URL der Webseite“ die echte Vereinsadresse eintragen, „Speichern“ und den kompletten Code einfügen – die ID wird automatisch herausgelesen. Auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an, auf der Live-Website schon. Besucher sehen die Widgets erst nach einem Klick (Datenschutz): „Einmal laden“ oder „Immer laden“ – Letzteres merkt sich ihr Browser, dann erscheinen die Widgets künftig sofort.' },
+    { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse, FuPa-Widget und FUSSBALL.DE-Nummer (Spielplan/Tabelle). FuPa: im Widget-Builder auf fupa.net das Widget zusammenstellen (Kader, Tabelle, Spielplan), als „URL der Webseite“ die echte Vereinsadresse eintragen, „Speichern“ und den kompletten Code einfügen – die ID wird automatisch herausgelesen. Besucher sehen die Widgets erst nach einem Klick (Datenschutz): „Einmal laden“ oder „Immer laden“ – Letzteres merkt sich ihr Browser, dann erscheinen die Widgets künftig sofort.' },
     { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne – im Aufklappmenü Fußball/Breitensport, auf den Übersichtsseiten und im Mitgliedsantrag. Neue Teams bekommen 100 und stehen damit hinten; gleiche Zahl = alphabetisch. Bequemer per Ziehen: Menü & Fußzeile → Reiter „Aufklappmenü …“.' },
     { name: 'Aktiv (öffentlich sichtbar)', text: 'Nur aktive Angebote sind auf der Website sichtbar. Ändern dürfen das Admin und Redaktion.' },
   ],
@@ -1043,7 +1042,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload, Node.js, Datenbank)?',
-    antwort: 'Alles steht an einem Ort: Einstellungen → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server (bzw. BSV-Website-Update.bat am PC); die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
+    antwort: 'Alles steht an einem Ort: Einstellungen → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server; die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
     bereich: 'sicherung',
   },
   {
@@ -1058,12 +1057,12 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Was ist die „Passt noch?“-Mail?',
-    antwort: 'Hat 3 Monate lang niemand bestätigt, dass die Angaben eines Teams stimmen, bekommen die Verantwortlichen (Trainer, Team-Redaktion) eine kurze E-Mail – alle eigenen Teams in einer Mail, mit Trainingszeiten. Pro Team ein Knopf „Prüfen und bestätigen“: Er öffnet eine Seite, auf der „✓ Ja, passt noch“ genügt (ohne Anmeldung, 30 Tage gültig). Stimmt etwas nicht, ändert man die Zeiten in der Verwaltung – das zählt automatisch als bestätigt. Auf der Teamseite steht dann „Stand der Trainingszeiten: …“. Verschickt wird nur von der echten Live-Website (nicht vom PC, nicht von der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    antwort: 'Hat 3 Monate lang niemand bestätigt, dass die Angaben eines Teams stimmen, bekommen die Verantwortlichen (Trainer, Team-Redaktion) eine kurze E-Mail – alle eigenen Teams in einer Mail, mit Trainingszeiten. Pro Team ein Knopf „Prüfen und bestätigen“: Er öffnet eine Seite, auf der „✓ Ja, passt noch“ genügt (ohne Anmeldung, 30 Tage gültig). Stimmt etwas nicht, ändert man die Zeiten in der Verwaltung – das zählt automatisch als bestätigt. Auf der Teamseite steht dann „Stand der Trainingszeiten: …“. Verschickt wird nur von der echten Live-Website (nicht von Test-Installationen wie der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
     bereich: 'angebote',
   },
   {
     frage: 'Was ist der Monatsbericht?',
-    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist, welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Verschickt wird nur von der echten Live-Website (nicht vom PC, nicht von der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist, welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Verschickt wird nur von der echten Live-Website (nicht von Test-Installationen wie der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
     bereich: 'dashboard',
   },
   {
@@ -1169,7 +1168,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie richte ich den E-Mail-Versand ein?',
-    antwort: 'Nötig für Registrierung, „Passwort vergessen“ und Benachrichtigungen. In die .env eintragen (Daten vom E-Mail-Anbieter, z. B. SiteGround → Site Tools → E-Mail → Konten → „Mail-Konfiguration“): SMTP_HOST=… (Postausgangsserver), SMTP_PORT=465, SMTP_USER=website@eure-domain.de, SMTP_PASS=… (Passwort des Postfachs), SMTP_FROM=website@eure-domain.de. Danach die Website neu starten – auf dem Server mit sudo systemctl restart bsv, am PC mit BSV-Website-Update.bat. Ohne diese Einträge stehen die Mails beim Ausprobieren auf dem eigenen PC nur im schwarzen Server-Fenster (mit Link zum Anklicken); auf der Live-Website ist die Registrierung dann gesperrt.',
+    antwort: 'Nötig für Registrierung, „Passwort vergessen“ und Benachrichtigungen. In die .env eintragen (Daten vom E-Mail-Anbieter, z. B. SiteGround → Site Tools → E-Mail → Konten → „Mail-Konfiguration“): SMTP_HOST=… (Postausgangsserver), SMTP_PORT=465, SMTP_USER=website@eure-domain.de, SMTP_PASS=… (Passwort des Postfachs), SMTP_FROM=website@eure-domain.de. Danach die Website neu starten: sudo systemctl restart bsv. Ohne diese Einträge ist die Registrierung auf der Live-Website gesperrt.',
     bereich: 'users',
   },
 

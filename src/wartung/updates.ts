@@ -202,17 +202,11 @@ function laufzeitEintrag(key: string, name: string, ist: string, latest: string 
 }
 
 const NODE_TUN = {
-  update: () =>
-    live()
-      ? 'Auf dem Server: sudo apt update && sudo apt upgrade nodejs – danach sudo systemctl restart bsv. (Automatische Updates installieren es meist von selbst.)'
-      : 'Am PC: nodejs.org → Installer „LTS“ – oder in PowerShell: winget upgrade OpenJS.NodeJS.LTS. Danach BSV-Website-Update.bat starten.',
-  wechsel: 'Neue Hauptversion: vorher testen lassen (GitHub-Workflow), dann in deploy/einrichten.sh bzw. am PC umstellen.',
+  update: () => 'Auf dem Server: sudo apt update && sudo apt upgrade nodejs – danach sudo systemctl restart bsv. (Automatische Updates installieren es meist von selbst.)',
+  wechsel: 'Neue Hauptversion: vorher testen lassen (GitHub-Workflow), dann auf dem Server umstellen – Auftrag geben.',
 }
 const PG_TUN = {
-  update: () =>
-    live()
-      ? 'Auf dem Server: sudo apt update && sudo apt upgrade postgresql* – automatische Updates erledigen das meist von selbst.'
-      : 'Am PC (Docker): Website-Fenster schließen, im Ordner app eine PowerShell öffnen: docker compose pull, dann docker compose up -d. Die Daten bleiben erhalten.',
+  update: () => 'Auf dem Server: sudo apt update && sudo apt upgrade postgresql* – automatische Updates erledigen das meist von selbst.',
   wechsel: 'Neue Hauptversion: nur mit Sicherung und Anleitung (Daten müssen umgezogen werden) – Auftrag geben.',
 }
 
@@ -347,7 +341,7 @@ export async function updatesPruefen(payload?: Payload): Promise<UpdateStand> {
         const neu = latest[p] ?? null
         const m = meldungen[p]
         const name = NAMEN[p] ?? p
-        const tun = 'Update in Auftrag geben (Paket aktualisieren, alle Tests) – danach am PC BSV-Website-Update.bat bzw. auf dem Server ./deploy/update.sh.'
+        const tun = 'Update in Auftrag geben (Paket aktualisieren, alle Tests) – danach auf dem Server ./deploy/update.sh (sichert vorher, fällt bei Fehlern zurück).'
         if (m?.length)
           eintraege.push({ key: `pkt-${p}`, gruppe: 'Website-Pakete', name, installiert: ist, verfuegbar: neu, art: 'sicherheit', text: `${m.some((x) => x.schwere === 'critical') ? 'Kritische' : 'Hohe'} Sicherheitslücke bekannt – zeitnah aktualisieren.`, tun, meldungen: m })
         else if (neu && istNeuer(neu, ist)) {
