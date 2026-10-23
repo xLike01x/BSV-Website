@@ -76,7 +76,16 @@ export const Sponsoren: CollectionConfig = {
       admin: { position: 'sidebar', description: 'Bestimmt die Gruppe und Größe auf der Sponsoren-Seite. „Hauptsponsor“ steht ganz oben und in der Fußzeile – auch mehrere Hauptsponsoren sind möglich (Reihenfolge-Zahl bestimmt die Reihenfolge).' },
     },
     { name: 'imLaufband', label: 'Im Laufband auf der Startseite', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar', description: 'Nur mit Logo.' } },
-    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne.' } },
+    {
+      name: 'reihenfolge',
+      label: 'Reihenfolge',
+      type: 'number',
+      defaultValue: 100,
+      admin: {
+        position: 'sidebar',
+        description: 'Kleinere Zahl = weiter vorne – innerhalb derselben Art auf der Sponsorenseite und im Laufband. Gleiche Zahl = alphabetisch. Mehrere Hauptsponsoren: der mit der kleinsten Zahl steht in der Fußzeile.',
+      },
+    },
     { name: 'aktiv', label: 'Aktiv (sichtbar)', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
   ],
 }

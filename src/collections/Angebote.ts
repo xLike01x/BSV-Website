@@ -260,7 +260,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     },
     { name: 'bestaetigtVon', type: 'text', access: { read: nurTeamVerwaltung, create: niemand, update: niemand }, admin: { hidden: true } },
     { name: 'erinnertAm', type: 'date', access: { read: nurTeamVerwaltung, create: niemand, update: niemand }, admin: { hidden: true } },
-    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.' } },
+    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter vorne – im Aufklappmenü, auf den Übersichtsseiten und im Mitgliedsantrag. Gleiche Zahl = alphabetisch. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.' } },
     { name: 'aktiv', label: 'Aktiv (öffentlich sichtbar)', type: 'checkbox', defaultValue: true, access: { create: teamsFeld, update: teamsFeld }, admin: { position: 'sidebar', description: 'Ohne Haken ist das Angebot auf der Website ausgeblendet – News und Bilder bleiben erhalten.' } },
     mitEindeutigemSlug(slugField({ position: 'sidebar' }), 'angebote'),
   ],

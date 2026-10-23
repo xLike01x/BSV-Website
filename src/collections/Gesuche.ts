@@ -38,7 +38,7 @@ export const Gesuche: CollectionConfig = {
         },
       ],
     },
-    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar' } },
+    { name: 'reihenfolge', label: 'Reihenfolge', type: 'number', defaultValue: 100, admin: { position: 'sidebar', description: 'Kleinere Zahl = weiter oben auf der Seite „Mitmachen“. Gleiche Zahl = alphabetisch.' } },
     { name: 'aktiv', label: 'Auf der Website zeigen', type: 'checkbox', defaultValue: true, admin: { position: 'sidebar' } },
   ],
 }

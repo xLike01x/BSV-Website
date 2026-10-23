@@ -835,7 +835,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Trainer- und Betreuerteam', text: 'Nur zur Anzeige auf der Teamseite (Name, Rolle, optional Foto). Wer bearbeiten darf, steht bei „Verantwortliche“.' },
     { name: 'Kursplätze', text: 'Eingeklappt: Haken „Plätze begrenzt (Reservierung im Mitgliederbereich)“ setzen und bei „Max. Plätze“ die Höchstzahl eintragen.' },
     { name: 'Fußball-Widgets', text: 'Nur bei Fußball: Spielklasse, FuPa-Widget und FUSSBALL.DE-Nummer (Spielplan/Tabelle). FuPa: im Widget-Builder auf fupa.net das Widget zusammenstellen (Kader, Tabelle, Spielplan), als „URL der Webseite“ die echte Vereinsadresse eintragen, „Speichern“ und den kompletten Code einfügen – die ID wird automatisch herausgelesen. Auf dem eigenen PC (localhost) zeigt FuPa das Widget eventuell nicht an, auf der Live-Website schon. Besucher sehen die Widgets erst nach einem Klick (Datenschutz): „Einmal laden“ oder „Immer laden“ – Letzteres merkt sich ihr Browser, dann erscheinen die Widgets künftig sofort.' },
-    { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne in Listen und Menüs.' },
+    { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne – im Aufklappmenü Fußball/Breitensport, auf den Übersichtsseiten und im Mitgliedsantrag. Neue Teams bekommen 100 und stehen damit hinten; gleiche Zahl = alphabetisch. Bequemer per Ziehen: Menü & Fußzeile → Reiter „Aufklappmenü …“.' },
     { name: 'Aktiv (öffentlich sichtbar)', text: 'Nur aktive Angebote sind auf der Website sichtbar. Ändern dürfen das Admin und Redaktion.' },
   ],
   media: [
@@ -928,6 +928,13 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Text auf dem Absende-Button', text: 'z. B. „Anmelden“.' },
     { name: 'Nach dem Absenden …', text: 'Eine Danke-Nachricht zeigen oder auf eine Seite weiterleiten.' },
     { name: 'E-Mail-Benachrichtigungen', text: 'Kommt mit dem E-Mail-Versand – bis dahin stehen die Eingänge unter „Formular-Eingänge“.' },
+  ],
+  sponsoren: [
+    { name: 'Art', text: 'Hauptsponsor, Premium-Partner, Partner oder Förderer & Freunde – bestimmt den Abschnitt auf der Sponsorenseite. Der Hauptsponsor steht zusätzlich in der Fußzeile.' },
+    { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter vorne innerhalb derselben Art (Sponsorenseite, Laufband). Neue Sponsoren bekommen 100; gleiche Zahl = alphabetisch.' },
+  ],
+  gesuche: [
+    { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter oben auf „Mitmachen“. Neue Gesuche bekommen 100; gleiche Zahl = alphabetisch.' },
   ],
   texte: [
     { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
@@ -1261,6 +1268,15 @@ export const FAQ: Faq[] = [
     frage: 'Wo ändere ich die Mitgliedsbeiträge?',
     antwort: 'Einstellungen → Vereinsdaten → „Mitgliedsbeiträge“: je Mitgliedsart den Betrag „€ pro Quartal“ eintragen und speichern. Alles andere rechnet sich automatisch: die Beitrags-Kacheln auf der Vereinsseite (inkl. „entspricht … € im Monat“), die Überschrift „Ab … € im Monat“ (günstigster Beitrag für aktive Mitglieder, passiv zählt nicht), der Online-Antrag und der Platzhalter {abMonat} in „Texte & Bilder“. Bei jedem neuen Antrag wird der Betrag, der beim Absenden galt, unter „Beitrag laut Antrag“ festgehalten. Eine Aufnahmegebühr gibt es auf der Website nicht.',
     bereich: 'verein',
+  },
+  {
+    frage: 'Was bedeutet das Feld „Reihenfolge“ (z. B. Wert 100)?',
+    antwort:
+      'Die Zahl bestimmt, an welcher Stelle ein Eintrag erscheint: kleinere Zahl = weiter vorne bzw. weiter oben. Es zählt nur der Vergleich mit den anderen Einträgen – 10, 20, 30 wirkt genauso wie 1, 2, 3. Neue Einträge bekommen automatisch 100 und landen damit hinten. Bei gleicher Zahl wird alphabetisch sortiert. Das Feld gibt es bei Teams & Kurse (Aufklappmenü Fußball/Breitensport, Übersichtsseiten, Mitgliedsantrag), Sponsoren (innerhalb derselben Art auf der Sponsorenseite und im Laufband) und Gesuchen (Seite „Mitmachen“).\n\n'
+      + 'Beispiel 1 – Wenn die F1-Jugend 20 hat, die F2-Jugend 30 und eine neue F3-Jugend 100 – dann steht im Menü F1, F2, F3. Soll die F3 zwischen die beiden, gib ihr 25.\n\n'
+      + 'Beispiel 2 – Wenn zwei Partner-Sponsoren beide 100 haben – dann stehen sie alphabetisch. Soll „Bäckerei Schmitz“ vor „Autohaus Müller“, gib der Bäckerei 50.\n\n'
+      + 'Tipp: Für Teams geht es ohne Zahlen bequemer – Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → Einträge ziehen; die Zahlen werden dann automatisch gesetzt.',
+    bereich: 'angebote',
   },
   {
     frage: 'Wie ändere ich die Reihenfolge im Menü und in den Aufklappmenüs Fußball und Breitensport?',

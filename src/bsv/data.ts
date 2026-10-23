@@ -208,7 +208,7 @@ export const getPlatzhalter = cache(async (): Promise<Record<string, string>> =>
 /** Aktive Sponsoren, sortiert */
 export const getSponsoren = cache(async () => {
   const p = await payload()
-  const res = await p.find({ collection: 'sponsoren', where: { aktiv: { not_equals: false } }, sort: 'reihenfolge', limit: 200, depth: 1 })
+  const res = await p.find({ collection: 'sponsoren', where: { aktiv: { not_equals: false } }, sort: ['reihenfolge', 'name'], limit: 200, depth: 1 })
   return res.docs
 })
 
@@ -226,7 +226,7 @@ export const getHauptsponsor = cache(async () => {
   if (haupt) return haupt
   // Noch nicht übernommen? Dann jetzt – damit die Fußzeile nie leer bleibt
   const p = await payload()
-  if (await hauptsponsorUmziehen(p).catch(() => null)) return (await p.find({ collection: 'sponsoren', where: { stufe: { equals: 'haupt' } }, sort: 'reihenfolge', limit: 1, depth: 1 })).docs[0] ?? null
+  if (await hauptsponsorUmziehen(p).catch(() => null)) return (await p.find({ collection: 'sponsoren', where: { stufe: { equals: 'haupt' } }, sort: ['reihenfolge', 'name'], limit: 1, depth: 1 })).docs[0] ?? null
   return null
 })
 
@@ -252,6 +252,6 @@ export const getAlbum = cache(async (slug: string) => {
 /** Aktive Ehrenamts-Gesuche */
 export const getGesuche = cache(async () => {
   const p = await payload()
-  const res = await p.find({ collection: 'gesuche', where: { aktiv: { not_equals: false } }, sort: 'reihenfolge', limit: 50, depth: 0 })
+  const res = await p.find({ collection: 'gesuche', where: { aktiv: { not_equals: false } }, sort: ['reihenfolge', 'titel'], limit: 50, depth: 0 })
   return res.docs
 })

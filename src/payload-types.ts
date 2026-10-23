@@ -569,7 +569,7 @@ export interface Angebote {
   bestaetigtVon?: string | null;
   erinnertAm?: string | null;
   /**
-   * Kleinere Zahl = weiter vorne – im Aufklappmenü und auf den Übersichtsseiten. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.
+   * Kleinere Zahl = weiter vorne – im Aufklappmenü, auf den Übersichtsseiten und im Mitgliedsantrag. Gleiche Zahl = alphabetisch. Bequemer: Menü & Fußzeile → Reiter „Aufklappmenü Fußball“ bzw. „Breitensport“ → ziehen.
    */
   reihenfolge?: number | null;
   /**
@@ -1154,7 +1154,7 @@ export interface Sponsoren {
    */
   imLaufband?: boolean | null;
   /**
-   * Kleinere Zahl = weiter vorne.
+   * Kleinere Zahl = weiter vorne – innerhalb derselben Art auf der Sponsorenseite und im Laufband. Gleiche Zahl = alphabetisch. Mehrere Hauptsponsoren: der mit der kleinsten Zahl steht in der Fußzeile.
    */
   reihenfolge?: number | null;
   aktiv?: boolean | null;
@@ -1179,6 +1179,9 @@ export interface Gesuche {
   text: string;
   aufwand?: string | null;
   symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
+  /**
+   * Kleinere Zahl = weiter oben auf der Seite „Mitmachen“. Gleiche Zahl = alphabetisch.
+   */
   reihenfolge?: number | null;
   aktiv?: boolean | null;
   endgueltigAm?: string | null;

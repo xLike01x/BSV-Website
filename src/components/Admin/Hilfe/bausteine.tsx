@@ -72,7 +72,8 @@ export function FaqBox({ faq }: { faq: Faq[] }) {
             </span>
             {f.frage}
           </summary>
-          <p>{f.antwort}</p>
+          {/* Zeilenumbrüche (\n) in Antworten als Absätze zeigen, z. B. für Beispiele */}
+          <p style={{ whiteSpace: 'pre-line' }}>{f.antwort}</p>
         </details>
       ))}
     </div>
