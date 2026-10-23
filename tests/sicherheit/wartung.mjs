@@ -20,9 +20,14 @@ export default async function wartung(d) {
       const plain = await fetch(B + '/api/updates/pruefen', { method: 'POST', headers: { Cookie: w, 'Content-Type': 'text/plain' }, body: '{}' })
       pruefe('Web-Admin ohne JSON → 415', plain.status === 415, plain.status)
       const erst = await api(w, 'POST', '/api/updates/pruefen', {})
-      const nochmal = await api(w, 'POST', '/api/updates/pruefen', {})
-      pruefe('Web-Admin: Update-Prüfung läuft (oder ist gerade gelaufen)', erst.s === 200 || erst.s === 429, erst)
-      pruefe('Sofort nochmal → 429 (höchstens einmal pro Minute)', nochmal.s === 429, nochmal.s)
+      if (erst.s === 409) {
+        // BSV_PAKETPRUEFUNG=aus im Dev-Server: Prüfung abgeschaltet, Ratenlimit nicht testbar
+        pruefe('Web-Admin: Update-Prüfung abgeschaltet → 409', true)
+      } else {
+        const nochmal = await api(w, 'POST', '/api/updates/pruefen', {})
+        pruefe('Web-Admin: Update-Prüfung läuft (oder ist gerade gelaufen)', erst.s === 200 || erst.s === 429, erst)
+        pruefe('Sofort nochmal → 429 (höchstens einmal pro Minute)', nochmal.s === 429, nochmal.s)
+      }
     })
 
     // Saisonwechsel

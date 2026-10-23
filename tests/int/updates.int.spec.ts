@@ -1,6 +1,6 @@
-import { describe, expect, it } from 'vitest'
+import { afterEach, describe, expect, it, vi } from 'vitest'
 
-import { istNeuer, meldungenAus, nodeSicherheit, ubuntuUpdates, zyklus } from '@/wartung/updates'
+import { istHauptversion, istNeuer, meldungenAus, nodeSicherheit, registryPfad, ubuntuUpdates, updatesPruefen, zyklus } from '@/wartung/updates'
 
 describe('Update-Prüfung: Versionen', () => {
   it.each([
@@ -12,7 +12,71 @@ describe('Update-Prüfung: Versionen', () => {
     ['16.5.0-canary.3', '16.4.2', false],
     ['v24.22.1', '24.22.0', true],
     ['16.16', '16.15', true],
+    ['3.0.0', '3.0.0-beta.1', true],
+    ['3.0.0-beta.2', '3.0.0-beta.1', false],
   ])('%s neuer als %s: %s', (neu, alt, soll) => expect(istNeuer(neu, alt)).toBe(soll))
+
+  it.each([
+    ['17.0.0', '16.9.9', true],
+    ['16.5.0', '16.4.2', false],
+    ['0.8.0', '0.7.1', true],
+    ['0.7.2', '0.7.1', false],
+    ['1.0.0', '0.9.0', true],
+  ])('%s ist Hauptversion gegenüber %s: %s', (neu, alt, soll) => expect(istHauptversion(neu, alt)).toBe(soll))
+
+  it('Registry-Pfad kodiert Paketnamen', () => {
+    expect(registryPfad('next')).toBe('next')
+    expect(registryPfad('@payloadcms/next')).toBe('@payloadcms%2Fnext')
+    expect(registryPfad('../x?y')).toBe('..%2Fx%3Fy')
+  })
+})
+
+describe('Update-Prüfung: Ausfall einzelner Quellen', () => {
+  const g = globalThis as unknown as Record<string, unknown>
+  const umgebung = process.env.NODE_ENV
+  afterEach(() => {
+    vi.unstubAllGlobals()
+    ;(process.env as Record<string, string | undefined>).NODE_ENV = umgebung
+  })
+  const antwort = (daten: unknown) => ({ ok: true, status: 200, json: async () => daten })
+  const allesKlappt = vi.fn(async (url: string, _init?: RequestInit) => {
+    if (url.includes('/advisories/bulk')) return antwort({ next: [{ severity: 'critical', title: 'Testlücke', url: 'https://github.com/advisories/GHSA-test-test-test' }] })
+    if (url.endsWith('/latest')) return antwort({ version: '999.0.0' })
+    return antwort([])
+  })
+  const nichtsKlappt = vi.fn(async () => {
+    throw new Error('offline')
+  })
+
+  it('ohne je erreichte Quellen: unvollständig statt Entwarnung; danach gelten bei Ausfall die letzten Angaben', async () => {
+    ;(process.env as Record<string, string | undefined>).NODE_ENV = 'development'
+    delete g.__bsvUpdates
+    delete g.__bsvUpdatesRoh
+
+    vi.stubGlobal('fetch', nichtsKlappt)
+    const offline = await updatesPruefen()
+    expect(offline.ohneDaten).toEqual(expect.arrayContaining(['npm-Sicherheitsdatenbank', 'npm (neueste Versionen)', 'nodejs.org']))
+    expect(offline.eintraege.some((e) => e.gruppe === 'Website-Pakete')).toBe(false)
+
+    vi.stubGlobal('fetch', allesKlappt)
+    const online = await updatesPruefen()
+    expect(online.ohneDaten).toEqual([])
+    expect(online.quellenFehler).toEqual([])
+    expect(online.eintraege.find((e) => e.key === 'pkt-next')?.art).toBe('sicherheit')
+
+    vi.stubGlobal('fetch', nichtsKlappt)
+    const wiederOffline = await updatesPruefen()
+    expect(wiederOffline.ohneDaten).toEqual([])
+    expect(wiederOffline.quellenFehler).toContain('npm-Sicherheitsdatenbank')
+    expect(wiederOffline.eintraege.find((e) => e.key === 'pkt-next')?.art).toBe('sicherheit')
+    expect(wiederOffline.eintraege.filter((e) => e.gruppe === 'Website-Pakete').length).toBe(online.eintraege.filter((e) => e.gruppe === 'Website-Pakete').length)
+
+    // Nur die Sicherheitsdatenbank fällt aus, der Rest antwortet: bekannte Lücke bleibt sichtbar
+    vi.stubGlobal('fetch', async (url: string, init?: RequestInit) => (url.includes('/advisories/bulk') ? nichtsKlappt() : allesKlappt(url, init)))
+    const teilweise = await updatesPruefen()
+    expect(teilweise.quellenFehler).toEqual(['npm-Sicherheitsdatenbank'])
+    expect(teilweise.eintraege.find((e) => e.key === 'pkt-next')?.art).toBe('sicherheit')
+  })
 })
 
 describe('Update-Prüfung: Quellen auswerten', () => {

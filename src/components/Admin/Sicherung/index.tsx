@@ -27,7 +27,7 @@ export default async function Sicherung({ initPageResult, params, searchParams }
     schluesselwechsel: schluesselwechselOffen(),
     updates: (() => {
       const z = updateZusammenfassung()
-      return { sicherheit: z.sicherheit.length, updates: z.updates.length, geprueftAm: updateStand().geprueftAm }
+      return { sicherheit: z.sicherheit.length, updates: z.updates.length, geprueftAm: updateStand().geprueftAm, unvollstaendig: updateStand().ohneDaten.length > 0 }
     })(),
   }
   return (

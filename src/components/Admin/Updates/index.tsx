@@ -36,7 +36,7 @@ function Zeile({ e, ohneTun }: { e: Eintrag; ohneTun?: boolean }) {
         {e.meldungen && e.meldungen.length > 0 && (
           <ul className="bsv-upd__meldungen">
             {e.meldungen.map((m, i) => (
-              <li key={`${m.url ?? i}`}>
+              <li key={`${i}-${m.url ?? ''}`}>
                 <strong>{m.schwere === 'critical' ? 'Kritisch' : 'Hoch'}:</strong> {m.titel}
                 {m.betroffen ? ` (betroffen: ${m.betroffen})` : ''}
                 {m.url && (
@@ -103,6 +103,10 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
   const offen = s.eintraege.filter((e) => e.art !== 'aktuell')
   const pakete = s.eintraege.filter((e) => e.gruppe === 'Website-Pakete')
   const anzahl = { sicherheit: s.eintraege.filter((e) => e.art === 'sicherheit').length, offen: offen.length }
+  // Ohne Daten einer Quelle keine Entwarnung („keine Sicherheitslücken“, „alles aktuell“)
+  const unvollstaendig = s.ohneDaten.length > 0
+  const paketeUnklar = s.ohneDaten.some((q) => q.startsWith('npm'))
+  const alteAngaben = s.quellenFehler.filter((q) => !s.ohneDaten.includes(q))
 
   return (
     <DefaultTemplate
@@ -129,18 +133,21 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
             <JetztPruefen aus={updatePruefungAus()} />
           </header>
 
-          <div className={`bsv-upd__stand ${anzahl.sicherheit ? 'is-sicherheit' : anzahl.offen ? 'is-update' : 'is-ok'}`}>
+          <div className={`bsv-upd__stand ${anzahl.sicherheit || unvollstaendig ? 'is-sicherheit' : anzahl.offen ? 'is-update' : 'is-ok'}`}>
             <strong>
               {!s.geprueftAm
                 ? 'Noch nicht geprüft – „Jetzt prüfen“ klicken oder eine Minute nach dem Start warten.'
                 : anzahl.sicherheit
-                  ? `🚨 ${anzahl.sicherheit === 1 ? '1 Sicherheitsupdate' : `${anzahl.sicherheit} Sicherheitsupdates`} nötig`
-                  : anzahl.offen
-                    ? `⬆️ ${anzahl.offen === 1 ? '1 Update' : `${anzahl.offen} Updates`} verfügbar – keine Sicherheitslücken bekannt`
-                    : '✓ Alles aktuell'}
+                  ? `🚨 ${anzahl.sicherheit === 1 ? '1 Sicherheitsupdate' : `${anzahl.sicherheit} Sicherheitsupdates`} nötig${unvollstaendig ? ' – Prüfung unvollständig' : ''}`
+                  : unvollstaendig
+                    ? `⚠️ Prüfung unvollständig${anzahl.offen ? ` – ${anzahl.offen === 1 ? '1 Update' : `${anzahl.offen} Updates`} gefunden` : ''}${s.ohneDaten.includes('npm-Sicherheitsdatenbank') ? ', ob Sicherheitslücken bestehen, ist unbekannt' : ''}`
+                    : anzahl.offen
+                      ? `⬆️ ${anzahl.offen === 1 ? '1 Update' : `${anzahl.offen} Updates`} verfügbar – keine Sicherheitslücken bekannt`
+                      : '✓ Alles aktuell'}
             </strong>
             {s.geprueftAm && <span>Zuletzt geprüft: {wann(s.geprueftAm)}</span>}
-            {s.quellenFehler.length > 0 && <span className="bsv-upd__fehler">Nicht erreichbar: {s.quellenFehler.join(', ')} – diese Angaben fehlen oder sind vom letzten Mal.</span>}
+            {unvollstaendig && <span className="bsv-upd__fehler">Nicht erreichbar und noch nie abgerufen: {s.ohneDaten.join(', ')} – diese Angaben fehlen. Später erneut prüfen; klappt es tagelang nicht, Internetzugang des Servers prüfen.</span>}
+            {alteAngaben.length > 0 && <span className="bsv-upd__fehler">Gerade nicht erreichbar: {alteAngaben.join(', ')} – dafür gelten die Angaben vom letzten erfolgreichen Abruf.</span>}
           </div>
 
           <Gruppe titel="Zu erledigen" eintraege={offen} />
@@ -149,9 +156,11 @@ export default async function UpdatesSeite({ initPageResult, params, searchParam
             <section className="bsv-upd__box">
               <h2>Website-Pakete</h2>
               <p>
-                {pakete.length
-                  ? `${pakete.length} von ${s.paketeGesamt} direkt genutzten Paketen haben eine neuere Version oder eine Meldung (siehe oben).`
-                  : `Alle ${s.paketeGesamt} direkt genutzten Pakete sind auf dem neuesten Stand, keine Sicherheitsmeldungen.`}{' '}
+                {paketeUnklar
+                  ? `Die Pakete konnten nicht vollständig geprüft werden (${s.ohneDaten.filter((q) => q.startsWith('npm')).join(', ')} nicht erreichbar).${pakete.length ? ` Gefunden: ${pakete.length} von ${s.paketeGesamt}.` : ''}`
+                  : pakete.length
+                    ? `${pakete.length} von ${s.paketeGesamt} direkt genutzten Paketen haben eine neuere Version oder eine Meldung (siehe oben).`
+                    : `Alle ${s.paketeGesamt} direkt genutzten Pakete sind auf dem neuesten Stand, keine Sicherheitsmeldungen.`}{' '}
                 Indirekt genutzte Pakete prüft zusätzlich GitHub jeden Tag und schickt bei hohen oder kritischen Lücken eine E-Mail.
               </p>
             </section>

@@ -108,7 +108,10 @@ export async function wartungsHinweise(payload: Payload): Promise<Hinweis[]> {
   }
   if (updates.length)
     h.push({ key: 'updates', art: 'info', symbol: '⬆️', text: `${updates.length === 1 ? '1 Update verfügbar' : `${updates.length} Updates verfügbar`} (${updates.slice(0, 3).map((e) => e.name).join(', ')}${updates.length > 3 ? ' …' : ''}). Beim nächsten Update-Tag mitnehmen.` })
-  if (!updatePruefungAus() && u.fehlerSeit && Date.now() - new Date(u.fehlerSeit).getTime() > 3 * 86400000)
+  // Sicherheitsdatenbank noch nie erreicht: sofort melden (sonst fehlt die Warnung vor Lücken); sonst erst nach 3 Tagen
+  if (!updatePruefungAus() && u.ohneDaten.includes('npm-Sicherheitsdatenbank'))
+    h.push({ key: 'updates-fehler', art: 'warn', symbol: '📡', text: 'Die Update-Prüfung konnte die npm-Sicherheitsdatenbank noch nicht erreichen – ob Sicherheitslücken bestehen, ist unbekannt. Internetzugang des Servers prüfen.' })
+  else if (!updatePruefungAus() && u.fehlerSeit && Date.now() - new Date(u.fehlerSeit).getTime() > 3 * 86400000)
     h.push({ key: 'updates-fehler', art: 'info', symbol: '📡', text: `Die Update-Prüfung klappt seit mehreren Tagen nicht vollständig (nicht erreichbar: ${u.quellenFehler.join(', ') || 'unbekannt'}).` })
 
   const code = await codeStand()

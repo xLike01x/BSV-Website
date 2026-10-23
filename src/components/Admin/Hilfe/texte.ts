@@ -622,7 +622,8 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Oben steht, ob etwas zu tun ist: 🚨 Sicherheitsupdate (zeitnah), ⬆️ Update (beim nächsten Update-Tag), 🧭 neue Hauptversion (größerer Umbau, planen), ✓ aktuell.',
-      'In der Tabelle „Zu erledigen“ steht bei jedem Eintrag unter „So geht’s“, was zu tun ist – je nachdem, ob die Seite am PC oder auf dem Server läuft.',
+      'In der Tabelle „Zu erledigen“ steht unter „So geht’s“, was zu tun ist – je nachdem, ob die Seite am PC oder auf dem Server läuft (für alle Website-Pakete einmal unter der Tabelle).',
+      '„⚠️ Prüfung unvollständig“: Eine Quelle war nicht erreichbar und wurde noch nie abgerufen – dann gibt es bewusst keine Entwarnung. Ist eine Quelle nur gerade nicht erreichbar, gelten ihre Angaben vom letzten erfolgreichen Abruf.',
       '„🔄 Jetzt prüfen“ prüft sofort (sonst täglich und nach jedem Start; höchstens einmal pro Minute).',
       'Website-Pakete (Next.js, Payload …) nicht selbst aktualisieren: Update in Auftrag geben, testen lassen, dann BSV-Website-Update.bat bzw. ./deploy/update.sh.',
     ],

@@ -13,7 +13,7 @@ export type WartungDaten = {
   speicher: Speicher | null
   code: string | null
   schluesselwechsel: boolean
-  updates: { sicherheit: number; updates: number; geprueftAm: UpdateStand['geprueftAm'] }
+  updates: { sicherheit: number; updates: number; geprueftAm: UpdateStand['geprueftAm']; unvollstaendig: boolean }
 }
 const datum = (iso: string) => new Date(iso).toLocaleDateString('de-DE', { day: 'numeric', month: 'long', year: 'numeric' })
 
@@ -172,9 +172,9 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
               <td>{wartung.code ? datum(wartung.code) : 'unbekannt'}</td>
               <td>Spätestens alle 3 Monate aktualisieren (Update-Tag). Sicherheitsmeldungen prüfen die Website und GitHub täglich.</td>
             </tr>
-            <tr className={wartung.updates.sicherheit ? 'is-warn' : undefined}>
+            <tr className={wartung.updates.sicherheit || wartung.updates.unvollstaendig ? 'is-warn' : undefined}>
               <th>Updates &amp; Sicherheit</th>
-              <td>{wartung.updates.sicherheit ? `⚠️ ${wartung.updates.sicherheit} Sicherheitsupdate${wartung.updates.sicherheit === 1 ? '' : 's'}` : wartung.updates.updates ? `${wartung.updates.updates} verfügbar` : wartung.updates.geprueftAm ? 'alles aktuell' : 'noch nicht geprüft'}</td>
+              <td>{wartung.updates.sicherheit ? `⚠️ ${wartung.updates.sicherheit} Sicherheitsupdate${wartung.updates.sicherheit === 1 ? '' : 's'}` : wartung.updates.unvollstaendig ? 'Prüfung unvollständig' : wartung.updates.updates ? `${wartung.updates.updates} verfügbar` : wartung.updates.geprueftAm ? 'alles aktuell' : 'noch nicht geprüft'}</td>
               <td>
                 Node.js, PostgreSQL, Website-Pakete und Server an einem Ort: <a href="/admin/updates">Updates &amp; Sicherheit ansehen ›</a>
                 {wartung.updates.geprueftAm && ` Zuletzt geprüft: ${wann(wartung.updates.geprueftAm)}.`}
