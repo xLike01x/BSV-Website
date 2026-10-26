@@ -99,7 +99,9 @@ export const Termine: CollectionConfig = {
     },
     { name: 'beschreibung', label: 'Beschreibung', type: 'textarea' },
     { name: 'nurMitglieder', label: 'Nur für Mitglieder sichtbar', type: 'checkbox', admin: { description: 'Dann sehen den Termin nur angemeldete Mitglieder.' } },
-    { name: 'anmeldung', label: 'Anmeldung im Mitgliederbereich möglich', type: 'checkbox' },
+    // Noch ohne Funktion (keine Anmelde-Ansicht im Mitgliederbereich) – ausgeblendet, damit niemand sich darauf verlässt.
+    // Spalte bleibt bestehen; für Anmeldungen gibt es Formulare (Website-Aufbau → Formulare).
+    { name: 'anmeldung', label: 'Anmeldung im Mitgliederbereich möglich', type: 'checkbox', admin: { hidden: true } },
   ],
 }
 

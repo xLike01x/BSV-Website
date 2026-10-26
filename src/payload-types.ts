@@ -3462,7 +3462,7 @@ export interface Texte {
     bild?: (number | null) | Media;
   };
   /**
-   * Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.
+   * Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst. Der Countdown braucht einen Termin mit Datum (Inhalte → Termine) – eine Seite hat kein Datum, sie kannst du unten als Ziel des Links wählen.
    */
   countdown?: {
     /**
@@ -3470,7 +3470,7 @@ export interface Texte {
      */
     aktiv?: boolean | null;
     /**
-     * Datum, Uhrzeit und Name kommen aus dem Termin. Bei wiederkehrenden Terminen zählt der nächste.
+     * Aus Inhalte → Termine (nicht Seiten). Datum, Uhrzeit und Name kommen aus dem Termin; bei wiederkehrenden Terminen zählt der nächste. Zur Auswahl stehen nur öffentliche Termine – „Keine Optionen“ heißt: erst unter Termine einen anlegen (ohne Haken „Nur für Mitglieder“).
      */
     termin?: (number | null) | Termine;
     kicker?: string | null;
@@ -3483,6 +3483,10 @@ export interface Texte {
      */
     text?: string | null;
     linkText?: string | null;
+    /**
+     * Eigene Seite, z. B. „Sommerfest“. Leer = zum Termin unter „Termine“.
+     */
+    seite?: (number | null) | Page;
   };
   fussball?: {
     titel?: string | null;
@@ -4266,6 +4270,7 @@ export interface TexteSelect<T extends boolean = true> {
         titel?: T;
         text?: T;
         linkText?: T;
+        seite?: T;
       };
   fussball?:
     | T

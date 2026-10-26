@@ -158,7 +158,7 @@ export const getTermine = cache(async (limit = 50): Promise<Vorkommen[]> => {
  *  damit die Startseite statisch bleibt und Mitglieder-Termine nie erscheinen */
 export type CountdownDaten = { kicker: string; titel: string; text: string; linkText: string; href: string; beginn: string; ende: string | null; jetzt: number }
 export const getCountdown = cache(async (): Promise<CountdownDaten | null> => {
-  const t = (await getTexte()) as unknown as { countdown?: { aktiv?: boolean; termin?: unknown; kicker?: string; titel?: string; text?: string; linkText?: string } }
+  const t = (await getTexte()) as unknown as { countdown?: { aktiv?: boolean; termin?: unknown; kicker?: string; titel?: string; text?: string; linkText?: string; seite?: unknown } }
   const c = t.countdown
   if (!c?.aktiv || !c.termin) return null
   const id = typeof c.termin === 'object' ? (c.termin as { id: number }).id : Number(c.termin)
@@ -176,12 +176,20 @@ export const getCountdown = cache(async (): Promise<CountdownDaten | null> => {
   const v = aufloesen([doc], ab, bis, 10).find(nochNichtVorbei)
   if (!v) return null
   const schluessel = terminSchluessel(v)
+  // Ziel des Links: gewählte eigene Seite – ohne Anmeldung abgefragt, also nur, wenn sie veröffentlicht ist; sonst der Termin
+  const seitenId = c.seite ? (typeof c.seite === 'object' ? (c.seite as { id: number }).id : Number(c.seite)) : null
+  const seite = seitenId
+    ? ((await p.find({ collection: 'pages', where: { id: { equals: seitenId } }, depth: 0, limit: 1, overrideAccess: false, select: { slug: true, breadcrumbs: true } })).docs[0] as
+        | { slug?: string | null; breadcrumbs?: { url?: string | null }[] | null }
+        | undefined)
+    : undefined
+  const seitenAdresse = seite ? (seite.breadcrumbs?.at(-1)?.url ?? (seite.slug ? `/${seite.slug}` : null)) : null
   return {
     kicker: c.kicker || 'Bald im BSV',
     titel: c.titel || v.title,
     text: c.text || v.ort || '',
     linkText: c.linkText || 'Alle Infos zum Termin ›',
-    href: `/termine#termin-${schluessel}`,
+    href: seitenAdresse ?? `/termine#termin-${schluessel}`,
     beginn: v.beginn,
     ende: v.ende ?? null,
     jetzt,

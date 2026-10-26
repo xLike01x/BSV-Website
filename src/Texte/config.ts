@@ -152,7 +152,7 @@ export const Texte: GlobalConfig = {
               label: 'Veranstaltungs-Countdown',
               admin: {
                 description:
-                  'Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.',
+                  'Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst. Der Countdown braucht einen Termin mit Datum (Inhalte → Termine) – eine Seite hat kein Datum, sie kannst du unten als Ziel des Links wählen.',
               },
               fields: [
                 { name: 'aktiv', label: 'Anzeigen', type: 'checkbox', defaultValue: false, admin: { description: 'Haken setzen und unten einen Termin auswählen.' } },
@@ -163,7 +163,11 @@ export const Texte: GlobalConfig = {
                   relationTo: 'termine',
                   // Nur öffentliche Termine – „nur für Mitglieder“ erscheint nie auf der Startseite
                   filterOptions: () => ({ nurMitglieder: { not_equals: true } }),
-                  admin: { allowCreate: false, description: 'Datum, Uhrzeit und Name kommen aus dem Termin. Bei wiederkehrenden Terminen zählt der nächste.' },
+                  admin: {
+                    allowCreate: false,
+                    description:
+                      'Aus Inhalte → Termine (nicht Seiten). Datum, Uhrzeit und Name kommen aus dem Termin; bei wiederkehrenden Terminen zählt der nächste. Zur Auswahl stehen nur öffentliche Termine – „Keine Optionen“ heißt: erst unter Termine einen anlegen (ohne Haken „Nur für Mitglieder“).',
+                  },
                   validate: async (wert: unknown, { siblingData, req }: { siblingData?: { aktiv?: boolean }; req: PayloadRequest }) => {
                     // Nur prüfen, wenn der Countdown angezeigt werden soll – sonst blockiert ein alter Termin das Speichern anderer Texte
                     if (!siblingData?.aktiv) return true
@@ -182,7 +186,20 @@ export const Texte: GlobalConfig = {
                   ],
                 },
                 { name: 'text', label: 'Text (optional)', type: 'textarea', admin: { description: 'z. B. „Mit Hüpfburg, Grill und Fußballturnier für Kinder.“ Leer = Ort des Termins.' } },
-                text('linkText', 'Link-Text', 'Alle Infos zum Termin ›'),
+                {
+                  type: 'row',
+                  fields: [
+                    text('linkText', 'Link-Text', 'Alle Infos zum Termin ›'),
+                    {
+                      name: 'seite',
+                      label: 'Link führt zu (optional)',
+                      type: 'relationship',
+                      relationTo: 'pages',
+                      filterOptions: () => ({ _status: { equals: 'published' } }),
+                      admin: { allowCreate: false, description: 'Eigene Seite, z. B. „Sommerfest“. Leer = zum Termin unter „Termine“.' },
+                    },
+                  ],
+                },
               ],
             },
           ],

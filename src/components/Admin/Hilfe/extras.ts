@@ -367,6 +367,19 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         '„Speichern“ – der Termin steht sofort im Kalender.',
       ],
     },
+    {
+      id: 'veranstaltung-komplett',
+      titel: 'Eine Veranstaltung komplett vorbereiten (Termin, Anmeldung, Seite, Countdown)',
+      schritte: [
+        'Termin: Inhalte → Termine → Vorlage „Vereinsfest“ oder „Neu erstellen“. Titel, Beginn mit Uhrzeit und Ort eintragen (der Ort ist mit dem Sportpark vorbelegt – überschreiben, wenn woanders gefeiert wird). In die Beschreibung: Preis, was enthalten ist, Anmeldeschluss. Speichern.',
+        'Anmeldeformular: Website-Aufbau → Formulare → Vorlage „Anmeldung zu einer Veranstaltung“. Bei „Name des Formulars“ gleich den späteren Seitennamen eintragen (z. B. „Weihnachtsfeier 2026“) – daraus entsteht im nächsten Schritt die Adresse der Seite. Felder anpassen, z. B. eine Auswahlliste „Teilnahme“ mit „Ich komme“ / „Ich komme nicht“. Danke-Nachricht prüfen. Speichern.',
+        'Seite: im Formular rechts „Neue Seite mit diesem Formular erstellen“. Die Seite heißt wie das Formular (später umbenennen ändert die Adresse nicht mehr). Über dem Formular einen Baustein „Text (in Spalten)“ mit allen Infos einfügen, Vorschau prüfen, „Veröffentlichen“.',
+        'Ansehen: rechts in der Seite steht die Adresse als Link (z. B. /weihnachtsfeier-2026 ↗). Ins Menü kommt die Seite nicht von selbst – nur wenn du sie unter „Menü & Fußzeile“ einträgst.',
+        'Countdown (optional): Texte & Bilder → Startseite → Veranstaltungs-Countdown: Haken „Anzeigen“, den Termin wählen, bei „Link führt zu“ die Seite wählen. Speichern.',
+        'Antworten lesen: Posteingang → Formular-Eingänge. Zum Anmeldeschluss das Formular von der Seite nehmen (Baustein löschen und „Veröffentlichen“) – es schließt nicht von selbst.',
+        'Nach der Veranstaltung: Countdown-Haken raus (verschwindet sonst am Folgetag ohnehin), Seite auf „Entwurf“ zurücksetzen oder löschen, Formular-Eingänge löschen, sobald sie nicht mehr gebraucht werden.',
+      ],
+    },
   ],
   passantraege: [
     {
@@ -874,7 +887,6 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Wiederholen bis einschließlich', text: 'Letzter Tag der Wiederholung (höchstens 2 Jahre).' },
     { name: 'Einzelne Termine auslassen', text: 'Ferien oder Feiertage, an denen der Termin ausfällt – je ein Datum.' },
     { name: 'Nur für Mitglieder sichtbar', text: 'Nur nach dem Login sichtbar.' },
-    { name: 'Anmeldung im Mitgliederbereich möglich', text: 'Mitglieder können sich nach dem Login für den Termin anmelden.' },
     { name: 'Beschreibung', text: 'Weitere Infos zum Termin. Zeilenumbrüche werden übernommen.' },
   ],
   ausfaelle: [
@@ -1483,13 +1495,39 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wie zeige ich einen Countdown für eine Veranstaltung auf der Startseite?',
     antwort:
-      'Unter Website-Aufbau → Texte & Bilder → Reiter „Startseite“ → „Veranstaltungs-Countdown“: Haken „Anzeigen“ setzen, den Termin auswählen und speichern. Auf der Startseite erscheint direkt unter dem Kopfbereich eine Kachel „Noch 12 Tage · 3 Stunden · 59 Minuten“ mit Name, Datum und einem Link zum Termin.\n\n'
-      + '• Name, Datum und Uhrzeit kommen aus dem Termin – ändert sich der Termin, ändert sich der Countdown mit. Titel und Text kannst du optional überschreiben (leer = Name bzw. Ort des Termins).\n'
+      'Der Countdown braucht einen Termin mit Datum. Eine Seite (z. B. „Sommerfest“) hat kein Datum – sie lässt sich deshalb nicht als Termin auswählen, aber als Ziel des Links.\n\n'
+      + 'So geht es:\n'
+      + '1. Unter Inhalte → Termine die Veranstaltung anlegen (Titel, Beginn mit Uhrzeit, Ort). Den Haken „Nur für Mitglieder sichtbar“ nicht setzen.\n'
+      + '2. Website-Aufbau → Texte & Bilder → Reiter „Startseite“ → „Veranstaltungs-Countdown“: Haken „Anzeigen“ setzen und bei „Termin“ die Veranstaltung wählen.\n'
+      + '3. Optional bei „Link führt zu“ deine eigene Seite wählen. Leer = der Link führt zum Termin im Kalender.\n'
+      + '4. Speichern. Auf der Startseite erscheint direkt unter dem Kopfbereich die Kachel „Noch 12 Tage · 3 Stunden · 59 Minuten“.\n\n'
+      + '• „Keine Optionen“ bei „Termin“ heißt: Es gibt noch keinen öffentlichen Termin. Erst unter Termine einen anlegen.\n'
+      + '• Name, Datum und Uhrzeit kommen aus dem Termin – ändert sich der Termin, ändert sich der Countdown mit. Titel, Text und Link-Text kannst du optional überschreiben.\n'
       + '• Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst. Bei wiederkehrenden Terminen zählt immer der nächste.\n'
-      + '• Nur öffentliche Termine: „nur für Mitglieder“ lässt sich nicht auswählen und wird auch nachträglich nie auf der Startseite gezeigt.\n\n'
-      + 'Beispiel 1 – Wenn das Sommerfest am 4. Juli ist – dann lege es unter Termine an, wähle es beim Countdown aus und setze den Haken. Ab sofort zählt die Startseite herunter; am 5. Juli ist die Kachel weg.\n\n'
+      + '• Nur öffentliche Termine und nur veröffentlichte Seiten lassen sich auswählen.\n\n'
+      + 'Beispiel 1 – Wenn du eine Seite „Sommerfest“ mit Programm und Anmeldung gebaut hast – dann lege zusätzlich unter Termine den Termin „Sommerfest“ am 4. Juli an. Beim Countdown wählst du den Termin und bei „Link führt zu“ die Seite „Sommerfest“. Die Startseite zählt herunter und der Button öffnet deine Seite.\n\n'
       + 'Beispiel 2 – Wenn der Countdown vorübergehend nicht zu sehen sein soll – dann nimm nur den Haken „Anzeigen“ raus. Termin und Texte bleiben gespeichert.',
     bereich: 'texte',
+  },
+  {
+    frage: 'Ich habe eine Seite veröffentlicht – wo sehe ich sie?',
+    antwort:
+      'Unter ihrer eigenen Adresse: Website-Adresse + „/“ + Adresse der Seite, z. B. /sommerfest. In der Seite steht rechts der Link „/sommerfest ↗“ – ein Klick öffnet sie in einem neuen Tab. Die Adresse entsteht beim ersten Speichern aus dem Titel (Feld „Slug“) und ändert sich danach nicht mehr von selbst, auch wenn du den Titel änderst.\n\n'
+      + '• Ins Menü kommt eine neue Seite nicht von selbst. Dafür: „Menü & Fußzeile“ → Eintrag hinzufügen → Seite wählen → Speichern.\n'
+      + '• Ohne Menüeintrag findet man die Seite über einen Link: im Countdown („Link führt zu“), in einer News, auf einem Button einer anderen Seite oder als Link in WhatsApp.\n'
+      + '• Steht rechts nur „Adresse nach dem Veröffentlichen: …“, ist die Seite noch ein Entwurf – oben rechts „Veröffentlichen“ klicken.\n\n'
+      + 'Beispiel – Wenn du die Seite „Sommerfest“ veröffentlicht hast, sie aber nirgends siehst – dann klick rechts auf „/sommerfest ↗“. Soll jeder sie finden, trag sie ins Menü ein oder verlinke sie beim Countdown auf der Startseite.',
+    bereich: 'pages',
+  },
+  {
+    frage: 'Schließt ein Anmeldeformular automatisch zum Anmeldeschluss?',
+    antwort:
+      'Nein. Ein Formular nimmt Antworten an, solange es auf einer veröffentlichten Seite steht. Den Anmeldeschluss schreibst du deshalb gut sichtbar in den Text über dem Formular und nimmst das Formular am Stichtag selbst von der Seite.\n\n'
+      + 'So geht es am Stichtag: Seite öffnen → Reiter „Inhalt (Bausteine)“ → beim Baustein „Formular“ über die drei Punkte „Entfernen“ → einen Satz wie „Die Anmeldung ist geschlossen.“ ergänzen → „Veröffentlichen“. Das Formular selbst und alle Eingänge bleiben erhalten.\n\n'
+      + '• Ein Formular auf einer öffentlichen Seite kann jeder ausfüllen, auch Nicht-Mitglieder. Ist eine Feier nur für Mitglieder, das im Text sagen und die Eingänge beim Durchsehen prüfen.\n'
+      + '• Die Antworten stehen unter Posteingang → Formular-Eingänge. E-Mail-Benachrichtigungen an die Organisatoren kommen erst mit dem E-Mail-Versand.\n\n'
+      + 'Beispiel – Wenn die Zu- und Absagen bis 01.12. eingehen sollen – dann schreib „Verbindliche Zu- oder Absage bis spätestens 01.12.“ über das Formular und entferne am 02.12. den Baustein „Formular“.',
+    bereich: 'forms',
   },
   {
     frage: 'Muss die Web-App aktualisiert werden?',
