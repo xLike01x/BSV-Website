@@ -426,6 +426,10 @@
 .bsv .teilen-menue a:hover, .teilen-menue button:hover { background: var(--bsv-soft); }
 .teilen-hinweis { display: block; max-width: 240px; padding: 8px 12px 6px; font-size: 13px; line-height: 1.4; color: var(--bsv-green); }
 
+/* Countdown in der Termin-Karte */
+.termin-countdown { display: inline-flex; margin: 10px 0 0; padding: 6px 14px; border-radius: 999px; background: var(--bsv-green-tint); color: var(--bsv-green); font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.termin-countdown strong { font-weight: 800; }
+
 /* Termin-Aktionen */
 .termin-aktionen { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
 .bsv a.termin-link { display: inline-flex; align-items: center; gap: 6px; border: 1px solid var(--bsv-line); border-radius: 999px; padding: 6px 12px; font-size: 14px; font-weight: 600; color: var(--bsv-ink); text-decoration: none; }

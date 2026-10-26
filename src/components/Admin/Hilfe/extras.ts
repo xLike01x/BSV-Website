@@ -1518,6 +1518,7 @@ export const FAQ: Faq[] = [
       + 'Nach dem Haken erscheinen zwei weitere Felder:\n'
       + '• „Countdown-Button führt zu“: eine eigene, veröffentlichte Seite (z. B. „Sommerfest“ mit Programm und Anmeldung). Leer = der Button führt zum Termin im Kalender.\n'
       + '• „Countdown-Text“: ein kurzer Satz unter dem Datum, z. B. „Essen und Getränke inklusive“. Leer = Ort des Termins.\n\n'
+      + '• Auf der Seite „Termine“ hat jede Termin-Karte ohnehin einen kleinen Countdown („⏳ Noch 47 Tage · 5 Std. · 12 Min.“) – dafür ist kein Haken nötig. Der Haken bringt die große Kachel auf die Startseite.\n'
       + '• Name, Datum und Uhrzeit kommen aus dem Termin – ändert sich der Termin, ändert sich der Countdown mit.\n'
       + '• Haben mehrere Termine den Haken, zeigt die Startseite den nächsten. Ist er vorbei, kommt automatisch der übernächste dran. Bei wiederkehrenden Terminen zählt immer der nächste.\n'
       + '• Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.\n'

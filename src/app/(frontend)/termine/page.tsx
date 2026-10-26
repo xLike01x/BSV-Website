@@ -5,6 +5,7 @@ import Link from 'next/link'
 import React from 'react'
 
 import { Teilen } from '@/bsv/components/Teilen'
+import { TerminCountdown } from '@/bsv/components/TerminCountdown'
 import { JsonLd } from '@/bsv/components/JsonLd'
 import { absolut } from '@/bsv/seo'
 import { T } from '@/bsv/components/Text'
@@ -26,6 +27,9 @@ const BEREICH: Record<string, [string, string, string]> = {
 
 export default async function TerminSeite() {
   const [termine, user, tx, w] = await Promise.all([getTermine(100), aktuellerBenutzer(), getTexte(), getPlatzhalter()])
+
+  // Für den Countdown in jeder Karte: Server- und Browserzeit stimmen beim ersten Zeichnen überein
+  const jetzt = Date.now()
 
   // Nach Monat gruppieren
   const monate = new Map<string, typeof termine>()
@@ -113,6 +117,7 @@ export default async function TerminSeite() {
                         {uhrzeit(t.beginn)} Uhr{t.ende ? ` – ${uhrzeit(t.ende)} Uhr` : ''}
                         {t.ort ? ` · ${t.ort}` : ''}
                       </p>
+                      <TerminCountdown beginn={t.beginn} ende={t.ende ?? null} jetzt={jetzt} />
                       {t.beschreibung && <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)', whiteSpace: 'pre-line' }}>{t.beschreibung}</p>}
                       {t.anmeldung && (!t.wiederholung || t.wiederholung === 'keine') && (
                         <p style={{ margin: '8px 0 0', fontWeight: 600 }}>
