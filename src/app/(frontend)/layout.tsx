@@ -30,6 +30,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <head>
         <link href="/favicon.png" rel="icon" type="image/png" />
         <link href="/app-symbol-180.png" rel="apple-touch-icon" />
+        {/* Die Website ist bewusst hell. Dunkelmodus-Erweiterungen und Browser mit „Dark Reader“-Technik (z. B. Edge auf dem Handy)
+            färben sie sonst trotz color-scheme um – und verändern dabei die Seite, bevor React sie übernimmt (Hydration-Fehler). */}
+        <meta name="darkreader-lock" />
       </head>
       <body
         className="bsv"

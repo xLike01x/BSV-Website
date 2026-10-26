@@ -1588,6 +1588,15 @@ export const FAQ: Faq[] = [
     bereich: 'animationen',
   },
   {
+    frage: 'Auf meinem Handy erscheint die Website dunkel – ist das ein Fehler?',
+    antwort:
+      'Die Website ist bewusst hell und sagt das jedem Browser. Manche Browser oder Erweiterungen färben Seiten trotzdem dunkel, z. B. Edge mit „Dunkler Modus für Websites“ oder die Erweiterung „Dark Reader“. Für Dark Reader und Browser mit derselben Technik ist die Website gesperrt; andere Umfärbungen kann eine Website nicht verhindern.\n\n'
+      + '• Bleibt sie dunkel: in den Einstellungen des Browsers die Umfärbung für Websites ausschalten oder für diese Seite eine Ausnahme setzen.\n'
+      + '• Ein roter Kasten „1 Issue“ unten links erscheint nur, wenn die Website auf deinem PC im Entwicklungsmodus läuft (BSV-Website-Update.bat). Besucher der echten Website sehen ihn nie.\n\n'
+      + 'Beispiel – Wenn ein Mitglied meldet, dass die Seite „schwarz“ aussieht – dann fragen, welcher Browser es ist, und die Einstellung „Websites dunkel darstellen“ ausschalten lassen.',
+    bereich: 'dashboard',
+  },
+  {
     frage: 'Ich habe Text eingefügt – warum sind die Überschriften nicht fett?',
     antwort:
       'Text aus dem Editor (Notepad), einer .txt-Datei oder einem Chat bringt keine Formatierung mit – alles wird normaler Text.\n\n'
