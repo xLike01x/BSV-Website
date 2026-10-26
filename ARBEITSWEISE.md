@@ -113,6 +113,25 @@ Prüfe nicht nur, ob Schutzmaßnahmen vorhanden sind, sondern ob sie tatsächlic
 - Testdaten und Produktivdaten müssen angemessen getrennt bleiben.
 - Kritische Änderungen an Berechtigungen, Authentifizierung oder Datenzugriffen benötigen besonders sorgfältige Prüfungen.
 
+### Pflichtregeln für Datenzugriff, Schlüssel und externe Inhalte (ergänzt 26.10.2026)
+
+- Jede Supabase-Tabelle hat RLS aktiviert; keine Policy mit `using (true)` auf Tabellen mit Personendaten.
+  Diese Website nutzt kein Supabase, sondern Payload mit PostgreSQL. Dort gilt sinngemäß: Jede Sammlung und jedes Global hat
+  ausdrücklich gesetzte `access`-Regeln. `read: anyone` (oder `() => true`) nur für Inhalte, die ohnehin öffentlich sind
+  (News, Seiten, Termine ohne „nur für Mitglieder“, Teams, Bilder ohne Papierkorb). Personendaten (Benutzer, Anträge, Anfragen,
+  Mitgliedschaften, Formular-Eingänge, Statistik) sind nie öffentlich lesbar; einzelne vertrauliche Felder bekommen eigene
+  Feld-Regeln. `overrideAccess: true` nur in Serverfunktionen, die vorher selbst prüfen, wer fragt.
+- Der service_role-Key kommt niemals in Client-Code oder in Variablen mit `VITE_`/`NEXT_PUBLIC_`.
+  Sinngemäß hier: `PAYLOAD_SECRET`, `ENCRYPTION_KEY`, `PREVIEW_SECRET`, `DATABASE_URL`, SMTP- und Push-Schlüssel stehen nur in der
+  `.env` des Servers, nie im Repository, nie in Logs und nie in einer Variable mit öffentlichem Präfix. Einzige öffentliche Variable
+  ist `NEXT_PUBLIC_SERVER_URL` (enthält nur die Adresse der Website).
+- Keine externen Ressourcen (Fonts, Skripte, iframes) ohne lokale Einbindung oder Einwilligung.
+  Schriften liegen lokal; Karten, FuPa- und FUSSBALL.DE-Widgets laden erst nach einem Klick. Neue externe Quellen nur mit
+  Klick-Einwilligung, Eintrag in der Content-Security-Policy (`next.config.ts`) und Hinweis in der Datenschutzerklärung.
+
+Bei jeder Änderung an Sammlungen, Globals, Umgebungsvariablen oder eingebundenen Inhalten werden diese drei Regeln geprüft
+(Sicherheitstests `pnpm test:sicherheit` plus anonymer Abruf aller Schnittstellen).
+
 Wenn du eine Schwachstelle erkennst, behebe sie nicht durch einen oberflächlichen Workaround. Verstehe die Ursache und korrigiere das zugrunde liegende Problem.
 
 ## 5. Sicherheitsprüfung immer mindestens zweimal
