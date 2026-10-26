@@ -5,19 +5,24 @@ import { berlinTag } from '@/bsv/wiederholung'
 import { ratenGrenze } from '@/hooks/spamSchutz'
 
 /**
- * Tagesrekord der Spielecke – ganz ohne Namen: pro Tag nur Summen (Elfmeter, Tore, Runden) und der höchste
- * „Ball hochhalten“-Wert. Keine IP-Adressen, keine Kennungen; die Ratenbegrenzung läuft nur im Arbeitsspeicher.
+ * Tagesrekord der Spielecke – ganz ohne Namen: pro Tag nur Summen (Elfmeter, Tore, Runden), der höchste
+ * „Ball hochhalten“-Wert und die wenigsten Memory-Züge. Keine IP-Adressen, keine Kennungen; die Ratenbegrenzung läuft nur im Arbeitsspeicher.
  * Einträge älter als 30 Tage löscht die tägliche Aufgabe (spielstatistikAufraeumen).
  */
 export const HOCHHALTEN_MAX = 250
+/** Memory 6 × 6: mindestens 18 Züge (jedes Paar sofort), mehr als 400 ist unrealistisch */
+export const MEMORY_MIN = 18
+export const MEMORY_MAX = 400
 
-export type Tageswerte = { elfmeterSchuesse: number; elfmeterTore: number; hochhaltenSpiele: number; hochhaltenRekord: number }
-const LEER: Tageswerte = { elfmeterSchuesse: 0, elfmeterTore: 0, hochhaltenSpiele: 0, hochhaltenRekord: 0 }
+export type Tageswerte = { elfmeterSchuesse: number; elfmeterTore: number; hochhaltenSpiele: number; hochhaltenRekord: number; memorySpiele: number; memoryBester: number }
+const LEER: Tageswerte = { elfmeterSchuesse: 0, elfmeterTore: 0, hochhaltenSpiele: 0, hochhaltenRekord: 0, memorySpiele: 0, memoryBester: 0 }
 
 async function heute(payload: Payload): Promise<Tageswerte> {
   const r = await payload.find({ collection: 'spielstatistik', where: { datum: { equals: berlinTag(new Date()) } }, limit: 1, depth: 0, overrideAccess: true })
   const d = r.docs[0] as Partial<Tageswerte> | undefined
-  return d ? { elfmeterSchuesse: d.elfmeterSchuesse ?? 0, elfmeterTore: d.elfmeterTore ?? 0, hochhaltenSpiele: d.hochhaltenSpiele ?? 0, hochhaltenRekord: d.hochhaltenRekord ?? 0 } : LEER
+  return d
+    ? { elfmeterSchuesse: d.elfmeterSchuesse ?? 0, elfmeterTore: d.elfmeterTore ?? 0, hochhaltenSpiele: d.hochhaltenSpiele ?? 0, hochhaltenRekord: d.hochhaltenRekord ?? 0, memorySpiele: d.memorySpiele ?? 0, memoryBester: d.memoryBester ?? 0 }
+    : LEER
 }
 
 const antwort = (daten: unknown) => Response.json(daten, { headers: { 'Cache-Control': 'no-store' } })
@@ -37,10 +42,11 @@ const meldenEndpunkt: Endpoint = {
     const wert = Number(b?.wert)
     const elfmeter = b?.spiel === 'elfmeter' && Number.isInteger(wert) && wert >= 0 && wert <= 5
     const hochhalten = b?.spiel === 'hochhalten' && Number.isInteger(wert) && wert >= 0 && wert <= HOCHHALTEN_MAX
-    if (!elfmeter && !hochhalten) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
+    const memory = b?.spiel === 'memory' && Number.isInteger(wert) && wert >= MEMORY_MIN && wert <= MEMORY_MAX
+    if (!elfmeter && !hochhalten && !memory) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
     // Ausgeschaltete Spiele zählen nicht
-    const a = (await req.payload.findGlobal({ slug: 'animationen', depth: 0 }).catch(() => ({}))) as { elfmeter?: boolean | null; hochhalten?: boolean | null }
-    if ((elfmeter && a.elfmeter === false) || (hochhalten && a.hochhalten === false)) return Response.json({ fehler: 'Spiel ist ausgeschaltet.' }, { status: 403 })
+    const a = (await req.payload.findGlobal({ slug: 'animationen', depth: 0 }).catch(() => ({}))) as { elfmeter?: boolean | null; hochhalten?: boolean | null; memory?: boolean | null }
+    if ((elfmeter && a.elfmeter === false) || (hochhalten && a.hochhalten === false) || (memory && a.memory === false)) return Response.json({ fehler: 'Spiel ist ausgeschaltet.' }, { status: 403 })
     const vorher = await heute(req.payload)
     try {
       // Pro Anschluss höchstens 60 Runden in 10 Minuten, alle zusammen 3.000 – darüber wird still nicht gezählt
@@ -52,17 +58,21 @@ const meldenEndpunkt: Endpoint = {
     const db = (req.payload.db as unknown as { drizzle: { execute: (q: unknown) => Promise<unknown> } }).drizzle
     // In einem Schritt hochzählen bzw. Rekord übernehmen – auch bei vielen gleichzeitigen Runden richtig
     await db.execute(sql`
-      INSERT INTO "spielstatistik" ("datum", "elfmeter_schuesse", "elfmeter_tore", "hochhalten_spiele", "hochhalten_rekord", "updated_at", "created_at")
-      VALUES (${tag}, ${elfmeter ? 5 : 0}, ${elfmeter ? wert : 0}, ${hochhalten ? 1 : 0}, ${hochhalten ? wert : 0}, now(), now())
+      INSERT INTO "spielstatistik" ("datum", "elfmeter_schuesse", "elfmeter_tore", "hochhalten_spiele", "hochhalten_rekord", "memory_spiele", "memory_bester", "updated_at", "created_at")
+      VALUES (${tag}, ${elfmeter ? 5 : 0}, ${elfmeter ? wert : 0}, ${hochhalten ? 1 : 0}, ${hochhalten ? wert : 0}, ${memory ? 1 : 0}, ${memory ? wert : null}, now(), now())
       ON CONFLICT ("datum") DO UPDATE SET
         "elfmeter_schuesse" = COALESCE("spielstatistik"."elfmeter_schuesse", 0) + EXCLUDED."elfmeter_schuesse",
         "elfmeter_tore" = COALESCE("spielstatistik"."elfmeter_tore", 0) + EXCLUDED."elfmeter_tore",
         "hochhalten_spiele" = COALESCE("spielstatistik"."hochhalten_spiele", 0) + EXCLUDED."hochhalten_spiele",
         "hochhalten_rekord" = GREATEST(COALESCE("spielstatistik"."hochhalten_rekord", 0), EXCLUDED."hochhalten_rekord"),
+        "memory_spiele" = COALESCE("spielstatistik"."memory_spiele", 0) + EXCLUDED."memory_spiele",
+        -- Memory: weniger Züge = besser; LEAST übergeht NULL (noch kein Wert)
+        "memory_bester" = LEAST("spielstatistik"."memory_bester", EXCLUDED."memory_bester"),
         "updated_at" = now()
     `)
     const danach = await heute(req.payload)
-    return antwort({ ...danach, gezaehlt: true, neuerRekord: hochhalten && wert > 0 && wert > vorher.hochhaltenRekord })
+    const neuerRekord = (hochhalten && wert > 0 && wert > vorher.hochhaltenRekord) || (memory && (vorher.memoryBester === 0 || wert < vorher.memoryBester))
+    return antwort({ ...danach, gezaehlt: true, neuerRekord })
   },
 }
 
@@ -79,6 +89,9 @@ export const Spielstatistik: CollectionConfig = {
     { name: 'elfmeterTore', type: 'number', defaultValue: 0 },
     { name: 'hochhaltenSpiele', type: 'number', defaultValue: 0 },
     { name: 'hochhaltenRekord', type: 'number', defaultValue: 0 },
+    { name: 'memorySpiele', type: 'number', defaultValue: 0 },
+    // Ohne Standardwert: leer = heute noch keine Memory-Runde
+    { name: 'memoryBester', type: 'number' },
   ],
 }
 

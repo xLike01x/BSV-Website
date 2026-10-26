@@ -18,6 +18,7 @@ import * as migration_20261026_120559_termin_zusagen from './20261026_120559_ter
 import * as migration_20261026_134632_animationen from './20261026_134632_animationen';
 import * as migration_20261026_151441_animationen_global from './20261026_151441_animationen_global';
 import * as migration_20261026_153216_spielecke_statistik from './20261026_153216_spielecke_statistik';
+import * as migration_20261026_164436_memory from './20261026_164436_memory';
 
 export const migrations = [
   {
@@ -118,6 +119,11 @@ export const migrations = [
   {
     up: migration_20261026_153216_spielecke_statistik.up,
     down: migration_20261026_153216_spielecke_statistik.down,
-    name: '20261026_153216_spielecke_statistik'
+    name: '20261026_153216_spielecke_statistik',
+  },
+  {
+    up: migration_20261026_164436_memory.up,
+    down: migration_20261026_164436_memory.down,
+    name: '20261026_164436_memory'
   },
 ];

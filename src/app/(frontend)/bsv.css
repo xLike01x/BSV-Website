@@ -769,3 +769,24 @@
 .tagesrekord strong { color: var(--bsv-ink); }
 .hochhalten-rekord { display: block; margin-bottom: 4px; font-weight: 800; color: var(--bsv-coral-dark); font-size: 20px; animation: popin 0.5s var(--bsv-ease) both; }
 @media (max-width: 520px) { .tagesrekord { border-radius: 20px; } }
+
+/* Spielecke: Memory 6 × 6 */
+.spiel.memory { grid-column: 1 / -1; }
+.memory-stand { margin: 0; color: var(--bsv-ink-2); font-size: 15px; }
+.memory-stand strong { color: var(--bsv-green); font-size: 22px; font-weight: 800; }
+.memory-raster { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(5px, 1.3vw, 10px); width: 100%; max-width: 600px; margin: 0 auto; }
+.memory-karte { aspect-ratio: 1; border: 0; padding: 0; background: none; perspective: 600px; cursor: pointer; border-radius: 14px; font: inherit; }
+.memory-karte:disabled { cursor: default; }
+.memory-karte:focus-visible { outline: 3px solid var(--bsv-coral); outline-offset: 2px; }
+.memory-innen { position: relative; display: block; width: 100%; height: 100%; transform-style: preserve-3d; transition: transform 0.45s var(--bsv-ease); border-radius: inherit; }
+.memory-karte.ist-offen .memory-innen { transform: rotateY(180deg); }
+.memory-rueckseite, .memory-vorderseite { position: absolute; inset: 0; border-radius: inherit; backface-visibility: hidden; -webkit-backface-visibility: hidden; display: grid; place-items: center; }
+/* Rückseite: grün-weiße Streifen wie im Wappen */
+.memory-rueckseite { background: repeating-linear-gradient(-45deg, var(--bsv-green) 0 8px, #1f8f52 8px 16px); box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.28), 0 4px 10px rgba(21, 122, 67, 0.18); }
+.memory-karte:not(:disabled):hover .memory-rueckseite { filter: brightness(1.08); }
+.memory-vorderseite { background: #fff; transform: rotateY(180deg); box-shadow: inset 0 0 0 2px var(--bsv-line); }
+.memory-vorderseite svg { width: 64%; height: 64%; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.memory-vorderseite .duenn { stroke-width: 1; opacity: 0.6; }
+.memory-vorderseite .voll, .memory-vorderseite .ball-fleck { fill: currentColor; }
+.memory-vorderseite img { width: 68%; height: auto; }
+.memory-karte.ist-paar .memory-vorderseite { background: var(--bsv-green-tint); box-shadow: inset 0 0 0 3px var(--bsv-green); animation: popin 0.4s var(--bsv-ease); }

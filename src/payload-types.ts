@@ -1818,6 +1818,8 @@ export interface Spielstatistik {
   elfmeterTore?: number | null;
   hochhaltenSpiele?: number | null;
   hochhaltenRekord?: number | null;
+  memorySpiele?: number | null;
+  memoryBester?: number | null;
   updatedAt: string;
   createdAt: string;
 }
@@ -3002,6 +3004,8 @@ export interface SpielstatistikSelect<T extends boolean = true> {
   elfmeterTore?: T;
   hochhaltenSpiele?: T;
   hochhaltenRekord?: T;
+  memorySpiele?: T;
+  memoryBester?: T;
   updatedAt?: T;
   createdAt?: T;
 }
@@ -3656,6 +3660,7 @@ export interface Animationen {
   fehlerseite?: boolean | null;
   elfmeter?: boolean | null;
   hochhalten?: boolean | null;
+  memory?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4479,6 +4484,7 @@ export interface AnimationenSelect<T extends boolean = true> {
   fehlerseite?: T;
   elfmeter?: T;
   hochhalten?: T;
+  memory?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

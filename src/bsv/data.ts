@@ -222,7 +222,7 @@ export const getTeamGalerie = cache(async (angebotId: number, limit = 48) => {
 })
 
 /** Website-Aufbau → Animationen (Schalter für Effekte und Spielecke); fehlt etwas, gilt „an“ */
-export type AnimationenDaten = Partial<Record<'alle' | 'reglerBall' | 'countdown' | 'pulslinie' | 'kreide' | 'fehlerseite' | 'elfmeter' | 'hochhalten', boolean | null>>
+export type AnimationenDaten = Partial<Record<'alle' | 'reglerBall' | 'countdown' | 'pulslinie' | 'kreide' | 'fehlerseite' | 'elfmeter' | 'hochhalten' | 'memory', boolean | null>>
 export const getAnimationen = cache(async (): Promise<AnimationenDaten> => {
   const p = await payload()
   return ((await p.findGlobal({ slug: 'animationen', depth: 0 }).catch(() => null)) ?? {}) as AnimationenDaten

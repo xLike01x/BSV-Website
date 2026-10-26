@@ -1577,9 +1577,9 @@ export const FAQ: Faq[] = [
   {
     frage: 'Was ist die Spielecke – und was wird dabei gespeichert?',
     antwort:
-      'Unter /spielecke gibt es zwei kleine Fußballspiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten) und „Ball hochhalten“ (den fallenden Ball antippen, mit jedem Kontakt wird es schneller). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
-      + '• Tagesrekord ohne Namen: Oben steht „Heute in der Spielecke: ⚽ 214 Elfmeter · 152 Tore · 🤹 Tagesrekord: 27× hochgehalten“. Gespeichert werden dafür nur diese Tageszahlen – keine Namen, keine IP-Adressen, keine Kennungen. Wer den Rekord bricht, sieht „🎉 Neuer Tagesrekord!“. Die Zahlen von mehr als 30 Tagen werden automatisch gelöscht.\n'
-      + '• Der „Bester Wert“ im Spiel gilt nur, solange die Seite offen ist. Unrealistische Werte (mehr als 250× hochgehalten) nimmt die Website nicht an.\n'
+      'Unter /spielecke gibt es drei kleine Spiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten), „Ball hochhalten“ (den fallenden Ball antippen, mit jedem Kontakt wird es schneller) und „Memory“ (6 × 6 Karten, 18 Paare mit BSV-Wappen und Sport-Motiven – ganz ohne Zeitdruck, auch mit der Tastatur). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
+      + '• Tagesrekord ohne Namen: Oben steht „Heute in der Spielecke: ⚽ 214 Elfmeter · 152 Tore · 🤹 Tagesrekord: 27× hochgehalten · 🧠 Memory in 24 Zügen“. Gespeichert werden dafür nur diese Tageszahlen – keine Namen, keine IP-Adressen, keine Kennungen. Wer den Rekord bricht, sieht „🎉 Neuer Tagesrekord!“. Die Zahlen von mehr als 30 Tagen werden automatisch gelöscht.\n'
+      + '• Der „Bester Wert“ im Spiel gilt nur, solange die Seite offen ist. Unrealistische Werte (mehr als 250× hochgehalten, Memory in weniger als 18 Zügen) nimmt die Website nicht an.\n'
       + '• Ein- und ausschalten: Website-Aufbau → Animationen → Spielecke.\n'
       + '• In die Fußzeile kommt die Seite über „Menü & Fußzeile“ → Spalte „Entdecken“ → Eintrag hinzufügen → Adresse /spielecke.\n\n'
       + 'Beispiel – Wenn ihr die Spielecke beim Sommerfest auf einem Tablet zeigen wollt – dann /spielecke öffnen; die Kinder spielen reihum mit „Nochmal“.',
@@ -1595,7 +1595,7 @@ export const FAQ: Faq[] = [
       + '• Kachel „Fitness“ auf der Startseite: Eine Pulslinie zeichnet sich, dann läuft ab und zu ein Lichtpunkt darüber.\n'
       + '• Große Überschriften: Ein grüner Kreidestrich zieht sich darunter, wenn man hinscrollt.\n'
       + '• „Seite nicht gefunden“: Ein Ball fliegt über das Tor – „Daneben!“.\n'
-      + '• Spielecke (/spielecke): „Elfmeterschießen“ und „Ball hochhalten“ – jedes Spiel mit eigenem Haken. Sind beide aus, steht dort „Die Spielecke macht gerade Pause“ und der Hinweis auf der Breitensport-Seite verschwindet.\n\n'
+      + '• Spielecke (/spielecke): „Elfmeterschießen“, „Ball hochhalten“ und „Memory“ – jedes Spiel mit eigenem Haken. Sind alle aus, steht dort „Die Spielecke macht gerade Pause“ und der Hinweis auf der Breitensport-Seite verschwindet.\n\n'
       + 'Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht die Effekte nie. Sie kommen ohne zusätzliche Programme aus und bremsen die Seite nicht. Ändern dürfen das alle, die auch „Texte & Bilder“ ändern dürfen.\n\n'
       + 'Beispiel – Wenn euch der Kreidestrich unter den Überschriften zu verspielt ist – dann nur den Haken „Große Überschriften: Kreidestrich“ rausnehmen und speichern. Alles andere bleibt.',
     bereich: 'animationen',

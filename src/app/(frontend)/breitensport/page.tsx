@@ -16,7 +16,7 @@ export const metadata: Metadata = seite('Breitensport', 'Tanzen, Turnen, Fitness
 
 export default async function BreitensportSeite() {
   const [angebote, start, tx, w, anim] = await Promise.all([getAngebote(), getStartseite(), getTexte(), getPlatzhalter(), getAnimationen()])
-  const spielecke = animationAn(anim, 'elfmeter') || animationAn(anim, 'hochhalten')
+  const spielecke = animationAn(anim, 'elfmeter') || animationAn(anim, 'hochhalten') || animationAn(anim, 'memory')
   const kids = angebote.filter((a) => a.bereich === 'kids')
   const erw = angebote.filter((a) => a.bereich === 'erwachsene')
   const s = start.startseite
@@ -86,7 +86,7 @@ export default async function BreitensportSeite() {
             </span>
             <span style={{ flex: '1 1 260px' }}>
               <strong>Spielecke für BSV Kids</strong>
-              <span>Elfmeterschießen und Ball hochhalten – direkt im Browser.</span>
+              <span>Elfmeterschießen, Ball hochhalten und Memory – direkt im Browser.</span>
             </span>
             <span className="link-more">Jetzt spielen ›</span>
           </Link>
