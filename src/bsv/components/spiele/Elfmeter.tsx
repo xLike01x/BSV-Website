@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
+import { melden } from './melden'
 
 type Ecke = 'links' | 'mitte' | 'rechts'
 const ECKEN: Ecke[] = ['links', 'mitte', 'rechts']
@@ -23,6 +24,7 @@ export function Elfmeter() {
   const [schuss, setSchuss] = useState<{ ziel: Ecke; torwart: Ecke; tor: boolean } | null>(null)
   const [meldung, setMeldung] = useState('')
   const timer = useRef<ReturnType<typeof setTimeout>[]>([])
+  const stand = useRef<boolean[]>([])
   useEffect(() => () => timer.current.forEach(clearTimeout), [])
 
   const fertig = ergebnisse.length >= SCHUESSE && !schuss
@@ -37,12 +39,18 @@ export function Elfmeter() {
     timer.current.push(
       setTimeout(() => setMeldung(tor ? 'Tor! ⚽' : 'Gehalten! 🧤'), 650),
       setTimeout(() => {
-        setErgebnisse((e) => [...e, tor])
+        // Nicht im setState-Updater melden: React ruft Updater in der Entwicklung doppelt auf
+        const neu = [...stand.current, tor]
+        stand.current = neu
+        setErgebnisse(neu)
         setSchuss(null)
+        // Runde vorbei: Ergebnis (nur die Zahl der Tore) zum Tagesrekord melden
+        if (neu.length === SCHUESSE) void melden('elfmeter', neu.filter(Boolean).length)
       }, 1700),
     )
   }
   const nochmal = () => {
+    stand.current = []
     setErgebnisse([])
     setMeldung('')
   }

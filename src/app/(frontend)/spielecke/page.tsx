@@ -4,6 +4,7 @@ import React from 'react'
 
 import { Elfmeter } from '@/bsv/components/spiele/Elfmeter'
 import { Hochhalten } from '@/bsv/components/spiele/Hochhalten'
+import { Tagesrekord } from '@/bsv/components/spiele/Tagesrekord'
 import { animationAn, getAnimationen } from '@/bsv/data'
 import { seite } from '@/bsv/seo'
 
@@ -27,6 +28,7 @@ export default async function Spielecke() {
         </p>
       </section>
       <section className="sec-warm" style={{ padding: '0 22px 110px' }}>
+        {(elfmeter || hochhalten) && <Tagesrekord elfmeter={elfmeter} hochhalten={hochhalten} />}
         {elfmeter || hochhalten ? (
           <div className="spielecke">
             {elfmeter && <Elfmeter />}
@@ -38,7 +40,7 @@ export default async function Spielecke() {
           </p>
         )}
         <p className="center muted" style={{ margin: '28px auto 0', maxWidth: 560, fontSize: 14 }}>
-          Hier wird nichts gespeichert – keine Namen, keine Bestenliste. Deine Punkte gelten nur, solange die Seite offen ist.
+          Es werden keine Namen gespeichert. Für den Tagesrekord zählt die Website nur, wie viele Elfmeter und Tore es heute gab und wie oft der Ball am längsten hochgehalten wurde.
         </p>
       </section>
     </>

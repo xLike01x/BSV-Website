@@ -3,6 +3,7 @@ import type { Payload } from 'payload'
 import { papierkorbAufraeumen } from './papierkorb'
 import { passUnterlagenAufraeumen } from '@/passantraege/aufraeumen'
 import { rueckmeldungenAufraeumen } from '@/termine/rueckmeldungenAufraeumen'
+import { spielstatistikAufraeumen } from '@/spielecke/Spielstatistik'
 import { datenschutzAutomatisch } from '@/datenschutz/aufraeumen'
 import { statistikAufraeumen } from '@/statistik/aufraeumen'
 import { sicherungErstellen, type Pool } from '@/sicherung/kern'
@@ -61,6 +62,9 @@ export async function einmalAufraeumen(payload: Payload) {
     )
   await passUnterlagenAufraeumen(payload).catch((e) =>
     payload.logger.warn({ err: e }, 'Pass-Unterlagen aufräumen fehlgeschlagen'),
+  )
+  await spielstatistikAufraeumen(payload).catch((e) =>
+    payload.logger.warn({ err: e }, 'Spielecke-Statistik aufräumen fehlgeschlagen'),
   )
   await rueckmeldungenAufraeumen(payload).catch((e) =>
     payload.logger.warn({ err: e }, 'Zu-/Absagen aufräumen fehlgeschlagen'),

@@ -39,6 +39,7 @@ import { startseiteUmziehen } from './Startseite/umziehen'
 import { texteBilderUmziehen } from './Texte/bilderUmziehen'
 import { Texte } from './Texte/config'
 import { Animationen } from './Animationen/config'
+import { Spielstatistik } from './spielecke/Spielstatistik'
 import { Menue } from './Menue/config'
 import { HilfeFeedback, HilfeInhalte } from './Hilfe/config'
 import { de } from '@payloadcms/translations/languages/de'
@@ -240,6 +241,8 @@ const konfiguration = buildConfig({
     HilfeFeedback,
     // Besucherstatistik (ohne Cookies) – nur intern, Auswertung unter /admin/statistik
     Statistik,
+    // Spielecke: nur Tagessummen ohne Namen
+    Spielstatistik,
   ].map((c) =>
     PAPIERKORB.includes(c.slug)
       ? (() => {

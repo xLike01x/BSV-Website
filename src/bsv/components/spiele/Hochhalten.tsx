@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
+import { melden } from './melden'
 
 const GROESSE = 64
 const urteil = (n: number) => (n >= 30 ? 'Profi-Niveau! 🏆' : n >= 15 ? 'Richtig stark! ⭐' : n >= 5 ? 'Gut gemacht!' : 'Schaffst du mehr?')
@@ -18,6 +19,7 @@ export function Hochhalten() {
   const [bester, setBester] = useState(0)
   const [phase, setPhase] = useState<'start' | 'spiel' | 'aus'>('start')
   const [ruhigGewuenscht, setRuhigGewuenscht] = useState(false)
+  const [rekord, setRekord] = useState(false)
 
   useEffect(() => {
     setRuhigGewuenscht(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -84,6 +86,8 @@ export function Hochhalten() {
         zeichnen()
         setPhase('aus')
         setBester((b) => Math.max(b, z.kontakte))
+        // Ergebnis zum Tagesrekord melden (nur die Zahl, ohne Namen)
+        void melden('hochhalten', Math.min(z.kontakte, 250)).then((d) => setRekord(Boolean(d?.neuerRekord)))
         return
       }
       zeichnen()
@@ -108,6 +112,7 @@ export function Hochhalten() {
   }
 
   const starten = () => {
+    setRekord(false)
     zustand.current.kontakte = 0
     setKontakte(0)
     hinstellen()
@@ -162,6 +167,7 @@ export function Hochhalten() {
           <div className="hochhalten-overlay">
             {phase === 'aus' && (
               <p className="spiel-ende-text" role="status">
+                {rekord && <span className="hochhalten-rekord">🎉 Neuer Tagesrekord!</span>}
                 <strong>{kontakte}× hochgehalten.</strong> {urteil(kontakte)}
                 {bester > 0 && <span className="muted"> Bester Wert: {bester}</span>}
               </p>

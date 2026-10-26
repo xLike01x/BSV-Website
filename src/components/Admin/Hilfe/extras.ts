@@ -1563,10 +1563,11 @@ export const FAQ: Faq[] = [
     bereich: 'forms',
   },
   {
-    frage: 'Was ist die Spielecke – und wird dabei etwas gespeichert?',
+    frage: 'Was ist die Spielecke – und was wird dabei gespeichert?',
     antwort:
       'Unter /spielecke gibt es zwei kleine Fußballspiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten) und „Ball hochhalten“ (den fallenden Ball antippen, mit jedem Kontakt wird es schneller). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
-      + '• Gespeichert wird nichts – keine Namen, keine Punkte, keine Bestenliste. Der „Bester Wert“ gilt nur, solange die Seite offen ist.\n'
+      + '• Tagesrekord ohne Namen: Oben steht „Heute in der Spielecke: ⚽ 214 Elfmeter · 152 Tore · 🤹 Tagesrekord: 27× hochgehalten“. Gespeichert werden dafür nur diese Tageszahlen – keine Namen, keine IP-Adressen, keine Kennungen. Wer den Rekord bricht, sieht „🎉 Neuer Tagesrekord!“. Die Zahlen von mehr als 30 Tagen werden automatisch gelöscht.\n'
+      + '• Der „Bester Wert“ im Spiel gilt nur, solange die Seite offen ist. Unrealistische Werte (mehr als 250× hochgehalten) nimmt die Website nicht an.\n'
       + '• Ein- und ausschalten: Website-Aufbau → Animationen → Spielecke.\n'
       + '• In die Fußzeile kommt die Seite über „Menü & Fußzeile“ → Spalte „Entdecken“ → Eintrag hinzufügen → Adresse /spielecke.\n\n'
       + 'Beispiel – Wenn ihr die Spielecke beim Sommerfest auf einem Tablet zeigen wollt – dann /spielecke öffnen; die Kinder spielen reihum mit „Nochmal“.',

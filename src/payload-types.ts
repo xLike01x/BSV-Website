@@ -89,6 +89,7 @@ export interface Config {
     dokumente: Dokumente;
     'hilfe-feedback': HilfeFeedback;
     statistik: Statistik;
+    spielstatistik: Spielstatistik;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -123,6 +124,7 @@ export interface Config {
     dokumente: DokumenteSelect<false> | DokumenteSelect<true>;
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
     statistik: StatistikSelect<false> | StatistikSelect<true>;
+    spielstatistik: SpielstatistikSelect<false> | SpielstatistikSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1807,6 +1809,20 @@ export interface Statistik {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spielstatistik".
+ */
+export interface Spielstatistik {
+  id: number;
+  datum: string;
+  elfmeterSchuesse?: number | null;
+  elfmeterTore?: number | null;
+  hochhaltenSpiele?: number | null;
+  hochhaltenRekord?: number | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
@@ -2085,6 +2101,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'statistik';
         value: number | Statistik;
+      } | null)
+    | ({
+        relationTo: 'spielstatistik';
+        value: number | Spielstatistik;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -2969,6 +2989,19 @@ export interface StatistikSelect<T extends boolean = true> {
   schritt?: T;
   suchbegriff?: T;
   treffer?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spielstatistik_select".
+ */
+export interface SpielstatistikSelect<T extends boolean = true> {
+  datum?: T;
+  elfmeterSchuesse?: T;
+  elfmeterTore?: T;
+  hochhaltenSpiele?: T;
+  hochhaltenRekord?: T;
   updatedAt?: T;
   createdAt?: T;
 }
