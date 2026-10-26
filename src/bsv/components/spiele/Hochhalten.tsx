@@ -2,6 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
+import { darfKicken } from './hochhaltenRegel'
 import { melden } from './melden'
 import { RanglisteEintragen } from './RanglisteEintragen'
 
@@ -10,6 +11,8 @@ const urteil = (n: number) => (n >= 30 ? 'Profi-Niveau! 🏆' : n >= 15 ? 'Richt
 
 /**
  * Ball hochhalten: den fallenden Ball antippen, bevor er den Boden berührt. Mit jedem Kontakt wird es etwas schneller.
+ * Ein Kontakt zählt nur, wenn der Ball herunterfällt und im unteren Teil des Feldes ist (siehe hochhaltenRegel.ts) –
+ * sonst ließe er sich durch schnelles Klicken oben festhalten.
  * Bedienung per Tippen/Klicken auf den Ball oder Leertaste. Nichts wird gespeichert („Bester Wert“ gilt nur, solange die Seite offen ist).
  */
 export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
@@ -135,7 +138,7 @@ export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
     // Großzügige Trefferfläche (anderthalb Ballgrößen) – auch für kleine Finger
     const dx = px - (z.x + GROESSE / 2)
     const dy = py - (z.y + GROESSE / 2)
-    if (Math.hypot(dx, dy) <= GROESSE * 1.5) kick(px)
+    if (Math.hypot(dx, dy) <= GROESSE * 1.5 && darfKicken({ y: z.y, vy: z.vy, groesse: GROESSE, feldHoehe: f.clientHeight })) kick(px)
   }
   const taste = (e: React.KeyboardEvent) => {
     if (e.key !== ' ' && e.key !== 'Enter') return
@@ -143,8 +146,8 @@ export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
     if (phase !== 'spiel') return starten()
     const f = feld.current
     const z = zustand.current
-    // Tastatur: nur, wenn der Ball fällt und in der unteren Hälfte ist
-    if (f && z.vy > 0 && z.y > f.clientHeight * 0.4) kick()
+    // Gleiche Regel wie beim Tippen: nur, wenn der Ball fällt und im unteren Teil ist
+    if (f && darfKicken({ y: z.y, vy: z.vy, groesse: GROESSE, feldHoehe: f.clientHeight })) kick()
   }
 
   return (
@@ -185,7 +188,7 @@ export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
         )}
         <span className="hochhalten-rasen" aria-hidden="true" />
       </div>
-      <p className="spiel-hilfe">Tippe auf den Ball, bevor er den Boden berührt – oder drück die Leertaste, wenn er unten ist.</p>
+      <p className="spiel-hilfe">Tippe auf den Ball, wenn er herunterkommt – bevor er den Boden berührt. Oder drück die Leertaste.</p>
     </div>
   )
 }

@@ -1577,7 +1577,7 @@ export const FAQ: Faq[] = [
   {
     frage: 'Was ist die Spielecke – und was wird dabei gespeichert?',
     antwort:
-      'Unter /spielecke gibt es drei kleine Spiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten), „Ball hochhalten“ (den fallenden Ball antippen, mit jedem Kontakt wird es schneller) und „Memory“ (6 × 6 Karten, 18 Paare mit BSV-Wappen und Sport-Motiven – ganz ohne Zeitdruck, auch mit der Tastatur). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
+      'Unter /spielecke gibt es drei kleine Spiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten), „Ball hochhalten“ (den herunterfallenden Ball antippen, mit jedem Kontakt wird es schneller – schnelles Dauerklicken zählt nicht) und „Memory“ (6 × 6 Karten, 18 Paare mit BSV-Wappen und Sport-Motiven – ganz ohne Zeitdruck, auch mit der Tastatur). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
       + '• Tagesrekord ohne Namen: Oben steht „Heute in der Spielecke: ⚽ 214 Elfmeter · 152 Tore · 🤹 Tagesrekord: 27× hochgehalten · 🧠 Memory in 24 Zügen“. Gespeichert werden dafür nur diese Tageszahlen – keine Namen, keine IP-Adressen, keine Kennungen. Wer den Rekord bricht, sieht „🎉 Neuer Tagesrekord!“. Die Zahlen von mehr als 30 Tagen werden automatisch gelöscht.\n'
       + '• Der „Bester Wert“ im Spiel gilt nur, solange die Seite offen ist. Unrealistische Werte (mehr als 250× hochgehalten, Memory in weniger als 18 Zügen) nimmt die Website nicht an.\n'
       + '• Elfmeterschießen hat zwei Spielarten: „5 Schüsse“ und „Bis zum Fehlschuss“ – bei Letzterem zählt die Torserie für die Rangliste.\n'
