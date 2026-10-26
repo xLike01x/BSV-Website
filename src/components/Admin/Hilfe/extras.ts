@@ -1588,6 +1588,16 @@ export const FAQ: Faq[] = [
     bereich: 'animationen',
   },
   {
+    frage: 'Ich habe Text eingefügt – warum sind die Überschriften nicht fett?',
+    antwort:
+      'Text aus dem Editor (Notepad), einer .txt-Datei oder einem Chat bringt keine Formatierung mit – alles wird normaler Text.\n\n'
+      + '• Einzeln nachformatieren: in die Zeile klicken → oben in der Leiste „Normaler Text“ aufklappen → „Überschrift 2“ wählen.\n'
+      + '• Schneller bei langen Texten: aus einer formatierten Quelle kopieren (Word, eine Webseite) – Überschriften, Fett und Listen bleiben dann erhalten.\n'
+      + '• Ganz ersetzen: im Baustein in den Text klicken, Strg+A (alles markieren), dann Strg+V.\n\n'
+      + 'Beispiel – Wenn du eine neue Datenschutzerklärung einfügen willst – dann die Fassung als Webseite öffnen, „Text kopieren“ klicken, im Baustein Strg+A und Strg+V, anschließend „Veröffentlichen“.',
+    bereich: 'pages',
+  },
+  {
     frage: 'Wie prüfe und lösche ich Einträge in der Spielecke-Rangliste?',
     antwort:
       'Links unter Website-Aufbau → „Spielecke-Rangliste“. Dort stehen alle Einträge mit Spitzname, Spiel, Ergebnis und Datum – die neuesten oben.\n\n'
