@@ -64,7 +64,15 @@ export function Countdown({ kicker, titel, text, linkText, href, beginn, ende, w
           </Link>
         </div>
         {laeuft ? (
-          <p className="countdown-heute">Heute ist es so weit!</p>
+          <>
+            <p className="countdown-heute">Heute ist es so weit!</p>
+            {/* Konfetti in Vereinsfarben, einmal beim Laden (Texte & Bilder → Animationen) */}
+            <span className="countdown-konfetti" aria-hidden="true">
+              {Array.from({ length: 26 }, (_, i) => (
+                <i key={i} style={{ '--x': `${(i * 37) % 100}%`, '--v': `${(i % 8) * 0.12}s`, '--r': `${(i * 53) % 360}deg` } as React.CSSProperties} />
+              ))}
+            </span>
+          </>
         ) : (
           <div className="countdown-zahlen" role="img" aria-label={ansage}>
             <span className="countdown-noch" aria-hidden="true">
@@ -72,7 +80,8 @@ export function Countdown({ kicker, titel, text, linkText, href, beginn, ende, w
             </span>
             {felder.map(([n, eins, mehr]) => (
               <span key={mehr} className="countdown-feld" aria-hidden="true">
-                <strong>{n}</strong>
+                {/* key = Zahl: ändert sie sich, wird sie neu gezeichnet und klappt um wie eine Anzeigetafel */}
+                <strong key={n}>{n}</strong>
                 <small>{n === 1 ? eins : mehr}</small>
               </span>
             ))}

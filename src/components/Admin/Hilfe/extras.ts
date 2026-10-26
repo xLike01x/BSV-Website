@@ -1563,6 +1563,20 @@ export const FAQ: Faq[] = [
     bereich: 'forms',
   },
   {
+    frage: 'Welche Animationen gibt es auf der Website – und wie schalte ich sie ab?',
+    antwort:
+      'Website-Aufbau → Texte & Bilder → Reiter „Animationen“. Dort lässt sich jeder Effekt einzeln abschalten – oder mit „Animationen auf der Website“ alle auf einmal (dann bewegt sich nichts mehr, auch kein Einblenden, Laufband oder Spielfeld; die Inhalte bleiben gleich). Speichern, fertig.\n\n'
+      + 'Die Effekte im Einzelnen:\n'
+      + '• Altersregler: Ein kleiner Strich-Fußball rollt beim Schieben mit, die Zahl hüpft kurz.\n'
+      + '• Countdown: Die Ziffern klappen beim Minutenwechsel um wie eine Anzeigetafel; am Tag selbst fällt kurz Konfetti in Vereinsfarben.\n'
+      + '• Kachel „Fitness“ auf der Startseite: Eine Pulslinie zeichnet sich, dann läuft ab und zu ein Lichtpunkt darüber.\n'
+      + '• Große Überschriften: Ein grüner Kreidestrich zieht sich darunter, wenn man hinscrollt.\n'
+      + '• „Seite nicht gefunden“: Ein Ball fliegt über das Tor – „Daneben!“.\n\n'
+      + 'Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht diese Effekte nie. Sie kommen ohne zusätzliche Programme aus und bremsen die Seite nicht.\n\n'
+      + 'Beispiel – Wenn euch der Kreidestrich unter den Überschriften zu verspielt ist – dann nur den Haken „Große Überschriften: Kreidestrich“ rausnehmen und speichern. Alles andere bleibt.',
+    bereich: 'texte',
+  },
+  {
     frage: 'Muss die Web-App aktualisiert werden?',
     antwort:
       'Nein. Die Web-App zeigt immer die aktuelle Website – jede Änderung (News, Termine, Texte) und jedes Update der Website ist beim nächsten Öffnen sofort da. Es gibt keinen App-Store und nichts zu installieren. Auf dem Gerät liegt nur die Hinweisseite für „keine Verbindung“; alles andere kommt immer frisch vom Server.\n\n'

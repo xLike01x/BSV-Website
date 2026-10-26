@@ -3599,6 +3599,17 @@ export interface Texte {
   probetraining?: {
     titel?: string | null;
   };
+  animationen?: {
+    /**
+     * Haken raus = die ganze Website ohne Bewegung (auch Einblenden, Laufband, Handy, Spielfeld). Inhalte bleiben gleich.
+     */
+    alle?: boolean | null;
+    reglerBall?: boolean | null;
+    countdown?: boolean | null;
+    pulslinie?: boolean | null;
+    kreide?: boolean | null;
+    fehlerseite?: boolean | null;
+  };
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4404,6 +4415,16 @@ export interface TexteSelect<T extends boolean = true> {
     | T
     | {
         titel?: T;
+      };
+  animationen?:
+    | T
+    | {
+        alle?: T;
+        reglerBall?: T;
+        countdown?: T;
+        pulslinie?: T;
+        kreide?: T;
+        fehlerseite?: T;
       };
   updatedAt?: T;
   createdAt?: T;

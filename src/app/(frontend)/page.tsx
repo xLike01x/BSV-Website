@@ -12,6 +12,7 @@ import { OfferFinder, type FinderItem } from '@/bsv/components/OfferFinder'
 import { T } from '@/bsv/components/Text'
 import { WebApp } from '@/bsv/components/WebApp'
 import { Countdown } from '@/bsv/components/Countdown'
+import { Pulslinie } from '@/bsv/components/home/Pulslinie'
 import { getAngebote, getCountdown, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, datum, farbe, uhrzeit } from '@/bsv/lib'
 
@@ -217,6 +218,7 @@ export default async function Startseite() {
                   <T text={tx.kachelFitness?.titel} werte={w} />
                 </h3>
                 <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)' }}><T text={tx.kachelFitness?.text} werte={w} /></p>
+                <Pulslinie />
               </div>
               <div className="tile-media" style={{ minHeight: 200 }}>
                 <Bild media={s?.bildFitness} size="medium" sizes="(max-width: 760px) 100vw, 400px" />

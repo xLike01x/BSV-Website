@@ -1,4 +1,5 @@
 'use client'
+import { ruhig } from '@/bsv/bewegung'
 
 import React, { useEffect, useRef, useState } from 'react'
 
@@ -10,7 +11,7 @@ export function CountUp({ bis, von = 0, tausender = true }: { bis: number; von?:
   useEffect(() => {
     const el = ref.current
     if (!el) return
-    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (ruhig()) return
     setWert(von)
     let raf = 0
     const io = new IntersectionObserver(

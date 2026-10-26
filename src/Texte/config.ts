@@ -250,6 +250,32 @@ export const Texte: GlobalConfig = {
             ]),
           ],
         },
+        {
+          label: 'Animationen',
+          name: 'animationen',
+          description:
+            'Bewegte Effekte auf der Website. Alle sind dezent und starten erst, wenn man hinscrollt. Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht sie nie.',
+          fields: [
+            {
+              name: 'alle',
+              label: 'Animationen auf der Website',
+              type: 'checkbox',
+              defaultValue: true,
+              admin: { description: 'Haken raus = die ganze Website ohne Bewegung (auch Einblenden, Laufband, Handy, Spielfeld). Inhalte bleiben gleich.' },
+            },
+            {
+              type: 'row',
+              admin: { condition: (d) => d?.animationen?.alle !== false },
+              fields: [
+                { name: 'reglerBall', label: 'Altersregler: Ball rollt mit', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+                { name: 'countdown', label: 'Countdown: Ziffern klappen um, Konfetti am Tag selbst', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+                { name: 'pulslinie', label: 'Startseite, Kachel Fitness: Pulslinie', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+                { name: 'kreide', label: 'Große Überschriften: Kreidestrich', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+                { name: 'fehlerseite', label: '„Seite nicht gefunden“: Ball geht daneben', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
+              ],
+            },
+          ],
+        },
       ],
     },
   ],

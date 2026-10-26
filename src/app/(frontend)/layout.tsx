@@ -17,9 +17,13 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import './bsv.css'
 import { getServerSideURL } from '@/utilities/getURL'
+import { getTexte } from '@/bsv/data'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
+  // Animationen (Texte & Bilder → Animationen): ausgeschaltete Effekte als data-Attribute am <body>, das CSS richtet sich danach
+  const a = ((await getTexte().catch(() => null)) as { animationen?: Record<string, boolean | null | undefined> } | null)?.animationen ?? {}
+  const aus = (k: string) => (a[k] === false ? 'aus' : undefined)
 
   return (
     <html className={cn(GeistSans.variable)} lang="de" data-theme="light" suppressHydrationWarning>
@@ -27,7 +31,16 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <link href="/favicon.png" rel="icon" type="image/png" />
         <link href="/app-symbol-180.png" rel="apple-touch-icon" />
       </head>
-      <body className="bsv" suppressHydrationWarning>
+      <body
+        className="bsv"
+        data-anim={aus('alle')}
+        data-anim-ball={aus('reglerBall')}
+        data-anim-countdown={aus('countdown')}
+        data-anim-puls={aus('pulslinie')}
+        data-anim-kreide={aus('kreide')}
+        data-anim-fehlerseite={aus('fehlerseite')}
+        suppressHydrationWarning
+      >
         <Providers>
           {/* Besucherstatistik ohne Cookies (siehe /admin/statistik) */}
           <StatistikZaehler />

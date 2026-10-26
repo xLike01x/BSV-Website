@@ -1,4 +1,5 @@
 'use client'
+import { ruhig } from '@/bsv/bewegung'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 /**
@@ -74,8 +75,7 @@ export function Karussell({ children, label = 'Beiträge', automatisch = 0 }: { 
     const el = leiste.current
     if (!el) return
     const ziel = Math.max(0, Math.min(i, stellen.length - 1))
-    const ruhig = window.matchMedia('(prefers-reduced-motion: reduce)').matches
-    el.scrollTo({ left: stellen[ziel], behavior: ruhig ? 'auto' : 'smooth' })
+    el.scrollTo({ left: stellen[ziel], behavior: ruhig() ? 'auto' : 'smooth' })
     setAktiv(ziel)
   }
 
@@ -89,7 +89,7 @@ export function Karussell({ children, label = 'Beiträge', automatisch = 0 }: { 
 
   // Automatisch weiter
   useEffect(() => {
-    if (!automatisch || !mehrere || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return
+    if (!automatisch || !mehrere || ruhig()) return
     setLaeuft(true)
     const el = huelle.current
     const io = new IntersectionObserver(([e]) => (pause.current.unsichtbar = !e?.isIntersecting), { threshold: 0.4 })
