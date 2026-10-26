@@ -252,6 +252,18 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
     {
+      id: 'aufklapp-verein',
+      titel: 'Einen Link ins Aufklappmenü „Verein“ setzen (z. B. „Spielecke“)',
+      schritte: [
+        'Links auf „Menü & Fußzeile“ klicken und oben den Reiter „Aufklappmenü ‚Verein‘“ wählen.',
+        'Die linke Spalte („Über uns“) oder die rechte Spalte („Mehr“) aufklappen und unten auf „Eintrag hinzufügen“ klicken.',
+        '„Text im Menü“ ausfüllen, z. B. „Spielecke“.',
+        'Bei „Was soll der Eintrag tun?“ wählen: „Seite aus ‚Seiten‘ öffnen“ für selbst angelegte Seiten – oder „Adresse öffnen“ für feste Seiten der Website wie /spielecke, /termine oder /trainingszeiten (die stehen nicht in der Liste „Seiten“).',
+        'Bei „Adresse“ z. B. /spielecke eintragen (mit Schrägstrich, ohne localhost oder www).',
+        'Mit dem Griff links (⋮⋮) an die gewünschte Stelle ziehen und oben rechts „Speichern“. Auf der Website mit der Maus über „Verein“ fahren und prüfen.',
+      ],
+    },
+    {
       id: 'fusszeile',
       titel: 'Links in der Fußzeile ändern',
       schritte: [
