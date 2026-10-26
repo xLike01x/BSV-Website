@@ -113,7 +113,8 @@
       "unrs-resolver"
     ],
     "overrides": {
-      "dompurify": ">=3.4.16"
+      "dompurify": ">=3.4.16",
+      "happy-dom": ">=21.0.4"
     },
     "auditConfig": {
       "ignoreGhsas": [
