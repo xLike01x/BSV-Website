@@ -6,6 +6,8 @@ import { Elfmeter } from '@/bsv/components/spiele/Elfmeter'
 import { Hochhalten } from '@/bsv/components/spiele/Hochhalten'
 import { Memory } from '@/bsv/components/spiele/Memory'
 import { Tagesrekord } from '@/bsv/components/spiele/Tagesrekord'
+import { Rangliste } from '@/bsv/components/spiele/Rangliste'
+import type { RanglistenSpiel } from '@/bsv/components/spiele/RanglisteEintragen'
 import { animationAn, getAnimationen } from '@/bsv/data'
 import { seite } from '@/bsv/seo'
 
@@ -19,6 +21,8 @@ export default async function Spielecke() {
   const hochhalten = animationAn(a, 'hochhalten')
   const memory = animationAn(a, 'memory')
   const eins = elfmeter || hochhalten || memory
+  const rangliste = animationAn(a, 'rangliste')
+  const ranglistenSpiele: RanglistenSpiel[] = [...(hochhalten ? (['hochhalten'] as const) : []), ...(memory ? (['memory'] as const) : []), ...(elfmeter ? (['elfmeterSerie'] as const) : [])]
   return (
     <>
       <section className="center sec-warm" style={{ padding: '100px 22px 56px' }}>
@@ -34,9 +38,10 @@ export default async function Spielecke() {
         {eins && <Tagesrekord elfmeter={elfmeter} hochhalten={hochhalten} memory={memory} />}
         {eins ? (
           <div className="spielecke">
-            {elfmeter && <Elfmeter />}
-            {hochhalten && <Hochhalten />}
-            {memory && <Memory />}
+            {elfmeter && <Elfmeter rangliste={rangliste} />}
+            {hochhalten && <Hochhalten rangliste={rangliste} />}
+            {memory && <Memory rangliste={rangliste} />}
+            {rangliste && ranglistenSpiele.length > 0 && <Rangliste spiele={ranglistenSpiele} />}
           </div>
         ) : (
           <p className="center muted" style={{ margin: 0 }}>
@@ -44,7 +49,7 @@ export default async function Spielecke() {
           </p>
         )}
         <p className="center muted" style={{ margin: '28px auto 0', maxWidth: 560, fontSize: 14 }}>
-          Es werden keine Namen gespeichert. Für den Tagesrekord zählt die Website nur, wie viele Elfmeter und Tore es heute gab, wie oft der Ball am längsten hochgehalten wurde und wie wenige Züge ein Memory brauchte.
+          Für den Tagesrekord zählt die Website nur Zahlen. In die Rangliste kommt nur, wer sich mit einem Spitznamen einträgt – bitte nicht den echten Namen. Gespeichert werden Spitzname, Ergebnis und Datum; nach 30 Tagen wird alles gelöscht, außer den 10 besten aller Zeiten. Ein Eintrag soll weg? Schreib uns über das Kontaktformular.
         </p>
       </section>
     </>

@@ -32,4 +32,37 @@ export default async function spielecke(d) {
   }
   const [zeile] = await d.q(`select count(*)::int as n from information_schema.columns where table_name = 'spielstatistik' and column_name ~ '(ip|name|kennung|user)'`)
   pruefe('Keine Spalten für IP, Namen oder Kennungen', zeile?.n === 0, zeile)
+
+  // ── Rangliste mit Spitznamen ──
+  const eintragen = (body) => api(null, 'POST', '/api/spielergebnisse/eintragen', body, ip())
+  const NAME = 'SichTest'
+  try {
+    const ok1 = await eintragen({ spiel: 'hochhalten', wert: 7, spitzname: NAME })
+    pruefe('Rangliste: gültiger Eintrag angenommen', ok1.s === 200 && ok1.j?.ok === true, ok1.j)
+    for (const [body, name] of [
+      [{ spiel: 'hochhalten', wert: 7, spitzname: 'Arschloch' }, 'Schimpfwort'],
+      [{ spiel: 'hochhalten', wert: 7, spitzname: 'F 1 c k' }, 'verschleiertes Schimpfwort'],
+      [{ spiel: 'hochhalten', wert: 7, spitzname: '<img src=x>' }, 'HTML'],
+      [{ spiel: 'hochhalten', wert: 7, spitzname: 'www-test' }, 'Internetadresse'],
+      [{ spiel: 'hochhalten', wert: 7, spitzname: '0171 2345678' }, 'Telefonnummer'],
+      [{ spiel: 'hochhalten', wert: 7, spitzname: 'x'.repeat(40) }, 'zu langer Name'],
+      [{ spiel: 'hochhalten', wert: 9999, spitzname: 'Max' }, 'unrealistischer Wert'],
+      [{ spiel: 'memory', wert: 5, spitzname: 'Max' }, 'Memory unmöglich schnell'],
+    ]) pruefe(`Rangliste abgelehnt: ${name}`, (await eintragen(body)).s === 400)
+    const liste = await api(null, 'GET', '/api/spielergebnisse/rangliste?spiel=hochhalten&zeitraum=immer')
+    pruefe('Rangliste öffentlich: nur Platz, Spitzname, Wert, Datum', liste.s === 200 && (liste.j?.eintraege ?? []).every((e) => Object.keys(e).sort().join() === 'datum,platz,spitzname,wert'), liste.j?.eintraege?.[0])
+    pruefe('Rangliste: Einträge nicht direkt lesbar ohne Anmeldung', (await api(null, 'GET', '/api/spielergebnisse')).s === 403)
+    pruefe('Rangliste: direktes Anlegen gesperrt (auch für Admin)', (await api(admin, 'POST', '/api/spielergebnisse', { spiel: 'hochhalten', wert: 250, spitzname: 'Hacker' })).s === 403)
+    const [eintrag] = await d.q(`select id from spielergebnisse where spitzname = $1 limit 1`, [NAME])
+    const trainer = await login('trainer-1-mannschaft@bsv.test')
+    pruefe('Rangliste: Trainer sieht die Einträge in der Verwaltung nicht', [403].includes((await api(trainer, 'GET', '/api/spielergebnisse')).s) || ((await api(trainer, 'GET', '/api/spielergebnisse')).j?.docs ?? []).length === 0)
+    pruefe('Rangliste: Trainer kann nicht löschen', [403, 404].includes((await api(trainer, 'DELETE', `/api/spielergebnisse/${eintrag?.id}`)).s))
+    const red = await login('redaktion@bsv.test')
+    pruefe('Rangliste: Redaktion darf Spitznamen nicht umschreiben', (await api(red, 'PATCH', `/api/spielergebnisse/${eintrag?.id}`, { spitzname: 'Anders', wert: 250 })).j?.doc?.spitzname !== 'Anders')
+    pruefe('Rangliste: Redaktion kann löschen', (await api(red, 'DELETE', `/api/spielergebnisse/${eintrag?.id}`)).s === 200)
+    const [spalten] = await d.q(`select count(*)::int as n from information_schema.columns where table_name = 'spielergebnisse' and column_name ~ '(ip|kennung|user|konto|email)'`)
+    pruefe('Rangliste: keine Spalten für IP, Konto oder E-Mail', spalten?.n === 0, spalten)
+  } finally {
+    await d.q(`delete from spielergebnisse where spitzname = $1`, [NAME])
+  }
 }

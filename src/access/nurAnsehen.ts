@@ -39,6 +39,8 @@ const BEREICH_HAKEN: Record<string, LeseHaken> = {
   profilbilder: 'benutzer',
   // Namen und Bemerkungen der Mitglieder bei Zu-/Absagen
   'termin-rueckmeldungen': 'benutzer',
+  // Selbst eingetippte Spitznamen (Kinder) in der Spielecke-Rangliste
+  spielergebnisse: 'benutzer',
   statistik: 'statistik',
 }
 

@@ -19,6 +19,7 @@ import * as migration_20261026_134632_animationen from './20261026_134632_animat
 import * as migration_20261026_151441_animationen_global from './20261026_151441_animationen_global';
 import * as migration_20261026_153216_spielecke_statistik from './20261026_153216_spielecke_statistik';
 import * as migration_20261026_164436_memory from './20261026_164436_memory';
+import * as migration_20261026_203917_rangliste from './20261026_203917_rangliste';
 
 export const migrations = [
   {
@@ -124,6 +125,11 @@ export const migrations = [
   {
     up: migration_20261026_164436_memory.up,
     down: migration_20261026_164436_memory.down,
-    name: '20261026_164436_memory'
+    name: '20261026_164436_memory',
+  },
+  {
+    up: migration_20261026_203917_rangliste.up,
+    down: migration_20261026_203917_rangliste.down,
+    name: '20261026_203917_rangliste'
   },
 ];

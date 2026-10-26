@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
 import { melden } from './melden'
+import { RanglisteEintragen } from './RanglisteEintragen'
 
 type Ecke = 'links' | 'mitte' | 'rechts'
 const ECKEN: Ecke[] = ['links', 'mitte', 'rechts']
@@ -32,7 +33,9 @@ const urteil = (tore: number) =>
  * Elfmeterschießen: 5 Schüsse gegen einen Strich-Torwart. Bedienung per Tippen auf eine Ecke, Knopf oder Pfeiltasten.
  * Es wird nichts gespeichert; der Torwart wählt seine Ecke zufällig.
  */
-export function Elfmeter() {
+export function Elfmeter({ rangliste = false }: { rangliste?: boolean }) {
+  // „runde“ = 5 Schüsse, „serie“ = so lange, bis der Torwart einen hält (Torserie kommt in die Rangliste)
+  const [modus, setModus] = useState<'runde' | 'serie'>('runde')
   const [ergebnisse, setErgebnisse] = useState<boolean[]>([])
   const [schuss, setSchuss] = useState<{ ziel: Ecke; torwart: Ecke; tor: boolean; danach: boolean } | null>(null)
   const [meldung, setMeldung] = useState('')
@@ -40,11 +43,12 @@ export function Elfmeter() {
   const stand = useRef<boolean[]>([])
   useEffect(() => () => timer.current.forEach(clearTimeout), [])
 
-  const fertig = ergebnisse.length >= SCHUESSE && !schuss
+  const vorbei = (e: boolean[]) => (modus === 'runde' ? e.length >= SCHUESSE : e.length > 0 && !e[e.length - 1])
+  const fertig = vorbei(ergebnisse) && !schuss
   const tore = ergebnisse.filter(Boolean).length
 
   const schiessen = (ziel: Ecke) => {
-    if (schuss || ergebnisse.length >= SCHUESSE) return
+    if (schuss || vorbei(ergebnisse)) return
     const torwart = ECKEN[Math.floor(Math.random() * 3)]!
     const tor = torwart !== ziel
     setSchuss({ ziel, torwart, tor, danach: false })
@@ -61,7 +65,8 @@ export function Elfmeter() {
         setErgebnisse(neu)
         setSchuss(null)
         // Runde vorbei: Ergebnis (nur die Zahl der Tore) zum Tagesrekord melden
-        if (neu.length === SCHUESSE) void melden('elfmeter', neu.filter(Boolean).length)
+        if (modus === 'runde' && neu.length === SCHUESSE) void melden('elfmeter', neu.filter(Boolean).length)
+        if (modus === 'serie' && !tor) void melden('elfmeterSerie', neu.length - 1)
       }, 2000),
     )
   }
@@ -69,6 +74,11 @@ export function Elfmeter() {
     stand.current = []
     setErgebnisse([])
     setMeldung('')
+  }
+  const modusWechseln = (m: 'runde' | 'serie') => {
+    if (schuss || m === modus) return
+    setModus(m)
+    nochmal()
   }
   const taste = (e: React.KeyboardEvent) => {
     const ecke = ({ ArrowLeft: 'links', ArrowUp: 'mitte', ArrowRight: 'rechts' } as Record<string, Ecke>)[e.key]
@@ -93,13 +103,27 @@ export function Elfmeter() {
     <div className="spiel elfmeter" onKeyDown={taste}>
       <div className="spiel-kopf">
         <h2 className="spiel-titel">Elfmeterschießen</h2>
-        <ol className="elfmeter-punkte" aria-label={`${tore} Tore bei ${ergebnisse.length} von ${SCHUESSE} Schüssen`}>
-          {Array.from({ length: SCHUESSE }, (_, i) => (
-            <li key={i} className={i < ergebnisse.length ? (ergebnisse[i] ? 'ist-tor' : 'ist-gehalten') : undefined} aria-hidden="true">
-              {i < ergebnisse.length ? (ergebnisse[i] ? '✓' : '✗') : ''}
-            </li>
-          ))}
-        </ol>
+        {modus === 'runde' ? (
+          <ol className="elfmeter-punkte" aria-label={`${tore} Tore bei ${ergebnisse.length} von ${SCHUESSE} Schüssen`}>
+            {Array.from({ length: SCHUESSE }, (_, i) => (
+              <li key={i} className={i < ergebnisse.length ? (ergebnisse[i] ? 'ist-tor' : 'ist-gehalten') : undefined} aria-hidden="true">
+                {i < ergebnisse.length ? (ergebnisse[i] ? '✓' : '✗') : ''}
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <p className="hochhalten-zahl elfmeter-serie" aria-live="off">
+            <strong>{tore}</strong> <span>{tore === 1 ? 'Tor in Folge' : 'Tore in Folge'}</span>
+          </p>
+        )}
+      </div>
+      <div className="elfmeter-modus" role="radiogroup" aria-label="Spielart">
+        <button type="button" role="radio" aria-checked={modus === 'runde'} onClick={() => modusWechseln('runde')} disabled={Boolean(schuss)}>
+          5 Schüsse
+        </button>
+        <button type="button" role="radio" aria-checked={modus === 'serie'} onClick={() => modusWechseln('serie')} disabled={Boolean(schuss)}>
+          Bis zum Fehlschuss
+        </button>
       </div>
       <div className="elfmeter-feld">
         <svg className={`elfmeter-bild${schuss?.tor && schuss.danach ? ' ist-tor' : ''}`} viewBox="0 0 360 240" aria-hidden="true" focusable="false">
@@ -131,14 +155,26 @@ export function Elfmeter() {
       {fertig ? (
         <div className="spiel-ende">
           <p>
-            <strong>
-              {tore} von {SCHUESSE} Toren.
-            </strong>{' '}
-            {urteil(tore)}
+            {modus === 'runde' ? (
+              <>
+                <strong>
+                  {tore} von {SCHUESSE} Toren.
+                </strong>{' '}
+                {urteil(tore)}
+              </>
+            ) : (
+              <>
+                <strong>
+                  {tore} {tore === 1 ? 'Tor' : 'Tore'} in Folge!
+                </strong>{' '}
+                {tore >= 8 ? 'Unglaublich! 🏆' : tore >= 4 ? 'Starke Serie! ⭐' : tore >= 1 ? 'Schaffst du mehr?' : 'Gleich beim ersten gehalten – nochmal!'}
+              </>
+            )}
           </p>
           <button type="button" className="btn btn-primary" onClick={nochmal}>
             Nochmal schießen
           </button>
+          {rangliste && modus === 'serie' && tore >= 1 && <RanglisteEintragen key={`serie-${ergebnisse.length}`} spiel="elfmeterSerie" wert={tore} />}
         </div>
       ) : (
         <div className="spiel-knoepfe" role="group" aria-label="Wohin schießt du?">
@@ -153,7 +189,10 @@ export function Elfmeter() {
           </button>
         </div>
       )}
-      <p className="spiel-hilfe">Tippe auf eine Ecke im Tor – oder nutze die Pfeiltasten. Schuss {Math.min(ergebnisse.length + (schuss ? 1 : 0), SCHUESSE) || 1} von {SCHUESSE}.</p>
+      <p className="spiel-hilfe">
+        Tippe auf eine Ecke im Tor – oder nutze die Pfeiltasten.{' '}
+        {modus === 'runde' ? `Schuss ${Math.min(ergebnisse.length + (schuss ? 1 : 0), SCHUESSE) || 1} von ${SCHUESSE}.` : 'Schieß so lange, bis der Torwart einen hält.'}
+      </p>
     </div>
   )
 }

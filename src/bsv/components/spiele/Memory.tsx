@@ -3,6 +3,7 @@ import React, { useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
 import { melden } from './melden'
+import { RanglisteEintragen } from './RanglisteEintragen'
 
 /** 18 Motive für 36 Karten (6 × 6): das Vereinswappen und eigene Strich-Bilder aus Fußball und Breitensport */
 type Motiv = { key: string; name: string; farbe: string; bild: React.ReactNode }
@@ -48,7 +49,7 @@ const urteil = (z: number) => (z <= 24 ? 'Was für ein Gedächtnis! 🏆' : z <=
  * Memory 6 × 6: Karten umdrehen und Paare finden. Bedienung per Tippen/Klicken oder Tastatur (Pfeiltasten, Enter).
  * Gezählt werden nur die Züge; beim Tagesrekord nur die Zahl, ohne Namen.
  */
-export function Memory() {
+export function Memory({ rangliste = false }: { rangliste?: boolean }) {
   // Mischen erst im Browser – sonst unterschieden sich Server- und Browser-Fassung
   const [karten, setKarten] = useState<Karte[] | null>(null)
   const [offen, setOffen] = useState<number[]>([])
@@ -160,6 +161,7 @@ export function Memory() {
           <button type="button" className="btn btn-primary" onClick={nochmal}>
             Nochmal spielen
           </button>
+          {rangliste && <RanglisteEintragen spiel="memory" wert={zuege} />}
         </div>
       ) : (
         <p className="spiel-hilfe">Dreh zwei Karten um. Passen sie zusammen, bleiben sie offen. Mit der Tastatur: Pfeiltasten und Enter.</p>

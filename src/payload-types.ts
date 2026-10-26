@@ -90,6 +90,7 @@ export interface Config {
     'hilfe-feedback': HilfeFeedback;
     statistik: Statistik;
     spielstatistik: Spielstatistik;
+    spielergebnisse: Spielergebnisse;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -125,6 +126,7 @@ export interface Config {
     'hilfe-feedback': HilfeFeedbackSelect<false> | HilfeFeedbackSelect<true>;
     statistik: StatistikSelect<false> | StatistikSelect<true>;
     spielstatistik: SpielstatistikSelect<false> | SpielstatistikSelect<true>;
+    spielergebnisse: SpielergebnisseSelect<false> | SpielergebnisseSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -1824,6 +1826,24 @@ export interface Spielstatistik {
   createdAt: string;
 }
 /**
+ * Einträge aus der Spielecke (/spielecke). Unpassende Spitznamen hier löschen (Haken setzen → „Löschen“). Freigabe nötig? Einstellen unter Website-Aufbau → Animationen. Einträge älter als 30 Tage werden automatisch gelöscht – außer den 10 besten aller Zeiten je Spiel.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spielergebnisse".
+ */
+export interface Spielergebnisse {
+  id: number;
+  spitzname: string;
+  spiel: 'hochhalten' | 'memory' | 'elfmeterSerie';
+  /**
+   * Hochhalten: Kontakte · Memory: Züge (weniger ist besser) · Elfmeter: Tore in Folge
+   */
+  wert: number;
+  freigegeben?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
@@ -2107,6 +2127,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'spielstatistik';
         value: number | Spielstatistik;
+      } | null)
+    | ({
+        relationTo: 'spielergebnisse';
+        value: number | Spielergebnisse;
       } | null)
     | ({
         relationTo: 'redirects';
@@ -3011,6 +3035,18 @@ export interface SpielstatistikSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "spielergebnisse_select".
+ */
+export interface SpielergebnisseSelect<T extends boolean = true> {
+  spitzname?: T;
+  spiel?: T;
+  wert?: T;
+  freigegeben?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects_select".
  */
 export interface RedirectsSelect<T extends boolean = true> {
@@ -3661,6 +3697,14 @@ export interface Animationen {
   elfmeter?: boolean | null;
   hochhalten?: boolean | null;
   memory?: boolean | null;
+  /**
+   * Kinder tippen selbst einen Spitznamen ein; ein Filter sperrt Schimpfwörter, Links und lange Zahlen. Einträge unter Website-Aufbau → „Spielecke-Rangliste“ prüfen und löschen.
+   */
+  rangliste?: boolean | null;
+  /**
+   * Dann erscheint ein Eintrag erst, wenn ihn jemand unter „Spielecke-Rangliste“ auf „In der Rangliste sichtbar“ setzt.
+   */
+  ranglisteFreigabe?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4485,6 +4529,8 @@ export interface AnimationenSelect<T extends boolean = true> {
   elfmeter?: T;
   hochhalten?: T;
   memory?: T;
+  rangliste?: T;
+  ranglisteFreigabe?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

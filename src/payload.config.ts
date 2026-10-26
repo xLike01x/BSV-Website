@@ -40,6 +40,7 @@ import { texteBilderUmziehen } from './Texte/bilderUmziehen'
 import { Texte } from './Texte/config'
 import { Animationen } from './Animationen/config'
 import { Spielstatistik } from './spielecke/Spielstatistik'
+import { Spielergebnisse } from './spielecke/Rangliste'
 import { Menue } from './Menue/config'
 import { HilfeFeedback, HilfeInhalte } from './Hilfe/config'
 import { de } from '@payloadcms/translations/languages/de'
@@ -243,6 +244,7 @@ const konfiguration = buildConfig({
     Statistik,
     // Spielecke: nur Tagessummen ohne Namen
     Spielstatistik,
+    Spielergebnisse,
   ].map((c) =>
     PAPIERKORB.includes(c.slug)
       ? (() => {

@@ -13,6 +13,8 @@ export const HOCHHALTEN_MAX = 250
 /** Memory 6 × 6: mindestens 18 Züge (jedes Paar sofort), mehr als 400 ist unrealistisch */
 export const MEMORY_MIN = 18
 export const MEMORY_MAX = 400
+/** Elfmeter bis zum Fehlschuss: bei 2/3 Trefferchance sind mehr als 60 Tore in Folge praktisch ausgeschlossen */
+export const SERIE_MAX = 60
 
 export type Tageswerte = { elfmeterSchuesse: number; elfmeterTore: number; hochhaltenSpiele: number; hochhaltenRekord: number; memorySpiele: number; memoryBester: number }
 const LEER: Tageswerte = { elfmeterSchuesse: 0, elfmeterTore: 0, hochhaltenSpiele: 0, hochhaltenRekord: 0, memorySpiele: 0, memoryBester: 0 }
@@ -43,10 +45,12 @@ const meldenEndpunkt: Endpoint = {
     const elfmeter = b?.spiel === 'elfmeter' && Number.isInteger(wert) && wert >= 0 && wert <= 5
     const hochhalten = b?.spiel === 'hochhalten' && Number.isInteger(wert) && wert >= 0 && wert <= HOCHHALTEN_MAX
     const memory = b?.spiel === 'memory' && Number.isInteger(wert) && wert >= MEMORY_MIN && wert <= MEMORY_MAX
-    if (!elfmeter && !hochhalten && !memory) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
+    // Elfmeter bis zum Fehlschuss: wert = Tore in Folge, dazu ein gehaltener Schuss
+    const serie = b?.spiel === 'elfmeterSerie' && Number.isInteger(wert) && wert >= 0 && wert <= SERIE_MAX
+    if (!elfmeter && !hochhalten && !memory && !serie) return Response.json({ fehler: 'Ungültig.' }, { status: 400 })
     // Ausgeschaltete Spiele zählen nicht
     const a = (await req.payload.findGlobal({ slug: 'animationen', depth: 0 }).catch(() => ({}))) as { elfmeter?: boolean | null; hochhalten?: boolean | null; memory?: boolean | null }
-    if ((elfmeter && a.elfmeter === false) || (hochhalten && a.hochhalten === false) || (memory && a.memory === false)) return Response.json({ fehler: 'Spiel ist ausgeschaltet.' }, { status: 403 })
+    if (((elfmeter || serie) && a.elfmeter === false) || (hochhalten && a.hochhalten === false) || (memory && a.memory === false)) return Response.json({ fehler: 'Spiel ist ausgeschaltet.' }, { status: 403 })
     const vorher = await heute(req.payload)
     try {
       // Pro Anschluss höchstens 60 Runden in 10 Minuten, alle zusammen 3.000 – darüber wird still nicht gezählt
@@ -59,7 +63,7 @@ const meldenEndpunkt: Endpoint = {
     // In einem Schritt hochzählen bzw. Rekord übernehmen – auch bei vielen gleichzeitigen Runden richtig
     await db.execute(sql`
       INSERT INTO "spielstatistik" ("datum", "elfmeter_schuesse", "elfmeter_tore", "hochhalten_spiele", "hochhalten_rekord", "memory_spiele", "memory_bester", "updated_at", "created_at")
-      VALUES (${tag}, ${elfmeter ? 5 : 0}, ${elfmeter ? wert : 0}, ${hochhalten ? 1 : 0}, ${hochhalten ? wert : 0}, ${memory ? 1 : 0}, ${memory ? wert : null}, now(), now())
+      VALUES (${tag}, ${elfmeter ? 5 : serie ? wert + 1 : 0}, ${elfmeter || serie ? wert : 0}, ${hochhalten ? 1 : 0}, ${hochhalten ? wert : 0}, ${memory ? 1 : 0}, ${memory ? wert : null}, now(), now())
       ON CONFLICT ("datum") DO UPDATE SET
         "elfmeter_schuesse" = COALESCE("spielstatistik"."elfmeter_schuesse", 0) + EXCLUDED."elfmeter_schuesse",
         "elfmeter_tore" = COALESCE("spielstatistik"."elfmeter_tore", 0) + EXCLUDED."elfmeter_tore",

@@ -52,7 +52,7 @@ export const Animationen: GlobalConfig = {
     {
       type: 'collapsible',
       label: 'Spielecke (/spielecke)',
-      admin: { initCollapsed: false, description: 'Kleine Spiele für die BSV Kids. Es wird nichts gespeichert – keine Namen, keine Bestenliste; die Punkte gelten nur, solange die Seite offen ist.' },
+      admin: { initCollapsed: false, description: 'Kleine Spiele für die BSV Kids. Gespeichert werden Tageszahlen ohne Namen und – wenn die Rangliste an ist – Spitzname, Ergebnis und Zeitpunkt (keine IP-Adressen, keine Konten).' },
       fields: [
         {
           type: 'row',
@@ -60,6 +60,19 @@ export const Animationen: GlobalConfig = {
             haken('elfmeter', 'Spiel „Elfmeterschießen“'),
             haken('hochhalten', 'Spiel „Ball hochhalten“'),
             haken('memory', 'Spiel „Memory“ (6 × 6)'),
+          ],
+        },
+        {
+          type: 'row',
+          fields: [
+            haken('rangliste', 'Rangliste mit Spitznamen (7, 14, 30 Tage, Allzeit)', 'Kinder tippen selbst einen Spitznamen ein; ein Filter sperrt Schimpfwörter, Links und lange Zahlen. Einträge unter Website-Aufbau → „Spielecke-Rangliste“ prüfen und löschen.'),
+            {
+              name: 'ranglisteFreigabe',
+              label: 'Spitznamen erst nach Freigabe zeigen',
+              type: 'checkbox',
+              defaultValue: false,
+              admin: { width: '50%', condition: (d) => d?.rangliste !== false, description: 'Dann erscheint ein Eintrag erst, wenn ihn jemand unter „Spielecke-Rangliste“ auf „In der Rangliste sichtbar“ setzt.' },
+            },
           ],
         },
       ],

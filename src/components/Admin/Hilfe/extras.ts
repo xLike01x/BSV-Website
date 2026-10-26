@@ -1285,7 +1285,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Animationen, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Animationen, Spielecke-Rangliste, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {
@@ -1580,10 +1580,26 @@ export const FAQ: Faq[] = [
       'Unter /spielecke gibt es drei kleine Spiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten), „Ball hochhalten“ (den fallenden Ball antippen, mit jedem Kontakt wird es schneller) und „Memory“ (6 × 6 Karten, 18 Paare mit BSV-Wappen und Sport-Motiven – ganz ohne Zeitdruck, auch mit der Tastatur). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
       + '• Tagesrekord ohne Namen: Oben steht „Heute in der Spielecke: ⚽ 214 Elfmeter · 152 Tore · 🤹 Tagesrekord: 27× hochgehalten · 🧠 Memory in 24 Zügen“. Gespeichert werden dafür nur diese Tageszahlen – keine Namen, keine IP-Adressen, keine Kennungen. Wer den Rekord bricht, sieht „🎉 Neuer Tagesrekord!“. Die Zahlen von mehr als 30 Tagen werden automatisch gelöscht.\n'
       + '• Der „Bester Wert“ im Spiel gilt nur, solange die Seite offen ist. Unrealistische Werte (mehr als 250× hochgehalten, Memory in weniger als 18 Zügen) nimmt die Website nicht an.\n'
+      + '• Elfmeterschießen hat zwei Spielarten: „5 Schüsse“ und „Bis zum Fehlschuss“ – bei Letzterem zählt die Torserie für die Rangliste.\n'
+      + '• Rangliste (7, 14, 30 Tage und Allzeit, je Top 10): Nach einer Runde können sich Kinder mit einem selbst ausgedachten Spitznamen eintragen. Gespeichert werden nur Spitzname, Spiel, Ergebnis und Zeitpunkt. Siehe „Wie prüfe und lösche ich Einträge in der Spielecke-Rangliste?“.\n'
       + '• Ein- und ausschalten: Website-Aufbau → Animationen → Spielecke.\n'
       + '• In die Fußzeile kommt die Seite über „Menü & Fußzeile“ → Spalte „Entdecken“ → Eintrag hinzufügen → Adresse /spielecke.\n\n'
       + 'Beispiel – Wenn ihr die Spielecke beim Sommerfest auf einem Tablet zeigen wollt – dann /spielecke öffnen; die Kinder spielen reihum mit „Nochmal“.',
     bereich: 'animationen',
+  },
+  {
+    frage: 'Wie prüfe und lösche ich Einträge in der Spielecke-Rangliste?',
+    antwort:
+      'Links unter Website-Aufbau → „Spielecke-Rangliste“. Dort stehen alle Einträge mit Spitzname, Spiel, Ergebnis und Datum – die neuesten oben.\n\n'
+      + '• Löschen: Haken vor den Eintrag setzen → oben „Löschen“. Der Eintrag ist sofort aus der Rangliste verschwunden (kein Papierkorb).\n'
+      + '• Spitzname, Spiel und Ergebnis lassen sich nicht ändern – nur löschen. So kann niemand Ergebnisse „schönen“.\n'
+      + '• Erst prüfen, dann zeigen: unter Website-Aufbau → Animationen den Haken „Spitznamen erst nach Freigabe zeigen“ setzen. Neue Einträge erscheinen dann erst, wenn du sie öffnest und „In der Rangliste sichtbar“ anhakst. Die Kinder sehen nach dem Eintragen „Dein Eintrag erscheint, sobald ihn jemand vom Verein freigegeben hat“.\n'
+      + '• Automatischer Schutz: Schimpfwörter (auch in Schreibweisen wie „4rsch“), Internetadressen, lange Zahlen (Geburtsjahr, Telefonnummer) und unrealistische Ergebnisse lehnt die Website gleich ab. Ein Filter fängt aber nie alles – ab und zu reinschauen lohnt sich.\n'
+      + '• Aufräumen: Einträge älter als 30 Tage löscht die Website jede Nacht, außer den 10 besten aller Zeiten je Spiel.\n'
+      + '• Ganz ohne Rangliste: unter Animationen „Rangliste mit Spitznamen“ ausschalten.\n'
+      + '• Sehen und löschen dürfen Admin, Redaktion und wer das Recht „Seiten“ hat; „Nur ansehen“ sieht die Liste nur mit Haken „Benutzerkonten“.\n\n'
+      + 'Beispiel – Wenn ein Kind seinen echten Namen eingetragen hat oder Eltern um Löschung bitten – dann den Eintrag unter „Spielecke-Rangliste“ suchen (Spitzname und Datum), Haken setzen und „Löschen“.',
+    bereich: 'spielergebnisse',
   },
   {
     frage: 'Welche Animationen gibt es auf der Website – und wie schalte ich sie ab?',

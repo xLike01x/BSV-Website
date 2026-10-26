@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
 import { melden } from './melden'
+import { RanglisteEintragen } from './RanglisteEintragen'
 
 const GROESSE = 64
 const urteil = (n: number) => (n >= 30 ? 'Profi-Niveau! 🏆' : n >= 15 ? 'Richtig stark! ⭐' : n >= 5 ? 'Gut gemacht!' : 'Schaffst du mehr?')
@@ -11,7 +12,7 @@ const urteil = (n: number) => (n >= 30 ? 'Profi-Niveau! 🏆' : n >= 15 ? 'Richt
  * Ball hochhalten: den fallenden Ball antippen, bevor er den Boden berührt. Mit jedem Kontakt wird es etwas schneller.
  * Bedienung per Tippen/Klicken auf den Ball oder Leertaste. Nichts wird gespeichert („Bester Wert“ gilt nur, solange die Seite offen ist).
  */
-export function Hochhalten() {
+export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
   const feld = useRef<HTMLDivElement>(null)
   const ball = useRef<HTMLSpanElement>(null)
   const zustand = useRef({ x: 0, y: 0, vx: 0, vy: 0, dreh: 0, kontakte: 0, laeuft: false, zuletzt: 0 })
@@ -20,6 +21,8 @@ export function Hochhalten() {
   const [phase, setPhase] = useState<'start' | 'spiel' | 'aus'>('start')
   const [ruhigGewuenscht, setRuhigGewuenscht] = useState(false)
   const [rekord, setRekord] = useState(false)
+  // Zählt Runden mit – jede Runde bekommt ein frisches Eintragen-Feld
+  const [runde, setRunde] = useState(0)
 
   useEffect(() => {
     setRuhigGewuenscht(window.matchMedia('(prefers-reduced-motion: reduce)').matches)
@@ -113,6 +116,7 @@ export function Hochhalten() {
 
   const starten = () => {
     setRekord(false)
+    setRunde((r) => r + 1)
     zustand.current.kontakte = 0
     setKontakte(0)
     hinstellen()
@@ -172,6 +176,7 @@ export function Hochhalten() {
                 {bester > 0 && <span className="muted"> Bester Wert: {bester}</span>}
               </p>
             )}
+            {phase === 'aus' && rangliste && kontakte >= 1 && <RanglisteEintragen key={`hh-${runde}`} spiel="hochhalten" wert={Math.min(kontakte, 250)} />}
             {ruhigGewuenscht && phase === 'start' && <p className="muted">Hinweis: Dieses Spiel bewegt sich – auf deinem Gerät ist „Bewegung reduzieren“ eingeschaltet.</p>}
             <button type="button" className="btn btn-primary" onClick={starten}>
               {phase === 'start' ? 'Los geht’s' : 'Nochmal'}
