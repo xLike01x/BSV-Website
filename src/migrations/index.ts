@@ -13,6 +13,7 @@ import * as migration_20261023_071149_hilfe_updates from './20261023_071149_hilf
 import * as migration_20261023_124424_webapp from './20261023_124424_webapp';
 import * as migration_20261026_095157_countdown from './20261026_095157_countdown';
 import * as migration_20261026_110853_countdown_seite from './20261026_110853_countdown_seite';
+import * as migration_20261026_112744_countdown_termine from './20261026_112744_countdown_termine';
 
 export const migrations = [
   {
@@ -88,6 +89,11 @@ export const migrations = [
   {
     up: migration_20261026_110853_countdown_seite.up,
     down: migration_20261026_110853_countdown_seite.down,
-    name: '20261026_110853_countdown_seite'
+    name: '20261026_110853_countdown_seite',
+  },
+  {
+    up: migration_20261026_112744_countdown_termine.up,
+    down: migration_20261026_112744_countdown_termine.down,
+    name: '20261026_112744_countdown_termine'
   },
 ];

@@ -1,3 +1,4 @@
+import { datumUhrzeit } from '@/fields/datumUhrzeit'
 import { mitEindeutigemSlug } from '@/hooks/slugEindeutig'
 import { medienPruefen } from '@/hooks/medienPruefen'
 import { medienAuswahl, nurEinzelrechte, nurLeser } from '@/access/roles'
@@ -288,9 +289,7 @@ export const Posts: CollectionConfig<'posts'> = {
       label: 'Veröffentlicht am',
       type: 'date',
       admin: {
-        date: {
-          pickerAppearance: 'dayAndTime',
-        },
+        date: datumUhrzeit,
         position: 'sidebar',
         condition: (_data, _sibling, { user }) => siehtRedaktionsfelder(user),
         description: 'Leer = Zeitpunkt der Veröffentlichung.',
@@ -365,7 +364,8 @@ export const Posts: CollectionConfig<'posts'> = {
     drafts: {
       // Kein Autosave: sonst entsteht beim Öffnen von „News schreiben“ sofort ein leerer Entwurf.
       // Gespeichert wird mit „Entwurf speichern“ oder „Veröffentlichen“.
-      schedulePublish: true,
+      // „Veröffentlichung planen“: Uhrzeit im 24-Stunden-Format
+      schedulePublish: { timeFormat: "HH:mm 'Uhr'", timeIntervals: 15 },
     },
     maxPerDoc: 50,
   },

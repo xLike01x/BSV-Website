@@ -180,6 +180,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'titel', titel: 'Titel und Datum', text: 'Z. B. „Sommerfest“, Beginn und optional Ende.' },
       { key: 'ort', titel: 'Ort und Bereich', text: 'Der Bereich bestimmt die Farbe im Kalender.' },
       { key: 'sichtbar', titel: 'Für wen?', text: 'Optional nur für Mitglieder sichtbar.' },
+      { key: 'countdown', titel: 'Countdown (optional)', text: 'Zählt auf der Startseite bis zur Veranstaltung herunter.', wo: 'rechts' },
       { key: 'speichern', titel: 'Speichern', text: 'Sofort sichtbar – ohne Veröffentlichen.', wo: 'oben rechts' },
       { key: 'website', titel: 'Im Kalender', text: 'Nach dem Termin verschwindet er automatisch aus „Kommende Termine“.', href: '/termine', wo: 'Website → Termine' },
     ],

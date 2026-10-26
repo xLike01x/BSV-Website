@@ -1086,104 +1086,18 @@ export interface Termine {
    */
   nurMitglieder?: boolean | null;
   anmeldung?: boolean | null;
-  endgueltigAm?: string | null;
-  endgueltigVon?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Fotoalben für die Galerie auf der Website, z. B. „Sommerfest 2026“.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "alben".
- */
-export interface Alben {
-  id: number;
-  titel: string;
-  datum: string;
   /**
-   * Dann erscheint das Album auch auf der Teamseite.
+   * Zählt auf der Startseite bis zum Beginn herunter („Noch 12 Tage …“) und verschwindet nach dem Termin von selbst. Haben mehrere Termine den Haken, kommt der nächste dran.
    */
-  team?: (number | null) | Angebote;
-  beschreibung?: string | null;
+  countdown?: boolean | null;
   /**
-   * Mehrere Bilder auswählen oder neu hochladen. Das erste Bild ist das Titelbild. Nur Fotos mit Einwilligung der abgebildeten Personen.
+   * Eigene Seite, z. B. „Weihnachtsfeier 2026“. Leer = zu diesem Termin im Kalender.
    */
-  bilder: (number | Media)[];
-  aktiv?: boolean | null;
+  countdownSeite?: (number | null) | Page;
   /**
-   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   * z. B. „Essen und Getränke inklusive“. Leer = Ort des Termins.
    */
-  generateSlug?: boolean | null;
-  slug: string;
-  endgueltigAm?: string | null;
-  endgueltigVon?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "sponsoren".
- */
-export interface Sponsoren {
-  id: number;
-  name: string;
-  /**
-   * Ideal: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000), nur das Logo ohne weitere Elemente drumherum. Größe und Seitenverhältnis sind egal – die Website entfernt den leeren Rand automatisch und gleicht alle Logos so an, dass sie gleich groß wirken. Beim Hochladen kein Team wählen; das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
-   */
-  logo?: (number | null) | Media;
-  /**
-   * Nur für Hauptsponsoren: In der Fußzeile ist wenig Platz (ca. 40 Pixel hoch). Hat der Sponsor eine kompakte Variante (z. B. nur Schriftzug, quer), hier hochladen. Leer = das normale Logo wird genommen. Ideal: PNG mit durchsichtigem Hintergrund, quer, mindestens 400 Pixel breit.
-   */
-  logoFusszeile?: (number | null) | Media;
-  url?: string | null;
-  /**
-   * Z. B. „Unterstützt seit 2015 unsere Jugend“.
-   */
-  text?: string | null;
-  /**
-   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite. „Hauptsponsor“ steht ganz oben und in der Fußzeile – auch mehrere Hauptsponsoren sind möglich (Reihenfolge-Zahl bestimmt die Reihenfolge).
-   */
-  stufe?: ('haupt' | 'premium' | 'partner' | 'foerderer') | null;
-  /**
-   * Nur mit Logo.
-   */
-  imLaufband?: boolean | null;
-  /**
-   * Kleinere Zahl = weiter vorne – innerhalb derselben Art auf der Sponsorenseite und im Laufband. Gleiche Zahl = alphabetisch. Mehrere Hauptsponsoren: der mit der kleinsten Zahl steht in der Fußzeile.
-   */
-  reihenfolge?: number | null;
-  aktiv?: boolean | null;
-  endgueltigAm?: string | null;
-  endgueltigVon?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
- * Wen der Verein gerade sucht – Trainer, Helfer, Schiris, Vorstand. Erscheint auf der Seite „Mitmachen“.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "gesuche".
- */
-export interface Gesuche {
-  id: number;
-  titel: string;
-  /**
-   * Was ist zu tun? Was bieten wir? Kurz und einladend.
-   */
-  text: string;
-  aufwand?: string | null;
-  symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
-  /**
-   * Kleinere Zahl = weiter oben auf der Seite „Mitmachen“. Gleiche Zahl = alphabetisch.
-   */
-  reihenfolge?: number | null;
-  aktiv?: boolean | null;
+  countdownText?: string | null;
   endgueltigAm?: string | null;
   endgueltigVon?: string | null;
   updatedAt: string;
@@ -1621,6 +1535,104 @@ export interface Form {
         id?: string | null;
       }[]
     | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Fotoalben für die Galerie auf der Website, z. B. „Sommerfest 2026“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "alben".
+ */
+export interface Alben {
+  id: number;
+  titel: string;
+  datum: string;
+  /**
+   * Dann erscheint das Album auch auf der Teamseite.
+   */
+  team?: (number | null) | Angebote;
+  beschreibung?: string | null;
+  /**
+   * Mehrere Bilder auswählen oder neu hochladen. Das erste Bild ist das Titelbild. Nur Fotos mit Einwilligung der abgebildeten Personen.
+   */
+  bilder: (number | Media)[];
+  aktiv?: boolean | null;
+  /**
+   * When enabled, the slug will auto-generate from the title field on save and autosave.
+   */
+  generateSlug?: boolean | null;
+  slug: string;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Alle Sponsoren und Partner – auch der Hauptsponsor (Art „Hauptsponsor“), der zusätzlich unten in der Fußzeile jeder Seite steht.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "sponsoren".
+ */
+export interface Sponsoren {
+  id: number;
+  name: string;
+  /**
+   * Ideal: PNG mit durchsichtigem (oder weißem) Hintergrund, mindestens 600 Pixel breit (am besten 1000–2000), nur das Logo ohne weitere Elemente drumherum. Größe und Seitenverhältnis sind egal – die Website entfernt den leeren Rand automatisch und gleicht alle Logos so an, dass sie gleich groß wirken. Beim Hochladen kein Team wählen; das Logo kommt beim Speichern automatisch in den Mediathek-Ordner „Sponsoren“.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Nur für Hauptsponsoren: In der Fußzeile ist wenig Platz (ca. 40 Pixel hoch). Hat der Sponsor eine kompakte Variante (z. B. nur Schriftzug, quer), hier hochladen. Leer = das normale Logo wird genommen. Ideal: PNG mit durchsichtigem Hintergrund, quer, mindestens 400 Pixel breit.
+   */
+  logoFusszeile?: (number | null) | Media;
+  url?: string | null;
+  /**
+   * Z. B. „Unterstützt seit 2015 unsere Jugend“.
+   */
+  text?: string | null;
+  /**
+   * Bestimmt die Gruppe und Größe auf der Sponsoren-Seite. „Hauptsponsor“ steht ganz oben und in der Fußzeile – auch mehrere Hauptsponsoren sind möglich (Reihenfolge-Zahl bestimmt die Reihenfolge).
+   */
+  stufe?: ('haupt' | 'premium' | 'partner' | 'foerderer') | null;
+  /**
+   * Nur mit Logo.
+   */
+  imLaufband?: boolean | null;
+  /**
+   * Kleinere Zahl = weiter vorne – innerhalb derselben Art auf der Sponsorenseite und im Laufband. Gleiche Zahl = alphabetisch. Mehrere Hauptsponsoren: der mit der kleinsten Zahl steht in der Fußzeile.
+   */
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * Wen der Verein gerade sucht – Trainer, Helfer, Schiris, Vorstand. Erscheint auf der Seite „Mitmachen“.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "gesuche".
+ */
+export interface Gesuche {
+  id: number;
+  titel: string;
+  /**
+   * Was ist zu tun? Was bieten wir? Kurz und einladend.
+   */
+  text: string;
+  aufwand?: string | null;
+  symbol?: ('🙋' | '⚽' | '🤸' | '🧑‍🍳' | '🧾' | '🧑‍⚖️' | '🎉' | '📸' | '🛠️') | null;
+  /**
+   * Kleinere Zahl = weiter oben auf der Seite „Mitmachen“. Gleiche Zahl = alphabetisch.
+   */
+  reihenfolge?: number | null;
+  aktiv?: boolean | null;
   endgueltigAm?: string | null;
   endgueltigVon?: string | null;
   updatedAt: string;
@@ -2302,6 +2314,9 @@ export interface TermineSelect<T extends boolean = true> {
   beschreibung?: T;
   nurMitglieder?: T;
   anmeldung?: T;
+  countdown?: T;
+  countdownSeite?: T;
+  countdownText?: T;
   endgueltigAm?: T;
   endgueltigVon?: T;
   updatedAt?: T;
@@ -3462,31 +3477,11 @@ export interface Texte {
     bild?: (number | null) | Media;
   };
   /**
-   * Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst. Der Countdown braucht einen Termin mit Datum (Inhalte → Termine) – eine Seite hat kein Datum, sie kannst du unten als Ziel des Links wählen.
+   * Welche Veranstaltung heruntergezählt wird, stellst du beim Termin ein: Inhalte → Termine → Termin öffnen → rechts Haken „Countdown auf der Startseite“. Hier stehen nur die Wörter, die bei jedem Countdown gleich sind.
    */
   countdown?: {
-    /**
-     * Haken setzen und unten einen Termin auswählen.
-     */
-    aktiv?: boolean | null;
-    /**
-     * Aus Inhalte → Termine (nicht Seiten). Datum, Uhrzeit und Name kommen aus dem Termin; bei wiederkehrenden Terminen zählt der nächste. Zur Auswahl stehen nur öffentliche Termine – „Keine Optionen“ heißt: erst unter Termine einen anlegen (ohne Haken „Nur für Mitglieder“).
-     */
-    termin?: (number | null) | Termine;
     kicker?: string | null;
-    /**
-     * z. B. „Sommerfest 2027“
-     */
-    titel?: string | null;
-    /**
-     * z. B. „Mit Hüpfburg, Grill und Fußballturnier für Kinder.“ Leer = Ort des Termins.
-     */
-    text?: string | null;
     linkText?: string | null;
-    /**
-     * Eigene Seite, z. B. „Sommerfest“. Leer = zum Termin unter „Termine“.
-     */
-    seite?: (number | null) | Page;
   };
   fussball?: {
     titel?: string | null;
@@ -4264,13 +4259,8 @@ export interface TexteSelect<T extends boolean = true> {
   countdown?:
     | T
     | {
-        aktiv?: T;
-        termin?: T;
         kicker?: T;
-        titel?: T;
-        text?: T;
         linkText?: T;
-        seite?: T;
       };
   fussball?:
     | T

@@ -1,6 +1,7 @@
+import { datumUhrzeit } from '@/fields/datumUhrzeit'
 import { hinweisFeld } from '@/fields/hinweise'
-import { ausblendenAusserMit, rolleOderRecht } from '@/access/roles'
-import type { Access, CollectionConfig } from 'payload'
+import { ausblendenAusserMit, bereichFeld, imBereich, rolleOderRecht } from '@/access/roles'
+import type { Access, CollectionConfig, PayloadRequest } from 'payload'
 
 import { hasRole, isEditor, istMitgliedOderMehr } from '../access/roles'
 import { revalidateAllesNachAenderung, revalidateAllesNachLoeschen } from '../hooks/revalidateAlles'
@@ -26,7 +27,7 @@ export const Termine: CollectionConfig = {
     group: 'Inhalte',
     hidden: ausblendenAusserMit('termine', 'admin', 'redaktion'),
     useAsTitle: 'title',
-    defaultColumns: ['title', 'beginn', 'bereich', 'nurMitglieder'],
+    defaultColumns: ['title', 'beginn', 'bereich', 'nurMitglieder', 'countdown'],
   },
   defaultSort: 'beginn',
   hooks: { afterChange: [revalidateAllesNachAenderung], afterDelete: [revalidateAllesNachLoeschen] },
@@ -38,8 +39,8 @@ export const Termine: CollectionConfig = {
     {
       type: 'row',
       fields: [
-        { name: 'beginn', label: 'Beginn', type: 'date', required: true, admin: { date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' } } },
-        { name: 'ende', label: 'Ende', type: 'date', admin: { description: 'Optional.', date: { pickerAppearance: 'dayAndTime', displayFormat: 'dd.MM.yyyy HH:mm' } } },
+        { name: 'beginn', label: 'Beginn', type: 'date', required: true, admin: { date: datumUhrzeit } },
+        { name: 'ende', label: 'Ende', type: 'date', admin: { description: 'Optional.', date: datumUhrzeit } },
       ],
     },
     {
@@ -102,6 +103,51 @@ export const Termine: CollectionConfig = {
     // Noch ohne Funktion (keine Anmelde-Ansicht im Mitgliederbereich) – ausgeblendet, damit niemand sich darauf verlässt.
     // Spalte bleibt bestehen; für Anmeldungen gibt es Formulare (Website-Aufbau → Formulare).
     { name: 'anmeldung', label: 'Anmeldung im Mitgliederbereich möglich', type: 'checkbox', admin: { hidden: true } },
+    // Countdown auf der Startseite – gleiche Berechtigung wie früher unter „Texte & Bilder“ (Bereich Seiten),
+    // damit ein reines Termine-Recht nicht die Startseite gestaltet. Die Startseite fragt ohne Anmeldung ab:
+    // „nur für Mitglieder“ erscheint dort nie, auch wenn der Haken gesetzt ist.
+    {
+      name: 'countdown',
+      label: 'Countdown auf der Startseite',
+      type: 'checkbox',
+      access: { create: bereichFeld('seiten'), update: bereichFeld('seiten') },
+      admin: {
+        position: 'sidebar',
+        description: 'Zählt auf der Startseite bis zum Beginn herunter („Noch 12 Tage …“) und verschwindet nach dem Termin von selbst. Haben mehrere Termine den Haken, kommt der nächste dran.',
+      },
+      validate: (wert: unknown, { siblingData, req }: { siblingData?: { nurMitglieder?: boolean | null }; req: PayloadRequest }) => {
+        if (!wert || !siblingData?.nurMitglieder) return true
+        // Wer den Haken nicht ändern darf, soll den Termin trotzdem speichern können (er erscheint ohnehin nicht)
+        if (!imBereich(req.user, 'seiten')) return true
+        return 'Termine „nur für Mitglieder“ erscheinen nicht auf der Startseite. Bitte den Haken „Countdown“ entfernen oder „Nur für Mitglieder sichtbar“ ausschalten.'
+      },
+    },
+    {
+      name: 'countdownSeite',
+      label: 'Countdown-Button führt zu (optional)',
+      type: 'relationship',
+      relationTo: 'pages',
+      filterOptions: () => ({ _status: { equals: 'published' } }),
+      access: { create: bereichFeld('seiten'), update: bereichFeld('seiten') },
+      admin: {
+        position: 'sidebar',
+        allowCreate: false,
+        condition: (data) => Boolean(data?.countdown),
+        description: 'Eigene Seite, z. B. „Weihnachtsfeier 2026“. Leer = zu diesem Termin im Kalender.',
+      },
+    },
+    {
+      name: 'countdownText',
+      label: 'Countdown-Text (optional)',
+      type: 'textarea',
+      maxLength: 200,
+      access: { create: bereichFeld('seiten'), update: bereichFeld('seiten') },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => Boolean(data?.countdown),
+        description: 'z. B. „Essen und Getränke inklusive“. Leer = Ort des Termins.',
+      },
+    },
   ],
 }
 

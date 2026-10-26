@@ -2,7 +2,7 @@ import { api, login, pruefe } from './lib.mjs'
 
 const ip = () => ({ 'X-Real-IP': `198.51.100.${Math.floor(Math.random() * 250) + 1}` })
 const KONTO = 'mitglied@bsv.test'
-const ALLE = ['news', 'seiten', 'medien', 'sponsoren', 'teams', 'saisonwechsel', 'verein', 'datenschutz', 'statistik', 'papierkorb', 'hilfe', 'antraege']
+const ALLE = ['news', 'seiten', 'termine', 'medien', 'sponsoren', 'teams', 'saisonwechsel', 'verein', 'datenschutz', 'statistik', 'papierkorb', 'hilfe', 'antraege']
 const TEXT = { root: { type: 'root', format: '', indent: 0, version: 1, direction: null, children: [{ type: 'paragraph', format: '', indent: 0, version: 1, direction: null, children: [{ type: 'text', text: 'Test', version: 1, format: 0, mode: 'normal', style: '', detail: 0 }] }] } }
 const PERSONEN = ['mitgliedsantraege', 'mitgliedschaften', 'kontaktanfragen', 'probetraining', 'form-submissions']
 
@@ -72,6 +72,27 @@ export default async function zusatzrechte(d) {
       pruefe('seiten: „Texte & Bilder“ speichern', (await api(c, 'POST', '/api/globals/texte', {})).s === 200)
       pruefe('seiten: keine News anlegen', nicht(await api(c, 'POST', '/api/posts', { title: 'ZR-Test', _status: 'draft' })))
     })
+
+    // Termine: Countdown auf der Startseite nur mit Seiten-Recht (wie früher unter „Texte & Bilder“)
+    const termin = (c, extra) => api(c, 'POST', '/api/termine', { title: 'ZR-Test Termin', beginn: new Date(Date.now() + 5 * 86400000).toISOString(), bereich: 'verein', ...extra })
+    await mit(['termine'], async (c) => {
+      const t = await termin(c, { countdown: true, countdownText: 'ZR' })
+      pruefe('termine: Termin anlegen', t.s === 201, t.j)
+      pruefe('termine: ohne Seiten-Recht kein Countdown auf der Startseite', t.s === 201 && t.j?.doc?.countdown !== true && !t.j?.doc?.countdownText, t.j?.doc)
+      if (t.j?.doc?.id) {
+        await d.q('update termine set countdown = true where id = $1', [t.j.doc.id])
+        const u = await api(c, 'PATCH', `/api/termine/${t.j.doc.id}`, { countdown: false, nurMitglieder: true })
+        const [db] = await d.q('select countdown from termine where id = $1', [t.j.doc.id])
+        pruefe('termine: Countdown-Haken nicht entfernbar, Termin trotzdem speicherbar', u.s === 200 && db?.countdown === true, u.j)
+      }
+    })
+    await mit(['termine', 'seiten'], async (c) => {
+      const t = await termin(c, { countdown: true })
+      pruefe('termine + seiten: Countdown setzen', t.s === 201 && t.j?.doc?.countdown === true, t.j)
+      const m = await termin(c, { countdown: true, nurMitglieder: true })
+      pruefe('termine + seiten: Countdown bei „nur für Mitglieder“ abgelehnt', m.s === 400, m.j)
+    })
+    await mit([], async (c) => pruefe('Ohne Recht: keinen Termin anlegen', nicht(await termin(c, { countdown: true }))))
 
     // Medien, Sponsoren, Teams, Verein
     await mit(['medien'], async (c) => pruefe('medien: Bild ändern', (await api(c, 'PATCH', `/api/media/${bild.id}`, { alt: bild.alt })).s === 200))
@@ -214,6 +235,7 @@ export default async function zusatzrechte(d) {
       await d.q(`delete from posts where id = any($1)`, [neuePosts])
     }
     await d.q(`delete from mitgliedsantraege where email = 'sicherheitstest-zr@bsv.test'`)
+    await d.q(`delete from termine where title = 'ZR-Test Termin'`)
     await d.q(`delete from _pages_v where parent_id in (select id from pages where slug = 'zr-test-seite')`)
       await d.q(`delete from pages where slug = 'zr-test-seite'`)
   }

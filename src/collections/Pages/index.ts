@@ -153,7 +153,8 @@ export const Pages: CollectionConfig<'pages'> = {
         // Zwischenspeichern für die Live-Vorschau: 1 Sekunde nach dem Tippen (vorher 0,1 s → sehr viele Versionen)
         interval: 1000,
       },
-      schedulePublish: true,
+      // „Veröffentlichung planen“: Uhrzeit im 24-Stunden-Format
+      schedulePublish: { timeFormat: "HH:mm 'Uhr'", timeIntervals: 15 },
     },
     maxPerDoc: 50,
   },

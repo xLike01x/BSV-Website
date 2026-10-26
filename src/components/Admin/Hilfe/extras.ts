@@ -375,9 +375,9 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Anmeldeformular: Website-Aufbau → Formulare → Vorlage „Anmeldung zu einer Veranstaltung“. Bei „Name des Formulars“ gleich den späteren Seitennamen eintragen (z. B. „Weihnachtsfeier 2026“) – daraus entsteht im nächsten Schritt die Adresse der Seite. Felder anpassen, z. B. eine Auswahlliste „Teilnahme“ mit „Ich komme“ / „Ich komme nicht“. Danke-Nachricht prüfen. Speichern.',
         'Seite: im Formular rechts „Neue Seite mit diesem Formular erstellen“. Die Seite heißt wie das Formular (später umbenennen ändert die Adresse nicht mehr). Über dem Formular einen Baustein „Text (in Spalten)“ mit allen Infos einfügen, Vorschau prüfen, „Veröffentlichen“.',
         'Ansehen: rechts in der Seite steht die Adresse als Link (z. B. /weihnachtsfeier-2026 ↗). Ins Menü kommt die Seite nicht von selbst – nur wenn du sie unter „Menü & Fußzeile“ einträgst.',
-        'Countdown (optional): Texte & Bilder → Startseite → Veranstaltungs-Countdown: Haken „Anzeigen“, den Termin wählen, bei „Link führt zu“ die Seite wählen. Speichern.',
+        'Countdown (optional): den Termin wieder öffnen, rechts den Haken „Countdown auf der Startseite“ setzen und bei „Countdown-Button führt zu“ die Seite wählen. Speichern.',
         'Antworten lesen: Posteingang → Formular-Eingänge. Zum Anmeldeschluss das Formular von der Seite nehmen (Baustein löschen und „Veröffentlichen“) – es schließt nicht von selbst.',
-        'Nach der Veranstaltung: Countdown-Haken raus (verschwindet sonst am Folgetag ohnehin), Seite auf „Entwurf“ zurücksetzen oder löschen, Formular-Eingänge löschen, sobald sie nicht mehr gebraucht werden.',
+        'Nach der Veranstaltung: Der Countdown verschwindet am Folgetag von selbst. Seite auf „Entwurf“ zurücksetzen oder löschen, Formular-Eingänge löschen, sobald sie nicht mehr gebraucht werden.',
       ],
     },
   ],
@@ -880,13 +880,16 @@ export const FELDER: Record<string, Feld[]> = {
   ],
   termine: [
     { name: 'Titel', text: 'Name der Veranstaltung.' },
-    { name: 'Beginn / Ende', text: 'Datum und Uhrzeit. Ende ist optional.' },
+    { name: 'Beginn / Ende', text: 'Datum und Uhrzeit (24-Stunden-Format, z. B. 19:00 Uhr). Eintippen geht auch: „12.12.2026 19:00“. Ende ist optional.' },
     { name: 'Ort', text: 'Wo der Termin stattfindet.' },
     { name: 'Bereich', text: 'Bestimmt Farbe und Zuordnung im Kalender.' },
     { name: 'Wiederholen', text: 'Für regelmäßige Termine: „Jede Woche“, „Alle 2 Wochen“ oder „Jeden Monat (gleicher Tag)“.' },
     { name: 'Wiederholen bis einschließlich', text: 'Letzter Tag der Wiederholung (höchstens 2 Jahre).' },
     { name: 'Einzelne Termine auslassen', text: 'Ferien oder Feiertage, an denen der Termin ausfällt – je ein Datum.' },
     { name: 'Nur für Mitglieder sichtbar', text: 'Nur nach dem Login sichtbar.' },
+    { name: 'Countdown auf der Startseite', text: 'Rechts. Zählt auf der Startseite bis zum Beginn herunter und verschwindet danach von selbst. Mehrere Termine mit Haken: der nächste kommt dran. Nicht zusammen mit „Nur für Mitglieder“.' },
+    { name: 'Countdown-Button führt zu', text: 'Erscheint mit dem Haken. Eigene veröffentlichte Seite, z. B. mit Anmeldeformular. Leer = zum Termin im Kalender.' },
+    { name: 'Countdown-Text', text: 'Erscheint mit dem Haken. Kurzer Satz unter dem Datum. Leer = Ort des Termins.' },
     { name: 'Beschreibung', text: 'Weitere Infos zum Termin. Zeilenumbrüche werden übernommen.' },
   ],
   ausfaelle: [
@@ -1495,26 +1498,26 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wie zeige ich einen Countdown für eine Veranstaltung auf der Startseite?',
     antwort:
-      'Der Countdown braucht einen Termin mit Datum. Eine Seite (z. B. „Sommerfest“) hat kein Datum – sie lässt sich deshalb nicht als Termin auswählen, aber als Ziel des Links.\n\n'
-      + 'So geht es:\n'
-      + '1. Unter Inhalte → Termine die Veranstaltung anlegen (Titel, Beginn mit Uhrzeit, Ort). Den Haken „Nur für Mitglieder sichtbar“ nicht setzen.\n'
-      + '2. Website-Aufbau → Texte & Bilder → Reiter „Startseite“ → „Veranstaltungs-Countdown“: Haken „Anzeigen“ setzen und bei „Termin“ die Veranstaltung wählen.\n'
-      + '3. Optional bei „Link führt zu“ deine eigene Seite wählen. Leer = der Link führt zum Termin im Kalender.\n'
-      + '4. Speichern. Auf der Startseite erscheint direkt unter dem Kopfbereich die Kachel „Noch 12 Tage · 3 Stunden · 59 Minuten“.\n\n'
-      + '• „Keine Optionen“ bei „Termin“ heißt: Es gibt noch keinen öffentlichen Termin. Erst unter Termine einen anlegen.\n'
-      + '• Name, Datum und Uhrzeit kommen aus dem Termin – ändert sich der Termin, ändert sich der Countdown mit. Titel, Text und Link-Text kannst du optional überschreiben.\n'
-      + '• Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst. Bei wiederkehrenden Terminen zählt immer der nächste.\n'
-      + '• Nur öffentliche Termine und nur veröffentlichte Seiten lassen sich auswählen.\n\n'
-      + 'Beispiel 1 – Wenn du eine Seite „Sommerfest“ mit Programm und Anmeldung gebaut hast – dann lege zusätzlich unter Termine den Termin „Sommerfest“ am 4. Juli an. Beim Countdown wählst du den Termin und bei „Link führt zu“ die Seite „Sommerfest“. Die Startseite zählt herunter und der Button öffnet deine Seite.\n\n'
-      + 'Beispiel 2 – Wenn der Countdown vorübergehend nicht zu sehen sein soll – dann nimm nur den Haken „Anzeigen“ raus. Termin und Texte bleiben gespeichert.',
-    bereich: 'texte',
+      'Direkt im Termin: Inhalte → Termine → Termin öffnen (oder neu anlegen) → rechts den Haken „Countdown auf der Startseite“ setzen → Speichern. Auf der Startseite erscheint direkt unter dem Kopfbereich die Kachel „Noch 12 Tage · 3 Stunden · 59 Minuten“ mit Name, Datum und einem Button.\n\n'
+      + 'Nach dem Haken erscheinen zwei weitere Felder:\n'
+      + '• „Countdown-Button führt zu“: eine eigene, veröffentlichte Seite (z. B. „Sommerfest“ mit Programm und Anmeldung). Leer = der Button führt zum Termin im Kalender.\n'
+      + '• „Countdown-Text“: ein kurzer Satz unter dem Datum, z. B. „Essen und Getränke inklusive“. Leer = Ort des Termins.\n\n'
+      + '• Name, Datum und Uhrzeit kommen aus dem Termin – ändert sich der Termin, ändert sich der Countdown mit.\n'
+      + '• Haben mehrere Termine den Haken, zeigt die Startseite den nächsten. Ist er vorbei, kommt automatisch der übernächste dran. Bei wiederkehrenden Terminen zählt immer der nächste.\n'
+      + '• Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.\n'
+      + '• Nur bei öffentlichen Terminen: zusammen mit „Nur für Mitglieder sichtbar“ lässt sich der Haken nicht speichern.\n'
+      + '• Den Haken setzen dürfen Admin, Redaktion und wer das Recht für „Seiten“ hat – wie früher unter „Texte & Bilder“.\n'
+      + '• Die Überzeile („Bald im BSV“) und den Button-Text für alle Countdowns änderst du unter Website-Aufbau → Texte & Bilder → Startseite → „Veranstaltungs-Countdown“.\n\n'
+      + 'Beispiel 1 – Wenn du eine Seite „Sommerfest“ mit Programm und Anmeldung gebaut hast – dann lege unter Termine den Termin „Sommerfest“ am 4. Juli an, setze rechts den Haken „Countdown auf der Startseite“ und wähle bei „Countdown-Button führt zu“ die Seite „Sommerfest“. Die Startseite zählt herunter, der Button öffnet deine Seite.\n\n'
+      + 'Beispiel 2 – Wenn im Dezember schon die Weihnachtsfeier und im Januar der Neujahrsempfang den Haken haben – dann zählt die Startseite erst bis zur Weihnachtsfeier und ab dem Folgetag bis zum Neujahrsempfang. Umstellen musst du nichts.',
+    bereich: 'termine',
   },
   {
     frage: 'Ich habe eine Seite veröffentlicht – wo sehe ich sie?',
     antwort:
       'Unter ihrer eigenen Adresse: Website-Adresse + „/“ + Adresse der Seite, z. B. /sommerfest. In der Seite steht rechts der Link „/sommerfest ↗“ – ein Klick öffnet sie in einem neuen Tab. Die Adresse entsteht beim ersten Speichern aus dem Titel (Feld „Slug“) und ändert sich danach nicht mehr von selbst, auch wenn du den Titel änderst.\n\n'
       + '• Ins Menü kommt eine neue Seite nicht von selbst. Dafür: „Menü & Fußzeile“ → Eintrag hinzufügen → Seite wählen → Speichern.\n'
-      + '• Ohne Menüeintrag findet man die Seite über einen Link: im Countdown („Link führt zu“), in einer News, auf einem Button einer anderen Seite oder als Link in WhatsApp.\n'
+      + '• Ohne Menüeintrag findet man die Seite über einen Link: im Countdown eines Termins („Countdown-Button führt zu“), in einer News, auf einem Button einer anderen Seite oder als Link in WhatsApp.\n'
       + '• Steht rechts nur „Adresse nach dem Veröffentlichen: …“, ist die Seite noch ein Entwurf – oben rechts „Veröffentlichen“ klicken.\n\n'
       + 'Beispiel – Wenn du die Seite „Sommerfest“ veröffentlicht hast, sie aber nirgends siehst – dann klick rechts auf „/sommerfest ↗“. Soll jeder sie finden, trag sie ins Menü ein oder verlinke sie beim Countdown auf der Startseite.',
     bereich: 'pages',

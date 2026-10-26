@@ -154,41 +154,38 @@ export const getTermine = cache(async (limit = 50): Promise<Vorkommen[]> => {
   return aufloesen(res.docs, jetzt, bis, limit)
 })
 
-/** Countdown auf der Startseite: nächster Beginn des gewählten (öffentlichen) Termins – ohne Anmeldung abgefragt,
+/** Countdown auf der Startseite: nächster Beginn aller öffentlichen Termine mit Haken „Countdown“ – ohne Anmeldung abgefragt,
  *  damit die Startseite statisch bleibt und Mitglieder-Termine nie erscheinen */
 export type CountdownDaten = { kicker: string; titel: string; text: string; linkText: string; href: string; beginn: string; ende: string | null; jetzt: number }
 export const getCountdown = cache(async (): Promise<CountdownDaten | null> => {
-  const t = (await getTexte()) as unknown as { countdown?: { aktiv?: boolean; termin?: unknown; kicker?: string; titel?: string; text?: string; linkText?: string; seite?: unknown } }
-  const c = t.countdown
-  if (!c?.aktiv || !c.termin) return null
-  const id = typeof c.termin === 'object' ? (c.termin as { id: number }).id : Number(c.termin)
-  if (!id) return null
   const p = await payload()
-  const res = await p.find({ collection: 'termine', where: { id: { equals: id } }, depth: 0, limit: 1, overrideAccess: false })
-  const doc = res.docs[0]
-  if (!doc) return null
+  // Ohne Anmeldung abgefragt: Termine „nur für Mitglieder“ fallen dadurch immer heraus
+  const res = await p.find({ collection: 'termine', where: { countdown: { equals: true } }, depth: 0, limit: 50, pagination: false, overrideAccess: false })
+  if (!res.docs.length) return null
   const jetzt = Date.now()
   const ab = new Date(jetzt - 24 * 60 * 60 * 1000)
   const bis = new Date(jetzt + 2 * 366 * 24 * 60 * 60 * 1000)
-  // Nächstes Vorkommen, das noch nicht vorbei ist (ohne Ende: bis zum Ende des Tages, Berliner Zeit)
+  // Nächstes Vorkommen aller Termine mit Haken, das noch nicht vorbei ist (ohne Ende: bis zum Ende des Tages, Berliner Zeit)
   const heute = berlinTag(new Date(jetzt))
   const nochNichtVorbei = (x: Vorkommen) => (x.ende ? new Date(x.ende).getTime() > jetzt : berlinTag(x.beginn) >= heute)
-  const v = aufloesen([doc], ab, bis, 10).find(nochNichtVorbei)
+  const v = aufloesen(res.docs, ab, bis).find(nochNichtVorbei)
   if (!v) return null
   const schluessel = terminSchluessel(v)
-  // Ziel des Links: gewählte eigene Seite – ohne Anmeldung abgefragt, also nur, wenn sie veröffentlicht ist; sonst der Termin
-  const seitenId = c.seite ? (typeof c.seite === 'object' ? (c.seite as { id: number }).id : Number(c.seite)) : null
+  // Ziel des Buttons: gewählte eigene Seite – ohne Anmeldung abgefragt, also nur, wenn sie veröffentlicht ist; sonst der Termin
+  const s = (v as { countdownSeite?: unknown }).countdownSeite
+  const seitenId = s ? (typeof s === 'object' ? (s as { id: number }).id : Number(s)) : null
   const seite = seitenId
     ? ((await p.find({ collection: 'pages', where: { id: { equals: seitenId } }, depth: 0, limit: 1, overrideAccess: false, select: { slug: true, breadcrumbs: true } })).docs[0] as
         | { slug?: string | null; breadcrumbs?: { url?: string | null }[] | null }
         | undefined)
     : undefined
   const seitenAdresse = seite ? (seite.breadcrumbs?.at(-1)?.url ?? (seite.slug ? `/${seite.slug}` : null)) : null
+  const t = ((await getTexte()) as unknown as { countdown?: { kicker?: string; linkText?: string } }).countdown
   return {
-    kicker: c.kicker || 'Bald im BSV',
-    titel: c.titel || v.title,
-    text: c.text || v.ort || '',
-    linkText: c.linkText || 'Alle Infos zum Termin ›',
+    kicker: t?.kicker || 'Bald im BSV',
+    titel: v.title,
+    text: (v as { countdownText?: string | null }).countdownText || v.ort || '',
+    linkText: t?.linkText || 'Alle Infos zum Termin ›',
     href: seitenAdresse ?? `/termine#termin-${schluessel}`,
     beginn: v.beginn,
     ende: v.ende ?? null,
