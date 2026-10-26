@@ -9,7 +9,7 @@ import { cache } from 'react'
 import { Texte as TexteConfig } from '@/Texte/config'
 import { standardTexte, zusammenfuehren } from '@/Texte/standard'
 import { hauptsponsorUmziehen } from '@/utilities/hauptsponsorUmziehen'
-import { abFilter, aufloesen, type Vorkommen } from '@/bsv/wiederholung'
+import { abFilter, aufloesen, berlinTag, terminSchluessel, type Vorkommen } from '@/bsv/wiederholung'
 
 import type { Angebote, Post, Termine, Texte, User, Verein } from '@/payload-types'
 
@@ -152,6 +152,40 @@ export const getTermine = cache(async (limit = 50): Promise<Vorkommen[]> => {
   })
   // Wiederkehrende Termine in Einzeltermine auflösen
   return aufloesen(res.docs, jetzt, bis, limit)
+})
+
+/** Countdown auf der Startseite: nächster Beginn des gewählten (öffentlichen) Termins – ohne Anmeldung abgefragt,
+ *  damit die Startseite statisch bleibt und Mitglieder-Termine nie erscheinen */
+export type CountdownDaten = { kicker: string; titel: string; text: string; linkText: string; href: string; beginn: string; ende: string | null; jetzt: number }
+export const getCountdown = cache(async (): Promise<CountdownDaten | null> => {
+  const t = (await getTexte()) as unknown as { countdown?: { aktiv?: boolean; termin?: unknown; kicker?: string; titel?: string; text?: string; linkText?: string } }
+  const c = t.countdown
+  if (!c?.aktiv || !c.termin) return null
+  const id = typeof c.termin === 'object' ? (c.termin as { id: number }).id : Number(c.termin)
+  if (!id) return null
+  const p = await payload()
+  const res = await p.find({ collection: 'termine', where: { id: { equals: id } }, depth: 0, limit: 1, overrideAccess: false })
+  const doc = res.docs[0]
+  if (!doc) return null
+  const jetzt = Date.now()
+  const ab = new Date(jetzt - 24 * 60 * 60 * 1000)
+  const bis = new Date(jetzt + 2 * 366 * 24 * 60 * 60 * 1000)
+  // Nächstes Vorkommen, das noch nicht vorbei ist (ohne Ende: bis zum Ende des Tages, Berliner Zeit)
+  const heute = berlinTag(new Date(jetzt))
+  const nochNichtVorbei = (x: Vorkommen) => (x.ende ? new Date(x.ende).getTime() > jetzt : berlinTag(x.beginn) >= heute)
+  const v = aufloesen([doc], ab, bis, 10).find(nochNichtVorbei)
+  if (!v) return null
+  const schluessel = terminSchluessel(v)
+  return {
+    kicker: c.kicker || 'Bald im BSV',
+    titel: c.titel || v.title,
+    text: c.text || v.ort || '',
+    linkText: c.linkText || 'Alle Infos zum Termin ›',
+    href: `/termine#termin-${schluessel}`,
+    beginn: v.beginn,
+    ende: v.ende ?? null,
+    jetzt,
+  }
 })
 
 /** Alle veröffentlichten News eines Teams (auch die, die nicht auf der Startseite stehen) */

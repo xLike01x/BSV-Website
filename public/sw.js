@@ -15,7 +15,7 @@
  *   self.addEventListener('activate', (e) => e.waitUntil(caches.keys().then((n) => Promise.all(n.map((k) => caches.delete(k)))).then(() => self.registration.unregister())))
  * und die Anmeldung in src/bsv/components/WebApp.tsx entfernen. Browser holen sw.js bei jedem Seitenaufruf neu (no-cache).
  */
-const CACHE = 'bsv-offline-v1'
+const CACHE = 'bsv-offline-v2'
 const OFFLINE = '/offline.html'
 const DATEIEN = [OFFLINE, '/bsv-logo.png']
 

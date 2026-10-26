@@ -86,6 +86,12 @@ const nextConfig: NextConfig = {
         ],
       },
       {
+        // Wappen, App-Symbole und Favicon: einen Tag zwischenspeichern, danach im Hintergrund aktualisieren
+        // (Standard wäre „jedes Mal neu fragen“)
+        source: '/:datei(bsv-logo.png|favicon.png|favicon.ico|app-symbol-180.png|app-symbol-192.png|app-symbol-512.png|app-symbol-maskable-512.png|og-bsv.jpg)',
+        headers: [{ key: 'Cache-Control', value: 'public, max-age=86400, stale-while-revalidate=604800' }],
+      },
+      {
         // Web-App: Browser fragen bei jedem Start nach einer neuen Version des Service Workers
         source: '/sw.js',
         headers: [

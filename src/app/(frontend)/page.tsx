@@ -11,13 +11,14 @@ import { CountUp } from '@/bsv/components/home/CountUp'
 import { OfferFinder, type FinderItem } from '@/bsv/components/OfferFinder'
 import { T } from '@/bsv/components/Text'
 import { WebApp } from '@/bsv/components/WebApp'
-import { getAngebote, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
-import { bildUrl, datum, farbe } from '@/bsv/lib'
+import { Countdown } from '@/bsv/components/Countdown'
+import { getAngebote, getCountdown, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
+import { bildUrl, datum, farbe, uhrzeit } from '@/bsv/lib'
 
 export const revalidate = 60
 
 export default async function Startseite() {
-  const [verein, angebote, news, tx, w, start] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter(), getStartseite()])
+  const [verein, angebote, news, tx, w, start, countdown] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter(), getStartseite(), getCountdown()])
   /** Erste Zeile normal, weitere Zeilen grün hervorgehoben */
   const zweifarbig = (text?: string | null) => {
     const [erste, ...rest] = (text ?? '').split('\n')
@@ -113,7 +114,7 @@ export default async function Startseite() {
               { cls: 'c4', style: { right: '4%', bottom: '2%', width: '50%', height: '46%', borderRadius: '52% 48% 40% 60% / 46% 56% 44% 54%' } },
             ].map((p, i) => (
               <div key={p.cls} className={`ph ${p.cls}`} style={p.style as React.CSSProperties}>
-                <Bild media={hero[i]} size="medium" sizes="(max-width: 900px) 50vw, 360px" priority={i < 2} />
+                <Bild media={hero[i]} size="medium" sizes="(max-width: 900px) 50vw, 360px" priority={i === 0} />
               </div>
             ))}
             <span className="dot dot1" style={{ left: '54%', top: '46%', width: 34, height: 34, background: '#FFB938' }} />
@@ -133,6 +134,13 @@ export default async function Startseite() {
           </div>
         </div>
       </section>
+
+      {countdown && (
+        <Countdown
+          {...countdown}
+          wann={`${datum(countdown.beginn, { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })} · ${uhrzeit(countdown.beginn)} Uhr`}
+        />
+      )}
 
       <section style={{ padding: '0 22px 90px', background: 'linear-gradient(var(--bsv-warm) 0 36px, #fff 36px)' }}>
         <div className="stats">

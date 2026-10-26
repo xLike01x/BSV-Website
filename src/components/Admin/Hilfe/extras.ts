@@ -1481,6 +1481,28 @@ export const FAQ: Faq[] = [
     bereich: 'ausfaelle',
   },
   {
+    frage: 'Wie zeige ich einen Countdown für eine Veranstaltung auf der Startseite?',
+    antwort:
+      'Unter Website-Aufbau → Texte & Bilder → Reiter „Startseite“ → „Veranstaltungs-Countdown“: Haken „Anzeigen“ setzen, den Termin auswählen und speichern. Auf der Startseite erscheint direkt unter dem Kopfbereich eine Kachel „Noch 12 Tage · 3 Stunden · 59 Minuten“ mit Name, Datum und einem Link zum Termin.\n\n'
+      + '• Name, Datum und Uhrzeit kommen aus dem Termin – ändert sich der Termin, ändert sich der Countdown mit. Titel und Text kannst du optional überschreiben (leer = Name bzw. Ort des Termins).\n'
+      + '• Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst. Bei wiederkehrenden Terminen zählt immer der nächste.\n'
+      + '• Nur öffentliche Termine: „nur für Mitglieder“ lässt sich nicht auswählen und wird auch nachträglich nie auf der Startseite gezeigt.\n\n'
+      + 'Beispiel 1 – Wenn das Sommerfest am 4. Juli ist – dann lege es unter Termine an, wähle es beim Countdown aus und setze den Haken. Ab sofort zählt die Startseite herunter; am 5. Juli ist die Kachel weg.\n\n'
+      + 'Beispiel 2 – Wenn der Countdown vorübergehend nicht zu sehen sein soll – dann nimm nur den Haken „Anzeigen“ raus. Termin und Texte bleiben gespeichert.',
+    bereich: 'texte',
+  },
+  {
+    frage: 'Muss die Web-App aktualisiert werden?',
+    antwort:
+      'Nein. Die Web-App zeigt immer die aktuelle Website – jede Änderung (News, Termine, Texte) und jedes Update der Website ist beim nächsten Öffnen sofort da. Es gibt keinen App-Store und nichts zu installieren. Auf dem Gerät liegt nur die Hinweisseite für „keine Verbindung“; alles andere kommt immer frisch vom Server.\n\n'
+      + 'Nur Name und Symbol der App übernimmt der Browser verzögert:\n'
+      + '• Android/PC (Chrome, Edge): prüft beim Öffnen der App etwa einmal am Tag, ob sich Name oder Symbol geändert haben, und fragt bei einer Änderung manchmal kurz nach.\n'
+      + '• iPhone: übernimmt ein neues Symbol erst, wenn man die App vom Home-Bildschirm löscht und neu hinzufügt.\n'
+      + '• Windows: zeigt auf dem Desktop manchmal noch das alte Symbol aus seinem Zwischenspeicher – nach einem Neustart des Rechners ist es weg.\n\n'
+      + 'Beispiel 1 – Wenn du eine News veröffentlichst – dann sehen sie alle mit der App beim nächsten Öffnen sofort, ohne dass jemand etwas tun muss.\n\n'
+      + 'Beispiel 2 – Wenn das App-Symbol geändert wurde und auf einem Gerät noch das alte erscheint – dann die App einmal öffnen und einen Tag warten, oder sie entfernen und neu installieren (iPhone: vom Home-Bildschirm löschen und neu hinzufügen).',
+  },
+  {
     frage: 'Gibt es die Website als App?',
     antwort:
       'Ja, als sogenannte Web-App: kostenlos, ohne App-Store und ohne Anmeldung. Wer sie installiert, hat das Vereinswappen auf dem Startbildschirm und die Website öffnet sich in einem eigenen Fenster ohne Browser-Leiste. Inhalte sind immer dieselben wie auf der Website – es gibt nichts extra zu pflegen.\n\n'

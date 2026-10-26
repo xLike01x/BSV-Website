@@ -1,5 +1,5 @@
 import { ausblendenAusserBereich, bereichZugriff } from '@/access/roles'
-import type { Field, GlobalConfig } from 'payload'
+import type { Field, GlobalConfig, PayloadRequest } from 'payload'
 
 import { anyone } from '../access/anyone'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
@@ -144,6 +144,45 @@ export const Texte: GlobalConfig = {
                   ],
                 },
                 bild('bild', 'Bild (z. B. Plakat)', 'Hochformat sieht am besten aus.'),
+              ],
+            },
+            {
+              type: 'group',
+              name: 'countdown',
+              label: 'Veranstaltungs-Countdown',
+              admin: {
+                description:
+                  'Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.',
+              },
+              fields: [
+                { name: 'aktiv', label: 'Anzeigen', type: 'checkbox', defaultValue: false, admin: { description: 'Haken setzen und unten einen Termin auswählen.' } },
+                {
+                  name: 'termin',
+                  label: 'Termin',
+                  type: 'relationship',
+                  relationTo: 'termine',
+                  // Nur öffentliche Termine – „nur für Mitglieder“ erscheint nie auf der Startseite
+                  filterOptions: () => ({ nurMitglieder: { not_equals: true } }),
+                  admin: { allowCreate: false, description: 'Datum, Uhrzeit und Name kommen aus dem Termin. Bei wiederkehrenden Terminen zählt der nächste.' },
+                  validate: async (wert: unknown, { siblingData, req }: { siblingData?: { aktiv?: boolean }; req: PayloadRequest }) => {
+                    // Nur prüfen, wenn der Countdown angezeigt werden soll – sonst blockiert ein alter Termin das Speichern anderer Texte
+                    if (!siblingData?.aktiv) return true
+                    if (!wert) return 'Bitte einen Termin auswählen – oder den Haken „Anzeigen“ entfernen.'
+                    const id = typeof wert === 'object' ? (wert as { id?: number }).id : Number(wert)
+                    const t = await req.payload.findByID({ collection: 'termine', id: Number(id), depth: 0, overrideAccess: true, req }).catch(() => null)
+                    if (!t) return 'Diesen Termin gibt es nicht (mehr).'
+                    return t.nurMitglieder ? 'Termine „nur für Mitglieder“ erscheinen nicht auf der Startseite – bitte einen öffentlichen Termin wählen.' : true
+                  },
+                },
+                {
+                  type: 'row',
+                  fields: [
+                    text('kicker', 'Überzeile', 'Bald im BSV'),
+                    { name: 'titel', label: 'Titel (leer = Name des Termins)', type: 'text', admin: { description: 'z. B. „Sommerfest 2027“' } },
+                  ],
+                },
+                { name: 'text', label: 'Text (optional)', type: 'textarea', admin: { description: 'z. B. „Mit Hüpfburg, Grill und Fußballturnier für Kinder.“ Leer = Ort des Termins.' } },
+                text('linkText', 'Link-Text', 'Alle Infos zum Termin ›'),
               ],
             },
           ],

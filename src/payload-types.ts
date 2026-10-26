@@ -3461,6 +3461,29 @@ export interface Texte {
      */
     bild?: (number | null) | Media;
   };
+  /**
+   * Große Kachel auf der Startseite: „Noch 12 Tage bis zum Sommerfest“ – zählt bis zum Beginn eines Termins herunter. Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.
+   */
+  countdown?: {
+    /**
+     * Haken setzen und unten einen Termin auswählen.
+     */
+    aktiv?: boolean | null;
+    /**
+     * Datum, Uhrzeit und Name kommen aus dem Termin. Bei wiederkehrenden Terminen zählt der nächste.
+     */
+    termin?: (number | null) | Termine;
+    kicker?: string | null;
+    /**
+     * z. B. „Sommerfest 2027“
+     */
+    titel?: string | null;
+    /**
+     * z. B. „Mit Hüpfburg, Grill und Fußballturnier für Kinder.“ Leer = Ort des Termins.
+     */
+    text?: string | null;
+    linkText?: string | null;
+  };
   fussball?: {
     titel?: string | null;
     text?: string | null;
@@ -4233,6 +4256,16 @@ export interface TexteSelect<T extends boolean = true> {
         linkText?: T;
         linkUrl?: T;
         bild?: T;
+      };
+  countdown?:
+    | T
+    | {
+        aktiv?: T;
+        termin?: T;
+        kicker?: T;
+        titel?: T;
+        text?: T;
+        linkText?: T;
       };
   fussball?:
     | T

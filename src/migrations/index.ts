@@ -11,6 +11,7 @@ import * as migration_20261021_105048_zusatzrechte_bereiche from './20261021_105
 import * as migration_20261022_192800_nur_ansehen from './20261022_192800_nur_ansehen';
 import * as migration_20261023_071149_hilfe_updates from './20261023_071149_hilfe_updates';
 import * as migration_20261023_124424_webapp from './20261023_124424_webapp';
+import * as migration_20261026_095157_countdown from './20261026_095157_countdown';
 
 export const migrations = [
   {
@@ -76,6 +77,11 @@ export const migrations = [
   {
     up: migration_20261023_124424_webapp.up,
     down: migration_20261023_124424_webapp.down,
-    name: '20261023_124424_webapp'
+    name: '20261023_124424_webapp',
+  },
+  {
+    up: migration_20261026_095157_countdown.up,
+    down: migration_20261026_095157_countdown.down,
+    name: '20261026_095157_countdown'
   },
 ];

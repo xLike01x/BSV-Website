@@ -29,6 +29,7 @@
     "test:schluessel": "tsx --env-file=.env --tsconfig tsconfig.json tests/schluessel/wechsel.ts",
     "live:pruefen": "tsx --env-file=.env scripts/live-pruefen.ts",
     "medien:exif": "tsx scripts/exif-entfernen.ts",
+    "medien:webp": "tsx --env-file=.env scripts/bilder-neu-erzeugen.ts",
     "sicherung:entschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/entschluesseln.ts",
     "sicherung:alte-verschluesseln": "tsx --env-file=.env --tsconfig tsconfig.json src/sicherung/altVerschluesseln.ts",
     "konto:erstes": "cross-env NODE_OPTIONS=--no-deprecation payload run src/auth/erstesKonto.ts",
