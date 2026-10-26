@@ -45,6 +45,7 @@ export const auskunftEndpunkt: Endpoint = {
       passantraege: ids.length ? await suche(req, 'passantraege', { or: mitKonto('antragsteller') }) : [],
       passUnterlagen: ids.length ? await suche(req, 'passdokumente', { or: mitKonto('hochgeladenVon') }) : [],
       profilfotos: ids.length ? await suche(req, 'profilbilder', { or: mitKonto('besitzer') }) : [],
+      terminZuAbsagen: ids.length ? await suche(req, 'termin-rueckmeldungen', { or: mitKonto('mitglied') }) : [],
       besucherstatistik: 'Keine personenbezogene Zuordnung möglich (keine IP-Adressen, täglich wechselnde Kennung).',
     }
     req.payload.logger.info(`Datenschutz-Auskunft erstellt von ${(req.user as { email?: string }).email ?? 'unbekannt'}`)

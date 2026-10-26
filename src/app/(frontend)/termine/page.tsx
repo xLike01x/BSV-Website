@@ -114,6 +114,13 @@ export default async function TerminSeite() {
                         {t.ort ? ` · ${t.ort}` : ''}
                       </p>
                       {t.beschreibung && <p style={{ margin: '8px 0 0', color: 'var(--bsv-ink-2)', whiteSpace: 'pre-line' }}>{t.beschreibung}</p>}
+                      {t.anmeldung && (!t.wiederholung || t.wiederholung === 'keine') && (
+                        <p style={{ margin: '8px 0 0', fontWeight: 600 }}>
+                          <Link href="/mitglieder#zusagen" className="link-more">
+                            Zu- oder Absage für Mitglieder{t.anmeldeschluss ? ` bis ${datum(t.anmeldeschluss, { day: 'numeric', month: 'long' })}` : ''}: im Mitgliederbereich ›
+                          </Link>
+                        </p>
+                      )}
                       {!t.nurMitglieder && (
                         <div className="termin-aktionen">
                           <a className="termin-link" href={`/termine/kalender.ics?id=${t.id}`} download>

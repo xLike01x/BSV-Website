@@ -73,6 +73,7 @@ export interface Config {
     passantraege: Passantraege;
     posts: Post;
     termine: Termine;
+    'termin-rueckmeldungen': TerminRueckmeldungen;
     alben: Alben;
     media: Media;
     sponsoren: Sponsoren;
@@ -106,6 +107,7 @@ export interface Config {
     passantraege: PassantraegeSelect<false> | PassantraegeSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     termine: TermineSelect<false> | TermineSelect<true>;
+    'termin-rueckmeldungen': TerminRueckmeldungenSelect<false> | TerminRueckmeldungenSelect<true>;
     alben: AlbenSelect<false> | AlbenSelect<true>;
     media: MediaSelect<false> | MediaSelect<true>;
     sponsoren: SponsorenSelect<false> | SponsorenSelect<true>;
@@ -1085,7 +1087,18 @@ export interface Termine {
    * Dann sehen den Termin nur angemeldete Mitglieder.
    */
   nurMitglieder?: boolean | null;
+  /**
+   * Angemeldete Mitglieder sagen unter „Mein BSV“ zu oder ab. Die Liste erscheint unten in diesem Termin.
+   */
   anmeldung?: boolean | null;
+  /**
+   * Bis einschließlich diesem Tag änderbar. Leer = bis zum Beginn.
+   */
+  anmeldeschluss?: string | null;
+  /**
+   * Dann wählen Mitglieder „1 Person“ oder „2 Personen“, z. B. mit Partnerin oder Partner.
+   */
+  begleitung?: boolean | null;
   /**
    * Zählt auf der Startseite bis zum Beginn herunter („Noch 12 Tage …“) und verschwindet nach dem Termin von selbst. Haben mehrere Termine den Haken, kommt der nächste dran.
    */
@@ -1542,6 +1555,21 @@ export interface Form {
   deletedAt?: string | null;
 }
 /**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "termin-rueckmeldungen".
+ */
+export interface TerminRueckmeldungen {
+  id: number;
+  termin?: (number | null) | Termine;
+  mitglied?: (number | null) | User;
+  name?: string | null;
+  teilnahme: 'ja' | 'nein';
+  personen?: number | null;
+  bemerkung?: string | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * Fotoalben für die Galerie auf der Website, z. B. „Sommerfest 2026“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1993,6 +2021,10 @@ export interface PayloadLockedDocument {
         value: number | Termine;
       } | null)
     | ({
+        relationTo: 'termin-rueckmeldungen';
+        value: number | TerminRueckmeldungen;
+      } | null)
+    | ({
         relationTo: 'alben';
         value: number | Alben;
       } | null)
@@ -2314,6 +2346,8 @@ export interface TermineSelect<T extends boolean = true> {
   beschreibung?: T;
   nurMitglieder?: T;
   anmeldung?: T;
+  anmeldeschluss?: T;
+  begleitung?: T;
   countdown?: T;
   countdownSeite?: T;
   countdownText?: T;
@@ -2322,6 +2356,20 @@ export interface TermineSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   deletedAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "termin-rueckmeldungen_select".
+ */
+export interface TerminRueckmeldungenSelect<T extends boolean = true> {
+  termin?: T;
+  mitglied?: T;
+  name?: T;
+  teilnahme?: T;
+  personen?: T;
+  bemerkung?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3787,6 +3835,10 @@ export interface Datenschutz {
    */
   kontenMonate?: number | null;
   /**
+   * Läuft immer automatisch. Danach sind Namen, Antworten und Bemerkungen endgültig gelöscht.
+   */
+  rueckmeldungenTage?: number | null;
+  /**
    * Für Mitgliedsanträge, Mitgliedschaften, Kontakt- und Probetraining-Anfragen und Formular-Eingänge. Andere Inhalte (News, Seiten, Bilder …) bleiben so lange, wie unter Technik → Sicherheit eingestellt.
    */
   personenPapierkorbTage?: number | null;
@@ -4513,6 +4565,7 @@ export interface DatenschutzSelect<T extends boolean = true> {
   passAntragMonate?: T;
   passOffenMonate?: T;
   kontenMonate?: T;
+  rueckmeldungenTage?: T;
   personenPapierkorbTage?: T;
   automatisch?: T;
   standardsOktober2026?: T;

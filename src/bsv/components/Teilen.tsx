@@ -2,13 +2,15 @@
 import React, { useEffect, useState } from 'react'
 
 /**
- * Teilen-Knopf: auf dem Handy das normale Teilen-Menü (WhatsApp, Signal, …),
- * am Computer WhatsApp, Facebook, E-Mail und „Link kopieren“.
+ * Teilen-Knopf: auf dem Handy das normale Teilen-Menü (WhatsApp, Instagram, Signal, …),
+ * am Computer WhatsApp, Facebook, Instagram, E-Mail und „Link kopieren“.
+ * Instagram bietet keine Teilen-Adresse für Links: Der Eintrag kopiert den Link und öffnet Instagram,
+ * dort fügt man ihn z. B. als Link-Sticker in der Story oder in einer Direktnachricht ein.
  */
 export function Teilen({ titel, pfad, text, klein }: { titel: string; pfad?: string; text?: string; klein?: boolean }) {
   const [url, setUrl] = useState('')
   const [offen, setOffen] = useState(false)
-  const [kopiert, setKopiert] = useState(false)
+  const [kopiert, setKopiert] = useState<'' | 'link' | 'instagram'>('')
   const [nativ, setNativ] = useState(false)
   useEffect(() => {
     setUrl(pfad ? new URL(pfad, window.location.origin).toString() : window.location.href)
@@ -26,14 +28,20 @@ export function Teilen({ titel, pfad, text, klein }: { titel: string; pfad?: str
     }
     setOffen((o) => !o)
   }
-  const kopieren = async () => {
+  const kopieren = async (wofuer: 'link' | 'instagram') => {
     try {
       await navigator.clipboard.writeText(url)
-      setKopiert(true)
-      setTimeout(() => setKopiert(false), 2000)
+      setKopiert(wofuer)
+      setTimeout(() => setKopiert(''), wofuer === 'instagram' ? 6000 : 2000)
     } catch {
       /* ignorieren */
     }
+  }
+  const instagram = () => {
+    // Kopieren starten, solange diese Seite noch den Fokus hat; das Fenster im selben Klick öffnen (sonst blockiert der Browser es)
+    const kopie = kopieren('instagram')
+    window.open('https://www.instagram.com/', '_blank', 'noopener,noreferrer')
+    void kopie
   }
   const nachricht = `${text ?? titel} ${url}`
 
@@ -55,10 +63,18 @@ export function Teilen({ titel, pfad, text, klein }: { titel: string; pfad?: str
           <a role="menuitem" href={`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(url)}`} target="_blank" rel="noopener noreferrer">
             Facebook
           </a>
-          <a role="menuitem" href={`mailto:?subject=${encodeURIComponent(titel)}&body=${encodeURIComponent(nachricht)}`}>E-Mail</a>
-          <button type="button" role="menuitem" onClick={kopieren}>
-            {kopiert ? '✓ Kopiert' : 'Link kopieren'}
+          <button type="button" role="menuitem" onClick={instagram}>
+            Instagram
           </button>
+          <a role="menuitem" href={`mailto:?subject=${encodeURIComponent(titel)}&body=${encodeURIComponent(nachricht)}`}>E-Mail</a>
+          <button type="button" role="menuitem" onClick={() => kopieren('link')}>
+            {kopiert === 'link' ? '✓ Kopiert' : 'Link kopieren'}
+          </button>
+          {kopiert === 'instagram' && (
+            <span className="teilen-hinweis" role="status">
+              ✓ Link kopiert – in Instagram als Link-Sticker in der Story oder in einer Nachricht einfügen.
+            </span>
+          )}
         </span>
       )}
     </span>

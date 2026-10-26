@@ -368,11 +368,24 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
     {
+      id: 'zu-absage',
+      titel: 'Zu- und Absagen der Mitglieder einsammeln (z. B. Weihnachtsfeier)',
+      schritte: [
+        'Den Termin öffnen oder anlegen. Er darf sich nicht wiederholen.',
+        'Haken „Zu-/Absage im Mitgliederbereich“ setzen.',
+        'Optional: „Anmeldeschluss“ wählen (bis einschließlich diesem Tag änderbar) und „Begleitperson erlaubt“ anhaken, wenn Partnerin oder Partner mitkommen dürfen.',
+        'Speichern. Mitglieder sehen den Termin nach dem Login unter „Mein BSV“ ganz oben und antworten mit „Ich komme“ oder „Ich komme nicht“ – auf Wunsch mit Bemerkung (z. B. „vegetarisch“).',
+        'Auf der Seite „Termine“ steht automatisch der Hinweis „Zu- oder Absage für Mitglieder bis … im Mitgliederbereich“.',
+        'Die Liste steht unten im Termin: Zusagen, Personen, Absagen, Bemerkungen – mit „Drucken“ und „Als Tabelle herunterladen (Excel)“.',
+        'Nach dem Termin wird die Liste automatisch gelöscht (Standard: 30 Tage, einstellbar unter Datenschutz-Fristen). Vorher bei Bedarf drucken oder herunterladen.',
+      ],
+    },
+    {
       id: 'veranstaltung-komplett',
       titel: 'Eine Veranstaltung komplett vorbereiten (Termin, Anmeldung, Seite, Countdown)',
       schritte: [
         'Termin: Inhalte → Termine → Vorlage „Vereinsfest“ oder „Neu erstellen“. Titel, Beginn mit Uhrzeit und Ort eintragen (der Ort ist mit dem Sportpark vorbelegt – überschreiben, wenn woanders gefeiert wird). In die Beschreibung: Preis, was enthalten ist, Anmeldeschluss. Speichern.',
-        'Anmeldeformular: Website-Aufbau → Formulare → Vorlage „Anmeldung zu einer Veranstaltung“. Bei „Name des Formulars“ gleich den späteren Seitennamen eintragen (z. B. „Weihnachtsfeier 2026“) – daraus entsteht im nächsten Schritt die Adresse der Seite. Felder anpassen, z. B. eine Auswahlliste „Teilnahme“ mit „Ich komme“ / „Ich komme nicht“. Danke-Nachricht prüfen. Speichern.',
+        'Nur für Mitglieder (z. B. Weihnachtsfeier)? Dann statt eines Formulars im Termin den Haken „Zu-/Absage im Mitgliederbereich“ setzen (eigene Anleitung) und mit dem Schritt „Countdown“ weitermachen. Für alle Besucher: Anmeldeformular: Website-Aufbau → Formulare → Vorlage „Anmeldung zu einer Veranstaltung“. Bei „Name des Formulars“ gleich den späteren Seitennamen eintragen (z. B. „Weihnachtsfeier 2026“) – daraus entsteht im nächsten Schritt die Adresse der Seite. Felder anpassen, z. B. eine Auswahlliste „Teilnahme“ mit „Ich komme“ / „Ich komme nicht“. Danke-Nachricht prüfen. Speichern.',
         'Seite: im Formular rechts „Neue Seite mit diesem Formular erstellen“. Die Seite heißt wie das Formular (später umbenennen ändert die Adresse nicht mehr). Über dem Formular einen Baustein „Text (in Spalten)“ mit allen Infos einfügen, Vorschau prüfen, „Veröffentlichen“.',
         'Ansehen: rechts in der Seite steht die Adresse als Link (z. B. /weihnachtsfeier-2026 ↗). Ins Menü kommt die Seite nicht von selbst – nur wenn du sie unter „Menü & Fußzeile“ einträgst.',
         'Countdown (optional): den Termin wieder öffnen, rechts den Haken „Countdown auf der Startseite“ setzen und bei „Countdown-Button führt zu“ die Seite wählen. Speichern.',
@@ -887,6 +900,9 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Wiederholen bis einschließlich', text: 'Letzter Tag der Wiederholung (höchstens 2 Jahre).' },
     { name: 'Einzelne Termine auslassen', text: 'Ferien oder Feiertage, an denen der Termin ausfällt – je ein Datum.' },
     { name: 'Nur für Mitglieder sichtbar', text: 'Nur nach dem Login sichtbar.' },
+    { name: 'Zu-/Absage im Mitgliederbereich', text: 'Mitglieder sagen nach dem Login unter „Mein BSV“ zu oder ab. Die Liste steht unten im Termin. Nur bei Terminen, die sich nicht wiederholen.' },
+    { name: 'Anmeldeschluss', text: 'Erscheint mit dem Haken. Bis einschließlich diesem Tag können Mitglieder antworten oder ändern. Leer = bis zum Beginn.' },
+    { name: 'Begleitperson erlaubt', text: 'Erscheint mit dem Haken. Mitglieder wählen dann „1 Person“ oder „2 Personen (mit Begleitung)“.' },
     { name: 'Countdown auf der Startseite', text: 'Rechts. Zählt auf der Startseite bis zum Beginn herunter und verschwindet danach von selbst. Mehrere Termine mit Haken: der nächste kommt dran. Nicht zusammen mit „Nur für Mitglieder“.' },
     { name: 'Countdown-Button führt zu', text: 'Erscheint mit dem Haken. Eigene veröffentlichte Seite, z. B. mit Anmeldeformular. Leer = zum Termin im Kalender.' },
     { name: 'Countdown-Text', text: 'Erscheint mit dem Haken. Kurzer Satz unter dem Datum. Leer = Ort des Termins.' },
@@ -1513,6 +1529,19 @@ export const FAQ: Faq[] = [
     bereich: 'termine',
   },
   {
+    frage: 'Wie sagen Mitglieder zu einem Termin zu oder ab – und wo sehe ich die Liste?',
+    antwort:
+      'Im Termin den Haken „Zu-/Absage im Mitgliederbereich“ setzen, optional Anmeldeschluss und „Begleitperson erlaubt“. Mitglieder sehen den Termin nach dem Login unter „Mein BSV“ ganz oben, wählen „Ich komme“ oder „Ich komme nicht“, bei erlaubter Begleitung 1 oder 2 Personen, und können eine Bemerkung schreiben. Bis zum Anmeldeschluss lässt sich die Antwort ändern.\n\n'
+      + 'Die Liste steht unten im Termin: oben die Summe („✓ 14 Zusagen · 23 Personen · ✗ 3 Absagen“), darunter alle Antworten. „Drucken“ öffnet eine Druckansicht, „Als Tabelle herunterladen“ eine Datei für Excel.\n\n'
+      + '• Antworten können nur angemeldete, freigeschaltete Mitglieder – jede Person einmal pro Termin. Wer nicht Mitglied ist, kommt gar nicht erst dorthin.\n'
+      + '• Die Liste sehen Admin, Redaktion und wer das Zusatzrecht „Termine“ hat. Mitglieder sehen nur ihre eigene Antwort.\n'
+      + '• Nur bei Terminen, die sich nicht wiederholen.\n'
+      + '• Datenschutz: Die Antworten werden nach dem Termin automatisch gelöscht (Standard 30 Tage, Einstellungen → Datenschutz-Fristen).\n'
+      + '• E-Mails an die Organisatoren gibt es nicht – die aktuelle Liste steht immer im Termin.\n\n'
+      + 'Beispiel – Wenn die Weihnachtsfeier nur für Mitglieder ist und Partner mitkommen dürfen – dann Haken „Zu-/Absage im Mitgliederbereich“, Anmeldeschluss 01.12. und „Begleitperson erlaubt“ setzen. Rocco bekommt ein Konto mit Zusatzrecht „Termine“ und sieht die Liste, oder du druckst sie am 02.12. aus.',
+    bereich: 'termine',
+  },
+  {
     frage: 'Ich habe eine Seite veröffentlicht – wo sehe ich sie?',
     antwort:
       'Unter ihrer eigenen Adresse: Website-Adresse + „/“ + Adresse der Seite, z. B. /sommerfest. In der Seite steht rechts der Link „/sommerfest ↗“ – ein Klick öffnet sie in einem neuen Tab. Die Adresse entsteht beim ersten Speichern aus dem Titel (Feld „Slug“) und ändert sich danach nicht mehr von selbst, auch wenn du den Titel änderst.\n\n'
@@ -1527,7 +1556,7 @@ export const FAQ: Faq[] = [
     antwort:
       'Nein. Ein Formular nimmt Antworten an, solange es auf einer veröffentlichten Seite steht. Den Anmeldeschluss schreibst du deshalb gut sichtbar in den Text über dem Formular und nimmst das Formular am Stichtag selbst von der Seite.\n\n'
       + 'So geht es am Stichtag: Seite öffnen → Reiter „Inhalt (Bausteine)“ → beim Baustein „Formular“ über die drei Punkte „Entfernen“ → einen Satz wie „Die Anmeldung ist geschlossen.“ ergänzen → „Veröffentlichen“. Das Formular selbst und alle Eingänge bleiben erhalten.\n\n'
-      + '• Ein Formular auf einer öffentlichen Seite kann jeder ausfüllen, auch Nicht-Mitglieder. Ist eine Feier nur für Mitglieder, das im Text sagen und die Eingänge beim Durchsehen prüfen.\n'
+      + '• Ein Formular auf einer öffentlichen Seite kann jeder ausfüllen, auch Nicht-Mitglieder. Ist eine Feier nur für Mitglieder, besser im Termin den Haken „Zu-/Absage im Mitgliederbereich“ nutzen – dort gibt es einen echten Anmeldeschluss.\n'
       + '• Die Antworten stehen unter Posteingang → Formular-Eingänge. E-Mail-Benachrichtigungen an die Organisatoren kommen erst mit dem E-Mail-Versand.\n\n'
       + 'Beispiel – Wenn die Zu- und Absagen bis 01.12. eingehen sollen – dann schreib „Verbindliche Zu- oder Absage bis spätestens 01.12.“ über das Formular und entferne am 02.12. den Baustein „Formular“.',
     bereich: 'forms',
@@ -1770,7 +1799,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   mitglied: {
     label: 'Mitglied',
     kurz: 'Du nutzt den Mitgliederbereich der Website.',
-    darf: ['Mitgliederbereich nutzen'],
+    darf: ['Mitgliederbereich nutzen', 'Zu Terminen zu- oder absagen (unter „Mein BSV“)'],
     darfNicht: ['Die Verwaltung bearbeiten'],
     anleitungen: [],
   },

@@ -26,6 +26,7 @@ import { Posts } from './collections/Posts'
 import { Users } from './collections/Users'
 import { Angebote } from './collections/Angebote'
 import { Termine } from './collections/Termine'
+import { TerminRueckmeldungen } from './collections/TerminRueckmeldungen'
 import { Mitgliedsantraege } from './collections/Mitgliedsantraege'
 import { Probetraining } from './collections/Probetraining'
 import { Ausfaelle } from './collections/Ausfaelle'
@@ -132,6 +133,8 @@ const konfiguration = buildConfig({
     startFertig()
   },
   admin: {
+    // Datumsangaben in Listen und „Zuletzt geändert“: deutsch, 24 Stunden (statt „1:08 nachm.“)
+    dateFormat: "dd.MM.yyyy, HH:mm 'Uhr'",
     components: {
       beforeLogin: ['@/components/BeforeLogin'],
       // Eigenes, helles Dashboard (Begrüßung, Kennzahlen, Schnellzugriff, Aktivitäten)
@@ -225,7 +228,7 @@ const konfiguration = buildConfig({
     // Posteingang
     Mitgliedsantraege, Kontaktanfragen, Probetraining, Passantraege,
     // Inhalte
-    Posts, Termine, Alben, Media, Sponsoren, Gesuche,
+    Posts, Termine, TerminRueckmeldungen, Alben, Media, Sponsoren, Gesuche,
     // Website-Aufbau
     Pages, Categories,
     // Sport

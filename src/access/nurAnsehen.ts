@@ -37,6 +37,8 @@ const BEREICH_HAKEN: Record<string, LeseHaken> = {
   mitgliedschaften: 'mitgliedschaften',
   users: 'benutzer',
   profilbilder: 'benutzer',
+  // Namen und Bemerkungen der Mitglieder bei Zu-/Absagen
+  'termin-rueckmeldungen': 'benutzer',
   statistik: 'statistik',
 }
 

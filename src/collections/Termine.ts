@@ -1,4 +1,5 @@
 import { datumUhrzeit } from '@/fields/datumUhrzeit'
+import { berlinTag } from '@/bsv/wiederholung'
 import { hinweisFeld } from '@/fields/hinweise'
 import { ausblendenAusserMit, bereichFeld, imBereich, rolleOderRecht } from '@/access/roles'
 import type { Access, CollectionConfig, PayloadRequest } from 'payload'
@@ -100,9 +101,38 @@ export const Termine: CollectionConfig = {
     },
     { name: 'beschreibung', label: 'Beschreibung', type: 'textarea' },
     { name: 'nurMitglieder', label: 'Nur für Mitglieder sichtbar', type: 'checkbox', admin: { description: 'Dann sehen den Termin nur angemeldete Mitglieder.' } },
-    // Noch ohne Funktion (keine Anmelde-Ansicht im Mitgliederbereich) – ausgeblendet, damit niemand sich darauf verlässt.
-    // Spalte bleibt bestehen; für Anmeldungen gibt es Formulare (Website-Aufbau → Formulare).
-    { name: 'anmeldung', label: 'Anmeldung im Mitgliederbereich möglich', type: 'checkbox', admin: { hidden: true } },
+    // Zu-/Absage im Mitgliederbereich (Antworten: Sammlung „termin-rueckmeldungen“, Liste unten im Termin)
+    {
+      name: 'anmeldung',
+      label: 'Zu-/Absage im Mitgliederbereich',
+      type: 'checkbox',
+      admin: { description: 'Angemeldete Mitglieder sagen unter „Mein BSV“ zu oder ab. Die Liste erscheint unten in diesem Termin.' },
+      validate: (wert: unknown, { siblingData }: { siblingData?: { wiederholung?: string | null } }) =>
+        wert && siblingData?.wiederholung && siblingData.wiederholung !== 'keine' ? 'Zu-/Absage geht nur bei Terminen, die sich nicht wiederholen.' : true,
+    },
+    {
+      type: 'row',
+      admin: { condition: (d) => Boolean(d?.anmeldung) },
+      fields: [
+        {
+          name: 'anmeldeschluss',
+          label: 'Anmeldeschluss (optional)',
+          type: 'date',
+          admin: { width: '50%', date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' }, description: 'Bis einschließlich diesem Tag änderbar. Leer = bis zum Beginn.' },
+          validate: (wert: unknown, { siblingData }: { siblingData?: { beginn?: string } }) => {
+            if (!wert || !siblingData?.beginn) return true
+            return berlinTag(String(wert)) > berlinTag(siblingData.beginn) ? 'Der Anmeldeschluss liegt nach dem Termin.' : true
+          },
+        },
+        {
+          name: 'begleitung',
+          label: 'Begleitperson erlaubt (bis 2 Personen)',
+          type: 'checkbox',
+          admin: { width: '50%', description: 'Dann wählen Mitglieder „1 Person“ oder „2 Personen“, z. B. mit Partnerin oder Partner.' },
+        },
+      ],
+    },
+    { name: 'rueckmeldungen', type: 'ui', admin: { condition: (d) => Boolean(d?.anmeldung), components: { Field: '@/components/Admin/Rueckmeldungen' } } },
     // Countdown auf der Startseite – gleiche Berechtigung wie früher unter „Texte & Bilder“ (Bereich Seiten),
     // damit ein reines Termine-Recht nicht die Startseite gestaltet. Die Startseite fragt ohne Anmeldung ab:
     // „nur für Mitglieder“ erscheint dort nie, auch wenn der Haken gesetzt ist.

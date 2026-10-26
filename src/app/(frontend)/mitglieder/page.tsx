@@ -11,6 +11,8 @@ import { AbmeldenButton } from '@/bsv/components/AbmeldenButton'
 import { Profilfoto } from '@/bsv/components/Profilfoto'
 import { AusweisKarten } from '@/bsv/components/AusweisKarte'
 import { ZweiFaktorKonto } from '@/bsv/components/ZweiFaktorKonto'
+import { ZuAbsage, type ZuAbsageAntwort, type ZuAbsageTermin } from '@/bsv/components/ZuAbsage'
+import { antwortMoeglich } from '@/collections/TerminRueckmeldungen'
 import { ausweiseFuer } from '@/mitgliedschaften/ausweise'
 import { aktuellerBenutzer, getAusfaelle, getTermine, getVerein, payload } from '@/bsv/data'
 import { bildUrl, datum, farbe, kurzZeit, uhrzeit } from '@/bsv/lib'
@@ -124,6 +126,41 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
       ? p.count({ collection: 'probetraining', where: { and: [{ angebot: { in: geleitet.map((g) => g.id) } }, { status: { equals: 'neu' } }] }, overrideAccess: true })
       : Promise.resolve({ totalDocs: 0 }),
   ])
+  // Zu- und Absagen: kommende Termine mit Haken „Zu-/Absage im Mitgliederbereich“ (mit den Rechten des Mitglieds geladen)
+  const zuAbsageTermine = (
+    await p
+      .find({
+        collection: 'termine',
+        where: { and: [{ anmeldung: { equals: true } }, { beginn: { greater_than: new Date().toISOString() } }, { or: [{ wiederholung: { equals: 'keine' } }, { wiederholung: { exists: false } }] }] },
+        sort: 'beginn',
+        depth: 0,
+        limit: 20,
+        user,
+        overrideAccess: false,
+      })
+      .catch(() => ({ docs: [] }))
+  ).docs
+  const eigeneAntworten = zuAbsageTermine.length
+    ? (
+        await p
+          .find({ collection: 'termin-rueckmeldungen', where: { and: [{ mitglied: { equals: user.id } }, { termin: { in: zuAbsageTermine.map((t) => t.id) } }] }, depth: 0, limit: 50, user, overrideAccess: false })
+          .catch(() => ({ docs: [] }))
+      ).docs
+    : []
+  const zuAbsagen = zuAbsageTermine.map((t) => {
+    const a = eigeneAntworten.find((x) => (typeof x.termin === 'object' ? x.termin?.id : x.termin) === t.id)
+    const termin: ZuAbsageTermin = {
+      id: t.id,
+      title: t.title,
+      wann: `${datum(t.beginn, { weekday: 'long', day: 'numeric', month: 'long' })} · ${uhrzeit(t.beginn)} Uhr`,
+      ort: t.ort ?? null,
+      schluss: t.anmeldeschluss ? datum(t.anmeldeschluss, { weekday: 'long', day: 'numeric', month: 'long' }) : null,
+      offen: antwortMoeglich(t),
+      begleitung: Boolean(t.begleitung),
+    }
+    const antwort: ZuAbsageAntwort = a ? { teilnahme: a.teilnahme, personen: a.personen ?? 0, bemerkung: a.bemerkung ?? '' } : null
+    return { termin, antwort }
+  })
   // Geschützte Dateien kommen über /api/dokumente/file/… (prüft die Anmeldung); alte Einträge notfalls noch aus der Mediathek
   const dateiUrl = (d: { dokument?: unknown; datei?: unknown }) => {
     const dok = d.dokument as { url?: string | null } | null | undefined
@@ -182,6 +219,24 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
               {f.hinweis ? ` – ${f.hinweis}` : ''}
             </p>
           ))}
+        </section>
+      )}
+
+      {zuAbsagen.length > 0 && (
+        <section className="wrap-narrow" style={{ paddingBottom: 24 }} id="zusagen">
+          <div style={{ background: '#fff', borderRadius: 28, padding: 32 }}>
+            <h2 className="t-3" style={{ fontSize: 26, marginBottom: 6 }}>
+              Zu- und Absagen
+            </h2>
+            <p className="muted" style={{ margin: '0 0 18px', fontSize: 15 }}>
+              Sag bitte kurz Bescheid, ob du kommst. Deine Antwort sieht nur die Verwaltung.
+            </p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
+              {zuAbsagen.map((z) => (
+                <ZuAbsage key={z.termin.id} termin={z.termin} antwort={z.antwort} />
+              ))}
+            </div>
+          </div>
         </section>
       )}
 

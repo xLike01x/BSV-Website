@@ -29,6 +29,7 @@ import { NewsHinweise as NewsHinweise_37fae30b24d1a12bf2667fda13922509 } from '@
 import { SlugField as SlugField_2b8867833a34864a02ddf429b0728a40 } from '@payloadcms/next/client'
 import { default as default_3c44ae4db322ab6667b5755c4caea543 } from '@/components/Admin/Einstieg/VorlageUebernehmen'
 import { TerminHinweise as TerminHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
+import { default as default_524e5288915a998eaa18a61ca6aec34a } from '@/components/Admin/Rueckmeldungen'
 import { MedienHinweise as MedienHinweise_37fae30b24d1a12bf2667fda13922509 } from '@/components/Admin/Hinweise'
 import { default as default_32ec0822ebee3f70a808b72e6323c81c } from '@/components/Admin/MedienOrdner'
 import { default as default_3128b959b5f53a177f9b2fbbb89048a9 } from '@/components/Admin/Sponsoren'
@@ -111,6 +112,7 @@ export const importMap = {
   "@payloadcms/next/client#SlugField": SlugField_2b8867833a34864a02ddf429b0728a40,
   "@/components/Admin/Einstieg/VorlageUebernehmen#default": default_3c44ae4db322ab6667b5755c4caea543,
   "@/components/Admin/Hinweise#TerminHinweise": TerminHinweise_37fae30b24d1a12bf2667fda13922509,
+  "@/components/Admin/Rueckmeldungen#default": default_524e5288915a998eaa18a61ca6aec34a,
   "@/components/Admin/Hinweise#MedienHinweise": MedienHinweise_37fae30b24d1a12bf2667fda13922509,
   "@/components/Admin/MedienOrdner#default": default_32ec0822ebee3f70a808b72e6323c81c,
   "@/components/Admin/Sponsoren#default": default_3128b959b5f53a177f9b2fbbb89048a9,

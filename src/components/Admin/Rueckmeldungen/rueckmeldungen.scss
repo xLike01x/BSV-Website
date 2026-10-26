@@ -1,0 +1,71 @@
+.bsv-rueckmeldungen {
+  background: #fff;
+  border-radius: 18px;
+  padding: 18px 20px;
+  margin: 8px 0 24px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+
+  &__kopf {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 16px;
+    justify-content: space-between;
+    align-items: baseline;
+  }
+  &__summe {
+    background: #e8f6ee;
+    color: #157a43;
+    font-weight: 700;
+    border-radius: 999px;
+    padding: 2px 12px;
+    font-size: 13px;
+  }
+  &__leer {
+    color: #6e6e73;
+    font-size: 13px;
+    margin: 6px 0 12px;
+  }
+  &__knoepfe {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 12px;
+    button {
+      border: 1px solid #d2d2d7;
+      background: #fff;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      &:hover {
+        border-color: #157a43;
+        color: #157a43;
+      }
+    }
+  }
+  &__tabelle {
+    overflow-x: auto;
+  }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+  }
+  th,
+  td {
+    text-align: left;
+    padding: 8px 10px;
+    border-bottom: 1px solid #f0f0f2;
+    vertical-align: top;
+  }
+  th {
+    font-size: 12px;
+    color: #6e6e73;
+    font-weight: 600;
+  }
+  .ist-absage td {
+    color: #6e6e73;
+  }
+}

@@ -154,6 +154,15 @@ export const Datenschutz: GlobalConfig = {
       ],
     },
     {
+      name: 'rueckmeldungenTage',
+      label: 'Zu- und Absagen zu Terminen – Tage nach dem Termin löschen',
+      type: 'number',
+      min: 1,
+      max: 365,
+      defaultValue: 30,
+      admin: { description: 'Läuft immer automatisch. Danach sind Namen, Antworten und Bemerkungen endgültig gelöscht.' },
+    },
+    {
       name: 'personenPapierkorbTage',
       label: 'Web-Admin-Papierkorb – persönliche Daten nach Tagen endgültig löschen',
       type: 'number',

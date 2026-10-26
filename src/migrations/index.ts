@@ -14,6 +14,7 @@ import * as migration_20261023_124424_webapp from './20261023_124424_webapp';
 import * as migration_20261026_095157_countdown from './20261026_095157_countdown';
 import * as migration_20261026_110853_countdown_seite from './20261026_110853_countdown_seite';
 import * as migration_20261026_112744_countdown_termine from './20261026_112744_countdown_termine';
+import * as migration_20261026_120559_termin_zusagen from './20261026_120559_termin_zusagen';
 
 export const migrations = [
   {
@@ -94,6 +95,11 @@ export const migrations = [
   {
     up: migration_20261026_112744_countdown_termine.up,
     down: migration_20261026_112744_countdown_termine.down,
-    name: '20261026_112744_countdown_termine'
+    name: '20261026_112744_countdown_termine',
+  },
+  {
+    up: migration_20261026_120559_termin_zusagen.up,
+    down: migration_20261026_120559_termin_zusagen.down,
+    name: '20261026_120559_termin_zusagen'
   },
 ];

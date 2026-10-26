@@ -424,6 +424,7 @@
 .teilen-menue { position: absolute; z-index: 20; top: calc(100% + 6px); left: 0; min-width: 180px; background: #fff; border-radius: 16px; box-shadow: 0 16px 40px rgba(0,0,0,.14); padding: 6px; display: flex; flex-direction: column; }
 .bsv .teilen-menue a, .teilen-menue button { display: block; text-align: left; padding: 10px 12px; border-radius: 10px; color: var(--bsv-ink); text-decoration: none; font: inherit; font-size: 15px; border: 0; background: none; cursor: pointer; }
 .bsv .teilen-menue a:hover, .teilen-menue button:hover { background: var(--bsv-soft); }
+.teilen-hinweis { display: block; max-width: 240px; padding: 8px 12px 6px; font-size: 13px; line-height: 1.4; color: var(--bsv-green); }
 
 /* Termin-Aktionen */
 .termin-aktionen { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
@@ -609,3 +610,21 @@
 /* Handy: nichts darf breiter als der Bildschirm werden */
 .suche-form input { min-width: 0; }
 .bsv :is(h1, h2, h3, summary, strong) { overflow-wrap: break-word; hyphens: auto; }
+
+/* Zu- und Absagen im Mitgliederbereich */
+.zusage { background: var(--bsv-soft); border-radius: 22px; padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.zusage-kopf { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 6px 14px; }
+.zusage-titel { font-size: 20px; letter-spacing: -0.02em; }
+.zusage-stand { font-size: 13px; font-weight: 700; color: var(--bsv-muted); }
+.zusage-stand.ist-ja { color: var(--bsv-green); }
+.zusage-stand.ist-nein { color: #b42318; }
+.zusage-wann { margin: 0; color: var(--bsv-ink-2); font-size: 15px; }
+.zusage-form { display: flex; flex-direction: column; gap: 12px; }
+.zusage-wahl { border: 0; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.zusage-wahl label { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 16px; border: 1px solid var(--bsv-line); border-radius: 999px; background: #fff; font-weight: 600; cursor: pointer; }
+.zusage-wahl label.ist-gewaehlt { border-color: var(--bsv-green); background: var(--bsv-green-tint); color: var(--bsv-green); }
+.zusage-wahl input { accent-color: var(--bsv-green); width: 18px; height: 18px; margin: 0; }
+.zusage-wahl label:focus-within { box-shadow: 0 0 0 4px rgba(21, 122, 67, 0.15); }
+.zusage-fuss { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 16px; font-size: 14px; }
+.zusage-ok { margin: 0; color: var(--bsv-green); font-weight: 600; font-size: 15px; }
+.zusage-zu { margin: 0; font-size: 15px; }
