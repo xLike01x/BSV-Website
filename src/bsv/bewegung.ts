@@ -1,6 +1,6 @@
 /**
  * Soll es ruhig bleiben? Ja, wenn das Gerät „Bewegung reduzieren“ meldet oder die Animationen unter
- * Texte & Bilder → Animationen ausgeschaltet sind (data-anim="aus" am <body>, gesetzt im Layout).
+ * Website-Aufbau → Animationen ausgeschaltet sind (data-anim="aus" am <body>, gesetzt im Layout).
  * Einzelne Effekte: data-anim-<name>="aus" (z. B. „countdown“).
  */
 export function ruhig(effekt?: string): boolean {

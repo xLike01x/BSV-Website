@@ -1273,7 +1273,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Animationen, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {
@@ -1563,18 +1563,29 @@ export const FAQ: Faq[] = [
     bereich: 'forms',
   },
   {
+    frage: 'Was ist die Spielecke – und wird dabei etwas gespeichert?',
+    antwort:
+      'Unter /spielecke gibt es zwei kleine Fußballspiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten) und „Ball hochhalten“ (den fallenden Ball antippen, mit jedem Kontakt wird es schneller). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
+      + '• Gespeichert wird nichts – keine Namen, keine Punkte, keine Bestenliste. Der „Bester Wert“ gilt nur, solange die Seite offen ist.\n'
+      + '• Ein- und ausschalten: Website-Aufbau → Animationen → Spielecke.\n'
+      + '• In die Fußzeile kommt die Seite über „Menü & Fußzeile“ → Spalte „Entdecken“ → Eintrag hinzufügen → Adresse /spielecke.\n\n'
+      + 'Beispiel – Wenn ihr die Spielecke beim Sommerfest auf einem Tablet zeigen wollt – dann /spielecke öffnen; die Kinder spielen reihum mit „Nochmal“.',
+    bereich: 'animationen',
+  },
+  {
     frage: 'Welche Animationen gibt es auf der Website – und wie schalte ich sie ab?',
     antwort:
-      'Website-Aufbau → Texte & Bilder → Reiter „Animationen“. Dort lässt sich jeder Effekt einzeln abschalten – oder mit „Animationen auf der Website“ alle auf einmal (dann bewegt sich nichts mehr, auch kein Einblenden, Laufband oder Spielfeld; die Inhalte bleiben gleich). Speichern, fertig.\n\n'
+      'Links unter Website-Aufbau → „Animationen“. Dort lässt sich jeder Effekt einzeln abschalten – oder mit „Animationen auf der Website“ alle auf einmal (dann bewegt sich nichts mehr, auch kein Einblenden, Laufband oder Spielfeld; die Inhalte bleiben gleich). Speichern, fertig.\n\n'
       + 'Die Effekte im Einzelnen:\n'
       + '• Altersregler: Ein kleiner Strich-Fußball rollt beim Schieben mit, die Zahl hüpft kurz.\n'
       + '• Countdown: Die Ziffern klappen beim Minutenwechsel um wie eine Anzeigetafel; am Tag selbst fällt kurz Konfetti in Vereinsfarben.\n'
       + '• Kachel „Fitness“ auf der Startseite: Eine Pulslinie zeichnet sich, dann läuft ab und zu ein Lichtpunkt darüber.\n'
       + '• Große Überschriften: Ein grüner Kreidestrich zieht sich darunter, wenn man hinscrollt.\n'
-      + '• „Seite nicht gefunden“: Ein Ball fliegt über das Tor – „Daneben!“.\n\n'
-      + 'Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht diese Effekte nie. Sie kommen ohne zusätzliche Programme aus und bremsen die Seite nicht.\n\n'
+      + '• „Seite nicht gefunden“: Ein Ball fliegt über das Tor – „Daneben!“.\n'
+      + '• Spielecke (/spielecke): „Elfmeterschießen“ und „Ball hochhalten“ – jedes Spiel mit eigenem Haken. Sind beide aus, steht dort „Die Spielecke macht gerade Pause“ und der Hinweis auf der Breitensport-Seite verschwindet.\n\n'
+      + 'Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht die Effekte nie. Sie kommen ohne zusätzliche Programme aus und bremsen die Seite nicht. Ändern dürfen das alle, die auch „Texte & Bilder“ ändern dürfen.\n\n'
       + 'Beispiel – Wenn euch der Kreidestrich unter den Überschriften zu verspielt ist – dann nur den Haken „Große Überschriften: Kreidestrich“ rausnehmen und speichern. Alles andere bleibt.',
-    bereich: 'texte',
+    bereich: 'animationen',
   },
   {
     frage: 'Muss die Web-App aktualisiert werden?',

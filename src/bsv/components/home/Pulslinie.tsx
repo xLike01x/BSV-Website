@@ -5,7 +5,7 @@ const LINIE = 'M2 34 H96 L106 34 L114 14 L124 54 L134 6 L144 44 L152 34 H298'
 
 /**
  * Herzschlag-Linie in der Kachel „Fitness“: zeichnet sich wie das Spielfeld selbst, sobald die Kachel sichtbar wird,
- * danach läuft ab und zu ein Lichtpunkt darüber. Rein dekorativ; ausschaltbar unter Texte & Bilder → Animationen.
+ * danach läuft ab und zu ein Lichtpunkt darüber. Rein dekorativ; ausschaltbar unter Website-Aufbau → Animationen.
  */
 export function Pulslinie() {
   const ref = useRef<SVGSVGElement>(null)

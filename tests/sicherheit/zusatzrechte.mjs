@@ -44,6 +44,7 @@ export default async function zusatzrechte(d) {
       pruefe('Ohne Recht: Team nicht ändern', nicht(await api(c, 'PATCH', `/api/angebote/${team.id}`, { aktiv: team.aktiv })))
       pruefe('Ohne Recht: Bild nicht ändern', nicht(await api(c, 'PATCH', `/api/media/${bild.id}`, { alt: bild.alt })))
       pruefe('Ohne Recht: Vereinsdaten nicht ändern', nicht(await api(c, 'POST', '/api/globals/verein', {})))
+      pruefe('Ohne Recht: Animationen nicht ändern', nicht(await api(c, 'POST', '/api/globals/animationen', { alle: false })))
       pruefe('Ohne Recht: keine Datenschutz-Fristen', nicht(await api(c, 'GET', '/api/globals/datenschutz')) || !('kontaktMonate' in ((await api(c, 'GET', '/api/globals/datenschutz')).j ?? {})))
       pruefe('Ohne Recht: keine Statistik', nicht(await api(c, 'GET', '/api/statistik?limit=1')))
       pruefe('Ohne Recht: kein Papierkorb', nicht(await api(c, 'GET', '/api/papierkorb/liste')))
@@ -70,6 +71,7 @@ export default async function zusatzrechte(d) {
       await d.q(`delete from _pages_v where parent_id in (select id from pages where slug = 'zr-test-seite')`)
       await d.q(`delete from pages where slug = 'zr-test-seite'`)
       pruefe('seiten: „Texte & Bilder“ speichern', (await api(c, 'POST', '/api/globals/texte', {})).s === 200)
+      pruefe('seiten: „Animationen“ speichern', (await api(c, 'POST', '/api/globals/animationen', {})).s === 200)
       pruefe('seiten: keine News anlegen', nicht(await api(c, 'POST', '/api/posts', { title: 'ZR-Test', _status: 'draft' })))
     })
 

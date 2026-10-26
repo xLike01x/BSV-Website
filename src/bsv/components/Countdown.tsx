@@ -66,7 +66,7 @@ export function Countdown({ kicker, titel, text, linkText, href, beginn, ende, w
         {laeuft ? (
           <>
             <p className="countdown-heute">Heute ist es so weit!</p>
-            {/* Konfetti in Vereinsfarben, einmal beim Laden (Texte & Bilder → Animationen) */}
+            {/* Konfetti in Vereinsfarben, einmal beim Laden (Website-Aufbau → Animationen) */}
             <span className="countdown-konfetti" aria-hidden="true">
               {Array.from({ length: 26 }, (_, i) => (
                 <i key={i} style={{ '--x': `${(i * 37) % 100}%`, '--v': `${(i % 8) * 0.12}s`, '--r': `${(i * 53) % 360}deg` } as React.CSSProperties} />

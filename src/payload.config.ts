@@ -38,6 +38,7 @@ import { Wartung } from './wartung/config'
 import { startseiteUmziehen } from './Startseite/umziehen'
 import { texteBilderUmziehen } from './Texte/bilderUmziehen'
 import { Texte } from './Texte/config'
+import { Animationen } from './Animationen/config'
 import { Menue } from './Menue/config'
 import { HilfeFeedback, HilfeInhalte } from './Hilfe/config'
 import { de } from '@payloadcms/translations/languages/de'
@@ -263,7 +264,7 @@ const konfiguration = buildConfig({
   graphQL: { disable: true },
   // Größte erlaubte Datei beim Hochladen (Bilder, PDFs)
   upload: { limits: { fileSize: 25 * 1024 * 1024 } },
-  globals: [Header, Footer, Menue, Texte, Startseite, Verein, Datenschutz, MailVorlagen, HilfeInhalte, RollenRechte, Sicherheit, Wartung],
+  globals: [Header, Footer, Menue, Texte, Animationen, Startseite, Verein, Datenschutz, MailVorlagen, HilfeInhalte, RollenRechte, Sicherheit, Wartung],
   i18n: {
     supportedLanguages: { de },
     fallbackLanguage: 'de',

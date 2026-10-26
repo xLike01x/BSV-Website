@@ -17,12 +17,12 @@ import { draftMode } from 'next/headers'
 import './globals.css'
 import './bsv.css'
 import { getServerSideURL } from '@/utilities/getURL'
-import { getTexte } from '@/bsv/data'
+import { getAnimationen } from '@/bsv/data'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
-  // Animationen (Texte & Bilder → Animationen): ausgeschaltete Effekte als data-Attribute am <body>, das CSS richtet sich danach
-  const a = ((await getTexte().catch(() => null)) as { animationen?: Record<string, boolean | null | undefined> } | null)?.animationen ?? {}
+  // Website-Aufbau → Animationen: ausgeschaltete Effekte als data-Attribute am <body>, das CSS richtet sich danach
+  const a = (await getAnimationen().catch(() => ({}))) as Record<string, boolean | null | undefined>
   const aus = (k: string) => (a[k] === false ? 'aus' : undefined)
 
   return (

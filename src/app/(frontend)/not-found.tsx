@@ -7,7 +7,7 @@ export const metadata: Metadata = { title: 'Seite nicht gefunden' }
 export default function NotFound() {
   return (
     <section className="wrap-narrow" style={{ paddingTop: 96, paddingBottom: 120, textAlign: 'center' }}>
-      {/* Strich-Tor, der Ball fliegt knapp daneben (ausschaltbar unter Texte & Bilder → Animationen) */}
+      {/* Strich-Tor, der Ball fliegt knapp daneben (ausschaltbar unter Website-Aufbau → Animationen) */}
       <div className="daneben" aria-hidden="true">
         <svg className="daneben-tor" viewBox="0 0 320 170" focusable="false">
           <path d="M8 160 H312" className="daneben-boden" />

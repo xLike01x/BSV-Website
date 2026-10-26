@@ -7,14 +7,16 @@ import React from 'react'
 import { Bild } from '@/bsv/components/Bild'
 import { GruppenFilter, type Gruppe } from '@/bsv/components/GruppenFilter'
 import { T } from '@/bsv/components/Text'
-import { getAngebote, getPlatzhalter, getStartseite, getTexte } from '@/bsv/data'
+import { animationAn, getAngebote, getAnimationen, getPlatzhalter, getStartseite, getTexte } from '@/bsv/data'
+import { Ball } from '@/bsv/components/spiele/Ball'
 import { bildUrl, farbe, kurzZeit } from '@/bsv/lib'
 
 export const revalidate = 60
 export const metadata: Metadata = seite('Breitensport', 'Tanzen, Turnen, Fitness, Gesundheit und Ausdauer beim BSV – Kurse für jedes Alter, Schnuppern erwünscht.')
 
 export default async function BreitensportSeite() {
-  const [angebote, start, tx, w] = await Promise.all([getAngebote(), getStartseite(), getTexte(), getPlatzhalter()])
+  const [angebote, start, tx, w, anim] = await Promise.all([getAngebote(), getStartseite(), getTexte(), getPlatzhalter(), getAnimationen()])
+  const spielecke = animationAn(anim, 'elfmeter') || animationAn(anim, 'hochhalten')
   const kids = angebote.filter((a) => a.bereich === 'kids')
   const erw = angebote.filter((a) => a.bereich === 'erwachsene')
   const s = start.startseite
@@ -75,6 +77,21 @@ export default async function BreitensportSeite() {
           <GruppenFilter gruppen={gruppen} variante="bild" />
         </div>
       </section>
+
+      {spielecke && (
+        <section className="sec-soft" style={{ padding: '0 22px 90px' }}>
+          <Link href="/spielecke" className="spielecke-teaser rv">
+            <span className="ball-hupf" aria-hidden="true">
+              <Ball />
+            </span>
+            <span style={{ flex: '1 1 260px' }}>
+              <strong>Spielecke für BSV Kids</strong>
+              <span>Elfmeterschießen und Ball hochhalten – direkt im Browser.</span>
+            </span>
+            <span className="link-more">Jetzt spielen ›</span>
+          </Link>
+        </section>
+      )}
 
       <section className="sec center">
         <h2 className="t-sec rv" style={{ maxWidth: 820, margin: '0 auto', fontSize: 'clamp(40px, 6vw, 72px)' }}>

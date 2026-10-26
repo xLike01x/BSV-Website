@@ -47,6 +47,7 @@ export const STANDARD_FUSSZEILE: { titel: string; eintraege: Eintrag[] }[] = [
     eintraege: [
       a('News', '/news'),
       a('Kunstrasen 2026', '/kunstrasen'),
+      a('Spielecke', '/spielecke'),
       a('Vereinskollektion ↗', 'https://team.jako.de/de/team/buederichersv/', true),
       a('Merch-Shop ↗', 'https://buedericher-spielverein.fan12.de', true),
     ],

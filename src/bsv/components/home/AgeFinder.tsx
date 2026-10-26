@@ -32,7 +32,7 @@ export function AgeFinder({
       <label htmlFor="alter">
         <span>{frage}</span>
         <output htmlFor="alter" aria-live="polite">
-          {/* key: bei jeder Änderung neu – die Zahl hüpft kurz (Texte & Bilder → Animationen) */}
+          {/* key: bei jeder Änderung neu – die Zahl hüpft kurz (Website-Aufbau → Animationen) */}
           <span key={alter} className="regler-zahl">
             {alter} {alter === 1 ? 'Jahr' : 'Jahre'}
           </span>

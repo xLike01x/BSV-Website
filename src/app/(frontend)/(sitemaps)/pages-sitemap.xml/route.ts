@@ -32,7 +32,7 @@ const getPagesSitemap = unstable_cache(
     const dateFallback = new Date().toISOString()
 
     // Feste Seiten der Website (ohne /search: die ist „noindex“ und doppelt /suche)
-    const FEST = ['/', '/verein', '/fussball', '/breitensport', '/termine', '/trainingszeiten', '/news', '/galerie', '/sponsoren', '/kontakt', '/mitmachen', '/mitglied-werden']
+    const FEST = ['/', '/verein', '/fussball', '/breitensport', '/termine', '/trainingszeiten', '/news', '/galerie', '/sponsoren', '/kontakt', '/mitmachen', '/mitglied-werden', '/spielecke']
     const defaultSitemap = FEST.map((p) => ({ loc: `${SITE_URL}${p === '/' ? '/' : p}`, lastmod: dateFallback }))
 
     // Teams & Kurse sowie Galerie-Alben

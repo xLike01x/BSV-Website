@@ -633,7 +633,7 @@
 .zusage-ok { margin: 0; color: var(--bsv-green); font-weight: 600; font-size: 15px; }
 .zusage-zu { margin: 0; font-size: 15px; }
 
-/* ===== Animationen (Texte & Bilder → Animationen) =====
+/* ===== Animationen (Website-Aufbau → Animationen) =====
    Jede einzeln abschaltbar: data-anim-<name>="aus" am <body>; data-anim="aus" schaltet alle Bewegung ab (wie „Bewegung reduzieren“). */
 
 /* Altersregler: Strich-Fußball rollt mit, Zahl hüpft */
@@ -700,9 +700,63 @@
   .regler { padding-top: 0; }
 }
 
-/* Alle Animationen aus (Texte & Bilder → Animationen): wie „Bewegung reduzieren“ */
+/* Alle Animationen aus (Website-Aufbau → Animationen): wie „Bewegung reduzieren“ */
 .bsv[data-anim='aus'] *, .bsv[data-anim='aus'] *::before, .bsv[data-anim='aus'] *::after { animation: none !important; transition: none !important; }
 .bsv[data-anim='aus'] .pl { stroke-dashoffset: 0; }
 .bsv[data-anim='aus'] .laufband-spur { flex-wrap: wrap; width: auto; justify-content: center; }
 .bsv[data-anim='aus'] .laufband { mask-image: none; }
 .bsv[data-anim='aus'] .karussell-leiste { scroll-behavior: auto; }
+
+/* ===== Spielecke (/spielecke) – Website-Aufbau → Animationen ===== */
+.spielecke { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px; align-items: start; }
+.spiel { background: #fff; border-radius: 30px; padding: clamp(20px, 3vw, 32px); box-shadow: 0 18px 44px rgba(232, 89, 12, 0.08); display: flex; flex-direction: column; gap: 16px; }
+.spiel-kopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+.spiel-titel { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
+.spiel-hilfe { margin: 0; color: var(--bsv-muted); font-size: 14px; }
+.spiel-knoepfe { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.spiel-knoepfe .btn { min-height: 48px; padding: 10px 8px; }
+.spiel-ende { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; justify-content: space-between; }
+.spiel-ende p { margin: 0; font-size: 17px; }
+.spiel-meldung { position: absolute; left: 0; right: 0; bottom: 22%; margin: 0; text-align: center; font-size: clamp(26px, 5vw, 38px); font-weight: 800; letter-spacing: -0.02em; color: var(--bsv-green); pointer-events: none; }
+.spiel-meldung:not(:empty) { animation: popin 0.45s var(--bsv-ease) both; }
+.ball-fleck { fill: var(--bsv-ink); }
+
+/* Elfmeterschießen */
+.elfmeter-feld { position: relative; aspect-ratio: 3 / 2; background: var(--bsv-green-tint); border-radius: 22px; overflow: hidden; }
+.elfmeter-bild { position: absolute; inset: 0; width: 100%; height: 100%; fill: none; stroke: var(--bsv-green); stroke-linecap: round; stroke-linejoin: round; }
+.elfmeter-tor { stroke-width: 4; }
+.elfmeter-netz { stroke-width: 1; opacity: 0.4; }
+.elfmeter-strafraum, .elfmeter-boden { stroke-width: 2; opacity: 0.5; }
+.elfmeter-punkt { fill: var(--bsv-green); stroke: none; }
+.elfmeter-torwart { stroke: var(--bsv-ink); stroke-width: 3; fill: none; transform-box: view-box; transform-origin: 180px 148px; animation: torwart-wippen 2.4s ease-in-out infinite; transition: transform 0.45s cubic-bezier(0.3, 0.7, 0.4, 1); }
+.elfmeter-torwart circle:first-child { fill: #fff; }
+.elfmeter-handschuh { fill: var(--bsv-coral); stroke: none; }
+.elfmeter-torwart.ist-sprung { animation: none; }
+@keyframes torwart-wippen { 0%, 100% { transform: translateX(-26px); } 50% { transform: translateX(26px); } }
+.elfmeter-ball { position: absolute; width: 11%; aspect-ratio: 1; transition: left 0.6s cubic-bezier(0.2, 0.7, 0.3, 1), top 0.6s cubic-bezier(0.2, 0.7, 0.3, 1), transform 0.6s ease-out; pointer-events: none; }
+.elfmeter-ball svg, .hochhalten-ball svg { display: block; width: 100%; height: 100%; fill: #fff; stroke: var(--bsv-ink); stroke-width: 1.5; stroke-linejoin: round; }
+.elfmeter-ziele { position: absolute; left: 16.7%; width: 66.6%; top: 12.5%; height: 50%; display: flex; }
+.elfmeter-ziele button { flex: 1; border: 0; background: transparent; cursor: crosshair; border-radius: 12px; }
+.elfmeter-ziele button:hover:not(:disabled) { background: rgba(255, 255, 255, 0.35); }
+.elfmeter-punkte { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; }
+.elfmeter-punkte li { width: 26px; height: 26px; border-radius: 50%; border: 2px solid var(--bsv-line); display: grid; place-items: center; font-size: 13px; font-weight: 800; color: #fff; }
+.elfmeter-punkte li.ist-tor { background: var(--bsv-green); border-color: var(--bsv-green); }
+.elfmeter-punkte li.ist-gehalten { background: var(--bsv-coral); border-color: var(--bsv-coral); }
+
+/* Ball hochhalten */
+.hochhalten-feld { position: relative; height: 380px; background: linear-gradient(#eaf4ff, #f6fbff 70%); border-radius: 22px; overflow: hidden; touch-action: manipulation; user-select: none; -webkit-user-select: none; cursor: pointer; }
+.hochhalten-feld:focus-visible { outline: 3px solid var(--bsv-green); outline-offset: 3px; }
+.hochhalten-ball { position: absolute; left: 0; top: 0; will-change: transform; pointer-events: none; }
+.hochhalten-rasen { position: absolute; left: 0; right: 0; bottom: 0; height: 18px; background: var(--bsv-green); opacity: 0.85; }
+.hochhalten-overlay { position: absolute; inset: 0 0 18px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 20px; text-align: center; background: rgba(255, 255, 255, 0.72); backdrop-filter: blur(2px); }
+.hochhalten-overlay p { margin: 0; max-width: 340px; }
+.spiel-ende-text { font-size: 18px; }
+.hochhalten-zahl { margin: 0; display: flex; align-items: baseline; gap: 6px; color: var(--bsv-blue); }
+.hochhalten-zahl strong { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+
+/* Teaser auf der Breitensport-Seite */
+.spielecke-teaser { max-width: 880px; margin: 0 auto; display: flex; gap: 18px 28px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--bsv-coral-tint); border-radius: 28px; padding: 24px 28px; text-decoration: none; color: var(--bsv-ink); }
+.spielecke-teaser strong { display: block; font-size: 22px; letter-spacing: -0.02em; }
+.spielecke-teaser span { color: var(--bsv-ink-2); }
+.spielecke-teaser .ball-hupf { width: 46px; height: 46px; flex: 0 0 auto; animation: bob 2.4s ease-in-out infinite; }
+.spielecke-teaser .ball-hupf svg { width: 100%; height: 100%; fill: #fff; stroke: var(--bsv-ink); stroke-width: 1.5; }

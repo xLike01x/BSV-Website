@@ -142,6 +142,7 @@ export interface Config {
     footer: Footer;
     menue: Menue;
     texte: Texte;
+    animationen: Animationen;
     startseite: Startseite;
     verein: Verein;
     datenschutz: Datenschutz;
@@ -156,6 +157,7 @@ export interface Config {
     footer: FooterSelect<false> | FooterSelect<true>;
     menue: MenueSelect<false> | MenueSelect<true>;
     texte: TexteSelect<false> | TexteSelect<true>;
+    animationen: AnimationenSelect<false> | AnimationenSelect<true>;
     startseite: StartseiteSelect<false> | StartseiteSelect<true>;
     verein: VereinSelect<false> | VereinSelect<true>;
     datenschutz: DatenschutzSelect<false> | DatenschutzSelect<true>;
@@ -3599,17 +3601,28 @@ export interface Texte {
   probetraining?: {
     titel?: string | null;
   };
-  animationen?: {
-    /**
-     * Haken raus = die ganze Website ohne Bewegung (auch Einblenden, Laufband, Handy, Spielfeld). Inhalte bleiben gleich.
-     */
-    alle?: boolean | null;
-    reglerBall?: boolean | null;
-    countdown?: boolean | null;
-    pulslinie?: boolean | null;
-    kreide?: boolean | null;
-    fehlerseite?: boolean | null;
-  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * Bewegte Effekte und Spiele auf der Website. Alle sind dezent und starten erst, wenn man hinscrollt. Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht die Effekte nicht.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "animationen".
+ */
+export interface Animationen {
+  id: number;
+  /**
+   * Haken raus = die ganze Website ohne Bewegung (auch Einblenden, Laufband, Handy, Spielfeld). Inhalte bleiben gleich. Die Spielecke hat eigene Schalter (unten).
+   */
+  alle?: boolean | null;
+  reglerBall?: boolean | null;
+  countdown?: boolean | null;
+  pulslinie?: boolean | null;
+  kreide?: boolean | null;
+  fehlerseite?: boolean | null;
+  elfmeter?: boolean | null;
+  hochhalten?: boolean | null;
   updatedAt?: string | null;
   createdAt?: string | null;
 }
@@ -4416,16 +4429,23 @@ export interface TexteSelect<T extends boolean = true> {
     | {
         titel?: T;
       };
-  animationen?:
-    | T
-    | {
-        alle?: T;
-        reglerBall?: T;
-        countdown?: T;
-        pulslinie?: T;
-        kreide?: T;
-        fehlerseite?: T;
-      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "animationen_select".
+ */
+export interface AnimationenSelect<T extends boolean = true> {
+  alle?: T;
+  reglerBall?: T;
+  countdown?: T;
+  pulslinie?: T;
+  kreide?: T;
+  fehlerseite?: T;
+  elfmeter?: T;
+  hochhalten?: T;
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;
