@@ -5,6 +5,8 @@ const eslintConfig = [
   ...vitals,
   ...ts,
   {
+    // Seit eslint-config-next 16.4.3 gelten dessen Plugins nur für Code-Dateien – die eigenen Regeln daher ebenso
+    files: ['**/*.{js,jsx,mjs,ts,tsx,mts,cts}'],
     rules: {
       // Neue React-Compiler-Regeln: Hinweise, keine Fehler (bestehender Code funktioniert)
       'react-hooks/set-state-in-effect': 'warn',
@@ -37,7 +39,7 @@ const eslintConfig = [
     rules: { '@next/next/no-img-element': 'off' },
   },
   {
-    ignores: ['.next/', 'src/payload-types.ts', 'src/payload-generated-schema.ts'],
+    ignores: ['.next/', '.next-perf/', 'src/payload-types.ts', 'src/payload-generated-schema.ts'],
   },
 ]
 
