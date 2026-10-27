@@ -271,7 +271,8 @@ export const HILFE: Record<string, HilfeText> = {
       'Unten im Kasten „✓ Aufnehmen“, „❓ Rückfrage“ oder „Ablehnen“ klicken. Es erscheint eine fertige E-Mail an die Person – Text anpassen (Stellen in [ECKIGEN KLAMMERN] ausfüllen) und bestätigen. Ohne Haken geht keine Mail raus.',
       'Bei „Aufgenommen“ entsteht automatisch der Eintrag für den digitalen Mitgliedsausweis (unter „Mitgliedschaften“) – dort nur noch die Mitgliedsnummer ergänzen.',
       'Mit dem Zusatzrecht „Mitgliedsanträge bearbeiten – ohne Bankdaten“ siehst und beantwortest du Anträge, aber IBAN, Kontoinhaber und SEPA-Mandat bleiben ausgeblendet. Löschen und den Export („📥 … neue exportieren“) macht die Kasse.',
-      'Für DFBnet/Mitgliederliste: in der Liste oben „📥 … neue exportieren“ – du bekommst eine Excel-Datei (CSV) aller aufgenommenen, noch nicht exportierten Anträge, ohne Bankdaten.',
+      'Für DFBnet/Mitgliederliste: in der Liste oben „📥 … neue exportieren“ – du bekommst eine Excel-Datei (CSV) aller aufgenommenen, noch nicht exportierten Anträge, ohne Bankdaten. Mit Geschlecht je Person und je einer Spalte für die Einwilligungen (Fotos Homepage, Social Media, Presse, Kinder ab 14, Kontaktdaten).',
+      'Wie in der Papier-Beitrittserklärung: Geschlecht (männlich, weiblich, divers) für jede Person; unten „Freiwillige Einwilligungen“ – Kontaktdaten-Weitergabe (z. B. Fahrgemeinschaften) und Fotos/Videos getrennt nach Homepage, Social Media und Presse. Ohne Haken = nicht eingewilligt. Kommt ein Widerruf per Brief oder E-Mail, den Haken hier entfernen.',
     ],
     wirkung: [
       'Neue Anträge melden sich per E-Mail bei der Kasse (nur ein Link, keine Daten in der Mail) und oben auf der Übersicht.',
@@ -284,7 +285,8 @@ export const HILFE: Record<string, HilfeText> = {
       'Die Export-Datei enthält Namen und Adressen: nach dem Übertragen löschen und nicht per E-Mail verschicken.',
       '„Aufgenommen“ ist endgültig – danach gibt es keine Knöpfe mehr. Kündigungen aus dem Mitgliederbereich bearbeitest du unter Posteingang → „Kündigungen“ – „Bestätigen“ setzt „Gültig bis“ automatisch. Austritte ohne Online-Kündigung: unter „Mitgliedschaften“ „Gültig bis (Austritt)“ eintragen. Weitere Nachrichten an die Person über „✉️ Antworten“.',
       'Solange der E-Mail-Versand noch nicht eingerichtet ist, bietet der Antrag nach dem Bestätigen „Im E-Mail-Programm öffnen“ an – mit fertigem Text.',
-      'Übernommene Anträge nach der vorgeschriebenen Frist löschen.',
+      'Übernommene Anträge löscht die Website nach der Datenschutz-Frist automatisch (Standard 3 Monate nach der Bearbeitung).',
+      'Fotos nur veröffentlichen, wenn der passende Haken gesetzt ist – z. B. „Social Media“ nur mit Haken „Fotos/Videos: Social-Media-Seiten des Vereins“. Bei Kindern ab 14 zusätzlich „Kinder ab 14 … einverstanden“.',
     ],
   },
 

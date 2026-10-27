@@ -52,6 +52,10 @@ export default function AntragPruefung() {
     sepa: Boolean(x.sepaMandat?.value),
     satzung: Boolean(x.satzungAkzeptiert?.value),
     foto: Boolean(x.fotoEinwilligung?.value),
+    fotoSocial: Boolean(x.fotoSocialMedia?.value),
+    fotoPresse: Boolean(x.fotoPresse?.value),
+    kontakt: Boolean(x.kontaktEinwilligung?.value),
+    geschlecht: String(x.geschlecht?.value ?? ''),
     familie: Number(x.familienmitglieder?.value ?? 0),
     teams: Array.isArray(x.angebote?.value) ? (x.angebote?.value as unknown[]).length : 0,
   }))
@@ -98,7 +102,9 @@ export default function AntragPruefung() {
     p.push({ art: gueltig ? 'ok' : 'warn', text: gueltig ? `IBAN gültig (${kurz.slice(0, 4)} … ${kurz.slice(-4)}), SEPA-Mandat ${f.sepa ? 'erteilt' : 'FEHLT'}` : 'IBAN fehlt oder ist nicht lesbar.' })
   }
   if (!f.satzung) p.push({ art: 'warn', text: 'Satzung/Datenschutz nicht bestätigt.' })
-  p.push({ art: 'info', text: `Foto-Einwilligung: ${f.foto ? 'ja' : 'nein'} · ${f.teams ? `${f.teams} Team${f.teams === 1 ? '' : 's'}/Kurs${f.teams === 1 ? '' : 'e'} gewünscht` : 'keine Teams gewählt'}` })
+  const fotos = [f.foto && 'Homepage', f.fotoSocial && 'Social Media', f.fotoPresse && 'Presse'].filter(Boolean).join(', ')
+  p.push({ art: 'info', text: `Fotos: ${fotos || 'keine Einwilligung'} · Kontaktdaten weitergeben: ${f.kontakt ? 'ja' : 'nein'} · ${f.teams ? `${f.teams} Team${f.teams === 1 ? '' : 's'}/Kurs${f.teams === 1 ? '' : 'e'} gewünscht` : 'keine Teams gewählt'}` })
+  if (!f.geschlecht) p.push({ art: 'info', text: 'Geschlecht nicht angegeben (älterer Antrag) – fürs DFBnet ggf. nachfragen.' })
   if (daten) {
     for (const a of daten.antraege)
       p.push({ art: 'warn', text: <>Weiterer Antrag mit gleicher E-Mail oder Person: <a href={`/admin/collections/mitgliedsantraege/${a.id}`}>{a.name}</a> ({ENTSCHEIDUNG_LABEL[a.status as Entscheidung] ?? 'Neu'}, {new Date(a.am).toLocaleDateString('de-DE')})</> })

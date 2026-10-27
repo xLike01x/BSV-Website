@@ -4,7 +4,7 @@ const ip = () => ({ 'X-Real-IP': `198.51.100.${Math.floor(Math.random() * 250) +
 
 /** F-04, F-13: Fristen und IBAN im Web-Admin-Papierkorb */
 export default async function datenschutz(d) {
-  const antrag = await api(null, 'POST', '/api/mitgliedsantraege', { vorname: 'Sicherheitstest', nachname: 'Datenschutz', geburtsdatum: '1990-05-05', email: 'sicherheitstest-ds@bsv.test', strasse: 'Teststraße 1', plz: '41470', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: 'Test', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true }, ip())
+  const antrag = await api(null, 'POST', '/api/mitgliedsantraege', { vorname: 'Sicherheitstest', nachname: 'Datenschutz', geburtsdatum: '1990-05-05', geschlecht: 'w', email: 'sicherheitstest-ds@bsv.test', strasse: 'Teststraße 1', plz: '41470', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: 'Test', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true }, ip())
   const id = antrag.j?.doc?.id
   try {
     pruefe('Testantrag angelegt', Boolean(id), antrag.j)

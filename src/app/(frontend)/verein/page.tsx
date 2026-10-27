@@ -164,7 +164,8 @@ export default async function VereinSeite() {
             {v.dsgvo!.map((q, i) => (
               <details key={q.id ?? i} className="acc" open={i === 0}>
                 <summary>{q.frage}</summary>
-                <p>{q.antwort}</p>
+                {/* Absätze aus dem Textfeld übernehmen */}
+                <p style={{ whiteSpace: 'pre-line' }}>{q.antwort}</p>
               </details>
             ))}
             <p className="muted" style={{ marginTop: 24 }}>

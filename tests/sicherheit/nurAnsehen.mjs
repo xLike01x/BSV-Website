@@ -47,7 +47,7 @@ export default async function nurAnsehen(d) {
   if (!konto) return pruefe('Testkonto lesen@bsv.test vorhanden', false)
   const leser = await login(LESER)
 
-  const antrag = await api(null, 'POST', '/api/mitgliedsantraege', { vorname: 'Sicherheitstest', nachname: 'NurAnsehen', geburtsdatum: '1990-05-05', email: 'sicherheitstest-lesen@bsv.test', strasse: 'Teststraße 1', plz: '41470', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: 'Geheim Kontoinhaber', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true }, ip())
+  const antrag = await api(null, 'POST', '/api/mitgliedsantraege', { vorname: 'Sicherheitstest', nachname: 'NurAnsehen', geburtsdatum: '1990-05-05', geschlecht: 'w', email: 'sicherheitstest-lesen@bsv.test', strasse: 'Teststraße 1', plz: '41470', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: 'Geheim Kontoinhaber', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true }, ip())
   const antragId = antrag.j?.doc?.id
   const [geloescht] = await d.q(`insert into posts (title, slug, _status, deleted_at, updated_at, created_at) values ('Sicherheitstest gelöscht', 'sicherheitstest-geloescht-' || floor(random()*1e9)::text, 'draft', now(), now(), now()) returning id`)
   try {

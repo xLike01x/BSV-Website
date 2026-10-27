@@ -19,6 +19,7 @@ import { antragEndpunkte } from '@/antraege/endpunkte'
 import { neuerAntragMelden } from '@/antraege/melden'
 import { emailImVerlauf, nurUeberEndpunkt, oeffentlichKnapp, posteingangFelder, statusImVerlauf, zustaendigNameSetzen } from '@/posteingang/felder'
 import { posteingangEndpunkte } from '@/posteingang/endpunkte'
+import { GESCHLECHT_OPTIONEN, GESCHLECHTER } from '@/antraege/geschlecht'
 
 const STATUS_LABEL: Record<string, string> = { neu: 'Neu', rueckfrage: 'Rückfrage', aufgenommen: 'Aufgenommen', abgelehnt: 'Abgelehnt' }
 
@@ -118,6 +119,8 @@ export const Mitgliedsantraege: CollectionConfig = {
         { name: 'vorname', label: 'Vorname', type: 'text', required: true, maxLength: 80 },
         { name: 'nachname', label: 'Nachname', type: 'text', required: true, maxLength: 80 },
         { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date', required: true, validate: geburtsdatumPruefen(), admin: { date: { displayFormat: 'dd.MM.yyyy' } } },
+        // Beim Absenden Pflicht (Hook unten) – ältere Anträge haben noch keine Angabe
+        { name: 'geschlecht', label: 'Geschlecht', type: 'select', options: GESCHLECHT_OPTIONEN },
       ],
     },
     {
@@ -171,6 +174,7 @@ export const Mitgliedsantraege: CollectionConfig = {
             { name: 'vorname', label: 'Vorname', type: 'text', required: true, maxLength: 80 },
             { name: 'nachname', label: 'Nachname', type: 'text', maxLength: 80 },
             { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date', validate: geburtsdatumPruefen(false) },
+            { name: 'geschlecht', label: 'Geschlecht', type: 'select', options: GESCHLECHT_OPTIONEN },
           ],
         },
       ],
@@ -230,11 +234,31 @@ export const Mitgliedsantraege: CollectionConfig = {
         { name: 'sepaMandat', label: 'SEPA-Mandat erteilt', type: 'checkbox', required: true, access: { read: nurKasse, update: nurKasse } },
       ],
     },
+    { name: 'satzungAkzeptiert', label: 'Satzung und Ordnungen anerkannt, Informationen nach Art. 13/14 DSGVO zur Kenntnis genommen', type: 'checkbox', required: true },
     {
-      type: 'row',
+      type: 'collapsible',
+      label: 'Freiwillige Einwilligungen (jederzeit widerrufbar)',
+      admin: { description: 'Wie in der Beitrittserklärung. Ohne Haken = nicht eingewilligt. Ein Widerruf kommt per Brief oder E-Mail an den Verein – dann hier den Haken entfernen.' },
       fields: [
-        { name: 'satzungAkzeptiert', label: 'Satzung anerkannt, Datenschutzhinweise zur Kenntnis genommen', type: 'checkbox', required: true },
-        { name: 'fotoEinwilligung', label: 'Einwilligung Fotos (freiwillig)', type: 'checkbox' },
+        {
+          name: 'kontaktEinwilligung',
+          label: 'Kontaktdaten: Nutzung in Notfällen und zu Vereinszwecken, Weitergabe an andere Mitglieder (z. B. Fahrgemeinschaften)',
+          type: 'checkbox',
+        },
+        {
+          type: 'row',
+          fields: [
+            { name: 'fotoEinwilligung', label: 'Fotos/Videos: Homepage des Vereins', type: 'checkbox' },
+            { name: 'fotoSocialMedia', label: 'Fotos/Videos: Social-Media-Seiten des Vereins', type: 'checkbox' },
+            { name: 'fotoPresse', label: 'Fotos/Videos: regionale Presse', type: 'checkbox' },
+          ],
+        },
+        {
+          name: 'fotoKindEinverstanden',
+          label: 'Angemeldete Kinder ab 14 Jahren sind mit den Foto-Einwilligungen selbst einverstanden',
+          type: 'checkbox',
+          admin: { description: 'Ab 14 Jahren braucht es die Einwilligung der Eltern UND des Kindes.' },
+        },
       ],
     },
     // Früheres Notizfeld – nur noch sichtbar, wenn dort etwas steht (neue Notizen oben im Kasten „Wer kümmert sich?“)
@@ -259,6 +283,16 @@ export const Mitgliedsantraege: CollectionConfig = {
         if (operation === 'create' && data && (!data.sepaMandat || !data.satzungAkzeptiert)) {
           throw new APIError('SEPA-Mandat und Satzung müssen bestätigt werden.', 400)
         }
+        return data
+      },
+      // Geschlecht ist beim Absenden Pflicht – für die Person und jedes Familienmitglied (wie in der Beitrittserklärung)
+      ({ data, operation, req }) => {
+        // Kasse/Admin dürfen ältere Papier-Anträge auch ohne Angabe nachtragen
+        if (operation !== 'create' || !data || hasRole(req.user as never, 'admin', 'kasse')) return data
+        const ok = (g: unknown) => typeof g === 'string' && GESCHLECHTER.includes(g)
+        if (!ok(data.geschlecht)) throw new APIError('Bitte das Geschlecht angeben.', 400)
+        const familie = Array.isArray(data.familienmitglieder) ? (data.familienmitglieder as { geschlecht?: unknown }[]) : []
+        if (familie.some((f) => !ok(f?.geschlecht))) throw new APIError('Bitte bei allen Familienmitgliedern das Geschlecht angeben.', 400)
         return data
       },
     ],

@@ -1544,6 +1544,13 @@ export const FAQ: Faq[] = [
     bereich: 'menue',
   },
   {
+    frage: 'Wo sehe ich, ob ein neues Mitglied Fotos oder die Weitergabe der Kontaktdaten erlaubt hat?',
+    antwort:
+      'Im Mitgliedsantrag unten unter „Freiwillige Einwilligungen“ und im Kasten „Antrag prüfen“ (z. B. „Fotos: Homepage, Social Media · Kontaktdaten weitergeben: ja“). Im Export für das DFBnet steht je Einwilligung eine eigene Spalte. Ohne Haken = nicht eingewilligt. Bei Kindern ab 14 Jahren gilt eine Foto-Einwilligung nur, wenn auch „Kinder ab 14 … einverstanden“ gesetzt ist. Widerruft jemand per Brief oder E-Mail, den Haken im Antrag entfernen und den Trainern Bescheid geben.\n\n'
+      + 'Beispiel – Wenn ein Vater nur „Website“ angekreuzt hat – dann darf ein Foto seines Kindes auf die Teamseite, aber nicht auf Instagram und nicht in die Zeitung.',
+    bereich: 'mitgliedsantraege',
+  },
+  {
     frage: 'Wer sieht die Mitgliedsanträge und Bankdaten?',
     antwort: 'Kasse und Admin (mit Bankdaten). Wer das Zusatzrecht „Mitgliedsanträge bearbeiten – ohne Bankdaten“ hat, sieht die Anträge ohne IBAN. Die Rolle „Nur ansehen“ sieht sie ebenfalls, solange der Web-Admin unter Rollen & Rechte → „Rechte anpassen“ die Haken „Mitgliedsanträge“ bzw. „Bankdaten“ nicht entfernt hat (ab Werk an). Alle anderen sehen den Bereich nicht.',
     bereich: 'mitgliedsantraege',

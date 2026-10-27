@@ -7,6 +7,8 @@ const ERSETZEN: [string, string][] = [
   ['Die Übungsleitungen werden automatisch informiert.', 'Die Trainer werden automatisch informiert.'],
   // Beitrag nicht fest im Text, sondern aus den Vereinsdaten berechnet
   ['Ab 5 € im Monat, alle Kurse inklusive.', 'Ab {abMonat} € im Monat, alle Kurse inklusive.'],
+  // Stimmte nie: Neue Anträge gehen an die Kasse, nicht an die Trainer (27.10.2026)
+  ['Die Trainer werden automatisch informiert.', 'Wir melden uns schnellstmöglich bei dir.'],
 ]
 
 const ersetzen = (wert: unknown): unknown => {
@@ -24,7 +26,7 @@ export async function trainerUmbenennen(payload: Payload) {
       const { id: _id, createdAt: _c, updatedAt: _u, globalType: _g, ...daten } = neu as Record<string, unknown>
       void [_id, _c, _u, _g]
       await payload.updateGlobal({ slug: 'texte' as never, data: daten as never, overrideAccess: true, context: { disableRevalidate: true } })
-      payload.logger.info('Texte: „Übungsleitung“ → „Trainer“ umbenannt')
+      payload.logger.info('Texte: veraltete Formulierungen nachgezogen')
     }
   }
   // Rollen-Bezeichnung im Trainerteam der Teams/Kurse

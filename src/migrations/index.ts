@@ -26,6 +26,8 @@ import * as migration_20261027_104121_vereinswappen from './20261027_104121_vere
 import * as migration_20261027_123248_kuendigungen from './20261027_123248_kuendigungen';
 import * as migration_20261027_145506_hilfe_bereiche_kuendigungen from './20261027_145506_hilfe_bereiche_kuendigungen';
 import * as migration_20261027_174802_konto_geschuetzt from './20261027_174802_konto_geschuetzt';
+import * as migration_20261027_183018_beitrittserklaerung from './20261027_183018_beitrittserklaerung';
+import * as migration_20261027_183317_antrag_text from './20261027_183317_antrag_text';
 
 export const migrations = [
   {
@@ -166,6 +168,16 @@ export const migrations = [
   {
     up: migration_20261027_174802_konto_geschuetzt.up,
     down: migration_20261027_174802_konto_geschuetzt.down,
-    name: '20261027_174802_konto_geschuetzt'
+    name: '20261027_174802_konto_geschuetzt',
+  },
+  {
+    up: migration_20261027_183018_beitrittserklaerung.up,
+    down: migration_20261027_183018_beitrittserklaerung.down,
+    name: '20261027_183018_beitrittserklaerung',
+  },
+  {
+    up: migration_20261027_183317_antrag_text.up,
+    down: migration_20261027_183317_antrag_text.down,
+    name: '20261027_183317_antrag_text'
   },
 ];

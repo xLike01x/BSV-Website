@@ -231,7 +231,7 @@ export const Texte: GlobalConfig = {
             ]),
             gruppe('antrag', 'Mitglied werden', [
               text('titel', 'Überschrift', 'Anmelden beim BSV.'),
-              text('text', 'Text', 'Wähle deine Teams und Kurse, gib deine Daten ein, fertig. Die Trainer werden automatisch informiert.', true),
+              text('text', 'Text', 'Wähle deine Teams und Kurse, gib deine Daten ein, fertig. Wir melden uns schnellstmöglich bei dir.', true),
             ]),
             gruppe('sponsoren', 'Sponsoren', [
               text('titel', 'Überschrift', 'Danke an unsere Partner.'),

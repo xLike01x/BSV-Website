@@ -4,6 +4,7 @@ import { hasRole, isFinance, istMitgliedOderMehr } from '@/access/roles'
 import { hatRecht } from '@/access/einzelrechte'
 import { darf, rechteLaden } from '@/access/rollenRechte'
 import { berlinDatum } from '@/utilities/berlinDatum'
+import { GESCHLECHT_OPTIONEN } from '@/antraege/geschlecht'
 
 export const MITGLIEDSART: Record<string, string> = {
   jugend: 'Einzelmitgliedschaft · Jugend',
@@ -82,6 +83,7 @@ export const Mitgliedschaften: CollectionConfig = {
           options: Object.entries(MITGLIEDSART).map(([value, label]) => ({ value, label })),
         },
         { name: 'geburtsdatum', label: 'Geburtsdatum', type: 'date', admin: { date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' }, description: 'Nur zur Unterscheidung, steht nicht auf dem Ausweis.' } },
+        { name: 'geschlecht', label: 'Geschlecht', type: 'select', options: GESCHLECHT_OPTIONEN, admin: { description: 'Aus dem Antrag. Steht nicht auf dem Ausweis.' } },
       ],
     },
     {

@@ -30,7 +30,7 @@ export default async function zusatzrechte(d) {
   const [team] = await d.q(`select id, aktiv from angebote where bereich = 'fussball' order by id limit 1`)
   const [bild] = await d.q('select id, alt from media where deleted_at is null order by id limit 1')
   const [sponsor] = await d.q('select id, name from sponsoren order by id limit 1')
-  const antrag = await api(null, 'POST', '/api/mitgliedsantraege', { vorname: 'Sicherheitstest', nachname: 'Zusatzrecht', geburtsdatum: '1990-05-05', email: 'sicherheitstest-zr@bsv.test', strasse: 'Teststraße 1', plz: '41470', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: 'Geheim Kontoinhaber', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true }, ip())
+  const antrag = await api(null, 'POST', '/api/mitgliedsantraege', { vorname: 'Sicherheitstest', nachname: 'Zusatzrecht', geburtsdatum: '1990-05-05', geschlecht: 'w', email: 'sicherheitstest-zr@bsv.test', strasse: 'Teststraße 1', plz: '41470', ort: 'Neuss', mitgliedsart: 'passiv', kontoinhaber: 'Geheim Kontoinhaber', iban: 'DE89370400440532013000', sepaMandat: true, satzungAkzeptiert: true }, ip())
   const antragId = antrag.j?.doc?.id
   const neuePosts = []
   try {

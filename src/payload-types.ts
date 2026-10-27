@@ -238,6 +238,7 @@ export interface Mitgliedsantraege {
   vorname: string;
   nachname: string;
   geburtsdatum: string;
+  geschlecht?: ('m' | 'w' | 'd') | null;
   email: string;
   telefon?: string | null;
   strasse: string;
@@ -253,6 +254,7 @@ export interface Mitgliedsantraege {
         vorname: string;
         nachname?: string | null;
         geburtsdatum?: string | null;
+        geschlecht?: ('m' | 'w' | 'd') | null;
         id?: string | null;
       }[]
     | null;
@@ -264,7 +266,14 @@ export interface Mitgliedsantraege {
   iban: string;
   sepaMandat: boolean;
   satzungAkzeptiert: boolean;
+  kontaktEinwilligung?: boolean | null;
   fotoEinwilligung?: boolean | null;
+  fotoSocialMedia?: boolean | null;
+  fotoPresse?: boolean | null;
+  /**
+   * Ab 14 Jahren braucht es die Einwilligung der Eltern UND des Kindes.
+   */
+  fotoKindEinverstanden?: boolean | null;
   /**
    * Aus der Zeit vor dem Notizen-Verlauf. Neue Notizen bitte oben im Kasten schreiben.
    */
@@ -999,6 +1008,10 @@ export interface Mitgliedschaften {
    * Nur zur Unterscheidung, steht nicht auf dem Ausweis.
    */
   geburtsdatum?: string | null;
+  /**
+   * Aus dem Antrag. Steht nicht auf dem Ausweis.
+   */
+  geschlecht?: ('m' | 'w' | 'd') | null;
   /**
    * Unter diesem Konto erscheint der Ausweis. Wird bei der Freigabe einer Registrierung mit gleicher E-Mail automatisch verknüpft. Bei Kindern das Konto der Eltern.
    */
@@ -2297,6 +2310,7 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
   vorname?: T;
   nachname?: T;
   geburtsdatum?: T;
+  geschlecht?: T;
   email?: T;
   telefon?: T;
   strasse?: T;
@@ -2310,6 +2324,7 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
         vorname?: T;
         nachname?: T;
         geburtsdatum?: T;
+        geschlecht?: T;
         id?: T;
       };
   angebote?: T;
@@ -2317,7 +2332,11 @@ export interface MitgliedsantraegeSelect<T extends boolean = true> {
   iban?: T;
   sepaMandat?: T;
   satzungAkzeptiert?: T;
+  kontaktEinwilligung?: T;
   fotoEinwilligung?: T;
+  fotoSocialMedia?: T;
+  fotoPresse?: T;
+  fotoKindEinverstanden?: T;
   notizen?: T;
   endgueltigAm?: T;
   endgueltigVon?: T;
@@ -3059,6 +3078,7 @@ export interface MitgliedschaftenSelect<T extends boolean = true> {
   eintritt?: T;
   art?: T;
   geburtsdatum?: T;
+  geschlecht?: T;
   konto?: T;
   email?: T;
   angebote?: T;

@@ -1,3 +1,4 @@
+import { GESCHLECHT_LABEL } from './geschlecht'
 import type { Endpoint, PayloadRequest, Where } from 'payload'
 
 import { hatRecht } from '@/access/einzelrechte'
@@ -139,7 +140,7 @@ const pruefung: Endpoint = {
 /* ------------------------------------------------------------------ */
 // Export für die Kasse (CSV ohne Bankdaten)
 
-const SPALTEN = ['Antrag-Nr.', 'Rolle', 'Nachname', 'Vorname', 'Geburtsdatum', 'Straße', 'PLZ', 'Ort', 'E-Mail', 'Telefon', 'Mitgliedsart', 'Beitrag pro Quartal (€)', 'Gewünschte Teams', 'Foto-Einwilligung', 'Antrag vom', 'Aufgenommen am']
+const SPALTEN = ['Antrag-Nr.', 'Rolle', 'Nachname', 'Vorname', 'Geburtsdatum', 'Geschlecht', 'Straße', 'PLZ', 'Ort', 'E-Mail', 'Telefon', 'Mitgliedsart', 'Beitrag pro Quartal (€)', 'Gewünschte Teams', 'Fotos Homepage', 'Fotos Social Media', 'Fotos Presse', 'Kinder ab 14 einverstanden', 'Kontaktdaten-Einwilligung', 'Antrag vom', 'Aufgenommen am']
 
 const deDatum = (iso: unknown) => {
   if (typeof iso !== 'string' || !iso) return ''
@@ -167,8 +168,13 @@ type Antrag = {
   mitgliedsart?: string
   beitragQuartal?: number | null
   angebote?: ({ title?: string } | number)[] | null
+  geschlecht?: string | null
   fotoEinwilligung?: boolean | null
-  familienmitglieder?: { vorname?: string; nachname?: string; geburtsdatum?: string }[] | null
+  fotoSocialMedia?: boolean | null
+  fotoPresse?: boolean | null
+  fotoKindEinverstanden?: boolean | null
+  kontaktEinwilligung?: boolean | null
+  familienmitglieder?: { vorname?: string; nachname?: string; geburtsdatum?: string; geschlecht?: string | null }[] | null
   createdAt?: string
   aufgenommenAm?: string | null
   updatedAt?: string
@@ -180,11 +186,12 @@ export function csvZeilen(antraege: Antrag[]): string {
     const teams = (a.angebote ?? []).map((t) => (typeof t === 'object' ? t.title : '')).filter(Boolean).join(', ')
     const gemeinsam = [a.strasse, a.plz, a.ort, a.email, a.telefon, MITGLIEDSART_LABEL[a.mitgliedsart ?? ''] ?? a.mitgliedsart]
     const beitrag = a.beitragQuartal != null ? String(a.beitragQuartal).replace('.', ',') : ''
-    const daten = [a.fotoEinwilligung ? 'ja' : 'nein', deDatum(a.createdAt), deDatum(a.aufgenommenAm ?? a.updatedAt)]
-    zeilen.push([a.id, 'Antragsteller/in', a.nachname, a.vorname, deDatum(a.geburtsdatum), ...gemeinsam, beitrag, teams, ...daten].map(csvFeld).join(';'))
+    const jn = (b?: boolean | null) => (b ? 'ja' : 'nein')
+    const daten = [jn(a.fotoEinwilligung), jn(a.fotoSocialMedia), jn(a.fotoPresse), jn(a.fotoKindEinverstanden), jn(a.kontaktEinwilligung), deDatum(a.createdAt), deDatum(a.aufgenommenAm ?? a.updatedAt)]
+    zeilen.push([a.id, 'Antragsteller/in', a.nachname, a.vorname, deDatum(a.geburtsdatum), GESCHLECHT_LABEL[a.geschlecht ?? ''] ?? '', ...gemeinsam, beitrag, teams, ...daten].map(csvFeld).join(';'))
     if (a.mitgliedsart === 'familie')
       for (const f of a.familienmitglieder ?? []) {
-        zeilen.push([a.id, 'Familienmitglied', f.nachname || a.nachname, f.vorname, deDatum(f.geburtsdatum), ...gemeinsam, '', '', ...daten].map(csvFeld).join(';'))
+        zeilen.push([a.id, 'Familienmitglied', f.nachname || a.nachname, f.vorname, deDatum(f.geburtsdatum), GESCHLECHT_LABEL[f.geschlecht ?? ''] ?? '', ...gemeinsam, '', '', ...daten].map(csvFeld).join(';'))
       }
   }
   // BOM, damit Excel Umlaute richtig anzeigt
@@ -224,7 +231,12 @@ const exportEndpunkt: Endpoint = {
           mitgliedsart: true,
           beitragQuartal: true,
           angebote: true,
+          geschlecht: true,
           fotoEinwilligung: true,
+          fotoSocialMedia: true,
+          fotoPresse: true,
+          fotoKindEinverstanden: true,
+          kontaktEinwilligung: true,
           familienmitglieder: true,
           createdAt: true,
           updatedAt: true,

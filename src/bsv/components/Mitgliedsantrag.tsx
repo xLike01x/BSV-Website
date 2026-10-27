@@ -11,8 +11,15 @@ import { sendeFormular } from './sendeFormular'
 export type AntragAngebot = { id: number; slug: string; name: string; gruppe: string }
 export type AntragBeitrag = { key: string; label: string; zielgruppe: string; quartal: number }
 
-type Person = { vorname: string; nachname: string; geburtsdatum: string }
-const leer: Person = { vorname: '', nachname: '', geburtsdatum: '' }
+type Person = { vorname: string; nachname: string; geburtsdatum: string; geschlecht: string }
+const leer: Person = { vorname: '', nachname: '', geburtsdatum: '', geschlecht: '' }
+
+/** Wie in der Beitrittserklärung – genderneutral mit „divers“ */
+const GESCHLECHT = [
+  { value: 'm', label: 'männlich' },
+  { value: 'w', label: 'weiblich' },
+  { value: 'd', label: 'divers' },
+]
 
 const euro = (n: number) => n.toLocaleString('de-DE', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) + ' €'
 
@@ -52,7 +59,8 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
   }
   const [p, setP] = useState({ ...leer, email: '', telefon: '', strasse: '', plz: '', ort: '' })
   const [familie, setFamilie] = useState<Person[]>([])
-  const [sepa, setSepa] = useState({ kontoinhaber: '', iban: '', mandat: false, satzung: false, fotos: false })
+  // Bewusst NICHT vorausgefüllt: Einwilligungen müssen aktiv erteilt werden (DSGVO, EuGH „Planet49“). „Allem zustimmen“ setzt alle mit einem Klick.
+  const [sepa, setSepa] = useState({ kontoinhaber: '', iban: '', mandat: false, satzung: false, kontakt: false, fotoHomepage: false, fotoSocial: false, fotoPresse: false, fotoKind: false })
   const [fehler, setFehler] = useState<string | null>(null)
   const [sendet, setSendet] = useState(false)
   const [hp, setHp] = useState('')
@@ -88,6 +96,14 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
   const gewaehlt = angebote.filter((a) => auswahl.includes(a.id))
   const beitrag = beitraege.find((b) => b.key === art) ?? beitraege[0]
   const istMinderjaehrig = (alterAm(p.geburtsdatum) ?? 99) < 18
+  // Kinder ab 14 müssen bei Fotos selbst mit einwilligen (zusätzlich zu den Eltern)
+  const ab14 = (geb: string) => {
+    const a = alterAm(geb)
+    return a !== null && a >= 14 && a < 18
+  }
+  const jugendlicheAb14 = ab14(p.geburtsdatum) || (art === 'familie' && familie.some((f) => f.vorname.trim() && ab14(f.geburtsdatum)))
+  const fotoGewaehlt = sepa.fotoHomepage || sepa.fotoSocial || sepa.fotoPresse
+  const allesAngehakt = sepa.mandat && sepa.satzung && sepa.kontakt && sepa.fotoHomepage && sepa.fotoSocial && sepa.fotoPresse && (!jugendlicheAb14 || sepa.fotoKind)
 
   const pruefe = (): string | null => {
     if (schritt === 1 && auswahl.length === 0 && art !== 'passiv') return 'Bitte wähle mindestens ein Team oder einen Kurs aus – oder werde passives Mitglied.'
@@ -95,10 +111,12 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
     if (schritt === 2) {
       if (!p.vorname.trim() || !p.nachname.trim()) return 'Bitte gib Vor- und Nachnamen an.'
       if (!p.geburtsdatum || alterAm(p.geburtsdatum) === null) return 'Bitte gib das Geburtsdatum an.'
+      if (!p.geschlecht) return 'Bitte gib das Geschlecht an.'
       if (!/^\S+@\S+\.\S+$/.test(p.email)) return 'Bitte gib eine gültige E-Mail-Adresse an.'
       if (!p.strasse.trim() || !/^\d{5}$/.test(p.plz.trim()) || !p.ort.trim()) return 'Bitte gib eine vollständige Anschrift mit fünfstelliger PLZ an.'
       if (art === 'familie' && familie.some((f) => !f.vorname.trim())) return 'Bitte gib für alle Familienmitglieder einen Vornamen an oder entferne leere Zeilen.'
       if (art === 'familie' && !familie.some((f) => f.vorname.trim())) return 'Beim Familienbeitrag bitte mindestens ein weiteres Familienmitglied eintragen.'
+      if (art === 'familie' && familie.some((f) => f.vorname.trim() && !f.geschlecht)) return 'Bitte gib bei allen Familienmitgliedern das Geschlecht an.'
       const alter = alterAm(p.geburtsdatum)
       if (alter !== null && alter < 0) return 'Das Geburtsdatum liegt in der Zukunft.'
       if (alter !== null && alter >= 18 && art === 'jugend') return '„Jugendliche“ gilt bis 17 Jahre. Bitte eine andere Mitgliedsart wählen.'
@@ -107,6 +125,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
       if (!sepa.kontoinhaber.trim()) return 'Bitte gib den Namen des Kontoinhabers an.'
       if (!ibanOk(sepa.iban)) return 'Die IBAN ist ungültig. Bitte prüfe deine Eingabe.'
       if (!sepa.mandat || !sepa.satzung) return 'Bitte bestätige das SEPA-Mandat und die Satzung.'
+      if (jugendlicheAb14 && fotoGewaehlt && !sepa.fotoKind) return 'Bitte bestätige, dass dein Kind (ab 14) mit den Fotos selbst einverstanden ist – oder nimm die Foto-Haken heraus.'
     }
     return null
   }
@@ -122,6 +141,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
       vorname: p.vorname.trim(),
       nachname: p.nachname.trim(),
       geburtsdatum: p.geburtsdatum,
+      geschlecht: p.geschlecht,
       email: p.email.trim(),
       telefon: p.telefon.trim() || undefined,
       strasse: p.strasse.trim(),
@@ -134,7 +154,11 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
       iban: sepa.iban.replace(/\s+/g, '').toUpperCase(),
       sepaMandat: sepa.mandat,
       satzungAkzeptiert: sepa.satzung,
-      fotoEinwilligung: sepa.fotos,
+      kontaktEinwilligung: sepa.kontakt,
+      fotoEinwilligung: sepa.fotoHomepage,
+      fotoSocialMedia: sepa.fotoSocial,
+      fotoPresse: sepa.fotoPresse,
+      fotoKindEinverstanden: jugendlicheAb14 && fotoGewaehlt ? sepa.fotoKind : false,
       website: hp,
     })
     setSendet(false)
@@ -248,6 +272,17 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 {feld('vorname', 'Vorname', { autoComplete: 'given-name', required: true, maxLength: 80 })}
                 {feld('nachname', 'Nachname', { autoComplete: 'family-name', required: true, maxLength: 80 })}
                 {feld('geburtsdatum', 'Geburtsdatum', { type: 'date', required: true, max: new Date().toISOString().slice(0, 10) })}
+                <label className="field">
+                  Geschlecht
+                  <select value={p.geschlecht} onChange={(e) => setP({ ...p, geschlecht: e.target.value })} required>
+                    <option value="">Bitte wählen …</option>
+                    {GESCHLECHT.map((g) => (
+                      <option key={g.value} value={g.value}>
+                        {g.label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
                 {feld('email', 'E-Mail', { type: 'email', autoComplete: 'email', required: true })}
                 {feld('strasse', 'Straße und Hausnummer', { autoComplete: 'street-address', required: true, maxLength: 120 }, true)}
                 {feld('plz', 'PLZ', { inputMode: 'numeric', autoComplete: 'postal-code', required: true, maxLength: 5 })}
@@ -275,6 +310,17 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                       <label className="field">
                         Geburtsdatum
                         <input type="date" value={f.geburtsdatum} onChange={(e) => setFamilie(familie.map((x, j) => (j === i ? { ...x, geburtsdatum: e.target.value } : x)))} />
+                      </label>
+                      <label className="field">
+                        Geschlecht
+                        <select value={f.geschlecht} onChange={(e) => setFamilie(familie.map((x, j) => (j === i ? { ...x, geschlecht: e.target.value } : x)))}>
+                          <option value="">Bitte wählen …</option>
+                          {GESCHLECHT.map((g) => (
+                            <option key={g.value} value={g.value}>
+                              {g.label}
+                            </option>
+                          ))}
+                        </select>
                       </label>
                       <button type="button" className="btn btn-ghost" aria-label={`Familienmitglied ${i + 1} entfernen`} onClick={() => setFamilie(familie.filter((_, j) => j !== i))} style={{ padding: '12px 16px' }}>
                         ✕
@@ -320,23 +366,67 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 </label>
               </div>
               <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
+                <button type="button" className="btn btn-ghost" aria-pressed={allesAngehakt} onClick={() => setSepa({ ...sepa, mandat: true, satzung: true, kontakt: true, fotoHomepage: true, fotoSocial: true, fotoPresse: true, fotoKind: jugendlicheAb14 })} style={{ alignSelf: 'flex-start' }}>
+                  {allesAngehakt ? '✓ Allem zugestimmt' : '✓ Allem zustimmen'}
+                </button>
+                <p className="muted" style={{ margin: '-6px 0 0', fontSize: 13 }}>
+                  Setzt alle Haken auf einmal. Was du nicht möchtest – z. B. Fotos in der Presse –, nimmst du danach einfach wieder heraus.
+                </p>
+
+                <h3 style={{ fontSize: 16, fontWeight: 700, margin: '8px 0 0' }}>Pflicht</h3>
                 <label className="check">
                   <input type="checkbox" checked={sepa.mandat} onChange={(e) => setSepa({ ...sepa, mandat: e.target.checked })} />
                   <span>
-                    Ich ermächtige den Büdericher Spielverein 1919 e.V., Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die Lastschriften einzulösen.
-                    {glaeubigerId ? ` Gläubiger-ID: ${glaeubigerId}.` : ''} Die Mandatsreferenz wird separat mitgeteilt. Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung verlangen.
+                    <strong>SEPA-Lastschriftmandat:</strong> Ich ermächtige den Büdericher Spielverein 1919 e.V. widerruflich, Zahlungen von meinem Konto mittels Lastschrift einzuziehen. Zugleich weise ich mein Kreditinstitut an, die vom Verein auf mein Konto gezogenen Lastschriften einzulösen.
+                    {glaeubigerId ? ` Gläubiger-ID: ${glaeubigerId}.` : ''} Die Mandatsreferenz wird separat mitgeteilt. Hinweis: Ich kann innerhalb von acht Wochen, beginnend mit dem Belastungsdatum, die Erstattung des belasteten Betrages verlangen. Es gelten dabei die mit meinem Kreditinstitut vereinbarten Bedingungen.
                   </span>
                 </label>
                 <label className="check">
                   <input type="checkbox" checked={sepa.satzung} onChange={(e) => setSepa({ ...sepa, satzung: e.target.checked })} />
                   <span>
-                    Ich erkenne die <Link href="/verein#downloads">Satzung</Link> an und habe die <Link href="/verein#dsgvo">Informationen nach DSGVO</Link> zur Kenntnis genommen.
+                    Ich erkenne die <Link href="/verein#downloads">Satzung und Ordnungen</Link> des Vereins in der jeweils gültigen Fassung an und habe die <Link href="/verein#dsgvo">Informationen nach Art. 13 und 14 DSGVO</Link> gelesen.
+                    {istMinderjaehrig ? ' Als Erziehungsberechtigte/r stelle ich den Antrag für mein Kind.' : ''}
                   </span>
                 </label>
+
+                <h3 style={{ fontSize: 16, fontWeight: 700, margin: '8px 0 0' }}>Freiwillig – jederzeit widerrufbar</h3>
                 <label className="check">
-                  <input type="checkbox" checked={sepa.fotos} onChange={(e) => setSepa({ ...sepa, fotos: e.target.checked })} />
-                  <span>Fotos von mir bzw. meinem Kind dürfen auf der Website erscheinen (freiwillig, jederzeit widerrufbar).</span>
+                  <input type="checkbox" checked={sepa.kontakt} onChange={(e) => setSepa({ ...sepa, kontakt: e.target.checked })} />
+                  <span>
+                    <strong>Kontaktdaten:</strong> Ich bin damit einverstanden, dass meine Telefonnummer und E-Mail-Adresse in Notfällen und zu Vereinszwecken genutzt und dafür auch an andere Mitglieder weitergegeben werden dürfen, z. B. für Fahrgemeinschaften.
+                  </span>
                 </label>
+                <div>
+                  <p style={{ margin: '0 0 8px' }}>
+                    <strong>Fotos und Videos:</strong> Ich willige ein, dass Fotos und Videos von mir {istMinderjaehrig || art === 'familie' ? 'bzw. meinen angemeldeten Kindern ' : ''}bei sportlichen Veranstaltungen und zur Vorstellung von Mannschaften gemacht und hier veröffentlicht werden dürfen:
+                  </p>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 10, paddingLeft: 4 }}>
+                    <label className="check">
+                      <input type="checkbox" checked={sepa.fotoHomepage} onChange={(e) => setSepa({ ...sepa, fotoHomepage: e.target.checked })} />
+                      <span>Website des Vereins</span>
+                    </label>
+                    <label className="check">
+                      <input type="checkbox" checked={sepa.fotoSocial} onChange={(e) => setSepa({ ...sepa, fotoSocial: e.target.checked })} />
+                      <span>Social-Media-Seiten des Vereins (z. B. Instagram, Facebook)</span>
+                    </label>
+                    <label className="check">
+                      <input type="checkbox" checked={sepa.fotoPresse} onChange={(e) => setSepa({ ...sepa, fotoPresse: e.target.checked })} />
+                      <span>Regionale Presse (z. B. RP, NRZ, Der Weseler, Niederrhein Nachrichten)</span>
+                    </label>
+                    {jugendlicheAb14 && fotoGewaehlt && (
+                      <label className="check">
+                        <input type="checkbox" checked={sepa.fotoKind} onChange={(e) => setSepa({ ...sepa, fotoKind: e.target.checked })} />
+                        <span>Mein Kind ab 14 Jahren ist mit diesen Fotos selbst ebenfalls einverstanden.</span>
+                      </label>
+                    )}
+                  </div>
+                  <details style={{ marginTop: 10, fontSize: 14 }}>
+                    <summary style={{ cursor: 'pointer', color: 'var(--bsv-green)', fontWeight: 600 }}>Gut zu wissen zu Fotos</summary>
+                    <p className="muted" style={{ margin: '8px 0 0' }}>
+                      Im Internet veröffentlichte Fotos und Videos sind weltweit abrufbar. Dass Dritte sie kopieren oder verändern, lässt sich nicht ausschließen – eine vollständige Löschung kann der Verein deshalb nicht garantieren. Die Einwilligung gilt, bis du sie widerrufst. Der Widerruf wirkt für die Zukunft und geht formlos per Brief oder E-Mail an den Verein. Ohne Einwilligung ist die Mitgliedschaft genauso möglich.
+                    </p>
+                  </details>
+                </div>
               </div>
             </div>
           )}
@@ -352,7 +442,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 Willkommen im BSV, {p.vorname}!
               </h2>
               <p className="muted" style={{ margin: '12px auto 0', maxWidth: 460 }}>
-                Wir haben deine Anmeldung erhalten. {gewaehlt.length > 0 ? `Die Trainer deiner ${gewaehlt.length === 1 ? 'Gruppe' : `${gewaehlt.length} Angebote`} melden sich bei dir.` : 'Der Vorstand meldet sich bei dir.'} Sobald die Kasse deinen Antrag bearbeitet hat, bekommst du deinen Zugang zum Mitgliederbereich.
+                Wir haben deine Anmeldung erhalten und melden uns bei dir. Sobald die Kasse deinen Antrag bearbeitet hat, bekommst du eine Bestätigung per E-Mail.
               </p>
               <Link href="/" className="btn btn-primary" style={{ marginTop: 24 }}>
                 Zur Startseite

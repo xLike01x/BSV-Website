@@ -12,8 +12,8 @@ export const mitgliedschaftAusAntrag: CollectionAfterChangeHook = async ({ doc, 
   const email = String(doc.email ?? '').toLowerCase()
   const angebote = (doc.angebote ?? []).map((a: unknown) => (a && typeof a === 'object' ? (a as { id: number }).id : a))
   const personen = [
-    { vorname: doc.vorname, nachname: doc.nachname, geburtsdatum: doc.geburtsdatum, angebote },
-    ...(doc.mitgliedsart === 'familie' ? (doc.familienmitglieder ?? []).map((f: { vorname?: string; nachname?: string; geburtsdatum?: string }) => ({ vorname: f.vorname, nachname: f.nachname || doc.nachname, geburtsdatum: f.geburtsdatum, angebote: [] })) : []),
+    { vorname: doc.vorname, nachname: doc.nachname, geburtsdatum: doc.geburtsdatum, geschlecht: doc.geschlecht ?? null, angebote },
+    ...(doc.mitgliedsart === 'familie' ? (doc.familienmitglieder ?? []).map((f: { vorname?: string; nachname?: string; geburtsdatum?: string; geschlecht?: string }) => ({ vorname: f.vorname, nachname: f.nachname || doc.nachname, geburtsdatum: f.geburtsdatum, geschlecht: f.geschlecht ?? null, angebote: [] })) : []),
   ]
   // Gibt es schon ein vertrauenswürdiges Konto mit dieser E-Mail (von der Verwaltung angelegt oder mit bestätigter E-Mail)?
   // Dann gleich verknüpfen.

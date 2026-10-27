@@ -6,6 +6,7 @@ const basis = {
   nachname: 'Formular',
   geburtsdatum: '1990-05-05',
   email: 'sicherheitstest-antrag@bsv.test',
+  geschlecht: 'd',
   strasse: 'Teststraße 1',
   plz: '41470',
   ort: 'Neuss',
@@ -29,6 +30,18 @@ export default async function formulare(d) {
     pruefe('Antrag: passiv mit Teams → 400', (await antrag({ mitgliedsart: 'passiv', angebote: [team.id] })).s === 400)
     const ok = await antrag({ angebote: [team.id] })
     pruefe('Antrag: gültige Angaben → 201', ok.s === 201, ok.j)
+    // Beitrittserklärung: Geschlecht Pflicht (auch je Familienmitglied), Einwilligungen werden gespeichert
+    pruefe('Antrag: ohne Geschlecht → 400', (await antrag({ geschlecht: undefined })).s === 400)
+    pruefe('Antrag: Geschlecht „x“ → 400', (await antrag({ geschlecht: 'x' })).s === 400)
+    pruefe('Antrag: Familienmitglied ohne Geschlecht → 400', (await antrag({ mitgliedsart: 'familie', familienmitglieder: [{ vorname: 'Kind' }] })).s === 400)
+    const fam = await antrag({ mitgliedsart: 'familie', familienmitglieder: [{ vorname: 'Kind', geburtsdatum: '2012-03-03', geschlecht: 'm' }], fotoEinwilligung: true, fotoSocialMedia: false, fotoPresse: true, fotoKindEinverstanden: true, kontaktEinwilligung: true })
+    pruefe('Antrag: Familie mit Geschlecht und Einwilligungen → 201', fam.s === 201, fam.j)
+    if (fam.j?.doc?.id) {
+      const [z] = await d.q('select geschlecht, foto_einwilligung, foto_social_media, foto_presse, foto_kind_einverstanden, kontakt_einwilligung from mitgliedsantraege where id=$1', [fam.j.doc.id])
+      pruefe('Antrag: Geschlecht und Einwilligungen gespeichert', z?.geschlecht === 'd' && z.foto_einwilligung === true && z.foto_social_media === false && z.foto_presse === true && z.foto_kind_einverstanden === true && z.kontakt_einwilligung === true, z)
+      const [g] = await d.q('select geschlecht from mitgliedsantraege_familienmitglieder where _parent_id=$1', [fam.j.doc.id])
+      pruefe('Antrag: Geschlecht des Familienmitglieds gespeichert', g?.geschlecht === 'm', g)
+    }
     const k = (extra) => api(null, 'POST', '/api/kontaktanfragen', { name: 'Sicherheitstest', email: 'sicherheitstest-antrag@bsv.test', betreff: 'x', nachricht: 'Test', ...extra }, ip())
     pruefe('Kontakt: Datenschutz-Haken „false“ → 400', (await k({ datenschutz: false })).s === 400)
     pruefe('Kontakt: ohne Datenschutz-Haken → 400', (await k({})).s === 400)

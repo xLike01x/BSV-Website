@@ -10,6 +10,7 @@ const basis = {
   vorname: 'Posteingangtest',
   nachname: 'Sicherheit',
   geburtsdatum: '1988-04-04',
+  geschlecht: 'd',
   email: MAIL,
   strasse: 'Teststraße 2',
   plz: '41470',
