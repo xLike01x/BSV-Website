@@ -1067,6 +1067,18 @@ export const FAQ: Faq[] = [
     bereich: 'kuendigungen',
   },
   {
+    frage: 'Wie funktioniert „Im DFBnet austragen“ bei einer Kündigung?',
+    antwort:
+      'Das Austragen machst du selbst im DFBnet – die Website ist nicht mit dem DFBnet verbunden und schickt keine Daten dorthin. Der Knopf „✓ Im DFBnet ausgetragen“ ist nur dein Haken „erledigt“.\n\n'
+      + '1. Kündigung prüfen und „✓ Bestätigen“ klicken – das Mitglied bekommt die Bestätigung, „Gültig bis“ steht auf dem Quartalsende.\n'
+      + '2. Die Kündigung steht jetzt im Reiter „📋 Im DFBnet austragen“ – dort sammeln sich alle bestätigten Kündigungen, die im DFBnet noch fehlen.\n'
+      + '3. Im DFBnet das Mitglied zum Quartalsende austragen (wie bisher).\n'
+      + '4. Zurück in der Kündigung „✓ Im DFBnet ausgetragen“ klicken. Sie wandert nach „✓ Erledigt“, im Verlauf steht, wer es wann geklickt hat. Das Mitglied bekommt keine weitere E-Mail.\n\n'
+      + 'Wichtig: Der Austritt auf der Website hängt nicht an diesem Klick. Am Tag nach dem Quartalsende stellt die Website jede bestätigte Kündigung automatisch auf „nicht gültig“ – ob „ausgetragen“ geklickt wurde oder nicht. Wann du im DFBnet austrägst (sofort oder kurz vor dem Quartalsende), entscheidest du; der Reiter zeigt, was noch offen ist. Nach dem Bestätigen gibt es nur noch diesen einen Knopf – zurücknehmen geht nicht.\n\n'
+      + 'Beispiel – Wenn du am 20.11. eine Kündigung bestätigst – dann trägst du das Mitglied im DFBnet zum 31.12. aus, klickst „✓ Im DFBnet ausgetragen“ und musst nichts weiter tun: Ab 01.01. zeigt der Ausweis „nicht gültig“.',
+    bereich: 'kuendigungen',
+  },
+  {
     frage: 'Warum sehe ich im Mitgliederbereich „keine laufende Mitgliedschaft verknüpft“ beim Kündigen?',
     antwort:
       'Kündigen kann man nur Mitgliedschaften, die mit dem eigenen Konto verknüpft sind (Mitglieder → Mitgliedschaften → Feld „Benutzerkonto“). Das passiert automatisch, wenn sich jemand mit derselben E-Mail registriert und freigegeben wird. Fehlt die Verknüpfung, Mitgliedschaft öffnen, bei „Benutzerkonto“ das Konto auswählen, speichern – danach erscheint die Auswahl beim Kündigen.\n\n'
