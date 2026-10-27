@@ -8,7 +8,11 @@ import { Plugin } from 'payload'
 import { zweistufigerPapierkorb } from '@/papierkorb/plugin'
 import { nurAnsehen } from '@/access/nurAnsehen'
 import { anyone } from '@/access/anyone'
-import { ausblendenAusser, ausblendenAusserBereich, ausblendenAusserMit, bereichFeld, bereichZugriff, isAdmin, isEditor, rolleOderRecht } from '@/access/roles'
+import { ausblendenAusser, ausblendenAusserBereich, ausblendenAusserMit, bereichFeld, bereichZugriff, isAdmin, istWebAdmin, rolleOderRecht } from '@/access/roles'
+import type { Access } from 'payload'
+
+/** Technik-Bereiche (Weiterleitungen, Suchindex): ändern nur Web-Admins – auch über die Schnittstelle, nicht nur in der Seitenleiste */
+const nurWebAdmin: Access = ({ req }) => istWebAdmin(req.user)
 import { spamSchutz } from '@/hooks/spamSchutz'
 
 import { revalidateRedirects } from '@/hooks/revalidateRedirects'
@@ -45,7 +49,7 @@ export const plugins: Plugin[] = [
         description:
           'Leitet eine alte Adresse auf eine Seite oder News weiter – z. B. wenn eine Seite umbenannt wurde und alte Links noch im Umlauf sind.',
       },
-      access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
+      access: { read: anyone, create: nurWebAdmin, update: nurWebAdmin, delete: nurWebAdmin },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
         return defaultFields.map((field) => {
@@ -170,7 +174,7 @@ export const plugins: Plugin[] = [
         description:
           'Entsteht automatisch aus den veröffentlichten News und wird für die Suche auf der Website genutzt. Nichts von Hand ändern – fehlt etwas, oben „Neuindizieren“ wählen.',
       },
-      access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
+      access: { read: anyone, create: nurWebAdmin, update: nurWebAdmin, delete: nurWebAdmin },
       fields: ({ defaultFields }) => {
         const deutsch: Record<string, string> = { title: 'Titel', priority: 'Reihenfolge in der Suche', doc: 'News', docUrl: 'Adresse' }
         return [...defaultFields.map((f) => ('name' in f && deutsch[f.name] ? ({ ...f, label: deutsch[f.name] } as typeof f) : f)), ...searchFields]
