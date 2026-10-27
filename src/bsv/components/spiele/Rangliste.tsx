@@ -10,11 +10,12 @@ const ZEITRAEUME: [string, string][] = [
   ['30', '30 Tage'],
   ['immer', 'Allzeit'],
 ]
-const NAMEN: Record<RanglistenSpiel, string> = { hochhalten: 'Ball hochhalten', memory: 'Memory', elfmeterSerie: 'Elfmeter-Serie' }
+const NAMEN: Record<RanglistenSpiel, string> = { hochhalten: 'Ball hochhalten', memory: 'Memory', elfmeterSerie: 'Elfmeter-Serie', huetchen: 'Hütchenspiel' }
 const EINHEIT: Record<RanglistenSpiel, (n: number) => string> = {
   hochhalten: (n) => `${n}×`,
   memory: (n) => `${n} Züge`,
   elfmeterSerie: (n) => `${n} ${n === 1 ? 'Tor' : 'Tore'}`,
+  huetchen: (n) => `${n}× richtig`,
 }
 const datum = (d: string) => `${d.slice(8, 10)}.${d.slice(5, 7)}.`
 

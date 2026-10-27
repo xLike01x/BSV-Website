@@ -126,18 +126,18 @@ export async function down({ db, payload, req }: MigrateDownArgs): Promise<void>
   DROP TABLE "kontaktanfragen_verlauf" CASCADE;
   DROP TABLE "probetraining_verlauf" CASCADE;
   DROP TABLE "mail_vorlagen" CASCADE;
-  ALTER TABLE "mitgliedsantraege" DROP CONSTRAINT "mitgliedsantraege_zustaendig_id_users_id_fk";
+  ALTER TABLE "mitgliedsantraege" DROP CONSTRAINT IF EXISTS "mitgliedsantraege_zustaendig_id_users_id_fk";
   
-  ALTER TABLE "kontaktanfragen" DROP CONSTRAINT "kontaktanfragen_zustaendig_id_users_id_fk";
+  ALTER TABLE "kontaktanfragen" DROP CONSTRAINT IF EXISTS "kontaktanfragen_zustaendig_id_users_id_fk";
   
-  ALTER TABLE "probetraining" DROP CONSTRAINT "probetraining_zustaendig_id_users_id_fk";
+  ALTER TABLE "probetraining" DROP CONSTRAINT IF EXISTS "probetraining_zustaendig_id_users_id_fk";
   
-  DROP INDEX "mitgliedsantraege_zustaendig_idx";
-  DROP INDEX "mitgliedsantraege_exportiert_am_idx";
-  DROP INDEX "kontaktanfragen_zustaendig_idx";
-  DROP INDEX "probetraining_zustaendig_idx";
-  DROP INDEX "posts_startseite_vorschlag_idx";
-  DROP INDEX "_posts_v_version_version_startseite_vorschlag_idx";
+  DROP INDEX IF EXISTS "mitgliedsantraege_zustaendig_idx";
+  DROP INDEX IF EXISTS "mitgliedsantraege_exportiert_am_idx";
+  DROP INDEX IF EXISTS "kontaktanfragen_zustaendig_idx";
+  DROP INDEX IF EXISTS "probetraining_zustaendig_idx";
+  DROP INDEX IF EXISTS "posts_startseite_vorschlag_idx";
+  DROP INDEX IF EXISTS "_posts_v_version_version_startseite_vorschlag_idx";
   ALTER TABLE "mitgliedsantraege" DROP COLUMN "zustaendig_id";
   ALTER TABLE "mitgliedsantraege" DROP COLUMN "zustaendig_name";
   ALTER TABLE "mitgliedsantraege" DROP COLUMN "aufgenommen_am";

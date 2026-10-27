@@ -24,13 +24,13 @@ export default async function Spielecke() {
   const memory = animationAn(a, 'memory')
   const huetchen = animationAn(a, 'huetchen')
   const rangliste = animationAn(a, 'rangliste')
-  const ranglistenSpiele: RanglistenSpiel[] = [...(hochhalten ? (['hochhalten'] as const) : []), ...(memory ? (['memory'] as const) : []), ...(elfmeter ? (['elfmeterSerie'] as const) : [])]
+  const ranglistenSpiele: RanglistenSpiel[] = [...(hochhalten ? (['hochhalten'] as const) : []), ...(memory ? (['memory'] as const) : []), ...(elfmeter ? (['elfmeterSerie'] as const) : []), ...(huetchen ? (['huetchen'] as const) : [])]
 
   const alle: (SpielKachel & { an: boolean; inhalt: React.ReactNode })[] = [
     { key: 'elfmeter', titel: 'Elfmeterschießen', text: 'Ecke wählen – trifft du?', symbol: '🥅', an: elfmeter, inhalt: <Elfmeter rangliste={rangliste} /> },
     { key: 'hochhalten', titel: 'Ball hochhalten', text: 'Wie oft schaffst du es?', symbol: '⚽', an: hochhalten, inhalt: <Hochhalten rangliste={rangliste} /> },
     { key: 'memory', titel: 'Memory', text: '18 Paare finden', symbol: '🧠', an: memory, inhalt: <Memory rangliste={rangliste} /> },
-    { key: 'huetchen', titel: 'Hütchenspiel', text: 'Wo ist der Ball?', symbol: '🔶', an: huetchen, inhalt: <Huetchen /> },
+    { key: 'huetchen', titel: 'Hütchenspiel', text: 'Wo ist der Ball?', symbol: '🔶', an: huetchen, inhalt: <Huetchen rangliste={rangliste} /> },
   ]
   const spiele = alle.filter((s) => s.an)
 
@@ -52,7 +52,7 @@ export default async function Spielecke() {
             <SpieleAuswahl
               spiele={spiele.map(({ key, titel, text, symbol }) => ({ key, titel, text, symbol }))}
               inhalte={Object.fromEntries(spiele.map((s) => [s.key, s.inhalt]))}
-              ranglisten={{ elfmeter: 'elfmeterSerie', hochhalten: 'hochhalten', memory: 'memory' }}
+              ranglisten={{ elfmeter: 'elfmeterSerie', hochhalten: 'hochhalten', memory: 'memory', huetchen: 'huetchen' }}
             />
             {rangliste && ranglistenSpiele.length > 0 && <Rangliste spiele={ranglistenSpiele} />}
           </div>

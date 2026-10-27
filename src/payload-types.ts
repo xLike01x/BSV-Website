@@ -1834,9 +1834,9 @@ export interface Spielstatistik {
 export interface Spielergebnisse {
   id: number;
   spitzname: string;
-  spiel: 'hochhalten' | 'memory' | 'elfmeterSerie';
+  spiel: 'hochhalten' | 'memory' | 'elfmeterSerie' | 'huetchen';
   /**
-   * Hochhalten: Kontakte · Memory: Züge (weniger ist besser) · Elfmeter: Tore in Folge
+   * Hochhalten: Kontakte · Memory: Züge (weniger ist besser) · Elfmeter: Tore in Folge · Hütchenspiel: richtig in Folge
    */
   wert: number;
   freigegeben?: boolean | null;

@@ -48,7 +48,19 @@ export default async function spielecke(d) {
       [{ spiel: 'hochhalten', wert: 7, spitzname: 'x'.repeat(40) }, 'zu langer Name'],
       [{ spiel: 'hochhalten', wert: 9999, spitzname: 'Max' }, 'unrealistischer Wert'],
       [{ spiel: 'memory', wert: 5, spitzname: 'Max' }, 'Memory unmöglich schnell'],
+      [{ spiel: 'huetchen', wert: 101, spitzname: 'Max' }, 'Hütchenspiel unrealistisch viele Runden'],
+      [{ spiel: 'huetchen', wert: 0, spitzname: 'Max' }, 'Hütchenspiel ohne richtige Runde'],
     ]) pruefe(`Rangliste abgelehnt: ${name}`, (await eintragen(body)).s === 400)
+    const hu = await eintragen({ spiel: 'huetchen', wert: 6, spitzname: NAME })
+    const huListe = await api(null, 'GET', '/api/spielergebnisse/rangliste?spiel=huetchen&zeitraum=7')
+    pruefe('Rangliste Hütchenspiel: Eintrag angenommen und sichtbar', hu.s === 200 && (huListe.j?.eintraege ?? []).some((e) => e.spitzname === NAME && e.wert === 6), { hu: hu.j, liste: huListe.j })
+    await api(admin, 'POST', '/api/globals/animationen', { huetchen: false })
+    try {
+      pruefe('Rangliste Hütchenspiel: Spiel aus → kein Eintrag', (await eintragen({ spiel: 'huetchen', wert: 6, spitzname: NAME })).s === 403)
+      pruefe('Rangliste Hütchenspiel: Spiel aus → Liste leer', ((await api(null, 'GET', '/api/spielergebnisse/rangliste?spiel=huetchen&zeitraum=immer')).j?.eintraege ?? []).length === 0)
+    } finally {
+      await api(admin, 'POST', '/api/globals/animationen', { huetchen: true })
+    }
     const liste = await api(null, 'GET', '/api/spielergebnisse/rangliste?spiel=hochhalten&zeitraum=immer')
     pruefe('Rangliste öffentlich: nur Platz, Spitzname, Wert, Datum', liste.s === 200 && (liste.j?.eintraege ?? []).every((e) => Object.keys(e).sort().join() === 'datum,platz,spitzname,wert'), liste.j?.eintraege?.[0])
     pruefe('Rangliste: Einträge nicht direkt lesbar ohne Anmeldung', (await api(null, 'GET', '/api/spielergebnisse')).s === 403)

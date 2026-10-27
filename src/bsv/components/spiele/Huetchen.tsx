@@ -2,6 +2,7 @@
 import React, { useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
+import { RanglisteEintragen } from './RanglisteEintragen'
 
 const PLAETZE = ['links', 'mitte', 'rechts'] as const
 /** Mitte der drei Plätze in Prozent der Feldbreite */
@@ -36,7 +37,7 @@ function HuetchenBild() {
  * Die Bewegung läuft über die Web Animations API – sie funktioniert damit auch, wenn CSS-Übergänge abgeschaltet sind
  * (sonst wäre das Spiel bei „Bewegung reduzieren“ nicht spielbar).
  */
-export function Huetchen() {
+export function Huetchen({ rangliste = false }: { rangliste?: boolean }) {
   const feld = useRef<HTMLDivElement>(null)
   const huetchen = useRef<(HTMLSpanElement | null)[]>([])
   // platz[h] = auf welchem Platz (0–2) Hütchen h gerade steht; der Ball liegt immer unter Hütchen „ball“
@@ -47,6 +48,8 @@ export function Huetchen() {
   const [nr, setNr] = useState(0)
   const [serie, setSerie] = useState(0)
   const [bester, setBester] = useState(0)
+  // Zählt Spiele mit – jedes Spiel bekommt ein frisches Eintragen-Feld
+  const [spielNr, setSpielNr] = useState(0)
   const [gewaehlt, setGewaehlt] = useState<number | null>(null)
   const [meldung, setMeldung] = useState('')
   // Nach einem Fehlversuch wird kurz danach auch das richtige Hütchen gehoben
@@ -95,8 +98,7 @@ export function Huetchen() {
     setZeigeRichtig(false)
     setMeldung('')
     setNr(rundeNr)
-    // Ball unter ein zufälliges Hütchen legen und kurz zeigen
-    ball.current = Math.floor(Math.random() * 3)
+    // Der Ball bleibt, wo man ihn zuletzt gesehen hat (am Anfang in der Mitte) – kurz zeigen, dann geht es von dort weiter
     setBallH(ball.current)
     setPlaetze([...platz.current])
     setPhase('zeigen')
@@ -147,6 +149,7 @@ export function Huetchen() {
   const weiter = () => void spielen(nr + 1)
   const neuStarten = () => {
     setSerie(0)
+    setSpielNr((n) => n + 1)
     void spielen(0)
   }
 
@@ -233,6 +236,8 @@ export function Huetchen() {
               Nochmal
             </button>
           )}
+          {/* Rangliste: erst eintragen, wenn das Spiel vorbei ist (beim ersten Fehlversuch) */}
+          {!richtig && rangliste && zeigeRichtig && serie >= 1 && <RanglisteEintragen key={`hu-${spielNr}`} spiel="huetchen" wert={Math.min(serie, 100)} />}
         </div>
       ) : anfang ? (
         <div className="spiel-ende" key="anfang">

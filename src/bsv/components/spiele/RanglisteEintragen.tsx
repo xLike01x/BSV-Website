@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react'
 
-export type RanglistenSpiel = 'hochhalten' | 'memory' | 'elfmeterSerie'
+export type RanglistenSpiel = 'hochhalten' | 'memory' | 'elfmeterSerie' | 'huetchen'
 
 /** Zuletzt benutzter Spitzname – nur solange die Seite offen ist (nicht gespeichert) */
 let letzterName = ''

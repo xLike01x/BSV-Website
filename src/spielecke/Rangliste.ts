@@ -15,15 +15,17 @@ import { spitznamePruefen } from './spitzname'
  * - Verwaltung (Website-Aufbau → „Spielecke-Rangliste“, Bereich Seiten): ansehen, freigeben, löschen. Anlegen nur über den Endpunkt.
  * - Datensparsamkeit: Einträge älter als 30 Tage werden täglich gelöscht – außer den 10 besten aller Zeiten je Spiel (ranglisteAufraeumen).
  */
-export type Spiel = 'hochhalten' | 'memory' | 'elfmeterSerie'
-export const SPIELE: Spiel[] = ['hochhalten', 'memory', 'elfmeterSerie']
-const GRENZEN: Record<Spiel, [number, number]> = { hochhalten: [1, HOCHHALTEN_MAX], memory: [MEMORY_MIN, MEMORY_MAX], elfmeterSerie: [1, SERIE_MAX] }
+export type Spiel = 'hochhalten' | 'memory' | 'elfmeterSerie' | 'huetchen'
+export const SPIELE: Spiel[] = ['hochhalten', 'memory', 'elfmeterSerie', 'huetchen']
+/** Hütchenspiel: richtig geratene Runden in Folge */
+export const HUETCHEN_MAX = 100
+const GRENZEN: Record<Spiel, [number, number]> = { hochhalten: [1, HOCHHALTEN_MAX], memory: [MEMORY_MIN, MEMORY_MAX], elfmeterSerie: [1, SERIE_MAX], huetchen: [1, HUETCHEN_MAX] }
 /** Memory: weniger Züge = besser */
-const AUFSTEIGEND: Record<Spiel, boolean> = { hochhalten: false, memory: true, elfmeterSerie: false }
+const AUFSTEIGEND: Record<Spiel, boolean> = { hochhalten: false, memory: true, elfmeterSerie: false, huetchen: false }
 const ZEITRAEUME: Record<string, number | null> = { '7': 7, '14': 14, '30': 30, immer: null }
 const PLAETZE = 10
 
-type Schalter = { rangliste?: boolean | null; ranglisteFreigabe?: boolean | null; hochhalten?: boolean | null; memory?: boolean | null; elfmeter?: boolean | null }
+type Schalter = { rangliste?: boolean | null; ranglisteFreigabe?: boolean | null; hochhalten?: boolean | null; memory?: boolean | null; elfmeter?: boolean | null; huetchen?: boolean | null }
 const schalter = async (payload: Payload) => ((await payload.findGlobal({ slug: 'animationen', depth: 0 }).catch(() => ({}))) ?? {}) as Schalter
 const spielAn = (s: Schalter, spiel: Spiel) => s.rangliste !== false && (spiel === 'elfmeterSerie' ? s.elfmeter !== false : s[spiel] !== false)
 
@@ -136,10 +138,11 @@ export const Spielergebnisse: CollectionConfig = {
         { label: 'Ball hochhalten', value: 'hochhalten' },
         { label: 'Memory (Züge)', value: 'memory' },
         { label: 'Elfmeter-Serie', value: 'elfmeterSerie' },
+        { label: 'Hütchenspiel', value: 'huetchen' },
       ],
       admin: { readOnly: true },
     },
-    { name: 'wert', label: 'Ergebnis', type: 'number', required: true, index: true, access: { update: () => false }, admin: { readOnly: true, description: 'Hochhalten: Kontakte · Memory: Züge (weniger ist besser) · Elfmeter: Tore in Folge' } },
+    { name: 'wert', label: 'Ergebnis', type: 'number', required: true, index: true, access: { update: () => false }, admin: { readOnly: true, description: 'Hochhalten: Kontakte · Memory: Züge (weniger ist besser) · Elfmeter: Tore in Folge · Hütchenspiel: richtig in Folge' } },
     { name: 'freigegeben', label: 'In der Rangliste sichtbar', type: 'checkbox', defaultValue: true, index: true },
   ],
 }
