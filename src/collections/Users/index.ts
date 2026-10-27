@@ -1,6 +1,7 @@
 import { mailHtml } from '@/auth/mail'
 import { registrierungEndpunkte, unbestaetigt } from '@/auth/registrierung'
 import { getServerSideURL } from '@/utilities/getURL'
+import { kontoGeschuetztFeld, kontoLoeschSchutz, kontoSchutz } from './kontoSchutz'
 import { webadminLoeschSchutz, webadminSchutz } from './webadminSchutz'
 import { ausblendenAusser } from '@/access/roles'
 import type { CollectionConfig } from 'payload'
@@ -92,6 +93,7 @@ export const Users: CollectionConfig = {
       admin: { components: { Field: '@/components/Admin/RollenKacheln' } },
     },
     teamsVerantwortlichFeld,
+    kontoGeschuetztFeld,
     {
       name: 'angebote',
       label: 'Teams & Kurse',
@@ -275,9 +277,11 @@ export const Users: CollectionConfig = {
         }
         return data
       },
+      kontoSchutz,
       webadminSchutz,
     ],
     beforeDelete: [
+      kontoLoeschSchutz,
       webadminLoeschSchutz,
       // Konto wird gelöscht → Profilfoto mit löschen (vorher, solange die Verknüpfung noch besteht)
       async ({ id, req }) => {

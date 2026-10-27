@@ -25,6 +25,7 @@ import * as migration_20261027_101150_rangliste_huetchen from './20261027_101150
 import * as migration_20261027_104121_vereinswappen from './20261027_104121_vereinswappen';
 import * as migration_20261027_123248_kuendigungen from './20261027_123248_kuendigungen';
 import * as migration_20261027_145506_hilfe_bereiche_kuendigungen from './20261027_145506_hilfe_bereiche_kuendigungen';
+import * as migration_20261027_174802_konto_geschuetzt from './20261027_174802_konto_geschuetzt';
 
 export const migrations = [
   {
@@ -160,6 +161,11 @@ export const migrations = [
   {
     up: migration_20261027_145506_hilfe_bereiche_kuendigungen.up,
     down: migration_20261027_145506_hilfe_bereiche_kuendigungen.down,
-    name: '20261027_145506_hilfe_bereiche_kuendigungen'
+    name: '20261027_145506_hilfe_bereiche_kuendigungen',
+  },
+  {
+    up: migration_20261027_174802_konto_geschuetzt.up,
+    down: migration_20261027_174802_konto_geschuetzt.down,
+    name: '20261027_174802_konto_geschuetzt'
   },
 ];

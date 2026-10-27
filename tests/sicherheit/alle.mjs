@@ -22,8 +22,9 @@ import spielecke from './spielecke.mjs'
 import zweifaktor from './zweifaktor.mjs'
 import kuendigungen from './kuendigungen.mjs'
 import technik from './technik.mjs'
+import kontoSchutz from './kontoSchutz.mjs'
 
-const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung, zusatzrechte, registrierung, haertung, zweifaktor, nurAnsehen, zusagen, spielecke, kuendigungen, technik }
+const TESTS = { papierkorb, anmeldung, rechte, uploads, statistik, formulare, datenschutz, posteingang, wartung, bestaetigung, zusatzrechte, registrierung, haertung, zweifaktor, nurAnsehen, zusagen, spielecke, kuendigungen, technik, kontoSchutz }
 
 // Einzelne Bereiche: pnpm test:sicherheit -- posteingang
 const nur = process.argv.slice(2)

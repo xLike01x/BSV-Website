@@ -304,6 +304,10 @@ export interface User {
    */
   teamsVerantwortlich?: (number | Angebote)[] | null;
   /**
+   * Nur für dich sichtbar. Mit Haken kann niemand sonst – auch kein anderer Web-Admin – dein Konto ändern, herabstufen oder löschen. Es kann nur ein Konto geschützt sein. Verlierst du Passwort, Handy und Wiederherstellungscodes, hilft nur noch jemand mit Server-Zugang.
+   */
+  kontoGeschuetzt?: boolean | null;
+  /**
    * Wo die Person selbst mitspielt bzw. teilnimmt (steht auf dem Ausweis). Gibt keine Rechte – dafür das Feld darüber.
    */
   angebote?: (number | Angebote)[] | null;
@@ -2979,6 +2983,7 @@ export interface UsersSelect<T extends boolean = true> {
   name?: T;
   roles?: T;
   teamsVerantwortlich?: T;
+  kontoGeschuetzt?: T;
   angebote?: T;
   zusatzrechte?:
     | T

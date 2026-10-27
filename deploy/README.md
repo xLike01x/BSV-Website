@@ -168,6 +168,18 @@ sudo -u bsv -H bash -c 'cd /srv/bsv && NODE_ENV=production pnpm konto:erstes'
 Fragt Name, E-Mail und Passwort (unsichtbar) ab, legt einen Web-Admin an und tut nichts, wenn es schon Konten gibt.
 Danach im Browser anmelden und die Zwei-Faktor-Anmeldung einrichten.
 
+### Geschütztes Konto aufheben (Notfall)
+
+Ein Web-Admin kann sein eigenes Konto schützen (Haken „Mein Konto schützen“ – nur für ihn selbst sichtbar). Dann kann
+niemand sonst dieses Konto ändern, herabstufen oder löschen, auch kein anderer Web-Admin. Fällt die Person aus oder
+muss ihr Zugang entzogen werden, geht das nur mit Server-Zugang:
+
+```bash
+sudo -u postgres psql bsv -c "UPDATE users SET konto_geschuetzt = false WHERE konto_geschuetzt = true;"
+```
+
+Danach kann ein anderer Web-Admin das Konto wie jedes andere bearbeiten.
+
 ## 3. Inhalte vom PC übernehmen
 
 Auf dem PC in der Verwaltung: **Einstellungen → Datensicherung → „Jetzt sichern“**, Datei herunterladen
