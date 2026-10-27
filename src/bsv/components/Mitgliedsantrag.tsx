@@ -384,7 +384,16 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 <label className="check">
                   <input type="checkbox" checked={sepa.satzung} onChange={(e) => setSepa({ ...sepa, satzung: e.target.checked })} />
                   <span>
-                    Ich erkenne die <Link href="/verein#downloads">Satzung und Ordnungen</Link> des Vereins in der jeweils gültigen Fassung an und habe die <Link href="/verein#dsgvo">Informationen nach Art. 13 und 14 DSGVO</Link> gelesen.
+                    {/* Neues Fenster: sonst wären beim Zurückkehren alle Eingaben weg */}
+                    Ich erkenne die{' '}
+                    <a href="/verein#downloads" target="_blank" rel="noopener noreferrer">
+                      Satzung und Ordnungen<span className="sr-only"> (öffnet in neuem Fenster)</span>
+                    </a>{' '}
+                    des Vereins in der jeweils gültigen Fassung an und habe die{' '}
+                    <a href="/verein#dsgvo" target="_blank" rel="noopener noreferrer">
+                      Informationen nach Art. 13 und 14 DSGVO<span className="sr-only"> (öffnet in neuem Fenster)</span>
+                    </a>{' '}
+                    gelesen.
                     {istMinderjaehrig ? ' Als Erziehungsberechtigte/r stelle ich den Antrag für mein Kind.' : ''}
                   </span>
                 </label>
