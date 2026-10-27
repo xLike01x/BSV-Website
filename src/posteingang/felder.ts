@@ -3,7 +3,7 @@ import type { CollectionAfterOperationHook, CollectionBeforeChangeHook, Field, F
 import { hasRole } from '@/access/roles'
 
 /** Bereiche im Posteingang mit „Wer kümmert sich?“, Notizen-Verlauf und „Antworten“ */
-export const POSTEINGANG = ['mitgliedsantraege', 'kontaktanfragen', 'probetraining'] as const
+export const POSTEINGANG = ['mitgliedsantraege', 'kontaktanfragen', 'probetraining', 'kuendigungen'] as const
 export type PosteingangSlug = (typeof POSTEINGANG)[number]
 
 /**

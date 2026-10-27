@@ -26,7 +26,7 @@ export async function ausweiseFuer(user: User): Promise<Ausweis[]> {
       // Für die Person, der das Konto gehört: auch die im Konto eingetragenen Kurse
       if (!kurse.length && (name.toLowerCase() === kontoName || (docs.length === 1 && i === 0))) kurse = kontoKurse
       const qr = await QRCode.toDataURL(`${getServerSideURL()}/ausweis/${ausweisToken(m.id)}`, { margin: 1, width: 220, color: { dark: '#1D1D1F', light: '#FFFFFF' } })
-      return { id: m.id, name, nummer: m.mitgliedsnummer ?? null, seit: datum(m.eintritt), art: MITGLIEDSART[m.art] ?? m.art, kurse, gueltig: istGueltig(m), qr }
+      return { id: m.id, name, nummer: m.mitgliedsnummer ?? null, seit: datum(m.eintritt), art: MITGLIEDSART[m.art] ?? m.art, kurse, gueltig: istGueltig(m), bis: m.austritt ? datum(m.austritt) : null, qr }
     }),
   )
 }

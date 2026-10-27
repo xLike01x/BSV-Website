@@ -71,6 +71,8 @@ export interface Config {
     kontaktanfragen: Kontaktanfragen;
     probetraining: Probetraining;
     passantraege: Passantraege;
+    kuendigungen: Kuendigungen;
+    kuendigungsdokumente: Kuendigungsdokumente;
     posts: Post;
     termine: Termine;
     'termin-rueckmeldungen': TerminRueckmeldungen;
@@ -107,6 +109,8 @@ export interface Config {
     kontaktanfragen: KontaktanfragenSelect<false> | KontaktanfragenSelect<true>;
     probetraining: ProbetrainingSelect<false> | ProbetrainingSelect<true>;
     passantraege: PassantraegeSelect<false> | PassantraegeSelect<true>;
+    kuendigungen: KuendigungenSelect<false> | KuendigungenSelect<true>;
+    kuendigungsdokumente: KuendigungsdokumenteSelect<false> | KuendigungsdokumenteSelect<true>;
     posts: PostsSelect<false> | PostsSelect<true>;
     termine: TermineSelect<false> | TermineSelect<true>;
     'termin-rueckmeldungen': TerminRueckmeldungenSelect<false> | TerminRueckmeldungenSelect<true>;
@@ -924,6 +928,117 @@ export interface Passdokumente {
   focalY?: number | null;
 }
 /**
+ * Kündigungen aus dem Mitgliederbereich mit unterschriebenem Schreiben. Wirksam zum Ende des Quartals, in dem sie eingegangen sind. Prüfen → „Bestätigen“ setzt das Austrittsdatum, danach im DFBnet austragen und „Im DFBnet ausgetragen“ klicken.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kuendigungen".
+ */
+export interface Kuendigungen {
+  id: number;
+  /**
+   * Wer sich um diesen Eintrag kümmert. Jede/r kann sich oben mit „Ich kümmere mich“ selbst eintragen.
+   */
+  zustaendig?: (number | null) | User;
+  zustaendigName?: string | null;
+  verlauf?:
+    | {
+        text: string;
+        von?: (number | null) | User;
+        vonName?: string | null;
+        am: string;
+        art?: ('notiz' | 'status') | null;
+        id?: string | null;
+      }[]
+    | null;
+  status?: ('neu' | 'rueckfrage' | 'bestaetigt' | 'erledigt' | 'abgelehnt' | 'zurueckgezogen') | null;
+  /**
+   * Name(n) und Mitgliedsnummer(n) zum Zeitpunkt der Kündigung.
+   */
+  namen?: string | null;
+  eingangAm?: string | null;
+  wirksamZum?: string | null;
+  mitgliedschaften?: (number | Mitgliedschaften)[] | null;
+  dokument?: (number | null) | Kuendigungsdokumente;
+  grund?: string | null;
+  konto?: (number | null) | User;
+  /**
+   * Antworten gehen an diese Adresse.
+   */
+  email?: string | null;
+  vorname?: string | null;
+  bestaetigtAm?: string | null;
+  /**
+   * Wird am Tag nach dem Quartalsende automatisch gesetzt.
+   */
+  wirksamGeworden?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen. Sichtbar wird der Ausweis im verknüpften Benutzerkonto.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "mitgliedschaften".
+ */
+export interface Mitgliedschaften {
+  id: number;
+  anzeigeName?: string | null;
+  vorname: string;
+  nachname: string;
+  /**
+   * Z. B. aus dem DFBnet oder eurer Mitgliederliste.
+   */
+  mitgliedsnummer?: string | null;
+  eintritt?: string | null;
+  art: 'jugend' | 'aktiv' | 'passiv' | 'familie';
+  /**
+   * Nur zur Unterscheidung, steht nicht auf dem Ausweis.
+   */
+  geburtsdatum?: string | null;
+  /**
+   * Unter diesem Konto erscheint der Ausweis. Wird bei der Freigabe einer Registrierung mit gleicher E-Mail automatisch verknüpft. Bei Kindern das Konto der Eltern.
+   */
+  konto?: (number | null) | User;
+  /**
+   * Zum Verknüpfen: Registriert sich jemand mit dieser E-Mail und wird freigegeben, wird das Konto hier eingetragen.
+   */
+  email: string;
+  /**
+   * Stehen auf dem Ausweis. Leer lassen = die Kurse aus dem Benutzerkonto werden angezeigt.
+   */
+  angebote?: (number | Angebote)[] | null;
+  aktiv?: boolean | null;
+  /**
+   * Laut Satzung das Quartalsende. Bis dahin zeigt der Ausweis „gültig bis …“, danach „nicht gültig“. Wird bei einer über die Website bestätigten Kündigung automatisch gesetzt.
+   */
+  austritt?: string | null;
+  antrag?: (number | null) | Mitgliedsantraege;
+  endgueltigAm?: string | null;
+  endgueltigVon?: string | null;
+  updatedAt: string;
+  createdAt: string;
+  deletedAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kuendigungsdokumente".
+ */
+export interface Kuendigungsdokumente {
+  id: number;
+  hochgeladenVon?: (number | null) | User;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
  * Neuigkeiten schreiben und veröffentlichen. Oben rechts unter „Hilfe“ steht, wie es geht.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -1705,51 +1820,6 @@ export interface Ausfaelle {
   deletedAt?: string | null;
 }
 /**
- * Die Daten für den digitalen Mitgliedsausweis. Neue Einträge entstehen automatisch, wenn ein Mitgliedsantrag auf „Aufgenommen“ gesetzt wird – Mitgliedsnummer dann nur noch ergänzen. Sichtbar wird der Ausweis im verknüpften Benutzerkonto.
- *
- * This interface was referenced by `Config`'s JSON-Schema
- * via the `definition` "mitgliedschaften".
- */
-export interface Mitgliedschaften {
-  id: number;
-  anzeigeName?: string | null;
-  vorname: string;
-  nachname: string;
-  /**
-   * Z. B. aus dem DFBnet oder eurer Mitgliederliste.
-   */
-  mitgliedsnummer?: string | null;
-  eintritt?: string | null;
-  art: 'jugend' | 'aktiv' | 'passiv' | 'familie';
-  /**
-   * Nur zur Unterscheidung, steht nicht auf dem Ausweis.
-   */
-  geburtsdatum?: string | null;
-  /**
-   * Unter diesem Konto erscheint der Ausweis. Wird bei der Freigabe einer Registrierung mit gleicher E-Mail automatisch verknüpft. Bei Kindern das Konto der Eltern.
-   */
-  konto?: (number | null) | User;
-  /**
-   * Zum Verknüpfen: Registriert sich jemand mit dieser E-Mail und wird freigegeben, wird das Konto hier eingetragen.
-   */
-  email: string;
-  /**
-   * Stehen auf dem Ausweis. Leer lassen = die Kurse aus dem Benutzerkonto werden angezeigt.
-   */
-  angebote?: (number | Angebote)[] | null;
-  aktiv?: boolean | null;
-  /**
-   * Danach zeigt der Ausweis „nicht mehr gültig“.
-   */
-  austritt?: string | null;
-  antrag?: (number | null) | Mitgliedsantraege;
-  endgueltigAm?: string | null;
-  endgueltigVon?: string | null;
-  updatedAt: string;
-  createdAt: string;
-  deletedAt?: string | null;
-}
-/**
  * Dateien nur für angemeldete Mitglieder, z. B. Protokolle. Sie sind nicht öffentlich erreichbar – auch nicht mit dem Link. Eingebunden werden sie unter „Vereinsdaten“ → „Satzung & Downloads“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
@@ -2053,6 +2123,14 @@ export interface PayloadLockedDocument {
         value: number | Passantraege;
       } | null)
     | ({
+        relationTo: 'kuendigungen';
+        value: number | Kuendigungen;
+      } | null)
+    | ({
+        relationTo: 'kuendigungsdokumente';
+        value: number | Kuendigungsdokumente;
+      } | null)
+    | ({
         relationTo: 'posts';
         value: number | Post;
       } | null)
@@ -2335,6 +2413,56 @@ export interface PassantraegeSelect<T extends boolean = true> {
   unterlagenGeloeschtAm?: T;
   updatedAt?: T;
   createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kuendigungen_select".
+ */
+export interface KuendigungenSelect<T extends boolean = true> {
+  zustaendig?: T;
+  zustaendigName?: T;
+  verlauf?:
+    | T
+    | {
+        text?: T;
+        von?: T;
+        vonName?: T;
+        am?: T;
+        art?: T;
+        id?: T;
+      };
+  status?: T;
+  namen?: T;
+  eingangAm?: T;
+  wirksamZum?: T;
+  mitgliedschaften?: T;
+  dokument?: T;
+  grund?: T;
+  konto?: T;
+  email?: T;
+  vorname?: T;
+  bestaetigtAm?: T;
+  wirksamGeworden?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "kuendigungsdokumente_select".
+ */
+export interface KuendigungsdokumenteSelect<T extends boolean = true> {
+  hochgeladenVon?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -3954,6 +4082,10 @@ export interface Datenschutz {
    */
   passOffenMonate?: number | null;
   /**
+   * Bestätigte Kündigungen: gerechnet ab dem Quartalsende. Abgelehnte oder zurückgezogene: ab der letzten Änderung. Wird direkt gelöscht (kein Papierkorb), auch das hochgeladene Schreiben.
+   */
+  kuendigungenMonate?: number | null;
+  /**
    * Wird nur angezeigt, nie automatisch gelöscht: Bitte selbst prüfen, ob die Person noch Mitglied ist.
    */
   kontenMonate?: number | null;
@@ -3974,7 +4106,7 @@ export interface Datenschutz {
   createdAt?: string | null;
 }
 /**
- * Texte für die Antwort an Antragsteller/innen. Platzhalter werden automatisch ersetzt: {vorname} {nachname} {mitgliedsart} {meinName}. Vor dem Senden kannst du den Text im Antrag noch anpassen. Stellen in [ECKIGEN KLAMMERN] musst du vor dem Senden ausfüllen.
+ * Texte für Antworten auf Mitgliedsanträge (Platzhalter: {vorname} {nachname} {mitgliedsart} {meinName}) und – im zweiten Reiter – auf Kündigungen. Vor dem Senden kannst du den Text im Antrag noch anpassen. Stellen in [ECKIGEN KLAMMERN] musst du vor dem Senden ausfüllen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "mailVorlagen".
@@ -3990,6 +4122,27 @@ export interface MailVorlagen {
     text: string;
   };
   abgelehnt: {
+    betreff: string;
+    text: string;
+  };
+  /**
+   * Platzhalter: {vorname} {namen} {wirksamZum} {meinName}
+   */
+  kuendigungBestaetigt: {
+    betreff: string;
+    text: string;
+  };
+  /**
+   * Platzhalter: {vorname} {namen} {wirksamZum} {meinName}
+   */
+  kuendigungRueckfrage: {
+    betreff: string;
+    text: string;
+  };
+  /**
+   * Platzhalter: {vorname} {namen} {wirksamZum} {meinName}
+   */
+  kuendigungAbgelehnt: {
     betreff: string;
     text: string;
   };
@@ -4712,6 +4865,7 @@ export interface DatenschutzSelect<T extends boolean = true> {
   passUnterlagenTage?: T;
   passAntragMonate?: T;
   passOffenMonate?: T;
+  kuendigungenMonate?: T;
   kontenMonate?: T;
   rueckmeldungenTage?: T;
   personenPapierkorbTage?: T;
@@ -4739,6 +4893,24 @@ export interface MailVorlagenSelect<T extends boolean = true> {
         text?: T;
       };
   abgelehnt?:
+    | T
+    | {
+        betreff?: T;
+        text?: T;
+      };
+  kuendigungBestaetigt?:
+    | T
+    | {
+        betreff?: T;
+        text?: T;
+      };
+  kuendigungRueckfrage?:
+    | T
+    | {
+        betreff?: T;
+        text?: T;
+      };
+  kuendigungAbgelehnt?:
     | T
     | {
         betreff?: T;

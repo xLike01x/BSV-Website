@@ -91,6 +91,7 @@ const TABELLEN: Record<string, { haupt: string; verlauf: string }> = {
   mitgliedsantraege: { haupt: 'mitgliedsantraege', verlauf: 'mitgliedsantraege_verlauf' },
   kontaktanfragen: { haupt: 'kontaktanfragen', verlauf: 'kontaktanfragen_verlauf' },
   probetraining: { haupt: 'probetraining', verlauf: 'probetraining_verlauf' },
+  kuendigungen: { haupt: 'kuendigungen', verlauf: 'kuendigungen_verlauf' },
 }
 
 /**

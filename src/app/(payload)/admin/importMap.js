@@ -5,6 +5,7 @@ import { default as default_a9afc1bc5ee6748910d9e48427111396 } from '@/component
 import { default as default_d0d19d9db7a4a6fd2771bbabbf3e87c6 } from '@/components/Admin/Einstieg'
 import { default as default_4e0fa61599039b8cd73b3f116b0bb6a4 } from '@/antraege/Export'
 import { default as default_2d7565a102af17e54aaa8173ce7a5f12 } from '@/components/Admin/StatusReiter'
+import { default as default_86c64a1bd8c78aea912557fdc739159f } from '@/kuendigungen/Pruefung'
 import { RscEntryLexicalCell as RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { RscEntryLexicalField as RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
 import { LexicalDiffComponent as LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e } from '@payloadcms/richtext-lexical/rsc'
@@ -88,6 +89,7 @@ export const importMap = {
   "@/components/Admin/Einstieg#default": default_d0d19d9db7a4a6fd2771bbabbf3e87c6,
   "@/antraege/Export#default": default_4e0fa61599039b8cd73b3f116b0bb6a4,
   "@/components/Admin/StatusReiter#default": default_2d7565a102af17e54aaa8173ce7a5f12,
+  "@/kuendigungen/Pruefung#default": default_86c64a1bd8c78aea912557fdc739159f,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalCell": RscEntryLexicalCell_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#RscEntryLexicalField": RscEntryLexicalField_44fe37237e0ebf4470c9990d8cb7b07e,
   "@payloadcms/richtext-lexical/rsc#LexicalDiffComponent": LexicalDiffComponent_44fe37237e0ebf4470c9990d8cb7b07e,

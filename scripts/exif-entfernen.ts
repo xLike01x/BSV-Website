@@ -7,7 +7,7 @@ import fs from 'fs/promises'
 import path from 'path'
 import sharp from 'sharp'
 
-const ORDNER = ['medien', 'passantraege', 'dokumente', 'profilbilder']
+const ORDNER = ['medien', 'passantraege', 'kuendigungen', 'dokumente', 'profilbilder']
 const BILD = /\.(jpe?g|png|webp)$/i
 
 let geprueft = 0

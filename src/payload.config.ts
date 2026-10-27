@@ -55,6 +55,8 @@ import { Profilbilder } from './collections/Profilbilder'
 import { Passantraege } from './passantraege/Passantraege'
 import { Mitgliedschaften } from './mitgliedschaften/Mitgliedschaften'
 import { Passdokumente } from './passantraege/Passdokumente'
+import { Kuendigungen } from './kuendigungen/Kuendigungen'
+import { Kuendigungsdokumente } from './kuendigungen/Kuendigungsdokumente'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { trainerUmbenennen } from './utilities/trainerUmbenennen'
 import { Datenschutz } from './datenschutz/config'
@@ -229,7 +231,7 @@ const konfiguration = buildConfig({
   // Papierkorb: Gelöschtes bleibt 30 Tage wiederherstellbar (Benutzerkonten werden sofort gelöscht)
   collections: [
     // Posteingang
-    Mitgliedsantraege, Kontaktanfragen, Probetraining, Passantraege,
+    Mitgliedsantraege, Kontaktanfragen, Probetraining, Passantraege, Kuendigungen, Kuendigungsdokumente,
     // Inhalte
     Posts, Termine, TerminRueckmeldungen, Alben, Media, Sponsoren, Gesuche,
     // Website-Aufbau

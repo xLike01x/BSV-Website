@@ -19,6 +19,7 @@ type Fristen = {
   austrittMonate?: number | null
   passOffenMonate?: number | null
   kontenMonate?: number | null
+  kuendigungenMonate?: number | null
   automatisch?: boolean | null
 }
 /** hinweis = wird nur angezeigt, nie automatisch gelöscht (z. B. alte Benutzerkonten – Entscheidung der Verwaltung) */
@@ -42,6 +43,9 @@ const regeln = (f: Fristen): Regel[] => {
     { id: 'mitgliedsantraege-offen', slug: 'mitgliedsantraege', label: 'nie bearbeitete Mitgliedsanträge', monate: offen, rollen: ['admin', 'kasse'], where: (g): Where => ({ and: [{ status: { in: ['neu', 'rueckfrage'] } }, { updatedAt: { less_than: g } }] }) },
     { id: 'form-submissions', slug: 'form-submissions', label: 'Formular-Eingänge', monate: f.eingaengeMonate ?? 12, rollen: ['admin'], where: (g): Where => ({ createdAt: { less_than: g } }) },
     { id: 'mitgliedschaften', slug: 'mitgliedschaften', label: 'Mitgliedschaften (digitaler Ausweis) nach Austritt', monate: f.austrittMonate ?? 12, rollen: ['admin', 'kasse'], where: (g): Where => ({ austritt: { less_than: g } }) },
+    // Kündigungen: samt unterschriebenem Schreiben direkt löschen (afterDelete-Hook). Offene (neu/Rückfrage) nie automatisch.
+    { id: 'kuendigungen', slug: 'kuendigungen', label: 'Kündigungen nach dem Austritt (samt Schreiben)', monate: f.kuendigungenMonate ?? 12, rollen: ['admin', 'kasse'], hart: true, where: (g): Where => ({ and: [{ status: { in: ['bestaetigt', 'erledigt'] } }, { wirksamZum: { less_than: g } }] }) },
+    { id: 'kuendigungen-ohne', slug: 'kuendigungen', label: 'abgelehnte oder zurückgezogene Kündigungen (samt Schreiben)', monate: f.kuendigungenMonate ?? 12, rollen: ['admin', 'kasse'], hart: true, where: (g): Where => ({ and: [{ status: { in: ['abgelehnt', 'zurueckgezogen'] } }, { updatedAt: { less_than: g } }] }) },
     // Passanträge haben keinen Papierkorb – liegengebliebene werden samt Ausweiskopie direkt gelöscht
     { id: 'passantraege-offen', slug: 'passantraege', label: 'nie abgeschlossene Passanträge (samt Ausweiskopie)', monate: f.passOffenMonate ?? 6, rollen: ['admin'], hart: true, where: (g): Where => ({ and: [{ status: { in: ['eingereicht', 'unterlagen_fehlen'] } }, { updatedAt: { less_than: g } }] }) },
     {
@@ -128,8 +132,8 @@ export const datenschutzEndpunkte: Endpoint[] = [
     handler: async (req) => {
       const rollen = ((req.user as { roles?: string[] } | null)?.roles ?? []) as string[]
       if (!hasRole(req.user as never, 'admin', 'kasse') && !mitZusatzrecht(req.user)) return Response.json({ fehler: 'Keine Berechtigung.' }, { status: 403 })
-      // Kasse räumt nur Mitgliedsanträge auf
-      const nur = rollen.includes('admin') || mitZusatzrecht(req.user) ? undefined : ['mitgliedsantraege']
+      // Kasse räumt nur Mitgliedsanträge und Kündigungen auf
+      const nur = rollen.includes('admin') || mitZusatzrecht(req.user) ? undefined : ['mitgliedsantraege', 'kuendigungen']
       // Zusatzrecht: nur in den Papierkorb (zurückholbar), nie direkt löschen
       return Response.json({ verschoben: await aufraeumen(req.payload, nur, mitZusatzrecht(req.user)) })
     },

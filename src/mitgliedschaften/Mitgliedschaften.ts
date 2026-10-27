@@ -3,6 +3,7 @@ import type { CollectionConfig, Where } from 'payload'
 import { hasRole, isFinance, istMitgliedOderMehr } from '@/access/roles'
 import { hatRecht } from '@/access/einzelrechte'
 import { darf, rechteLaden } from '@/access/rollenRechte'
+import { berlinDatum } from '@/utilities/berlinDatum'
 
 export const MITGLIEDSART: Record<string, string> = {
   jugend: 'Einzelmitgliedschaft · Jugend',
@@ -116,7 +117,7 @@ export const Mitgliedschaften: CollectionConfig = {
       type: 'row',
       fields: [
         { name: 'aktiv', label: 'Mitgliedschaft gültig', type: 'checkbox', defaultValue: true, admin: { width: '50%' } },
-        { name: 'austritt', label: 'Gültig bis (Austritt)', type: 'date', admin: { width: '50%', date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' }, description: 'Danach zeigt der Ausweis „nicht mehr gültig“.' } },
+        { name: 'austritt', label: 'Gültig bis (Austritt)', type: 'date', admin: { width: '50%', date: { pickerAppearance: 'dayOnly', displayFormat: 'dd.MM.yyyy' }, description: 'Laut Satzung das Quartalsende. Bis dahin zeigt der Ausweis „gültig bis …“, danach „nicht gültig“. Wird bei einer über die Website bestätigten Kündigung automatisch gesetzt.' } },
       ],
     },
     { name: 'antrag', label: 'Aus Mitgliedsantrag', type: 'relationship', relationTo: 'mitgliedsantraege', admin: { readOnly: true, position: 'sidebar' } },
@@ -124,6 +125,6 @@ export const Mitgliedschaften: CollectionConfig = {
   timestamps: true,
 }
 
-/** Ist die Mitgliedschaft heute gültig? */
+/** Ist die Mitgliedschaft heute gültig? Der Austrittstag selbst zählt noch (Kalendertag in Deutschland). */
 export const istGueltig = (m: { aktiv?: boolean | null; austritt?: string | null }) =>
-  m.aktiv !== false && (!m.austritt || new Date(m.austritt).getTime() >= new Date().setHours(0, 0, 0, 0))
+  m.aktiv !== false && (!m.austritt || berlinDatum(m.austritt) >= berlinDatum(new Date()))

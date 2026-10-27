@@ -23,6 +23,7 @@ const DATEI_ORDNER = [
   { name: 'media', pfad: path.join(WURZEL, 'medien') },
   { name: 'profilbilder', pfad: path.join(WURZEL, 'profilbilder') },
   { name: 'passantraege', pfad: path.join(WURZEL, 'passantraege') },
+  { name: 'kuendigungen', pfad: path.join(WURZEL, 'kuendigungen') },
   { name: 'dokumente', pfad: path.join(WURZEL, 'dokumente') },
 ]
 const VERSION = 1

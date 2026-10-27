@@ -35,6 +35,8 @@ const BEREICH_HAKEN: Record<string, LeseHaken> = {
   passantraege: 'passantraege',
   mitgliedsantraege: 'mitgliedsantraege',
   mitgliedschaften: 'mitgliedschaften',
+  // Kündigungen gehören zu den Mitgliedschaften (das unterschriebene Schreiben sieht die Rolle nie, siehe NIE_BEREICHE)
+  kuendigungen: 'mitgliedschaften',
   users: 'benutzer',
   profilbilder: 'benutzer',
   // Namen und Bemerkungen der Mitglieder bei Zu-/Absagen
@@ -45,7 +47,7 @@ const BEREICH_HAKEN: Record<string, LeseHaken> = {
 }
 
 /** Bereiche und Einstellungen, die die Rolle nie sieht */
-export const NIE_BEREICHE = new Set(['passdokumente'])
+export const NIE_BEREICHE = new Set(['passdokumente', 'kuendigungsdokumente'])
 export const NIE_GLOBALS = new Set(['sicherheit'])
 
 /** Felder, die niemand über die Schnittstelle liest – bleiben auch für diese Rolle zu */

@@ -915,3 +915,34 @@
 .foot { position: relative; overflow: hidden; }
 .foot-inner { position: relative; z-index: 1; }
 .foot-wappen { position: absolute; right: -70px; bottom: -150px; width: clamp(300px, 34vw, 520px); aspect-ratio: 690 / 743; background: var(--bsv-ink); opacity: 0.045; transform: rotate(-8deg); pointer-events: none; -webkit-mask: url(/wappen-schwarz.svg) center / contain no-repeat; mask: url(/wappen-schwarz.svg) center / contain no-repeat; }
+
+/* ===== Mitgliedschaft kündigen (Mein BSV) ===== */
+.kuendigung-liste { list-style: none; margin: 0 0 18px; padding: 0; display: flex; flex-direction: column; gap: 10px; }
+.kuendigung-liste li { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 16px; padding: 14px 16px; border-radius: 16px; background: var(--bsv-soft); }
+.kuendigung-liste li > div { flex: 1 1 260px; display: flex; flex-direction: column; gap: 2px; font-size: 15px; }
+.kuendigung-status { font-size: 14px; font-weight: 700; }
+.kuendigung-zurueck { min-height: 38px; padding: 6px 14px; font-size: 14px; }
+.kuendigung-form { display: flex; flex-direction: column; gap: 18px; margin-top: 4px; }
+.kuendigung-form .field textarea { min-height: 90px; }
+.kuendigung-frist { margin: -6px 0 0; padding: 12px 16px; border-radius: 14px; background: var(--bsv-coral-tint); color: var(--bsv-ink); font-size: 15px; line-height: 1.5; }
+
+/* Kündigungsschreiben (zum Drucken) */
+.schreiben-seite { background: var(--bsv-soft); padding: 40px 16px 80px; }
+.schreiben-knoepfe { max-width: 210mm; margin: 0 auto 18px; display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.schreiben { max-width: 210mm; margin: 0 auto; background: #fff; color: #111; padding: 22mm 20mm; box-shadow: 0 18px 44px rgba(0, 0, 0, 0.08); font-size: 15px; line-height: 1.55; }
+.schreiben-absender { display: grid; gap: 4px; font-size: 14px; }
+.schreiben-zeile { display: block; border-bottom: 1px solid #999; min-height: 1.9em; }
+.schreiben-zeile small { color: #666; font-size: 11px; }
+.schreiben-an { margin: 14mm 0 10mm; }
+.schreiben h1 { font-size: 18px; font-weight: 700; margin: 0 0 6mm; letter-spacing: 0; }
+.schreiben table { width: 100%; border-collapse: collapse; margin: 4mm 0 6mm; font-size: 14px; }
+.schreiben th, .schreiben td { text-align: left; border-bottom: 1px solid #ccc; padding: 6px 8px 6px 0; }
+.schreiben-unterschriften { display: grid; grid-template-columns: repeat(auto-fit, minmax(60mm, 1fr)); gap: 12mm 10mm; margin-top: 18mm; }
+.schreiben-unterschriften .schreiben-zeile { min-height: 14mm; }
+.schreiben-hinweis { margin-top: 14mm; padding-top: 4mm; border-top: 1px dashed #bbb; font-size: 12px; color: #555; }
+@media print {
+  @page { size: A4; margin: 0; }
+  .bsv .nav, .bsv nav.nav, .bsv header, .bsv .foot, .schreiben-knoepfe, .bsv .sr-only { display: none !important; }
+  .schreiben-seite { background: #fff; padding: 0; }
+  .schreiben { box-shadow: none; max-width: none; }
+}

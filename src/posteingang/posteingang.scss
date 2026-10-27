@@ -278,3 +278,20 @@
   text-decoration: underline;
   cursor: pointer;
 }
+
+/* Kündigung: hochgeladenes Schreiben */
+.bsv-kuendigung__schreiben {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  margin: 4px 0 12px;
+  img {
+    display: block;
+    max-width: min(100%, 420px);
+    max-height: 520px;
+    border: 1px solid var(--theme-elevation-150);
+    border-radius: 8px;
+    background: #fff;
+  }
+}

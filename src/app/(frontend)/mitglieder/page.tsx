@@ -12,6 +12,11 @@ import { Profilfoto } from '@/bsv/components/Profilfoto'
 import { AusweisKarten } from '@/bsv/components/AusweisKarte'
 import { ZweiFaktorKonto } from '@/bsv/components/ZweiFaktorKonto'
 import { ZuAbsage, type ZuAbsageAntwort, type ZuAbsageTermin } from '@/bsv/components/ZuAbsage'
+import { Kuendigung, type MeineKuendigung } from '@/bsv/components/Kuendigung'
+import { kuendbare } from '@/kuendigungen/endpunkte'
+import { quartalsende } from '@/kuendigungen/quartal'
+import { STATUS_MITGLIED, type KuendigungStatus } from '@/kuendigungen/texte'
+import { berlinDatum, deutschesDatum } from '@/utilities/berlinDatum'
 import { antwortMoeglich } from '@/collections/TerminRueckmeldungen'
 import { ausweiseFuer } from '@/mitgliedschaften/ausweise'
 import { aktuellerBenutzer, getAusfaelle, getTermine, getVerein, payload } from '@/bsv/data'
@@ -118,6 +123,26 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
       .catch(() => ({ docs: [] }))
   ).docs
   const ausweise = await ausweiseFuer(konto).catch(() => [])
+  // Kündigen: kündbare Mitgliedschaften dieses Kontos und eigene Kündigungen (auf dem Server gelesen – Mitglieder haben
+  // keinen Lesezugriff auf die Sammlung)
+  const [{ kuendbar }, eigeneKuendigungen] = await Promise.all([
+    kuendbare(p, user.id).catch(() => ({ kuendbar: [] as Awaited<ReturnType<typeof kuendbare>>['kuendbar'] })),
+    p.find({ collection: 'kuendigungen', where: { konto: { equals: user.id } }, sort: '-eingangAm', limit: 20, depth: 0, overrideAccess: true, select: { namen: true, status: true, eingangAm: true, wirksamZum: true } }).catch(() => ({ docs: [] })),
+  ])
+  const meineKuendigungen: MeineKuendigung[] = (eigeneKuendigungen.docs as unknown as { id: number; namen?: string | null; status?: KuendigungStatus | null; eingangAm?: string | null; wirksamZum?: string | null }[]).map((k) => {
+    const s = STATUS_MITGLIED[k.status ?? 'neu'] ?? STATUS_MITGLIED.neu
+    return {
+      id: k.id,
+      namen: (k.namen ?? '').replace(/\s*\(Nr\.[^)]*\)/g, ''),
+      status: k.status ?? 'neu',
+      statusText: s.text,
+      statusFarbe: s.farbe,
+      eingang: k.eingangAm ? deutschesDatum(berlinDatum(k.eingangAm)) : '–',
+      wirksam: k.wirksamZum ? deutschesDatum(berlinDatum(k.wirksamZum)) : '–',
+      zurueckziehbar: k.status === 'neu',
+    }
+  })
+  const quartalsendeJetzt = deutschesDatum(quartalsende(new Date()))
   const [ausfaelle, termine, verein, anfragen] = await Promise.all([
     alleIds.length ? getAusfaelle(alleIds) : Promise.resolve([]),
     getTermine(6),
@@ -411,6 +436,13 @@ export default async function MitgliederSeite({ searchParams }: { searchParams: 
           </Link>
           <ZweiFaktorKonto />
         </div>
+
+        <Kuendigung
+          kuendbar={kuendbar.map((m) => ({ id: m.id, name: `${m.vorname} ${m.nachname}`.trim(), nummer: m.mitgliedsnummer ?? null }))}
+          kuendigungen={meineKuendigungen}
+          wirksamJetzt={quartalsendeJetzt}
+          schlussJetzt={quartalsendeJetzt}
+        />
       </section>
     </div>
   )

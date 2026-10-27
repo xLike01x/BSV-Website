@@ -7,7 +7,7 @@ Alle Befehle stehen zum Kopieren da. Wo `www.buedericher-spielverein.de` steht, 
 
 ```
 Besucher ──HTTPS──▶ Caddy (Port 443, Zertifikat automatisch) ──▶ Website (nur 127.0.0.1:3000) ──▶ PostgreSQL (nur lokal)
-                                                                   └─ Ordner medien/, profilbilder/, passantraege/, dokumente/, backups/
+                                                                   └─ Ordner medien/, profilbilder/, passantraege/, kuendigungen/, dokumente/, backups/
 ```
 
 - Genau **eine** Website-Instanz (Ratenbegrenzung und tägliche Aufgaben laufen im Arbeitsspeicher).

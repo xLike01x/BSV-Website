@@ -11,6 +11,7 @@ const BETREFF: Record<string, (f: Record<string, string>) => string> = {
   mitgliedsantraege: () => 'Dein Mitgliedsantrag beim BSV 1919',
   kontaktanfragen: (f) => (f.betreff ? `Re: ${f.betreff}` : 'Deine Nachricht an den BSV 1919'),
   probetraining: () => 'Dein Probetraining beim BSV 1919',
+  kuendigungen: () => 'Deine Kündigung beim BSV 1919',
 }
 
 const datum = (iso: string) =>

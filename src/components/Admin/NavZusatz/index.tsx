@@ -8,7 +8,7 @@ import { EINTRAEGE, type Eintrag, eintragSichtbar } from './eintraege'
 import './nav-zusatz.scss'
 
 /** Bereiche mit Zähler „neu“ (Schlüssel = Sammlung) */
-const ZAEHLER = ['mitgliedsantraege', 'kontaktanfragen', 'probetraining', 'passantraege']
+const ZAEHLER = ['mitgliedsantraege', 'kontaktanfragen', 'probetraining', 'passantraege', 'kuendigungen']
 
 const gruppenInhalt = (label: string) => document.getElementById(`nav-group-${label}`)?.closest('.nav-group')?.querySelector('.nav-group__content') ?? null
 

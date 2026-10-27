@@ -30,4 +30,4 @@ export const eintragSichtbar = (e: Eintrag, user: unknown) => {
 export const REIHENFOLGE = ['users', 'rollen', 'sicherung', 'updates', 'papierkorb', 'statistik', 'search', 'redirects', 'verein', 'datenschutz', 'mailVorlagen', 'hilfe', 'hilfe-feedback', 'pages', 'menue', 'texte', 'forms']
 
 /** Nicht als eigener Eintrag zeigen – erreichbar über „Rollen & Rechte“ bzw. „Sicherheit“ (Reiter) bzw. im Passantrag */
-export const VERSTECKT = ['rollenRechte', 'sicherheit', 'passdokumente']
+export const VERSTECKT = ['rollenRechte', 'sicherheit', 'passdokumente', 'kuendigungsdokumente']

@@ -144,6 +144,14 @@ export const Datenschutz: GlobalConfig = {
           admin: { width: '50%', description: 'Status „eingereicht“ oder „Unterlagen fehlen“ ohne Änderung. Wird samt Ausweiskopie direkt gelöscht (kein Papierkorb).' },
         },
         {
+          name: 'kuendigungenMonate',
+          label: 'Kündigungen samt unterschriebenem Schreiben – Monate nach dem Austritt',
+          type: 'number',
+          min: 6,
+          defaultValue: 12,
+          admin: { width: '50%', description: 'Bestätigte Kündigungen: gerechnet ab dem Quartalsende. Abgelehnte oder zurückgezogene: ab der letzten Änderung. Wird direkt gelöscht (kein Papierkorb), auch das hochgeladene Schreiben.' },
+        },
+        {
           name: 'kontenMonate',
           label: 'Hinweis auf Mitgliedskonten ohne Anmeldung – nach Monaten',
           type: 'number',

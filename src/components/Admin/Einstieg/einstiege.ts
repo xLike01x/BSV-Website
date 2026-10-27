@@ -519,6 +519,18 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     ],
   },
 
+  kuendigungen: {
+    titel: 'Was passiert mit Kündigungen?',
+    text: 'Kündigungen aus dem Mitgliederbereich mit unterschriebenem Schreiben. Laut Satzung wirksam zum Ende des Quartals, in dem sie eingehen.',
+    ablauf: [
+      { key: 'eingang', titel: 'Kündigung kommt rein', text: 'Status „Eingegangen“, die Kasse bekommt eine E-Mail, das Mitglied eine Eingangsbestätigung.', wo: 'Website → Mein BSV → Mitgliedschaft kündigen' },
+      { key: 'pruefen', titel: 'Schreiben prüfen', text: '„Ich kümmere mich“, dann „Unterschriebenes Schreiben öffnen“.' },
+      { key: 'bestaetigen', titel: 'Bestätigen', text: '„✓ Bestätigen“ setzt „Gültig bis“ aufs Quartalsende – mit fertiger E-Mail.' },
+      { key: 'dfbnet', titel: 'Im DFBnet austragen', text: 'Danach „✓ Im DFBnet ausgetragen“ klicken.' },
+      { key: 'wirksam', titel: 'Automatisch wirksam', text: 'Am Tag nach dem Quartalsende zeigt der Ausweis „nicht gültig“.' },
+    ],
+  },
+
   mitgliedschaften: {
     titel: 'Wozu sind Mitgliedschaften da?',
     text: 'Daraus entsteht der digitale Mitgliedsausweis, den jedes Mitglied nach dem Login sieht – mit Nummer, Eintrittsdatum, Art und Kursen. Er aktualisiert sich automatisch.',

@@ -11,6 +11,8 @@ export type Ausweis = {
   art: string
   kurse: string[]
   gueltig: boolean
+  /** Austritt steht fest (z. B. nach Kündigung): „gültig bis TT.MM.JJJJ“ */
+  bis?: string | null
   qr: string
 }
 
@@ -42,7 +44,7 @@ function Karte({
           <small>Mitgliedsausweis</small>
         </span>
         <span className={`ausweis-status${a.gueltig ? '' : ' ist-ungueltig'}`}>
-          {a.gueltig ? '✓ gültig' : 'nicht gültig'}
+          {a.gueltig ? (a.bis ? `✓ gültig bis ${a.bis}` : '✓ gültig') : 'nicht gültig'}
         </span>
       </div>
       <div className="ausweis-mitte">

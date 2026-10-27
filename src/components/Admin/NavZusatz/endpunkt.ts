@@ -13,6 +13,7 @@ const NEU: { sammlung: string; status: string[] }[] = [
   { sammlung: 'kontaktanfragen', status: ['neu'] },
   { sammlung: 'probetraining', status: ['neu'] },
   { sammlung: 'passantraege', status: ['eingereicht'] },
+  { sammlung: 'kuendigungen', status: ['neu'] },
 ]
 
 /**

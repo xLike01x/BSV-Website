@@ -23,6 +23,7 @@ import * as migration_20261026_203917_rangliste from './20261026_203917_ranglist
 import * as migration_20261027_085945_huetchenspiel from './20261027_085945_huetchenspiel';
 import * as migration_20261027_101150_rangliste_huetchen from './20261027_101150_rangliste_huetchen';
 import * as migration_20261027_104121_vereinswappen from './20261027_104121_vereinswappen';
+import * as migration_20261027_123248_kuendigungen from './20261027_123248_kuendigungen';
 
 export const migrations = [
   {
@@ -148,6 +149,11 @@ export const migrations = [
   {
     up: migration_20261027_104121_vereinswappen.up,
     down: migration_20261027_104121_vereinswappen.down,
-    name: '20261027_104121_vereinswappen'
+    name: '20261027_104121_vereinswappen',
+  },
+  {
+    up: migration_20261027_123248_kuendigungen.up,
+    down: migration_20261027_123248_kuendigungen.down,
+    name: '20261027_123248_kuendigungen'
   },
 ];

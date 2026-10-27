@@ -1040,8 +1040,39 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Was passiert, wenn ein Mitglied austritt?',
-    antwort: 'Kündigen über die Website geht bewusst nicht – ein Austritt hat Fristen laut Satzung und betrifft Beitrag und Lastschrift. Das Mitglied meldet sich per Kontaktformular oder E-Mail bei Kasse bzw. Vorstand. Dann: 1. Mitglieder → Mitgliedschaften → Person öffnen → „Gültig bis (Austritt)“ eintragen → Speichern (bei Familien nur die Person, die austritt). 2. Ab dem Tag danach zeigt der digitale Ausweis „nicht mehr gültig“. 3. Nach 12 Monaten (einstellbar unter Einstellungen → Datenschutz-Fristen) ist die Mitgliedschaft „fällig“ und kommt beim Aufräumen in den Papierkorb, danach wird sie endgültig gelöscht. 4. Der Mitgliedsantrag mit der IBAN ist schon 3 Monate nach der Bearbeitung fällig; beim Löschen wird die IBAN sofort entfernt. 5. Das Benutzerkonto bleibt bestehen (Anmeldung geht weiter, der Ausweis ist ungültig). Nach 24 Monaten ohne Anmeldung erscheint es als Hinweis bei den Datenschutz-Fristen. Soll es sofort weg: Benutzer öffnen → Löschen. Die Mitgliederverwaltung des Vereins (z. B. DFBnet) pflegt die Kasse wie bisher.',
+    antwort:
+      'Laut Satzung wirkt eine Kündigung zum Ende des Quartals, in dem sie beim Verein eingeht – ohne weitere Frist. Beispiel: Eingang am 31.12.2026 → Austritt zum 31.12.2026, ab 01.01.2027 kein Mitglied mehr. Eingang am 01.01.2027 → Austritt zum 31.03.2027.\n\n'
+      + 'Kündigung über die Website (Mitglied mit Konto):\n'
+      + '1. Das Mitglied wählt unter „Mein BSV → Mitgliedschaft kündigen“ im Dropdown, wen es kündigt (sich, ein Familienmitglied oder die ganze Familie), öffnet das fertig ausgefüllte Kündigungsschreiben, druckt es aus, unterschreibt (bei Kindern die Eltern) und lädt ein Foto oder PDF hoch. Es zählt der Zeitpunkt des Hochladens.\n'
+      + '2. Die Kasse bekommt eine E-Mail; der Eintrag steht unter Posteingang → Kündigungen (orange Zahl). Das Mitglied bekommt eine Eingangsbestätigung.\n'
+      + '3. Kündigung öffnen → „Unterschriebenes Schreiben öffnen“ → prüfen → „✓ Bestätigen“ (mit E-Mail-Vorlage). Dabei wird bei der Mitgliedschaft „Gültig bis (Austritt)“ automatisch auf das Quartalsende gesetzt. Der Ausweis zeigt dann „✓ gültig bis 31.12.2026“.\n'
+      + '4. Im DFBnet austragen, dann „✓ Im DFBnet ausgetragen“ klicken.\n'
+      + '5. Am Tag nach dem Quartalsende stellt die Website die Mitgliedschaft automatisch auf „nicht gültig“ – der Ausweis zeigt „nicht gültig“. Das läuft jede Nacht und holt verpasste Tage nach.\n\n'
+      + 'Kündigung per Brief, E-Mail oder ohne Konto: wie bisher von Hand – Mitglieder → Mitgliedschaften → Person öffnen → „Gültig bis (Austritt)“ auf das Quartalsende setzen → Speichern (bei Familien nur die Person, die austritt). Ab dem Tag danach zeigt der Ausweis „nicht gültig“.\n\n'
+      + 'Danach: Nach 12 Monaten (einstellbar unter Einstellungen → Datenschutz-Fristen) werden Mitgliedschaft und Kündigung samt hochgeladenem Schreiben aufgeräumt. Der Mitgliedsantrag mit der IBAN ist schon 3 Monate nach der Bearbeitung fällig. Das Benutzerkonto bleibt bestehen (Anmeldung geht weiter, der Ausweis ist ungültig); nach 24 Monaten ohne Anmeldung erscheint es als Hinweis bei den Datenschutz-Fristen. Soll es sofort weg: Benutzer öffnen → Löschen.\n\n'
+      + 'Beispiel – Wenn eine Familie am 15.11. für alle kündigt – dann steht im Posteingang eine Kündigung für alle Personen, wirksam zum 31.12. Nach „Bestätigen“ zeigen alle Ausweise „gültig bis 31.12.“, ab 01.01. „nicht gültig“.',
     bereich: 'mitgliedschaften',
+  },
+  {
+    frage: 'Wie bearbeite ich eine Kündigung im Posteingang?',
+    antwort:
+      'Links unter Posteingang → „Kündigungen“. Oben die Reiter „Neu · Rückfrage · Im DFBnet austragen · Erledigt · Alle“. Kündigung öffnen, „Ich kümmere mich“ klicken, dann im Kasten „Kündigung prüfen“:\n\n'
+      + '• „Unterschriebenes Schreiben öffnen“: Ist es unterschrieben, passt der Name, bei Kindern die Unterschrift der Eltern?\n'
+      + '• „✓ Bestätigen“: setzt „Gültig bis“ der Mitgliedschaft(en) auf das Quartalsende und schickt die Bestätigung per E-Mail (Text vorher anpassbar). Bestätigt ist endgültig.\n'
+      + '• „❓ Rückfrage“: z. B. wenn das Foto unscharf ist – Frage in die Vorlage schreiben, senden. Das Mitglied sieht „Rückfrage – bitte E-Mails prüfen“.\n'
+      + '• „Nicht annehmen“: z. B. ohne Unterschrift. Das Mitglied kann danach ein neues Schreiben hochladen; das Quartal richtet sich dann nach dem neuen Eingang.\n'
+      + '• Nach dem Bestätigen: im DFBnet austragen, dann „✓ Im DFBnet ausgetragen“.\n\n'
+      + 'Solange niemand die Kündigung bearbeitet hat, kann das Mitglied sie im Mitgliederbereich selbst zurückziehen. Wirksam zum und Eingangsdatum rechnet die Website aus – sie lassen sich nicht ändern. Die E-Mail-Texte für alle Kündigungen stehen unter Einstellungen → „E-Mail-Vorlagen“ → Reiter „Kündigungen“.\n\n'
+      + 'Beispiel – Wenn ein Mitglied ein Foto ohne Unterschrift hochlädt – dann „Nicht annehmen“, in der E-Mail statt [GRUND] „Das Schreiben ist nicht unterschrieben“ eintragen und senden.',
+    bereich: 'kuendigungen',
+  },
+  {
+    frage: 'Warum sehe ich im Mitgliederbereich „keine laufende Mitgliedschaft verknüpft“ beim Kündigen?',
+    antwort:
+      'Kündigen kann man nur Mitgliedschaften, die mit dem eigenen Konto verknüpft sind (Mitglieder → Mitgliedschaften → Feld „Benutzerkonto“). Das passiert automatisch, wenn sich jemand mit derselben E-Mail registriert und freigegeben wird. Fehlt die Verknüpfung, Mitgliedschaft öffnen, bei „Benutzerkonto“ das Konto auswählen, speichern – danach erscheint die Auswahl beim Kündigen.\n\n'
+      + 'Beispiel – Wenn ein Vater für sein Kind kündigen will – dann muss die Mitgliedschaft des Kindes mit dem Konto des Vaters verknüpft sein.',
+    bereich: 'kuendigungen',
+
   },
   {
     frage: 'Was passiert, wenn ich einem Mitglied nachträglich eine Verwaltungsrolle gebe (z. B. Admin oder Trainer)?',
