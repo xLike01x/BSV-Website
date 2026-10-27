@@ -42,7 +42,7 @@ function Schritte() {
 const KOPF = { 'x-bsv-kuendigung': '1' }
 
 /**
- * Mein BSV → Mitgliedschaft kündigen: auswählen, Schreiben öffnen (drucken/PDF), unterschrieben hochladen.
+ * Mein BSV → Mitgliedschaft kündigen: auswählen, Kündigung öffnen (drucken/PDF), unterschrieben hochladen.
  * Wirksam zum Ende des Quartals, in dem es hochgeladen wird – das Datum rechnet der Server aus.
  */
 export function Kuendigung({
@@ -196,7 +196,7 @@ export function Kuendigung({
         <form onSubmit={absenden} className="kuendigung-form" method="post">
           <Schritte />
           <p className="muted" style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>
-            Schreiben herunterladen (bzw. als PDF speichern), ausdrucken, unterschreiben – bei
+            Kündigung herunterladen (bzw. als PDF speichern), ausdrucken, unterschreiben – bei
             Kindern die Eltern –, mit dem Handy abfotografieren und hier hochladen. Ein gut lesbares
             Foto reicht. Laut Satzung wirkt die Kündigung zum Ende des Quartals, in dem sie
             hochgeladen wird.
@@ -222,14 +222,14 @@ export function Kuendigung({
 
           {ids.length > 0 && (
             <p className="kuendigung-frist" role="status">
-              Wirksam zum <strong>{wirksamJetzt}</strong>, wenn du das unterschriebene Schreiben bis
+              Wirksam zum <strong>{wirksamJetzt}</strong>, wenn du die unterschriebene Kündigung bis
               einschließlich <strong>{schlussJetzt}</strong> hochlädst. Danach gilt das nächste
               Quartalsende.
             </p>
           )}
 
           <div className="field">
-            2. Kündigungsschreiben
+            2. Kündigung herunterladen
             {formularLink ? (
               <a
                 href={formularLink}
@@ -238,17 +238,17 @@ export function Kuendigung({
                 className="btn btn-ghost"
                 style={{ alignSelf: 'flex-start' }}
               >
-                📄 Kündigungsschreiben öffnen (drucken oder als PDF speichern)
+                📄 Kündigung öffnen (drucken oder als PDF speichern)
               </a>
             ) : (
               <span className="muted" style={{ fontSize: 15 }}>
-                Erst oben auswählen – dann ist das Schreiben schon ausgefüllt.
+                Erst oben auswählen – dann ist die Kündigung schon ausgefüllt.
               </span>
             )}
           </div>
 
           <div className="field">
-            3. Unterschriebenes Schreiben hochladen (Foto oder PDF, höchstens 10 MB)
+            3. Unterschriebene Kündigung hochladen (Foto oder PDF, höchstens 10 MB)
             <div className="kuendigung-datei">
               <label
                 className={`btn ${datei ? 'btn-ghost' : 'btn-primary'}${ids.length ? '' : ' ist-aus'}`}
@@ -291,8 +291,8 @@ export function Kuendigung({
               required
             />
             <span>
-              Das Schreiben ist unterschrieben (bei Kindern von den Erziehungsberechtigten). Mir ist
-              klar, dass die Kündigung verbindlich ist.
+              Die Kündigung ist unterschrieben (bei Kindern von den Erziehungsberechtigten). Mir ist
+              klar, dass sie verbindlich ist.
             </span>
           </label>
 

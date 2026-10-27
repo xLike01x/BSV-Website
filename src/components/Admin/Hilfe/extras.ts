@@ -1348,7 +1348,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Warum sieht jemand einen Bereich (nicht)?',
-    antwort: 'Benutzer öffnen. Ganz oben steht „🔎 Was darf diese Person?“ – darf bearbeiten, darf nur ansehen, kein Zugriff, und für welche eigenen Teams. Die Liste rechnet mit Rollen und Zusatzrechten zusammen und ändert sich sofort, wenn du Rollen anklickst (auch vor dem Speichern).',
+    antwort: 'Benutzer öffnen. Ganz oben steht „🔎 Was darf diese Person?“ – darf bearbeiten, darf nur ansehen, kein Zugriff, und für welche eigenen Teams. Die Liste rechnet mit Rollen und Zusatzrechten zusammen und ändert sich sofort, wenn du Rollen anklickst (auch vor dem Speichern). Hintergrund-Speicher ohne eigenen Menüpunkt (z. B. Kündigungsschreiben, Zu- und Absagen, Spielecke-Statistik) stehen dort nicht: Ihr Inhalt erscheint im zugehörigen Bereich – die Kündigungsschreiben z. B. direkt in der Kündigung.',
     bereich: 'users',
   },
   {

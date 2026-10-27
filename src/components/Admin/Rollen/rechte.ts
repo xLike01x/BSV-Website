@@ -80,7 +80,9 @@ export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrec
     const verwaltung = (await stufe(usersCfg?.access?.admin)) !== 'nein'
 
     for (const c of req.payload.config.collections) {
-      if (c.slug.startsWith('payload-') || AUSLASSEN.has(c.slug)) continue
+      // Für alle ausgeblendete Hintergrund-Speicher (z. B. Kündigungsschreiben, Zu- und Absagen) haben keinen eigenen
+      // Menüpunkt – ihr Inhalt erscheint in anderen Bereichen. Als „Kein Zugriff“ würden sie nur verwirren.
+      if (c.slug.startsWith('payload-') || AUSLASSEN.has(c.slug) || c.admin?.hidden === true) continue
       const a = c.access ?? {}
       const lesen = await stufe(a.read)
       const ansehen: Stufe = !verwaltung || versteckt(c.admin?.hidden) ? 'nein' : lesen
@@ -111,7 +113,7 @@ export async function rechteFuer(req: PayloadRequest, roles: string[], zusatzrec
       })
     }
     for (const g of req.payload.config.globals) {
-      if (['header', 'footer'].includes(g.slug)) continue
+      if (['header', 'footer'].includes(g.slug) || g.admin?.hidden === true) continue
       const a = g.access ?? {}
       const ansehen: Stufe = !verwaltung || versteckt(g.admin?.hidden) ? 'nein' : await stufe(a.read)
       const label = g.label
