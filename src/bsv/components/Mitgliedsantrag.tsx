@@ -59,8 +59,8 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
   }
   const [p, setP] = useState({ ...leer, email: '', telefon: '', strasse: '', plz: '', ort: '' })
   const [familie, setFamilie] = useState<Person[]>([])
-  // Bewusst NICHT vorausgefüllt: Einwilligungen müssen aktiv erteilt werden (DSGVO, EuGH „Planet49“). „Allem zustimmen“ setzt alle mit einem Klick.
-  const [sepa, setSepa] = useState({ kontoinhaber: '', iban: '', mandat: false, satzung: false, kontakt: false, fotoHomepage: false, fotoSocial: false, fotoPresse: false, fotoKind: false })
+  // Pflicht (SEPA, Satzung) vorausgewählt – Wunsch des Vereins. Freiwillige Einwilligungen bewusst NICHT: vorausgefüllte Haken gelten nicht als Einwilligung (DSGVO, EuGH „Planet49“).
+  const [sepa, setSepa] = useState({ kontoinhaber: '', iban: '', mandat: true, satzung: true, kontakt: false, fotoHomepage: false, fotoSocial: false, fotoPresse: false, fotoKind: false })
   const [fehler, setFehler] = useState<string | null>(null)
   const [sendet, setSendet] = useState(false)
   const [hp, setHp] = useState('')
@@ -103,7 +103,6 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
   }
   const jugendlicheAb14 = ab14(p.geburtsdatum) || (art === 'familie' && familie.some((f) => f.vorname.trim() && ab14(f.geburtsdatum)))
   const fotoGewaehlt = sepa.fotoHomepage || sepa.fotoSocial || sepa.fotoPresse
-  const allesAngehakt = sepa.mandat && sepa.satzung && sepa.kontakt && sepa.fotoHomepage && sepa.fotoSocial && sepa.fotoPresse && (!jugendlicheAb14 || sepa.fotoKind)
 
   const pruefe = (): string | null => {
     if (schritt === 1 && auswahl.length === 0 && art !== 'passiv') return 'Bitte wähle mindestens ein Team oder einen Kurs aus – oder werde passives Mitglied.'
@@ -366,14 +365,7 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                 </label>
               </div>
               <div style={{ marginTop: 24, display: 'flex', flexDirection: 'column', gap: 14 }}>
-                <button type="button" className="btn btn-ghost" aria-pressed={allesAngehakt} onClick={() => setSepa({ ...sepa, mandat: true, satzung: true, kontakt: true, fotoHomepage: true, fotoSocial: true, fotoPresse: true, fotoKind: jugendlicheAb14 })} style={{ alignSelf: 'flex-start' }}>
-                  {allesAngehakt ? '✓ Allem zugestimmt' : '✓ Allem zustimmen'}
-                </button>
-                <p className="muted" style={{ margin: '-6px 0 0', fontSize: 13 }}>
-                  Setzt alle Haken auf einmal. Was du nicht möchtest – z. B. Fotos in der Presse –, nimmst du danach einfach wieder heraus.
-                </p>
-
-                <h3 style={{ fontSize: 16, fontWeight: 700, margin: '8px 0 0' }}>Pflicht</h3>
+                <h3 style={{ fontSize: 16, fontWeight: 700, margin: 0 }}>Pflicht</h3>
                 <label className="check">
                   <input type="checkbox" checked={sepa.mandat} onChange={(e) => setSepa({ ...sepa, mandat: e.target.checked })} />
                   <span>
@@ -429,12 +421,6 @@ export function Mitgliedsantrag({ angebote, beitraege, glaeubigerId }: { angebot
                       </label>
                     )}
                   </div>
-                  <details style={{ marginTop: 10, fontSize: 14 }}>
-                    <summary style={{ cursor: 'pointer', color: 'var(--bsv-green)', fontWeight: 600 }}>Gut zu wissen zu Fotos</summary>
-                    <p className="muted" style={{ margin: '8px 0 0' }}>
-                      Im Internet veröffentlichte Fotos und Videos sind weltweit abrufbar. Dass Dritte sie kopieren oder verändern, lässt sich nicht ausschließen – eine vollständige Löschung kann der Verein deshalb nicht garantieren. Die Einwilligung gilt, bis du sie widerrufst. Der Widerruf wirkt für die Zukunft und geht formlos per Brief oder E-Mail an den Verein. Ohne Einwilligung ist die Mitgliedschaft genauso möglich.
-                    </p>
-                  </details>
                 </div>
               </div>
             </div>
