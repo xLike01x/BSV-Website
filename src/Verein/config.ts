@@ -69,7 +69,9 @@ export const Verein: GlobalConfig = {
     {
       name: 'beitraege',
       label: 'Mitgliedsbeiträge',
+      labels: { singular: 'Beitrag', plural: 'Beiträge' },
       type: 'array',
+      admin: { components: { RowLabel: { path: '@/components/Admin/ZeilenTitel', clientProps: { felder: ['label', 'zielgruppe'], ersatz: 'Beitrag' } } } },
       defaultValue: [
         { key: 'jugend', label: 'Jugendliche', zielgruppe: '0 bis 17 Jahre', quartal: 15 },
         { key: 'aktiv', label: 'Erwachsene aktiv', zielgruppe: 'ab 18 Jahren', quartal: 21 },
@@ -127,7 +129,10 @@ export const Verein: GlobalConfig = {
       label: 'Vorstand und Ansprechpersonen',
       labels: { singular: 'Person', plural: 'Personen' },
       type: 'array',
-      admin: { description: 'Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular (dort ohne Namen), keine Telefonnummern.' },
+      admin: {
+        description: 'Wird auf der Vereinsseite angezeigt. Kontakt läuft über das Formular (dort ohne Namen), keine Telefonnummern.',
+        components: { RowLabel: { path: '@/components/Admin/ZeilenTitel', clientProps: { felder: ['name', 'rolle'], ersatz: 'Person' } } },
+      },
       fields: [
         {
           type: 'row',
@@ -195,6 +200,7 @@ export const Verein: GlobalConfig = {
       defaultValue: STANDARD_ANLIEGEN.map((titel) => ({ titel })),
       admin: {
         initCollapsed: true,
+        components: { RowLabel: { path: '@/components/Admin/ZeilenTitel', clientProps: { felder: ['titel'], ersatz: 'Anliegen' } } },
         description:
           'Diese Auswahl sehen Besucher im Kontaktformular – bewusst ohne Namen. Pro Anliegen legt ein Admin fest, wer die Nachricht per E-Mail bekommt (unsichtbar für Besucher). Reihenfolge per Ziehen ändern. Leer gelassen = Standardliste. Ohne Empfänger geht die Nachricht an die Empfänger von „Allgemeine Frage“ (bzw. das erste Anliegen); unter „Kontaktanfragen“ steht sie immer.',
       },
@@ -221,6 +227,7 @@ export const Verein: GlobalConfig = {
       label: 'Satzung & Downloads',
       labels: { singular: 'Download', plural: 'Downloads' },
       type: 'array',
+      admin: { components: { RowLabel: { path: '@/components/Admin/ZeilenTitel', clientProps: { felder: ['titel'], ersatz: 'Download' } } } },
       fields: [
         {
           type: 'row',
@@ -233,7 +240,7 @@ export const Verein: GlobalConfig = {
           name: 'nurMitglieder',
           label: 'Nur für Mitglieder',
           type: 'checkbox',
-          admin: { description: 'Dann ist die Datei geschützt: nur angemeldete Mitglieder können sie öffnen – auch nicht mit dem Link.' },
+          admin: { description: 'Dann ist die Datei geschützt: Nur angemeldete Mitglieder können sie öffnen – andere auch nicht mit dem Link.' },
         },
         {
           name: 'datei',
@@ -254,7 +261,9 @@ export const Verein: GlobalConfig = {
     {
       name: 'dsgvo',
       label: 'Informationspflichten (DSGVO)',
+      labels: { singular: 'Abschnitt', plural: 'Abschnitte' },
       type: 'array',
+      admin: { components: { RowLabel: { path: '@/components/Admin/ZeilenTitel', clientProps: { felder: ['frage'], ersatz: 'Abschnitt' } } } },
       fields: [
         { name: 'frage', label: 'Überschrift', type: 'text', required: true },
         { name: 'antwort', label: 'Text', type: 'textarea', required: true },

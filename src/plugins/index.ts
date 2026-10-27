@@ -38,7 +38,13 @@ export const plugins: Plugin[] = [
     collections: ['pages', 'posts'],
     overrides: {
       labels: { singular: 'Weiterleitung', plural: 'Weiterleitungen' },
-      admin: { group: 'Technik', hidden: ausblendenAusser('webadmin') },
+      admin: {
+        group: 'Technik',
+        hidden: ausblendenAusser('webadmin'),
+        useAsTitle: 'from',
+        description:
+          'Leitet eine alte Adresse auf eine Seite oder News weiter – z. B. wenn eine Seite umbenannt wurde und alte Links noch im Umlauf sind.',
+      },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       // @ts-expect-error - This is a valid override, mapped fields don't resolve to the same type
       fields: ({ defaultFields }) => {
@@ -47,7 +53,8 @@ export const plugins: Plugin[] = [
             return {
               ...field,
               admin: {
-                description: 'You will need to rebuild the website when changing this field.',
+                description:
+                  'Alte Adresse ohne https:// und Domain, z. B. /sommerfest-2025. Greift, sobald es unter dieser Adresse keine Seite mehr gibt – kurz nach dem Speichern.',
               },
             }
           }
@@ -76,10 +83,28 @@ export const plugins: Plugin[] = [
       // Formulare aus dem Baukasten (Seiten). Eingänge liegen im „Posteingang“, die Formulare selbst unter „Website-Aufbau“.
       labels: { singular: 'Formular-Eingang', plural: 'Formular-Eingänge' },
       trash: true,
-      admin: { group: 'Posteingang', hidden: ausblendenAusserMit('formulare', 'admin', 'redaktion'), components: { beforeList: ['@/components/Admin/Einstieg'] } },
+      admin: {
+        group: 'Posteingang',
+        hidden: ausblendenAusserMit('formulare', 'admin', 'redaktion'),
+        defaultColumns: ['form', 'submissionData', 'createdAt'],
+        components: { beforeList: ['@/components/Admin/Einstieg'] },
+      },
       access: { create: anyone, read: rolleOderRecht('formulare', 'admin', 'redaktion'), update: isAdmin, delete: isAdmin },
       // Gleicher Schutz wie bei Kontakt & Co.: Anfragen pro Adresse begrenzen, übergroße Eingaben abweisen
       hooks: { beforeValidate: [spamSchutz('formular'), eingangPruefen] },
+      // Deutsche Beschriftungen statt „Form“ / „Submission Data“ (nur Anzeige, keine Datenbank-Änderung)
+      fields: ({ defaultFields }) =>
+        defaultFields.map((f) => {
+          if (!('name' in f)) return f
+          const unterfelder = (felder: typeof defaultFields) =>
+            felder.map((u) => ('name' in u && u.name === 'field' ? { ...u, label: 'Feld' } : 'name' in u && u.name === 'value' ? { ...u, label: 'Antwort' } : u)) as typeof defaultFields
+          if (f.name === 'form') return { ...f, label: 'Formular' } as typeof f
+          if (f.name === 'submissionData' && f.type === 'array')
+            return { ...f, label: 'Antworten', labels: { singular: 'Antwort', plural: 'Antworten' }, fields: unterfelder(f.fields) } as typeof f
+          if (f.name === 'submissionUploads' && f.type === 'array')
+            return { ...f, label: 'Hochgeladene Dateien', labels: { singular: 'Datei', plural: 'Dateien' }, fields: unterfelder(f.fields) } as typeof f
+          return f
+        }),
     },
     formOverrides: {
       labels: { singular: 'Formular', plural: 'Formulare' },
@@ -106,7 +131,8 @@ export const plugins: Plugin[] = [
             ? { ...roh, label: beschriftung[roh.name]!.label, admin: { ...(roh.admin ?? {}), description: beschriftung[roh.name]!.description } }
             : roh) as typeof roh
           // Empfänger-Adressen der Benachrichtigungen sind nicht öffentlich
-          if ('name' in field && field.name === 'emails') field = { ...field, access: { read: bereichFeld('seiten') } } as typeof field
+          if ('name' in field && field.name === 'emails')
+            field = { ...field, labels: { singular: 'E-Mail-Benachrichtigung', plural: 'E-Mail-Benachrichtigungen' }, access: { read: bereichFeld('seiten') } } as typeof field
           if ('name' in field && field.name === 'confirmationType' && 'options' in field) {
             const text: Record<string, string> = { message: 'Danke-Nachricht zeigen', redirect: 'Auf eine Seite weiterleiten' }
             return {
@@ -138,10 +164,16 @@ export const plugins: Plugin[] = [
     beforeSync: beforeSyncWithSearch,
     searchOverrides: {
       labels: { singular: 'Suchindex-Eintrag', plural: 'Suchindex' },
-      admin: { group: 'Technik', hidden: ausblendenAusser('webadmin') },
+      admin: {
+        group: 'Technik',
+        hidden: ausblendenAusser('webadmin'),
+        description:
+          'Entsteht automatisch aus den veröffentlichten News und wird für die Suche auf der Website genutzt. Nichts von Hand ändern – fehlt etwas, oben „Neuindizieren“ wählen.',
+      },
       access: { read: anyone, create: isEditor, update: isEditor, delete: isEditor },
       fields: ({ defaultFields }) => {
-        return [...defaultFields, ...searchFields]
+        const deutsch: Record<string, string> = { title: 'Titel', priority: 'Reihenfolge in der Suche', doc: 'News', docUrl: 'Adresse' }
+        return [...defaultFields.map((f) => ('name' in f && deutsch[f.name] ? ({ ...f, label: deutsch[f.name] } as typeof f) : f)), ...searchFields]
       },
     },
   }),

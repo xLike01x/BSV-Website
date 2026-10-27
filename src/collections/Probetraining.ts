@@ -76,7 +76,7 @@ export const Probetraining: CollectionConfig = {
   fields: [
     ...posteingangFelder(),
     // Nachträglich umhängen nur Admin/Redaktion (sonst könnten Trainer Anfragen samt Daten anderen Teams zuschieben)
-    { name: 'angebot', label: 'Angebot', type: 'relationship', relationTo: 'angebote', required: true, access: { update: isEditorField } },
+    { name: 'angebot', label: 'Team / Kurs', type: 'relationship', relationTo: 'angebote', required: true, access: { update: isEditorField } },
     {
       type: 'row',
       fields: [

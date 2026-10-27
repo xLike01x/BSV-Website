@@ -181,8 +181,16 @@ export function TerminHinweise() {
   const beginn = useFormFields(([f]) => f.beginn?.value as string | undefined)
   const ende = useFormFields(([f]) => f.ende?.value as string | undefined)
   const nurMitglieder = useFormFields(([f]) => f.nurMitglieder?.value as boolean | undefined)
+  const wiederholung = useFormFields(([f]) => f.wiederholung?.value as string | undefined)
+  const wiederholungBis = useFormFields(([f]) => f.wiederholungBis?.value as string | undefined)
   const h: Hinweis[] = []
-  if (beginn && new Date(beginn) < new Date()) h.push({ art: 'warn', text: 'Der Termin liegt in der Vergangenheit und erscheint nicht mehr auf der Website.' })
+  const serie = Boolean(wiederholung) && wiederholung !== 'keine'
+  // Ende des „Wiederholen bis“-Tages (Datum steht auf 12:00 Uhr)
+  const serieVorbei = serie && Boolean(wiederholungBis) && new Date(wiederholungBis!).getTime() + 12 * 3600000 < Date.now()
+  if (beginn && new Date(beginn) < new Date()) {
+    if (!serie) h.push({ art: 'warn', text: 'Der Termin liegt in der Vergangenheit und erscheint nicht mehr auf der Website.' })
+    else if (serieVorbei) h.push({ art: 'warn', text: 'Die Serie ist beendet und erscheint nicht mehr auf der Website.' })
+  }
   if (beginn && ende && new Date(ende) < new Date(beginn)) h.push({ art: 'warn', text: 'Das Ende liegt vor dem Beginn – bitte prüfen.' })
   h.push({ art: 'info', text: nurMitglieder ? 'Erscheint unter „Termine“ – nur für angemeldete Mitglieder.' : 'Erscheint unter „Termine“ für alle Besucher.' })
   return <HinweisBox hinweise={h} />
@@ -257,7 +265,7 @@ export function MedienHinweise() {
   if (bytes && bytes > 8 * 1024 * 1024)
     h.push({ art: 'warn', text: `Die Datei ist sehr groß (${(bytes / 1024 / 1024).toFixed(1)} MB). Lädt langsam – besser vorher verkleinern (unter 5 MB).` })
   if (!alt) h.push({ art: 'warn', text: 'Bitte eine kurze Bildbeschreibung eingeben.' })
-  if (galerie && !idVon(team)) h.push({ art: 'warn', text: '„In Galerie zeigen“ wirkt nur, wenn ein Team gewählt ist.' })
+  if (galerie && !idVon(team)) h.push({ art: 'warn', text: '„In der Bildergalerie des Teams zeigen“ wirkt nur, wenn ein Ordner (Team / Kurs) gewählt ist.' })
   if (galerie && idVon(team)) h.push({ art: 'info', text: 'Erscheint in der Fotogalerie des gewählten Teams.' })
   if (!idVon(team) && !allgemein && !sponsoren)
     h.push({ art: 'warn', text: 'Noch kein Ordner: rechts ein Team wählen, „Verein allgemein“ oder „Sponsoren-Logo“ anhaken. Sonst können Trainer das Bild nicht benutzen. (Sponsor-Logos kommen beim Speichern des Sponsors automatisch in „Sponsoren“.)' })

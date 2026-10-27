@@ -330,9 +330,12 @@ const konfiguration = buildConfig({
   },
   jobs: {
     access: {
-      // Hintergrund-Aufgaben (derzeit keine eingerichtet) nur durch Admins anstoßen
+      // Hintergrund-Aufgaben über die Schnittstelle nur durch Admins anstoßen
       run: ({ req }: { req: PayloadRequest }): boolean => hasRole(req.user as never, 'admin'),
     },
+    // Geplantes Veröffentlichen („Veröffentlichungsplanung“ bei News und Seiten) legt Aufträge in der Warteschlange an –
+    // ohne diesen Takt würden sie nie ausgeführt. Jede Minute im Server-Prozess, nicht während des Builds.
+    autoRun: [{ cron: '* * * * *', queue: 'default', limit: 10 }],
     tasks: [],
   },
 })

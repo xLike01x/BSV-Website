@@ -4,6 +4,9 @@ import { redirect } from 'next/navigation'
 import type { AdminViewServerProps } from 'payload'
 import React from 'react'
 
+import { einzelrechteVon, einzelrechtLabel } from '@/access/einzelrechte'
+import { nurEinzelrechte } from '@/access/roles'
+
 import type { HilfeGlobal } from '../Hilfe/daten'
 import { anleitungFinden, FAQ, hauptRolle, ROLLEN_PROFIL, type RolleKey } from '../Hilfe/extras'
 import Drucken from './Drucken'
@@ -19,7 +22,17 @@ export default async function Kurzanleitung({ initPageResult, params, searchPara
   const gewuenscht = String((searchParams as Record<string, string> | undefined)?.rolle ?? '') as RolleKey
   // Admins dürfen jede Rolle drucken (zum Verteilen), alle anderen nur die eigene
   const rolle: RolleKey = (eigene === 'admin' || eigene === 'webadmin') && ROLLEN_PROFIL[gewuenscht] ? gewuenscht : eigene
-  const profil = ROLLEN_PROFIL[rolle]
+  // Nur Zusatzrechte (Rolle „Mitglied“): wie auf der Übersicht die freigegebenen Bereiche nennen statt „nur Mitgliederbereich“
+  const nurZusatz = rolle === eigene && nurEinzelrechte(user)
+  const profil = nurZusatz
+    ? {
+        ...ROLLEN_PROFIL.mitglied,
+        label: 'Mitglied mit Zusatzrechten',
+        kurz: 'Ein Admin hat dir einzelne Bereiche der Verwaltung freigegeben.',
+        darf: einzelrechteVon(user).map(einzelrechtLabel),
+        darfNicht: ['Alle anderen Bereiche der Verwaltung'],
+      }
+    : ROLLEN_PROFIL[rolle]
   const anleitungen = profil.anleitungen.map(([b, id]) => anleitungFinden(b, id)).filter(Boolean)
   const global = (await req.payload.findGlobal({ slug: 'hilfe', depth: 0, user, overrideAccess: false }).catch(() => null)) as HilfeGlobal | null
   // Je Rolle eigene Fragen (z. B. Kasse: Export und Bankdaten, Trainer: Ausfall vom Handy)
@@ -66,7 +79,7 @@ export default async function Kurzanleitung({ initPageResult, params, searchPara
                   <li>Website öffnen und oben rechts auf „Anmelden“ klicken.</li>
                   <li>E-Mail und Passwort eingeben.</li>
                   <li>Den 6-stelligen Code aus der Handy-App eingeben (Zwei-Faktor).</li>
-                  <li>Du landest auf der Übersicht der Verwaltung.</li>
+                  <li>Du landest im Mitgliederbereich – dort oben auf „Zur Verwaltung“ klicken (oder direkt die Adresse …/admin öffnen).</li>
                 </ol>
               </div>
               <div>

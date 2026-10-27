@@ -3,6 +3,7 @@ import { Field } from 'payload'
 export const searchFields: Field[] = [
   {
     name: 'slug',
+    label: 'Adresse (Slug)',
     type: 'text',
     index: true,
     admin: {
@@ -11,7 +12,7 @@ export const searchFields: Field[] = [
   },
   {
     name: 'meta',
-    label: 'Meta',
+    label: 'Vorschau',
     type: 'group',
     index: true,
     admin: {
@@ -21,23 +22,23 @@ export const searchFields: Field[] = [
       {
         type: 'text',
         name: 'title',
-        label: 'Title',
+        label: 'Titel',
       },
       {
         type: 'text',
         name: 'description',
-        label: 'Description',
+        label: 'Beschreibung',
       },
       {
         name: 'image',
-        label: 'Image',
+        label: 'Bild',
         type: 'upload',
         relationTo: 'media',
       },
     ],
   },
   {
-    label: 'Categories',
+    label: 'Kategorien',
     name: 'categories',
     type: 'array',
     admin: {

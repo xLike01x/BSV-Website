@@ -368,7 +368,7 @@ export interface User {
      */
     saisonwechsel?: boolean | null;
     /**
-     * Mitglieder · Anträge sehen, beantworten und aufnehmen. IBAN, Kontoinhaber und Export für die Kasse bleiben der Rolle Kasse vorbehalten.
+     * Mitglieder · Anträge und Kündigungen sehen, beantworten und bestätigen. IBAN, Kontoinhaber und Export für die Kasse bleiben der Rolle Kasse vorbehalten.
      */
     antraege?: boolean | null;
     /**
@@ -392,7 +392,7 @@ export interface User {
      */
     papierkorb?: boolean | null;
     /**
-     * Einstellungen · Eigene Tipps in der Hilfe, Rückmeldungen aus „War das hilfreich?“ (ohne Namen).
+     * Einstellungen · Eigene Tipps in der Hilfe, Rückmeldungen aus „Hat dir das geholfen?“ (ohne Namen).
      */
     hilfe?: boolean | null;
   };
@@ -417,7 +417,7 @@ export interface User {
   bestaetigungBis?: string | null;
   googleId?: string | null;
   /**
-   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams, alle 3 Monate „Passt noch?“ für deine Teams, (Kasse) bei neuem Mitgliedsantrag und (Admins) der Monatsbericht. Haken entfernen = keine Mails.
+   * Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für deine Teams, alle 3 Monate „Passt noch?“ für deine Teams, (Kasse) bei neuem Mitgliedsantrag und neuer Kündigung und (Admins) der Monatsbericht. Haken entfernen = keine Mails.
    */
   mailBenachrichtigung?: boolean | null;
   /**
@@ -1100,7 +1100,7 @@ export interface Post {
    */
   aufStartseite?: boolean | null;
   /**
-   * Die Redaktion sieht deinen Vorschlag auf ihrer Startseite und holt die News mit einem Klick auf die Startseite der Website.
+   * Die Redaktion sieht deinen Vorschlag auf ihrer Übersicht in der Verwaltung und holt die News mit einem Klick auf die Startseite der Website.
    */
   startseiteVorschlag?: boolean | null;
   /**
@@ -1914,13 +1914,15 @@ export interface Spielergebnisse {
   createdAt: string;
 }
 /**
+ * Leitet eine alte Adresse auf eine Seite oder News weiter – z. B. wenn eine Seite umbenannt wurde und alte Links noch im Umlauf sind.
+ *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "redirects".
  */
 export interface Redirect {
   id: number;
   /**
-   * You will need to rebuild the website when changing this field.
+   * Alte Adresse ohne https:// und Domain, z. B. /sommerfest-2025. Greift, sobald es unter dieser Adresse keine Seite mehr gibt – kurz nach dem Speichern.
    */
   from: string;
   to?: {
@@ -1960,7 +1962,7 @@ export interface FormSubmission {
   deletedAt?: string | null;
 }
 /**
- * This is a collection of automatically created search results. These results are used by the global site search and will be updated automatically as documents in the CMS are created or updated.
+ * Entsteht automatisch aus den veröffentlichten News und wird für die Suche auf der Website genutzt. Nichts von Hand ändern – fehlt etwas, oben „Neuindizieren“ wählen.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "search".
@@ -3854,7 +3856,7 @@ export interface Animationen {
   createdAt?: string | null;
 }
 /**
- * Die grüne Aktions-Box auf der Startseite und die Bilder der Startseite, der Bereichsseiten und der Vereinsseite. Die Texte dazu stehen unter „Website-Texte“.
+ * Veraltet – nur noch als Sicherung gespeichert. Aktions-Box, Bilder und Texte stehen jetzt unter Website-Aufbau → „Texte & Bilder“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "startseite".
@@ -3992,7 +3994,7 @@ export interface Verein {
         titel: string;
         hinweis?: string | null;
         /**
-         * Dann ist die Datei geschützt: nur angemeldete Mitglieder können sie öffnen – auch nicht mit dem Link.
+         * Dann ist die Datei geschützt: Nur angemeldete Mitglieder können sie öffnen – andere auch nicht mit dem Link.
          */
         nurMitglieder?: boolean | null;
         /**
@@ -4098,7 +4100,7 @@ export interface Datenschutz {
    */
   personenPapierkorbTage?: number | null;
   /**
-   * Empfohlen. Ohne Haken erinnert nur das Dashboard. Ablauf: Papierkorb (30 Tage zurückholbar) → Web-Admin-Papierkorb (Frist oben) → endgültig gelöscht. Liegengebliebene Passanträge werden direkt gelöscht.
+   * Empfohlen. Ohne Haken erinnert nur die Übersicht. Ablauf: Papierkorb (30 Tage zurückholbar) → Web-Admin-Papierkorb (Frist oben) → endgültig gelöscht. Liegengebliebene Passanträge werden direkt gelöscht.
    */
   automatisch?: boolean | null;
   standardsOktober2026?: boolean | null;
@@ -4177,6 +4179,7 @@ export interface Hilfe {
           | 'mitgliedsantraege'
           | 'passantraege'
           | 'mitgliedschaften'
+          | 'kuendigungen'
           | 'kontaktanfragen'
           | 'users'
           | 'menue'
@@ -4186,6 +4189,8 @@ export interface Hilfe {
           | 'statistik'
           | 'sicherheit'
           | 'texte'
+          | 'spielergebnisse'
+          | 'animationen'
           | 'forms'
           | 'form-submissions'
           | 'redirects'
@@ -4253,6 +4258,7 @@ export interface Hilfe {
               | 'mitgliedsantraege'
               | 'passantraege'
               | 'mitgliedschaften'
+              | 'kuendigungen'
               | 'kontaktanfragen'
               | 'users'
               | 'menue'
@@ -4262,6 +4268,8 @@ export interface Hilfe {
               | 'statistik'
               | 'sicherheit'
               | 'texte'
+              | 'spielergebnisse'
+              | 'animationen'
               | 'forms'
               | 'form-submissions'
               | 'redirects'
@@ -4291,7 +4299,7 @@ export interface Hilfe {
   createdAt?: string | null;
 }
 /**
- * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Admin-Rechte sind bewusst nicht einstellbar. Bei „Nur ansehen“ schaltet ein entfernter Haken den Bereich für diese Rolle ganz aus. Wie sich das auswirkt, zeigt der Reiter „Übersicht“ unter „Was darf welche Rolle?“.
+ * Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Admin-Rechte sind bewusst nicht einstellbar. Bei „Nur ansehen“ schaltet ein entfernter Haken den Bereich für diese Rolle ganz aus. Wie sich das auswirkt, zeigt „Übersicht“ → Reiter „Rechte je Rolle“.
  *
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "rollenRechte".

@@ -22,13 +22,13 @@ export const EINZELRECHTE = [
   { key: 'teams', gruppe: 'Sport', label: 'Alle Teams & Kurse bearbeiten', text: 'Anlegen, Zeiten, Texte, Verantwortliche, aktiv/inaktiv – für alle Teams, nicht nur die eigenen.' },
   { key: 'ausfaelle', gruppe: 'Sport', label: 'Trainingsausfälle für alle Teams melden', text: 'Nicht nur für die eigenen Teams.' },
   { key: 'saisonwechsel', gruppe: 'Sport', label: 'Saisonwechsel (Fußball) durchgehen', text: 'Die Liste zum Saisonwechsel öffnen und abhaken (ohne E-Mail-Adressen der Verantwortlichen).' },
-  { key: 'antraege', gruppe: 'Mitglieder', label: 'Mitgliedsanträge bearbeiten – ohne Bankdaten', text: 'Anträge sehen, beantworten und aufnehmen. IBAN, Kontoinhaber und Export für die Kasse bleiben der Rolle Kasse vorbehalten.' },
+  { key: 'antraege', gruppe: 'Mitglieder', label: 'Mitgliedsanträge bearbeiten – ohne Bankdaten', text: 'Anträge und Kündigungen sehen, beantworten und bestätigen. IBAN, Kontoinhaber und Export für die Kasse bleiben der Rolle Kasse vorbehalten.' },
   { key: 'mitgliedschaften', gruppe: 'Mitglieder', label: 'Mitgliedschaften ansehen – nur lesen', text: 'Mitgliedsnummer, Eintritt, Abteilungen (ohne Bankdaten).' },
   { key: 'verein', gruppe: 'Einstellungen', label: 'Vereinsdaten bearbeiten', text: 'Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular, Downloads.' },
   { key: 'datenschutz', gruppe: 'Einstellungen', label: 'Datenschutz-Fristen einstellen', text: 'Fristen ansehen und verlängern, Fälliges in den Papierkorb verschieben. Kürzer als der Standard nur Admins; nichts wird direkt gelöscht.' },
   { key: 'statistik', gruppe: 'Technik', label: 'Besucherstatistik ansehen', text: 'Seitenaufrufe und Suchbegriffe der Website – ohne Cookies und ohne IP-Adressen.' },
   { key: 'papierkorb', gruppe: 'Technik', label: 'Papierkorb: Gelöschtes wiederherstellen', text: 'Nur der normale Papierkorb, ohne Bereiche mit persönlichen Daten; Bilder nur mit „Bilder“, Teams nur mit „Alle Teams“. Endgültig löschen bleibt dem Web-Admin.' },
-  { key: 'hilfe', gruppe: 'Einstellungen', label: 'Hilfe-Texte ergänzen und Rückmeldungen lesen', text: 'Eigene Tipps in der Hilfe, Rückmeldungen aus „War das hilfreich?“ (ohne Namen).' },
+  { key: 'hilfe', gruppe: 'Einstellungen', label: 'Hilfe-Texte ergänzen und Rückmeldungen lesen', text: 'Eigene Tipps in der Hilfe, Rückmeldungen aus „Hat dir das geholfen?“ (ohne Namen).' },
 ] as const
 
 export type EinzelrechtKey = (typeof EINZELRECHTE)[number]['key']

@@ -55,7 +55,7 @@ export const PAKETE: Record<string, Programm> = {
   clsx: { gruppe: 'Darstellung', name: 'clsx', text: 'Kleiner Helfer, der Gestaltungsklassen zusammensetzt.' },
   'tailwind-merge': { gruppe: 'Darstellung', name: 'tailwind-merge', text: 'Löst Widersprüche zwischen Gestaltungsklassen auf (z. B. zwei Abstände für dasselbe Element).' },
   'react-hook-form': { gruppe: 'Funktionen', name: 'React Hook Form', text: 'Steuert die Formulare auf der Website: Eingaben prüfen, Fehler anzeigen, absenden.' },
-  'driver.js': { gruppe: 'Funktionen', name: 'driver.js', text: 'Die geführte Tour durch die Verwaltung („Tour starten“ im Dashboard).' },
+  'driver.js': { gruppe: 'Funktionen', name: 'driver.js', text: 'Die geführte Tour durch die Verwaltung („Tour starten“ auf der Übersicht).' },
   sharp: { gruppe: 'Funktionen', name: 'sharp (Bildbearbeitung)', text: 'Verkleinert hochgeladene Bilder auf passende Größen und entfernt dabei Kamera-Daten (z. B. GPS-Ort).' },
   qrcode: { gruppe: 'Funktionen', name: 'qrcode', text: 'Erzeugt QR-Codes: für den digitalen Mitgliedsausweis und zum Einrichten der Zwei-Faktor-Anmeldung.' },
   tar: { gruppe: 'Funktionen', name: 'tar', text: 'Packt die Datensicherung (Datenbank und hochgeladene Dateien) in eine Datei und wieder aus.' },

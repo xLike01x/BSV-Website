@@ -126,7 +126,7 @@ export default function SicherungClient({ sicherungen, wartung }: { sicherungen:
             <strong>Persönliche Daten:</strong> Trotz Verschlüsselung nicht per E-Mail verschicken und nicht öffentlich ablegen. Ältere, unverschlüsselte Sicherungen verschlüsselt der Befehl <code>pnpm sicherung:alte-verschluesseln</code>.
           </li>
           <li>
-            <strong>Wie oft?</strong> Automatisch jeden Tag (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Vor größeren Änderungen zusätzlich „Sicherung jetzt erstellen“. Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.
+            <strong>Wie oft?</strong> Automatisch jeden Tag (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Vor größeren Änderungen zusätzlich „Sicherung jetzt erstellen“. Ist die letzte Sicherung älter als 7 Tage, erinnert die Übersicht.
           </li>
         </ul>
       </section>

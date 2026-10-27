@@ -62,6 +62,13 @@ export async function aufgabenFuer(req: PayloadRequest, rollen: string[]): Promi
       a.push({ key: 'antraege', art: 'warn', symbol: '📝', text: `${neu.totalDocs} ${neu.totalDocs === 1 ? 'neuer Mitgliedsantrag wartet' : 'neue Mitgliedsanträge warten'} auf Prüfung.`, href: '/admin/collections/mitgliedsantraege?where[status][equals]=neu', link: 'Prüfen' })
     if (offenExport.totalDocs && (admin || rollen.includes('kasse')))
       a.push({ key: 'export', art: 'info', symbol: '📥', text: `${offenExport.totalDocs} aufgenommene${offenExport.totalDocs === 1 ? 'r Antrag ist' : ' Anträge sind'} noch nicht für die Kasse exportiert.`, href: '/admin/collections/mitgliedsantraege', link: 'Exportieren' })
+    // Kündigungen: neue prüfen, bestätigte noch im DFBnet austragen (gleiche Personen wie bei den Anträgen)
+    const zaehleK = (status: string) => req.payload.count({ collection: 'kuendigungen', where: { status: { equals: status } }, user: req.user, overrideAccess: false, req }).catch(() => ({ totalDocs: 0 }))
+    const [kNeu, kDfb] = await Promise.all([zaehleK('neu'), zaehleK('bestaetigt')])
+    if (kNeu.totalDocs)
+      a.push({ key: 'kuendigungen', art: 'warn', symbol: '📄', text: `${kNeu.totalDocs} ${kNeu.totalDocs === 1 ? 'neue Kündigung wartet' : 'neue Kündigungen warten'} auf Prüfung.`, href: '/admin/collections/kuendigungen?where[status][equals]=neu', link: 'Prüfen' })
+    if (kDfb.totalDocs)
+      a.push({ key: 'kuendigungen-dfbnet', art: 'info', symbol: '📋', text: `${kDfb.totalDocs} bestätigte ${kDfb.totalDocs === 1 ? 'Kündigung muss' : 'Kündigungen müssen'} noch im DFBnet ausgetragen werden.`, href: '/admin/collections/kuendigungen?where[status][equals]=bestaetigt', link: 'Ansehen' })
   }
   // Saisonwechsel: im Sommer (15. Juni bis 30. September) erinnern, wenn er in diesem Jahr noch nicht abgeschlossen ist
   if (admin || rollen.includes('redaktion') || hatRecht(req.user, 'saisonwechsel')) {

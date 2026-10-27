@@ -23,12 +23,12 @@ export const HILFE: Record<string, HilfeText> = {
     kurz: 'Deine Startseite in der Verwaltung. Hier siehst du auf einen Blick, was im Verein gerade los ist.',
     tun: [
       'Ganz oben: „Du bist …“ – aufklappen zeigt, was deine Rolle darf, mit Knopf „Kurzanleitung“ zum Ausdrucken.',
-      'Darunter Hinweise, was gerade zu tun ist (z. B. neue Anträge, fehlende Trainingszeiten) – „Prüfen ›“ öffnet die Stelle.',
+      'Darunter Hinweise, was gerade zu tun ist (z. B. neue Anträge, fehlende Trainingszeiten) – der Link daneben (z. B. „Prüfen ›“ oder „Ansehen ›“) öffnet die Stelle.',
       '„Erste Schritte“: eine kleine Checkliste für den Start.',
       'Redaktion: „⭐ Für die Startseite vorgeschlagen“ – mit „Auf die Startseite“ oder „Nein, danke“ entscheiden.',
       'Trainer und Team-Redaktion: „Mein Team“ mit Zeiten, Ausfällen, offenen Anfragen und News – Knöpfe „+ News“, „Ausfall melden“, „Zeiten & Infos“.',
       'Die Zahlen-Karten öffnen per Klick die passende Liste. Dazu „Schnellzugriff“ für die häufigsten Aufgaben, „Letzte Aktivitäten“ und ganz unten „Alle Bereiche“.',
-      'Links in der Seitenleiste findest du alle Bereiche, die du bearbeiten darfst – sortiert nach Posteingang, Inhalte, Website-Aufbau, Sport, Mitglieder und Einstellungen.',
+      'Links in der Seitenleiste findest du alle Bereiche, die du bearbeiten darfst – sortiert nach Posteingang, Inhalte, Website-Aufbau, Sport, Mitglieder, Einstellungen und Technik.',
       'Eine orange Zahl im „Posteingang“ zeigt, wie viele neue Anträge und Anfragen auf dich warten.',
     ],
     wirkung: ['Auf dieser Seite änderst du nichts – sie ist nur zum Nachschauen und Loslegen.'],
@@ -69,7 +69,7 @@ export const HILFE: Record<string, HilfeText> = {
     titel: 'Termine',
     kurz: 'Der Vereinskalender: Feste, Turniere, Versammlungen und andere Veranstaltungen.',
     wozu: {
-      text: 'Damit alle wissen, wann was stattfindet. Termine erscheinen im Kalender und auf der Startseite.',
+      text: 'Damit alle wissen, wann was stattfindet. Termine erscheinen im Kalender der Website und die nächsten im Mitgliederbereich; mit „Countdown auf der Startseite“ zählt die Startseite bis zu einem Termin herunter.',
       beispiele: ['Jahreshauptversammlung', 'Sommerfest', 'Hallenturnier der E-Jugend'],
     },
     tun: [
@@ -77,6 +77,9 @@ export const HILFE: Record<string, HilfeText> = {
       'Einen Termin mit Titel, Beginn, Ende und Ort anlegen.',
       'Den Bereich wählen (Verein, Fußball, Kids, Breitensport) – davon hängt die Farbe ab.',
       'Mit „nur für Mitglieder“ ist der Termin nur nach dem Login sichtbar.',
+      '„Wiederholen“ für regelmäßige Termine (z. B. jeden Monat) – einmal anlegen statt mehrfach.',
+      '„Zu-/Absage im Mitgliederbereich“ anhaken, wenn Mitglieder unter „Mein BSV“ zu- oder absagen sollen – die Liste erscheint dann unten im Termin.',
+      'Der Countdown auf der Startseite erscheint nur bei Terminen, die alle sehen dürfen (nicht bei „nur für Mitglieder“).',
     ],
     wirkung: [
       'Termine erscheinen auf der Seite „Termine“, nach Monaten sortiert.',
@@ -179,8 +182,8 @@ export const HILFE: Record<string, HilfeText> = {
     wirkung: [
       'Die Seite selbst ändert nichts an den Teams – sie zeigt nur an, was auffällt (⚠️), und merkt sich die Häkchen.',
       'Orange markiert: keine Verantwortlichen, Verantwortliche seit über 6 Monaten nicht angemeldet oder ohne Trainer-Rolle, keine Trainingszeiten, kein Titelbild, Fotos mit Personen älter als 2 Jahre.',
-      'Breitensport (BSV Kids, Erwachsene & Senioren) steht hier nicht – dort meldet das Dashboard fehlende oder lange nicht geänderte Trainingszeiten und ungenutzte Zugänge.',
-      'Vom 15. Juni bis 30. September erinnert das Dashboard, solange der Saisonwechsel in diesem Jahr nicht abgeschlossen ist.',
+      'Breitensport (BSV Kids, Erwachsene & Senioren) steht hier nicht – dort meldet die Übersicht fehlende oder lange nicht geänderte Trainingszeiten und ungenutzte Zugänge.',
+      'Vom 15. Juni bis 30. September erinnert die Übersicht, solange der Saisonwechsel in diesem Jahr nicht abgeschlossen ist.',
     ],
     tipps: [
       'Admin und Redaktion sehen die Seite. Häkchen setzen geht auch zu zweit gleichzeitig.',
@@ -233,7 +236,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Der Ausfall erscheint sofort gut sichtbar auf der Seite des Teams und im Mitgliederbereich.',
       'Eltern und Mitglieder sehen so schnell, dass sie nicht kommen müssen.',
     ],
-    tipps: ['Als Trainer siehst du nur deine eigenen Teams.'],
+    tipps: ['Als Trainer siehst du in der Liste alle Ausfälle, meldest und änderst aber nur die deiner eigenen Teams.'],
   },
 
   probetraining: {
@@ -251,7 +254,7 @@ export const HILFE: Record<string, HilfeText> = {
     wirkung: ['Der Status ist nur für euch intern – die anfragende Person sieht ihn nicht.', 'Notizen und Statuswechsel werden mit Name und Uhrzeit gespeichert und lassen sich nicht nachträglich ändern.'],
     tipps: [
       'Bitte zeitnah antworten – das ist oft der erste Kontakt mit dem Verein.',
-      'Die Daten sind persönlich. Nicht weitergeben und erledigte Anfragen regelmäßig löschen.',
+      'Die Daten sind persönlich. Nicht weitergeben. Erledigte Anfragen löscht die Website automatisch nach der Datenschutz-Frist (Standard 6 Monate).',
     ],
   },
 
@@ -267,7 +270,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Der Kasten „Antrag prüfen“ zeigt Alter, Beitrag, ob die IBAN gültig ist und ob es schon einen Antrag oder eine Mitgliedschaft dieser Person gibt.',
       'Unten im Kasten „✓ Aufnehmen“, „❓ Rückfrage“ oder „Ablehnen“ klicken. Es erscheint eine fertige E-Mail an die Person – Text anpassen (Stellen in [ECKIGEN KLAMMERN] ausfüllen) und bestätigen. Ohne Haken geht keine Mail raus.',
       'Bei „Aufgenommen“ entsteht automatisch der Eintrag für den digitalen Mitgliedsausweis (unter „Mitgliedschaften“) – dort nur noch die Mitgliedsnummer ergänzen.',
-      'Mit dem Zusatzrecht „Mitgliedsanträge bearbeiten – ohne Bankdaten“ siehst und beantwortest du Anträge, aber IBAN, Kontoinhaber und SEPA-Mandat bleiben ausgeblendet. Löschen und „Für die Kasse exportieren“ macht die Kasse.',
+      'Mit dem Zusatzrecht „Mitgliedsanträge bearbeiten – ohne Bankdaten“ siehst und beantwortest du Anträge, aber IBAN, Kontoinhaber und SEPA-Mandat bleiben ausgeblendet. Löschen und den Export („📥 … neue exportieren“) macht die Kasse.',
       'Für DFBnet/Mitgliederliste: in der Liste oben „📥 … neue exportieren“ – du bekommst eine Excel-Datei (CSV) aller aufgenommenen, noch nicht exportierten Anträge, ohne Bankdaten.',
     ],
     wirkung: [
@@ -277,9 +280,9 @@ export const HILFE: Record<string, HilfeText> = {
       'Die Texte der E-Mails änderst du unter Einstellungen → „E-Mail-Vorlagen“.',
     ],
     tipps: [
-      'Hier stehen Bankdaten. Nur Kasse und Vorstand haben Zugriff – bitte nichts ausdrucken oder weiterleiten.',
+      'Hier stehen Bankdaten. Bearbeiten dürfen Kasse und Admin (mit Zusatzrecht auch ohne Bankdaten); „Nur ansehen“ sieht sie, solange der Haken unter Rollen & Rechte gesetzt ist. Bitte nichts ausdrucken oder weiterleiten.',
       'Die Export-Datei enthält Namen und Adressen: nach dem Übertragen löschen und nicht per E-Mail verschicken.',
-      '„Aufgenommen“ ist endgültig – danach gibt es keine Knöpfe mehr. Ein Austritt wird unter „Mitgliedschaften“ mit „Gültig bis“ eingetragen. Weitere Nachrichten an die Person über „✉️ Antworten“.',
+      '„Aufgenommen“ ist endgültig – danach gibt es keine Knöpfe mehr. Kündigungen aus dem Mitgliederbereich bearbeitest du unter Posteingang → „Kündigungen“ – „Bestätigen“ setzt „Gültig bis“ automatisch. Austritte ohne Online-Kündigung: unter „Mitgliedschaften“ „Gültig bis (Austritt)“ eintragen. Weitere Nachrichten an die Person über „✉️ Antworten“.',
       'Solange der E-Mail-Versand noch nicht eingerichtet ist, bietet der Antrag nach dem Bestätigen „Im E-Mail-Programm öffnen“ an – mit fertigem Text.',
       'Übernommene Anträge nach der vorgeschriebenen Frist löschen.',
     ],
@@ -303,7 +306,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Nach „Spielerlaubnis erteilt“ oder „Abgelehnt“ werden Ausweis, Passfoto und Erklärungen automatisch gelöscht (Standard 30 Tage). Der unterschriebene Passantrag wird 2 Jahre aufbewahrt und dann samt Antrag gelöscht. Beide Fristen stehen unter „Datenschutz-Fristen“.',
     ],
     tipps: [
-      'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ (alle Teams) und die Trainer des jeweiligen Teams. Team-Redaktion und andere Trainer sehen sie nicht.',
+      'Sehen dürfen die Anträge: Admin, die Rolle „Passwesen“ und das Zusatzrecht „Passanträge aller Teams“ (alle Teams), die Trainer des jeweiligen Teams (abschaltbar unter Rollen & Rechte) sowie „Nur ansehen“ – diese aber nie die Ausweis- und Fotodateien. Team-Redaktion, Kasse und andere Trainer sehen sie nicht.',
       'Es sind Ausweiskopien von Kindern dabei – bitte nichts herunterladen, ausdrucken oder weiterleiten, was nicht für das DFBnet nötig ist.',
       'Der Link zum offiziellen Formular (WDFV) ist unter „Vereinsdaten“ → „Fußball: Passantrag“ hinterlegt – dort auch änderbar.',
     ],
@@ -321,13 +324,37 @@ export const HILFE: Record<string, HilfeText> = {
       'Für Mitglieder ohne Online-Antrag: „Neu erstellen“, Name, Nummer, „Mitglied seit“, Art („Mitgliedschaft“) und die E-Mail eintragen.',
       'Sichtbar wird der Ausweis im verknüpften Benutzerkonto. Das passiert automatisch, wenn du eine Registrierung mit gleicher E-Mail freigibst – oder du wählst das Konto bei „Benutzerkonto“ selbst aus.',
       'Bei Kindern das Konto der Eltern verknüpfen – dann erscheinen alle Ausweise der Familie dort.',
-      'Austritt: „Gültig bis (Austritt)“ setzen oder den Haken „Mitgliedschaft gültig“ entfernen.',
+      'Austritt: Bei einer Kündigung über die Website setzt „Bestätigen“ unter Posteingang → „Kündigungen“ das Datum automatisch. Sonst „Gültig bis (Austritt)“ setzen oder den Haken „Mitgliedschaft gültig“ entfernen.',
     ],
     wirkung: [
       'Der Ausweis aktualisiert sich sofort – Kurse, Gültigkeit und Daten kommen immer frisch aus diesen Einträgen.',
       'Der QR-Code auf dem Ausweis führt zu einer Prüfseite, die live „gültig“ oder „nicht gültig“ zeigt – nur mit Vorname, Anfangsbuchstabe des Nachnamens und Nummer.',
     ],
     tipps: ['Die laufende Uhr und der schimmernde Streifen zeigen beim Vorzeigen, dass es kein Screenshot ist.'],
+  },
+
+  kuendigungen: {
+    titel: 'Kündigungen',
+    kurz: 'Kündigungen aus dem Mitgliederbereich (Mein BSV → Mitgliedschaft kündigen) mit unterschriebenem Schreiben – laut Satzung wirksam zum Ende des Quartals, in dem sie eingehen.',
+    wozu: {
+      text: 'Damit Mitglieder ohne Brief kündigen können und die Kasse alles an einem Ort prüft.',
+      beispiele: ['Ein Mitglied zieht weg', 'Eine Familie kündigt für alle', 'Ein Kind hört mit dem Turnen auf'],
+    },
+    tun: [
+      'Kündigung öffnen, oben „🙋 Ich kümmere mich“.',
+      'Im Kasten „Kündigung prüfen“: „📄 Unterschriebenes Schreiben öffnen“ – unterschrieben? Name richtig? Bei Kindern die Eltern?',
+      '„✓ Bestätigen“ (setzt „Gültig bis“ aufs Quartalsende, fertige E-Mail), „❓ Rückfrage“ oder „Nicht annehmen“.',
+      'Danach von Hand im DFBnet austragen und „✓ Im DFBnet ausgetragen“ klicken.',
+    ],
+    wirkung: [
+      'Das Mitglied bekommt beim Hochladen eine Eingangsbestätigung, die Kasse eine E-Mail.',
+      'Am Tag nach dem Quartalsende zeigt der Ausweis automatisch „nicht gültig“.',
+      'Gelöscht wird nach der Datenschutz-Frist „Kündigungen …“ (Standard 12 Monate) – direkt, ohne Papierkorb.',
+    ],
+    tipps: [
+      'Bearbeiten dürfen Kasse, Admin und das Zusatzrecht „Mitgliedsanträge bearbeiten“.',
+      'Die E-Mail-Texte stehen unter Einstellungen → „E-Mail-Vorlagen“ → Reiter „Kündigungen“.',
+    ],
   },
 
   kontaktanfragen: {
@@ -343,7 +370,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Im Feld „Anliegen“ steht, worum es geht (Auswahl „Worum geht es?“ im Formular).',
     ],
     wirkung: ['Der Status ist nur intern sichtbar.', 'Neue Nachrichten gehen zusätzlich per E-Mail an die Empfänger des Anliegens (festgelegt unter Vereinsdaten). Auf die E-Mail antworten = Antwort direkt an den Absender.'],
-    tipps: ['Erledigte Anfragen regelmäßig löschen – es sind persönliche Daten.'],
+    tipps: ['Es sind persönliche Daten: Erledigte Anfragen löscht die Website automatisch nach der Datenschutz-Frist (Standard 6 Monate).'],
   },
 
   users: {
@@ -361,8 +388,8 @@ export const HILFE: Record<string, HilfeText> = {
       'Einzelne Rechte nur für diese Person: beim Benutzer unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen – Häkchen setzen, speichern. Vergeben kann das nur ein Web-Admin; Admins sehen den Abschnitt nur, wenn die Person schon Zusatzrechte hat. Es gibt sie für fast jeden Bereich (z. B. nur News, nur Sponsoren, nur Vereinsdaten, Mitgliedsanträge ohne Bankdaten) – nie für Benutzerverwaltung, Admin-Rechte, Bankdaten und Datensicherung.',
       'Über die Rolle legst du fest, was jemand darf:',
       '• Web-Admin: Technik, Admin-Konten, Datensicherung · Admin: alles im Verein außer Admin-Rechte',
-      '• Redaktion: alle News, Termine, Seiten, Menü, Texte & Bilder, Sponsoren, Kontaktanfragen · Kasse: Mitgliedsanträge, Mitgliedschaften, Registrierungen · Passwesen: Passanträge aller Teams',
-      '• Trainer / Team-Redaktion: nur die eigenen Teams · Mitglied: nur der Mitgliederbereich',
+      '• Redaktion: alle News, Termine, Seiten, Menü, Texte & Bilder, Sponsoren, Kontaktanfragen · Kasse: Mitgliedsanträge, Kündigungen, Mitgliedschaften, Registrierungen, Vereinsdaten · Passwesen: Passanträge aller Teams',
+      '• Trainer / Team-Redaktion: nur die eigenen Teams · Nur ansehen: alles lesen, nichts ändern (sensible Bereiche unter Rollen & Rechte abschaltbar) · Mitglied: nur der Mitgliederbereich',
       'Welche Teams jemand pflegt, wählst du direkt unter den Rollen bei „Team-Berechtigungen“ (nur Admins) – oder beim Team unter „Verantwortliche“.',
       'Mitglieder können sich auch selbst registrieren (E-Mail + Passwort). Nach Klick auf den Link in der Bestätigungs-E-Mail warten sie unter „Posteingang → Registrierungen“ auf deine Freigabe – die Teams & Kurse, die sie angekreuzt haben, sind dort schon vorausgewählt.',
     ],
@@ -373,7 +400,7 @@ export const HILFE: Record<string, HilfeText> = {
     tipps: [
       'Rollen sparsam vergeben: Jeder bekommt nur, was er wirklich braucht.',
       'Wer den Verein verlässt, dessen Konto bitte löschen – das Profilfoto wird dabei mit gelöscht.',
-      'Profilfotos laden Mitglieder selbst hoch. Sehen können sie nur das Mitglied, Admin/Kasse und die Trainer seiner Kurse.',
+      'Profilfotos laden Mitglieder selbst hoch. Sehen können sie nur das Mitglied, Admin/Kasse, die Trainer seiner Kurse (abschaltbar unter Rollen & Rechte) und „Nur ansehen“ (ebenfalls abschaltbar). Nie öffentlich.',
     ],
   },
 
@@ -515,7 +542,7 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Unter jedem Text: „📍 Auf der Website zeigen“ öffnet die Seite und lässt genau diesen Text kurz grün aufleuchten.',
-      'Oben einen Reiter wählen: Startseite, Fußball, Breitensport, Verein oder Weitere Seiten (News, Termine, Kontakt, Antrag, Probetraining, Fußzeile).',
+      'Oben einen Reiter wählen: Startseite, Fußball, Breitensport, Verein oder Weitere Seiten (Fußzeile, Web-App, News, Termine, Kontakt, Mitglied werden, Sponsoren, Galerie, Mitmachen, Probetraining).',
       'Im Reiter „Startseite“ stehen die Felder in derselben Reihenfolge wie auf der Seite: ganz oben die Bilder (Bilder oben, zwei Schilder, Kachel-Bilder), dann Kopfbereich, Zahlen-Leiste, Kacheln, Angebotsfinder, News, „Mitglied werden“ und ganz unten die grüne Aktions-Box.',
       'Bild tauschen: über das × entfernen, mit „Aus vorhandenen auswählen“ ein neues aus der Mediathek wählen. Die Reiter „Breitensport“ und „Verein“ haben oben ihre Seitenbilder.',
       'Text im Feld ändern und oben rechts speichern.',
@@ -527,6 +554,34 @@ export const HILFE: Record<string, HilfeText> = {
       'Menü und Fußzeilen-Links: unter „Menü & Fußzeile“.',
       'Platzhalter in geschweiften Klammern bitte genau so stehen lassen.',
       'Ein Zeilenumbruch in einer Überschrift macht die zweite Zeile grün.',
+    ],
+  },
+
+  spielergebnisse: {
+    titel: 'Spielecke-Rangliste',
+    kurz: 'Spitznamen und Ergebnisse aus der Spielecke (/spielecke) – zum Prüfen und Löschen.',
+    tun: [
+      'Unpassende Spitznamen: Haken vor den Eintrag setzen, oben „Löschen“.',
+      'Sollen Einträge erst nach Freigabe erscheinen: Website-Aufbau → „Animationen“ → Haken „Spitznamen erst nach Freigabe zeigen“. Dann hier „In der Rangliste sichtbar“ setzen.',
+    ],
+    wirkung: [
+      'Gelöschte Einträge verschwinden sofort aus der Rangliste (ohne Papierkorb).',
+      'Einträge älter als 30 Tage löscht die Website automatisch – außer den 10 besten aller Zeiten je Spiel.',
+    ],
+    tipps: ['Gespeichert werden nur Spitzname, Ergebnis und Zeitpunkt – keine Namen, Konten oder IP-Adressen.'],
+  },
+
+  animationen: {
+    titel: 'Animationen',
+    kurz: 'Bewegte Effekte, Vereinswappen und die Spiele der Spielecke – jeder Teil einzeln abschaltbar.',
+    tun: [
+      'Ganz oben „Animationen auf der Website“: Haken raus = die ganze Website ohne Bewegung.',
+      'Darunter einzelne Effekte, die Wappen-Gestaltung und die Spiele (Elfmeterschießen, Ball hochhalten, Memory, Hütchenspiel) samt Rangliste ein- oder ausschalten.',
+      'Speichern – die Website zeigt es kurz danach.',
+    ],
+    wirkung: [
+      'Wer im Gerät „Bewegung reduzieren“ eingestellt hat, sieht die Effekte nicht.',
+      'Ein abgeschaltetes Spiel verschwindet aus der Spielecke.',
     ],
   },
 
@@ -557,7 +612,7 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: ['Einträge ansehen und nach Formular filtern.'],
     wirkung: ['Nur für euch sichtbar.'],
-    tipps: ['Nach der Veranstaltung die Eingänge löschen – es sind persönliche Daten.'],
+    tipps: ['Es sind persönliche Daten: Die Website löscht Eingänge automatisch nach der Datenschutz-Frist (Standard 12 Monate). Früher löschen kann ein Admin.'],
   },
 
   redirects: {
@@ -586,7 +641,7 @@ export const HILFE: Record<string, HilfeText> = {
 
   rollen: {
     titel: 'Rollen & Rechte',
-    kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich? Zu finden links unter „Einstellungen“.',
+    kurz: 'Auf einen Blick: Wer hat welche Rolle – und für welche Teams ist jemand verantwortlich? Zu finden links unter „Mitglieder“.',
     wozu: {
       text: 'Damit ihr schnell seht, wer welche Rechte hat – und wo noch jemand fehlt.',
       beispiele: ['Wer pflegt die D-Jugend?', 'Hat der neue Trainer schon Zwei-Faktor?'],
@@ -610,7 +665,7 @@ export const HILFE: Record<string, HilfeText> = {
       'Wer keinen Zugang zur Verwaltung hat, zeigt der Kasten „🚫 Kein Zugang zur Verwaltung“ unter „Rechte je Rolle“. Unter „Nach Person“ lassen sich Konten mit und ohne Verwaltungs-Zugang getrennt anzeigen.',
       '⚠️ markiert Lücken: Trainer ohne Team, Teams ohne Verantwortliche, Zugänge ohne Zwei-Faktor.',
     ],
-    tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Nur Admins und Web-Admins sehen diese Seite.'],
+    tipps: ['Einmal im Monat kurz durchschauen: Hat noch jemand Rechte, der nicht mehr dabei ist?', 'Sehen können diese Seite Admins, Web-Admins und „Nur ansehen“ (abschaltbar unter „Rechte anpassen“).'],
   },
 
   updates: {
@@ -628,7 +683,7 @@ export const HILFE: Record<string, HilfeText> = {
       '„🔄 Jetzt prüfen“ prüft sofort (sonst täglich und nach jedem Start; höchstens einmal pro Minute).',
       'Website-Pakete (Next.js, Payload …) nicht selbst aktualisieren: Update in Auftrag geben, testen lassen, dann auf dem Server ./deploy/update.sh.',
     ],
-    wirkung: ['Die Seite zeigt nur an – sie installiert nichts von selbst.', 'Sicherheitsupdates erscheinen zusätzlich oben im Dashboard und im Monatsbericht.'],
+    wirkung: ['Die Seite zeigt nur an – sie installiert nichts von selbst.', 'Sicherheitsupdates erscheinen zusätzlich oben auf der Übersicht und im Monatsbericht.'],
     tipps: [
       'Übertragen werden nur Paketnamen und Versionsnummern an npm, endoflife.date und nodejs.org – keine Daten des Vereins.',
       'Abschalten (z. B. ohne Internet): BSV_PAKETPRUEFUNG=aus in der .env.',
@@ -652,8 +707,8 @@ export const HILFE: Record<string, HilfeText> = {
     ],
     wirkung: [
       'Die Sicherung ändert nichts an der Website.',
-      'Ist die letzte Sicherung älter als 7 Tage, erinnert das Dashboard.',
-      'Das Dashboard erinnert außerdem, wenn der Speicher zu 80 % voll ist, Node.js oder PostgreSQL in den nächsten 6 Monaten keine Updates mehr bekommen, die Website seit 3 Monaten nicht aktualisiert wurde oder der Wiederherstellungs-Test über ein Jahr her ist.',
+      'Ist die letzte Sicherung älter als 7 Tage, erinnert die Übersicht.',
+      'Die Übersicht erinnert außerdem, wenn der Speicher zu 80 % voll ist, Node.js oder PostgreSQL in den nächsten 6 Monaten keine Updates mehr bekommen, die Website seit 3 Monaten nicht aktualisiert wurde oder der Wiederherstellungs-Test über ein Jahr her ist.',
     ],
     tipps: [
       'Nur Web-Admins sehen die Datensicherung – die Datei enthält alle Daten, auch die Zugänge.',
@@ -685,28 +740,28 @@ export const HILFE: Record<string, HilfeText> = {
       beispiele: ['Erledigte Kontaktanfragen nach 6 Monaten', 'Mitgliedsanträge nach der Übernahme in die Mitgliederverwaltung', 'Anmeldungen zum Sommerfest nach einem Jahr'],
     },
     tun: [
-      'Oben siehst du, was gerade über der Frist ist – „🧹 Jetzt aufräumen“ verschiebt es in den Papierkorb.',
-      'Fristen in Monaten anpassen und speichern.',
-      'Optional „Automatisch aufräumen“ anhaken – dann passiert das einmal täglich von selbst.',
-      'Unten „Auskunft für eine Person“ (Admins): E-Mail eingeben, „📄 Auskunft herunterladen“.',
+      'Oben siehst du, was gerade über der Frist ist – „🧹 Jetzt aufräumen“ verschiebt es in den Papierkorb (Kündigungen und nie abgeschlossene Passanträge werden direkt gelöscht).',
+      'Fristen (in Monaten bzw. Tagen) anpassen und speichern.',
+      '„Automatisch aufräumen“ ist ab Werk an – dann passiert das einmal täglich von selbst. Ohne Haken erinnert nur die Übersicht.',
+      'Darunter „Auskunft für eine Person“ (nur Admins): E-Mail eingeben, „📄 Auskunft herunterladen“.',
     ],
-    wirkung: ['Aufgeräumtes landet zuerst im Papierkorb und lässt sich 30 Tage zurückholen. Danach liegt es im Web-Admin-Papierkorb und wird nach der Frist „Web-Admin-Papierkorb – persönliche Daten“ (Standard 30 Tage) endgültig gelöscht.'],
+    wirkung: ['Aufgeräumtes landet zuerst im Papierkorb und lässt sich 30 Tage zurückholen (Ausnahme: Kündigungen und nie abgeschlossene Passanträge werden direkt endgültig gelöscht). Danach liegt es im Web-Admin-Papierkorb und wird nach der Frist „Web-Admin-Papierkorb – persönliche Daten“ (Standard 30 Tage) endgültig gelöscht.'],
     tipps: ['Mitgliedsanträge erst aufräumen, wenn die Daten in die Mitgliederverwaltung übernommen sind.'],
   },
 
   mailVorlagen: {
     titel: 'E-Mail-Vorlagen',
-    kurz: 'Die Texte, die beim Aufnehmen, Nachfragen oder Ablehnen eines Mitgliedsantrags vorgeschlagen werden.',
+    kurz: 'Die Texte, die beim Aufnehmen, Nachfragen oder Ablehnen eines Mitgliedsantrags vorgeschlagen werden – und im Reiter „Kündigungen“ beim Bestätigen, Nachfragen oder Ablehnen einer Kündigung.',
     wozu: {
       text: 'Damit die Kasse nicht jedes Mal neu formulieren muss – und alle Antworten gleich freundlich klingen.',
       beispiele: ['Willkommens-Mail nach der Aufnahme', 'Rückfrage, wenn eine Unterschrift fehlt', 'Freundliche Absage'],
     },
     tun: [
       'Betreff und Text je Fall anpassen und speichern.',
-      'Platzhalter werden automatisch ersetzt: {vorname}, {nachname}, {mitgliedsart} und {meinName} (Name der Person, die antwortet).',
+      'Platzhalter werden automatisch ersetzt: {vorname}, {nachname}, {mitgliedsart} und {meinName} (Name der Person, die antwortet). Im Reiter „Kündigungen“: {vorname}, {namen}, {wirksamZum} und {meinName}.',
       'Stellen in [ECKIGEN KLAMMERN] muss man vor dem Senden ausfüllen – sonst lässt sich die Mail nicht abschicken.',
     ],
-    wirkung: ['Beim Klick auf „Aufnehmen“, „Rückfrage“ oder „Ablehnen“ im Antrag steht der Text fertig da und kann vor dem Senden noch geändert werden.'],
+    wirkung: ['Beim Klick auf „Aufnehmen“, „Rückfrage“ oder „Ablehnen“ im Antrag (bzw. „Bestätigen“, „Rückfrage“, „Nicht annehmen“ in der Kündigung) steht der Text fertig da und kann vor dem Senden noch geändert werden.'],
     tipps: ['Keine Bankdaten oder Beitragsnummern in die Vorlage schreiben – E-Mails sind nicht verschlüsselt.'],
   },
 
@@ -719,7 +774,7 @@ export const HILFE: Record<string, HilfeText> = {
     },
     tun: [
       'Am einfachsten unter „Vereinsdaten“ → „Satzung & Downloads“: Eintrag hinzufügen, „Nur für Mitglieder“ anhaken, bei „Geschützte Datei“ hochladen.',
-      'Alte Einträge, deren Datei noch öffentlich liegt, zieht der Knopf „In den geschützten Bereich umziehen“ um.',
+      'Alte Einträge, deren Datei noch öffentlich liegt: unter „Vereinsdaten“ → „Satzung & Downloads“ auf „🔒 Jetzt in den geschützten Bereich umziehen“ klicken.',
     ],
     wirkung: ['Die Datei erscheint im Mitgliederbereich der Website unter „Downloads“ – nur für Angemeldete.'],
   },
@@ -764,7 +819,7 @@ export const HILFE: Record<string, HilfeText> = {
     titel: 'Profilfotos',
     kurz: 'Fotos, die Mitglieder im Mitgliederbereich von sich hochladen – nie öffentlich.',
     tun: ['Nur ansehen oder bei Bedarf löschen. Hochladen und ändern macht das Mitglied selbst.'],
-    wirkung: ['Sichtbar für das Mitglied, Admin und Kasse sowie die Trainer seiner Kurse (im Team unter „Mitglieder in diesem Team / Kurs“).'],
+    wirkung: ['Sichtbar für das Mitglied, Admin und Kasse sowie die Trainer seiner Kurse (im Team unter „Mitglieder in diesem Team / Kurs“) und „Nur ansehen“ – beides abschaltbar unter Rollen & Rechte → „Rechte anpassen“.'],
     tipps: ['Auf der Vereinsseite erscheint ein Profilfoto nur, wenn beim Vorstand „Profilfoto aus dem Konto auf der Vereinsseite zeigen“ angehakt ist – und nur mit Einverständnis.', 'Gelöschte Profilfotos sind sofort weg (kein Papierkorb).'],
   },
 
@@ -799,13 +854,13 @@ export const HILFE: Record<string, HilfeText> = {
       'Eure Ergänzungen erscheinen sofort im „? Hilfe“-Fenster und im Hilfe-Center.',
       'Die eingebauten Texte bleiben immer erhalten.',
     ],
-    tipps: ['Schaut unter „Hilfe-Rückmeldungen“ (nur Admins), welche Hilfen als nicht hilfreich markiert wurden.'],
+    tipps: ['Schaut unter „Hilfe-Rückmeldungen“ (Admins und Zusatzrecht „Hilfe-Texte“), welche Hilfen als nicht hilfreich markiert wurden.'],
   },
   'hilfe-feedback': {
     titel: 'Hilfe-Rückmeldungen',
     kurz: 'Was Nutzer unter „Hat dir das geholfen?“ angeklickt und geschrieben haben.',
     tun: ['Rückmeldungen lesen und unklare Hilfetexte unter „Hilfe-Texte“ verbessern.'],
-    wirkung: ['Nur Admins sehen diese Liste.'],
+    wirkung: ['Diese Liste sehen Admins, Personen mit dem Zusatzrecht „Hilfe-Texte ergänzen und Rückmeldungen lesen“ und „Nur ansehen“.'],
   },
 
   account: {
@@ -834,6 +889,6 @@ export const HILFE_LISTE = [
   'Mit „Neu erstellen“ legst du einen Eintrag an, mit einem Klick auf den Titel bearbeitest du ihn.',
   'Über das Suchfeld und „Filter“ findest du Einträge schneller.',
   'Mehrere Einträge auf einmal: links die Kästchen anhaken.',
-  'Im Posteingang filtern die Reiter oben nach Status: Neu, In Arbeit, Erledigt, Alle.',
+  'Im Posteingang filtern die Reiter oben nach Status (z. B. Neu, Rückfrage, Erledigt, Alle).',
   'Oben rechts „Papierkorb“ zeigt Gelöschtes der letzten 30 Tage – dort lässt es sich wiederherstellen.',
 ]

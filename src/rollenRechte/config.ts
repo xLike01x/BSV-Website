@@ -25,7 +25,7 @@ export const RollenRechte: GlobalConfig = {
     // In der Seitenleiste ausgeblendet (CSS) – erreichbar über „Rollen & Rechte“ → Reiter „Rechte anpassen“
     hidden: ({ user }) => !hasRole(user as never, 'admin'),
     description:
-      'Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Admin-Rechte sind bewusst nicht einstellbar. Bei „Nur ansehen“ schaltet ein entfernter Haken den Bereich für diese Rolle ganz aus. Wie sich das auswirkt, zeigt der Reiter „Übersicht“ unter „Was darf welche Rolle?“.',
+      'Was darf welche Rolle zusätzlich? Häkchen setzen, speichern – gilt sofort (spätestens nach 30 Sekunden). Ändern kann nur ein Web-Admin. Admin-Rechte sind bewusst nicht einstellbar. Bei „Nur ansehen“ schaltet ein entfernter Haken den Bereich für diese Rolle ganz aus. Wie sich das auswirkt, zeigt „Übersicht“ → Reiter „Rechte je Rolle“.',
   },
   // Gespeicherten Stand sofort übernehmen (nicht neu lesen – die Transaktion ist hier noch offen)
   hooks: { afterChange: [({ doc }) => rechteUebernehmen(doc)] },

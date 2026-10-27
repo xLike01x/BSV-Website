@@ -18,7 +18,7 @@ export const Startseite: GlobalConfig = {
     group: 'Website-Aufbau',
     // Veraltet: Inhalte stehen jetzt unter „Texte & Bilder“ – bleibt nur als Sicherung gespeichert
     hidden: true,
-    description: 'Die grüne Aktions-Box auf der Startseite und die Bilder der Startseite, der Bereichsseiten und der Vereinsseite. Die Texte dazu stehen unter „Website-Texte“.',
+    description: 'Veraltet – nur noch als Sicherung gespeichert. Aktions-Box, Bilder und Texte stehen jetzt unter Website-Aufbau → „Texte & Bilder“.',
   },
   hooks: { afterChange: [revalidateAllesGlobal] },
   fields: [

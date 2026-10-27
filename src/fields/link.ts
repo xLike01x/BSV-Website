@@ -130,6 +130,7 @@ export const link: LinkType = ({ appearances, disableLabel = false, overrides = 
 
     linkResult.fields.push({
       name: 'appearance',
+      label: 'Optik',
       type: 'select',
       admin: {
         description: 'Wie der Link aussehen soll.',

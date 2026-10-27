@@ -53,6 +53,7 @@ import { default as default_d9ad9595ea4f39c57478e527de33797c } from '@/Menue/Row
 import { default as default_20ffb6b77276f2ec9f4824df398059b8 } from '@/Menue/AufklappUebersicht'
 import { default as default_46234c6f88ae2e73ec168e941d39add2 } from '@/Menue/SpaltenLabel'
 import { default as default_d0d2d8ba323ca751d647155bafea5b5d } from '@/Texte/WoSteht'
+import { default as default_6bb0c21b6e4dcf24db148803790b75a3 } from '@/components/Admin/ZeilenTitel'
 import { default as default_dcec8d0f4a86291f22ff050ef8209c59 } from '@/Verein/DownloadsSchutz'
 import { default as default_ee61798dbac84d4559f918344d524ea7 } from '@/datenschutz/Uebersicht'
 import { default as default_b53cfac6c89f90ae49c091341d2f0ac2 } from '@/datenschutz/Auskunft'
@@ -137,6 +138,7 @@ export const importMap = {
   "@/Menue/AufklappUebersicht#default": default_20ffb6b77276f2ec9f4824df398059b8,
   "@/Menue/SpaltenLabel#default": default_46234c6f88ae2e73ec168e941d39add2,
   "@/Texte/WoSteht#default": default_d0d2d8ba323ca751d647155bafea5b5d,
+  "@/components/Admin/ZeilenTitel#default": default_6bb0c21b6e4dcf24db148803790b75a3,
   "@/Verein/DownloadsSchutz#default": default_dcec8d0f4a86291f22ff050ef8209c59,
   "@/datenschutz/Uebersicht#default": default_ee61798dbac84d4559f918344d524ea7,
   "@/datenschutz/Auskunft#default": default_b53cfac6c89f90ae49c091341d2f0ac2,

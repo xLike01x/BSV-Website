@@ -48,7 +48,7 @@ const niemand: FieldAccess = () => false
 
 export const Angebote: CollectionConfig<'angebote'> = {
   slug: 'angebote',
-  labels: { singular: 'Angebot', plural: 'Teams & Kurse' },
+  labels: { singular: 'Team / Kurs', plural: 'Teams & Kurse' },
   access: {
     read: anyone,
     create: bereichZugriff('teams'),

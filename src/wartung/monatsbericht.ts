@@ -30,12 +30,14 @@ export type Bericht = { allgemein: string[]; technik: string[] }
 /** Inhalte des Berichts (auch für Tests nutzbar) */
 export async function berichtErstellen(payload: Payload): Promise<Bericht> {
   const zaehle = (collection: string, where: Where) => payload.count({ collection: collection as CollectionSlug, where, overrideAccess: true }).then((r) => r.totalDocs).catch(() => 0)
-  const [antraege, kontakt, probe, pass, registrierungen] = await Promise.all([
+  const [antraege, kontakt, probe, pass, registrierungen, kuendigungen, kuendigungenDfb] = await Promise.all([
     zaehle('mitgliedsantraege', { status: { equals: 'neu' } }),
     zaehle('kontaktanfragen', { status: { equals: 'neu' } }),
     zaehle('probetraining', { status: { equals: 'neu' } }),
     zaehle('passantraege', { status: { equals: 'eingereicht' } }),
     zaehle('users', WARTEND),
+    zaehle('kuendigungen', { status: { equals: 'neu' } }),
+    zaehle('kuendigungen', { status: { equals: 'bestaetigt' } }),
   ])
   const teams = (
     await payload.find({ collection: 'angebote', where: { aktiv: { not_equals: false } }, limit: 500, pagination: false, depth: 0, overrideAccess: true, select: { title: true, leitung: true, zeiten: true, bestaetigtAm: true } as never })
@@ -63,6 +65,8 @@ export async function berichtErstellen(payload: Payload): Promise<Bericht> {
     probe && zahl(probe, 'neue Probetraining-Anfrage', 'neue Probetraining-Anfragen'),
     pass && zahl(pass, 'eingereichter Passantrag', 'eingereichte Passanträge'),
     registrierungen && zahl(registrierungen, 'Registrierung wartet auf Freigabe', 'Registrierungen warten auf Freigabe'),
+    kuendigungen && zahl(kuendigungen, 'neue Kündigung', 'neue Kündigungen'),
+    kuendigungenDfb && zahl(kuendigungenDfb, 'bestätigte Kündigung noch im DFBnet auszutragen', 'bestätigte Kündigungen noch im DFBnet auszutragen'),
   ].filter(Boolean) as string[]
   const allgemein: string[] = []
   if (offen.length) allgemein.push(`📥 Offen im Posteingang: ${offen.join(', ')}.`)

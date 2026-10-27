@@ -11,7 +11,7 @@ export default function Auskunft() {
       <h3>Auskunft für eine Person (Art. 15 DSGVO)</h3>
       <p className="bsv-datenschutz__klein">
         Will jemand wissen, was über ihn gespeichert ist, oder seine Daten mitnehmen: E-Mail-Adresse eingeben und die Datei herunterladen. Enthalten sind Konto, Anträge, Mitgliedschaften,
-        Anfragen, Formular-Eingänge, Passanträge und Fotos – auch aus dem Papierkorb. Die Datei enthält persönliche Daten (auch die IBAN): nur an die Person selbst geben, danach löschen.
+        Anfragen, Formular-Eingänge, Passanträge, Zu- und Absagen, Kündigungen und Fotos – auch aus dem Papierkorb. Die Datei enthält persönliche Daten (auch die IBAN): nur an die Person selbst geben, danach löschen.
       </p>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
         <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="name@beispiel.de" aria-label="E-Mail-Adresse der Person" style={{ minWidth: 260, padding: '8px 10px' }} />

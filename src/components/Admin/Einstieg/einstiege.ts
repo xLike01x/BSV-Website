@@ -175,14 +175,14 @@ export const EINSTIEGE: Record<string, Einstieg> = {
 
   termine: {
     titel: 'Wozu sind Termine da?',
-    text: 'Termine erscheinen im Kalender der Website und die nächsten auch auf der Startseite. Trainingszeiten gehören nicht hierher – die stehen beim Team.',
+    text: 'Termine erscheinen im Kalender der Website (Seite „Termine“), die nächsten auch im Mitgliederbereich. Trainingszeiten gehören nicht hierher – die stehen beim Team.',
     ablauf: [
       { key: 'titel', titel: 'Titel und Datum', text: 'Z. B. „Sommerfest“, Beginn und optional Ende.' },
       { key: 'ort', titel: 'Ort und Bereich', text: 'Der Bereich bestimmt die Farbe im Kalender.' },
       { key: 'sichtbar', titel: 'Für wen?', text: 'Optional nur für Mitglieder sichtbar.' },
-      { key: 'countdown', titel: 'Countdown (optional)', text: 'Zählt auf der Startseite bis zur Veranstaltung herunter.', wo: 'rechts' },
+      { key: 'countdown', titel: 'Countdown (optional)', text: 'Zählt auf der Startseite bis zur Veranstaltung herunter – nur bei Terminen, die alle sehen dürfen.', wo: 'rechts' },
       { key: 'speichern', titel: 'Speichern', text: 'Sofort sichtbar – ohne Veröffentlichen.', wo: 'oben rechts' },
-      { key: 'website', titel: 'Im Kalender', text: 'Nach dem Termin verschwindet er automatisch aus „Kommende Termine“.', href: '/termine', wo: 'Website → Termine' },
+      { key: 'website', titel: 'Im Kalender', text: 'Nach dem Tag verschwindet er automatisch aus dem Kalender. Mit „Wiederholen“ erscheint eine Serie einzeln.', href: '/termine', wo: 'Website → Termine' },
     ],
     vorlagenTitel: 'Mit einer Vorlage starten (wird erst beim Speichern angelegt)',
     vorlagen: [
@@ -257,7 +257,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
     titel: 'Training fällt aus?',
     text: 'Hier meldest du ausgefallene Trainings. Der Hinweis erscheint sofort auf der Seite des Teams und verschwindet nach dem Tag automatisch.',
     ablauf: [
-      { key: 'melden', titel: 'Melden', text: 'Team, Tag und Grund wählen.', wo: 'gleich hier unten' },
+      { key: 'melden', titel: 'Melden', text: 'Team, Tag und Grund wählen.', wo: 'links im Kasten „Schnell melden“' },
       { key: 'website', titel: 'Sofort sichtbar', text: 'Roter Hinweis auf der Teamseite.', wo: 'Website → Teamseite' },
       { key: 'weg', titel: 'Verschwindet von selbst', text: 'Nach dem Tag ist der Hinweis weg.' },
     ],
@@ -503,13 +503,13 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'kuemmern', titel: 'Ich kümmere mich', text: 'Oben im Eintrag – dann sehen alle, wer dran ist.' },
       { key: 'melden', titel: 'Melden', text: '„✉️ Antworten“ oder „📞 Anrufen“, danach kurz notieren.' },
       { key: 'status', titel: 'Status setzen', text: '„Zugesagt“ oder „Anderer Termin vorgeschlagen“.' },
-      { key: 'erledigt', titel: 'Erledigt', text: 'Nach dem Training auf „Erledigt“ – und später löschen.' },
+      { key: 'erledigt', titel: 'Erledigt', text: 'Nach dem Training auf „Erledigt“. Gelöscht wird automatisch nach der Datenschutz-Frist (Standard 6 Monate).' },
     ],
   },
 
   mitgliedsantraege: {
     titel: 'Was passiert mit Mitgliedsanträgen?',
-    text: 'Online-Anträge von „Mitglied werden“ – inklusive Bankdaten für das Lastschrift-Mandat. Nur Kasse und Admin sehen sie.',
+    text: 'Online-Anträge von „Mitglied werden“ – inklusive Bankdaten für das Lastschrift-Mandat. Bearbeiten dürfen Kasse und Admin (mit Zusatzrecht auch ohne Bankdaten); „Nur ansehen“ sieht sie, solange der Haken unter Rollen & Rechte gesetzt ist.',
     ablauf: [
       { key: 'antrag', titel: 'Antrag kommt rein', text: 'Status „Neu“, die Kasse bekommt eine E-Mail.', wo: 'Website → Mitglied werden' },
       { key: 'pruefen', titel: 'Prüfen', text: '„Ich kümmere mich“, dann den Kasten „Antrag prüfen“ lesen.' },
@@ -560,7 +560,7 @@ export const EINSTIEGE: Record<string, Einstieg> = {
       { key: 'neu', titel: 'Nachricht kommt rein', text: 'Status „Neu“. Im Feld „Anliegen“ steht, worum es geht.' },
       { key: 'kuemmern', titel: 'Ich kümmere mich', text: 'Oben im Eintrag – in der Liste steht dann dein Name.' },
       { key: 'antworten', titel: 'Antworten', text: '„✉️ Antworten“ öffnet dein E-Mail-Programm. Kurz notieren, Status „In Bearbeitung“.' },
-      { key: 'erledigt', titel: 'Erledigt', text: 'Status „Erledigt“ und regelmäßig löschen.' },
+      { key: 'erledigt', titel: 'Erledigt', text: 'Status „Erledigt“. Gelöscht wird automatisch nach der Datenschutz-Frist (Standard 6 Monate).' },
     ],
   },
 

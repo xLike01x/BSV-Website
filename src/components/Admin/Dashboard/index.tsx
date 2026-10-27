@@ -101,7 +101,13 @@ export default async function Dashboard(props: AdminViewServerProps) {
     zaehle('posts', {
       and: [{ _status: { equals: 'published' } }, ...(istTeamRolle && eigeneTeams.length ? [{ team: { in: eigeneTeams.map((t) => t.id) } }] : [])],
     }),
-    zaehle('termine', { beginn: { greater_than_equal: heute.toISOString() } }),
+    // Kommende Termine – auch Serien, deren erster Termin schon vorbei ist, die aber noch laufen
+    zaehle('termine', {
+      or: [
+        { beginn: { greater_than_equal: heute.toISOString() } },
+        { and: [{ wiederholung: { exists: true } }, { wiederholung: { not_equals: 'keine' } }, { or: [{ wiederholungBis: { exists: false } }, { wiederholungBis: { greater_than_equal: heute.toISOString() } }] }] },
+      ],
+    }),
     zaehle('ausfaelle', {
       and: [{ datum: { greater_than_equal: heute.toISOString() } }, ...(istTeamRolle && eigeneTeams.length ? [{ angebot: { in: eigeneTeams.map((t) => t.id) } }] : [])],
     }),
@@ -202,7 +208,7 @@ export default async function Dashboard(props: AdminViewServerProps) {
       ? undefined
       : rolle === 'uebungsleitung'
         ? {
-            label: 'Zum Üben einen Trainingsausfall anlegen (danach gern wieder löschen)',
+            label: 'Zum Üben einen Trainingsausfall anlegen – vorher den Haken „Teilnehmende … benachrichtigen“ entfernen, danach gern wieder löschen',
             href: `${ADMIN}/collections/ausfaelle/create`,
             erledigt: aktivitaeten.some((a) => a.href.includes('/ausfaelle/')),
           }

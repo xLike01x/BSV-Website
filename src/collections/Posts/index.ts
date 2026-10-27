@@ -281,7 +281,7 @@ export const Posts: CollectionConfig<'posts'> = {
       admin: {
         position: 'sidebar',
         condition: (data, _sibling, { user }) => !istRedaktion(user) || Boolean(data?.startseiteVorschlag && !data?.aufStartseite),
-        description: 'Die Redaktion sieht deinen Vorschlag auf ihrer Startseite und holt die News mit einem Klick auf die Startseite der Website.',
+        description: 'Die Redaktion sieht deinen Vorschlag auf ihrer Übersicht in der Verwaltung und holt die News mit einem Klick auf die Startseite der Website.',
       },
     },
     {

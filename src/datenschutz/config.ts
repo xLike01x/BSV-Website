@@ -189,7 +189,7 @@ export const Datenschutz: GlobalConfig = {
       defaultValue: true,
       admin: {
         description:
-          'Empfohlen. Ohne Haken erinnert nur das Dashboard. Ablauf: Papierkorb (30 Tage zurückholbar) → Web-Admin-Papierkorb (Frist oben) → endgültig gelöscht. Liegengebliebene Passanträge werden direkt gelöscht.',
+          'Empfohlen. Ohne Haken erinnert nur die Übersicht. Ablauf: Papierkorb (30 Tage zurückholbar) → Web-Admin-Papierkorb (Frist oben) → endgültig gelöscht. Liegengebliebene Passanträge werden direkt gelöscht.',
       },
     },
     // Einmalig: neue Standardwerte vom Oktober 2026 (u. a. „automatisch aufräumen“ an) für bestehende Installationen setzen

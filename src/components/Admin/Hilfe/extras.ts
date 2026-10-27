@@ -23,7 +23,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Die Verwaltung im Handy-Browser öffnen und anmelden.',
         'iPhone (Safari): unten auf das Teilen-Symbol □↑ → „Zum Home-Bildschirm“.',
         'Android (Chrome): oben rechts ⋮ → „Zum Startbildschirm hinzufügen“ bzw. „App installieren“.',
-        'Jetzt startet die Verwaltung mit dem BSV-Symbol wie eine App – ganz oben liegt der Schnellzugriff, z. B. „Ausfall melden“.',
+        'Jetzt startet die Verwaltung mit dem BSV-Symbol wie eine App. Unter Android: lange auf das Symbol drücken → „Ausfall melden“ oder „News schreiben“.',
       ],
     },
     {
@@ -119,7 +119,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'ordner',
       titel: 'Bilder in Ordner sortieren',
       schritte: [
-        'Links auf „Mediathek“. Oben siehst du die Ordner – je Team einer, dazu „Verein allgemein“ und „Noch nicht zugeordnet“.',
+        'Links auf „Mediathek“. Oben siehst du die Ordner – je Team einer, dazu „Verein allgemein“, „Sponsoren“ und „Noch nicht zugeordnet“.',
         'Auf „Noch nicht zugeordnet“ klicken.',
         'Bilder, die zum selben Team gehören, links anhaken und mit der Maus auf den Ordner des Teams ziehen (oder oben „Bearbeiten“ → „Ordner (Team / Kurs)“).',
         'Bilder für den ganzen Verein (Logo, Sportplatz, Vorstand): öffnen und rechts „Verein allgemein“ anhaken.',
@@ -156,8 +156,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Das Bild in der Mediathek öffnen.',
         'Auf „Bild bearbeiten“ klicken.',
         'Zum Zuschneiden die Ecken des Rahmens ziehen.',
-        'Mit „Wichtigster Bildbereich“ auf das Wichtigste tippen, z. B. das Gesicht – kleine Vorschaubilder richten sich danach.',
-        'Übernehmen und speichern.',
+        'Mit „Fokuspunkt setzen“ auf das Wichtigste tippen, z. B. das Gesicht – kleine Vorschaubilder richten sich danach.',
+        '„Änderungen anwenden“ und speichern.',
       ],
     },
     {
@@ -375,7 +375,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         'Oben in der Liste eine Vorlage wählen (z. B. „Vereinsfest“, „Versammlung“) – oder „Neu erstellen“.',
         'Titel, Beginn und (optional) Ende eintragen – mit Uhrzeit.',
         'Ort und eine kurze Beschreibung ergänzen, den Bereich wählen.',
-        'Rechts steht, ob der Termin für alle oder nur für Mitglieder sichtbar ist.',
+        'Oben im Kasten „Hinweise“ steht, ob der Termin für alle oder nur für Mitglieder sichtbar ist.',
         '„Speichern“ – der Termin steht sofort im Kalender.',
       ],
     },
@@ -397,7 +397,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Eine Veranstaltung komplett vorbereiten (Termin, Anmeldung, Seite, Countdown)',
       schritte: [
         'Termin: Inhalte → Termine → Vorlage „Vereinsfest“ oder „Neu erstellen“. Titel, Beginn mit Uhrzeit und Ort eintragen (der Ort ist mit dem Sportpark vorbelegt – überschreiben, wenn woanders gefeiert wird). In die Beschreibung: Preis, was enthalten ist, Anmeldeschluss. Speichern.',
-        'Nur für Mitglieder (z. B. Weihnachtsfeier)? Dann statt eines Formulars im Termin den Haken „Zu-/Absage im Mitgliederbereich“ setzen (eigene Anleitung) und mit dem Schritt „Countdown“ weitermachen. Für alle Besucher: Anmeldeformular: Website-Aufbau → Formulare → Vorlage „Anmeldung zu einer Veranstaltung“. Bei „Name des Formulars“ gleich den späteren Seitennamen eintragen (z. B. „Weihnachtsfeier 2026“) – daraus entsteht im nächsten Schritt die Adresse der Seite. Felder anpassen, z. B. eine Auswahlliste „Teilnahme“ mit „Ich komme“ / „Ich komme nicht“. Danke-Nachricht prüfen. Speichern.',
+        'Nur für Mitglieder (z. B. Weihnachtsfeier)? Dann statt eines Formulars im Termin den Haken „Zu-/Absage im Mitgliederbereich“ setzen (eigene Anleitung). Einen Countdown gibt es für Termine „nur für Mitglieder“ nicht – weiter mit „Nach der Veranstaltung“. Für alle Besucher: Anmeldeformular: Website-Aufbau → Formulare → Vorlage „Anmeldung zu einer Veranstaltung“. Bei „Name des Formulars“ gleich den späteren Seitennamen eintragen (z. B. „Weihnachtsfeier 2026“) – daraus entsteht im nächsten Schritt die Adresse der Seite. Felder anpassen, z. B. eine Auswahlliste „Teilnahme“ mit „Ich komme“ / „Ich komme nicht“. Danke-Nachricht prüfen. Speichern.',
         'Seite: im Formular rechts „Neue Seite mit diesem Formular erstellen“. Die Seite heißt wie das Formular (später umbenennen ändert die Adresse nicht mehr). Über dem Formular einen Baustein „Text (in Spalten)“ mit allen Infos einfügen, Vorschau prüfen, „Veröffentlichen“.',
         'Ansehen: rechts in der Seite steht die Adresse als Link (z. B. /weihnachtsfeier-2026 ↗). Ins Menü kommt die Seite nicht von selbst – nur wenn du sie unter „Menü & Fußzeile“ einträgst.',
         'Countdown (optional): den Termin wieder öffnen, rechts den Haken „Countdown auf der Startseite“ setzen und bei „Countdown-Button führt zu“ die Seite wählen. Speichern.',
@@ -449,7 +449,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Die Texte der Antwort-Mails ändern',
       schritte: [
         'Links unter „Einstellungen“ auf „E-Mail-Vorlagen“.',
-        'Für „Aufgenommen“, „Rückfrage“ und „Abgelehnt“ Betreff und Text anpassen.',
+        'Reiter „Mitgliedsanträge“: „Aufgenommen“, „Rückfrage“, „Abgelehnt“. Reiter „Kündigungen“: „Kündigung bestätigt“, „Rückfrage zur Kündigung“, „Kündigung nicht angenommen“. Jeweils Betreff und Text anpassen.',
         'Platzhalter wie {vorname} stehen lassen – sie werden automatisch ersetzt. Stellen in [ECKIGEN KLAMMERN] füllt man später im Antrag aus.',
         'Speichern.',
       ],
@@ -506,6 +506,19 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       ],
     },
   ],
+  kuendigungen: [
+    {
+      id: 'kuendigung-bearbeiten',
+      titel: 'Eine Kündigung bearbeiten',
+      schritte: [
+        'Links unter „Posteingang“ auf „Kündigungen“ und die Kündigung mit Status „Eingegangen“ öffnen. Oben „🙋 Ich kümmere mich“.',
+        'Im Kasten „Kündigung prüfen“ auf „📄 Unterschriebenes Schreiben öffnen“ – ist es unterschrieben, passt der Name? Bei Kindern: Unterschrift der Eltern.',
+        'Unklar? „❓ Rückfrage“. Ohne Unterschrift: „Nicht annehmen“. Passt alles: „✓ Bestätigen“ – „Gültig bis“ der Mitgliedschaft(en) wird aufs Quartalsende gesetzt, die Bestätigungs-Mail geht raus.',
+        'Das Mitglied von Hand im DFBnet austragen, danach „✓ Im DFBnet ausgetragen“ klicken (die Website ist nicht mit dem DFBnet verbunden – der Knopf ist dein Haken „erledigt“).',
+        'Am Tag nach dem Quartalsende zeigt der Ausweis automatisch „nicht gültig“ – auch ohne den DFBnet-Haken.',
+      ],
+    },
+  ],
   mitgliedschaften: [
     {
       id: 'ausweis-pflegen',
@@ -516,7 +529,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
         '„Mitgliedsnummer“ eintragen.',
         'Prüfen, ob bei „Benutzerkonto“ das richtige Konto steht (bei Kindern das der Eltern).',
         'Speichern.',
-        'Austritt: „Gültig bis (Austritt)“ setzen – danach zeigt der Ausweis „nicht mehr gültig“.',
+        'Austritt: Kommt die Kündigung über die Website, setzt „✓ Bestätigen“ unter Posteingang → „Kündigungen“ das Datum automatisch. Sonst „Gültig bis (Austritt)“ selbst setzen (Quartalsende) – danach zeigt der Ausweis „nicht gültig“.',
       ],
     },
   ],
@@ -575,7 +588,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Jemand fragt, welche Daten wir gespeichert haben (Admin)',
       schritte: [
         'Links unter „Einstellungen“ auf „Datenschutz-Fristen“.',
-        'Unten bei „Auskunft für eine Person“ die E-Mail-Adresse eingeben.',
+        'Oben (unter „Aktuell über der Frist“) bei „Auskunft für eine Person (Art. 15 DSGVO)“ die E-Mail-Adresse eingeben.',
         '„📄 Auskunft herunterladen“ – die Datei enthält alles von der Website, auch aus dem Papierkorb.',
         'Die Datei der Person geben (nicht per unverschlüsselter Mail an Dritte). Soll alles gelöscht werden: die gefundenen Einträge löschen und im Web-Admin-Papierkorb endgültig entfernen lassen.',
       ],
@@ -666,8 +679,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'testkonten',
       titel: 'Rechte mit Testkonten ausprobieren (nur lokal)',
       schritte: [
-        '„Rollen & Rechte“ öffnen → Reiter „Testkonten“ → „Testkonten anlegen“.',
-        'Es entsteht je ein Konto pro Rolle (Admin, Redaktion, Kasse, Passwesen, Mitglied), pro Abteilung (Abteilungsleitung, Pressewart) und pro Team (Trainer). Alle mit demselben Passwort, das dort angezeigt wird.',
+        '„Rollen & Rechte“ öffnen → Reiter „Testkonten“ (nur Web-Admins) → „Testkonten anlegen“ (bzw. „Testkonten aktualisieren“).',
+        'Es entsteht je ein Konto pro Rolle (Admin, Redaktion, Kasse, Passwesen, Nur ansehen, Mitglied), pro Abteilung (Abteilungsleitung, Pressewart) und pro Team (Trainer). Alle mit demselben Passwort, das dort angezeigt wird.',
         'Abmelden oder ein privates Browserfenster öffnen und mit einem Testkonto anmelden – ohne Zwei-Faktor.',
         'Prüfen: Was sieht die Person? Was darf sie ändern? Welche Bilder kann sie auswählen?',
         'Fertig? „Alle Testkonten löschen“. Echte Konten bleiben unberührt.',
@@ -690,8 +703,8 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       schritte: [
         'Unter „Rollen & Rechte“ die Person suchen.',
         'Auf „Bearbeiten“ klicken.',
-        'Bei „Rollen“ alle Kacheln außer „Mitglied“ abhaken (oder das Konto löschen) und speichern.',
-        'Bei „Team-Berechtigungen“ alle Teams entfernen (oder beim Team unter „Verantwortliche“).',
+        'Zuerst bei „Team-Berechtigungen“ alle Teams entfernen.',
+        'Dann bei „Rollen“ alle Kacheln außer „Mitglied“ abhaken (oder das Konto löschen) – beides zusammen speichern. Stehen beim Speichern noch Teams drin, wird „Trainer“ automatisch wieder gesetzt.',
       ],
     },
   ],
@@ -735,7 +748,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       titel: 'Jemand hat das Handy (Zwei-Faktor) verloren',
       schritte: [
         'Erst fragen: Hat die Person noch ihre Wiederherstellungscodes? Damit kann sie sich selbst anmelden.',
-        'Falls nicht: das Konto öffnen und den Haken bei „Zwei-Faktor-Anmeldung eingerichtet“ entfernen.',
+        'Falls nicht: das Konto öffnen und den Haken bei „Zwei-Faktor-Anmeldung eingerichtet“ entfernen. Bei Admin- und Web-Admin-Konten kann das nur ein Web-Admin.',
         'Speichern. Beim nächsten Anmelden richtet die Person die App neu ein.',
       ],
     },
@@ -789,7 +802,7 @@ export const ANLEITUNGEN: Record<string, Anleitung[]> = {
       id: 'aktion',
       titel: 'Die grüne Aktions-Box auf der Startseite ändern',
       schritte: [
-        'Website-Aufbau → „Texte & Bilder“ öffnen, Reiter „Startseite“ – ganz unten „Grüne Aktions-Box“.',
+        'Website-Aufbau → „Texte & Bilder“ öffnen, Reiter „Startseite“ – weit unten „Grüne Aktions-Box“ (direkt über „Veranstaltungs-Countdown“).',
         'Überzeile, Titel, Text, Button-Text und Button-Link anpassen, optional ein Bild wählen.',
         'Zum Ausblenden den Haken bei „Anzeigen“ entfernen.',
         'Speichern.',
@@ -879,9 +892,9 @@ export const FELDER: Record<string, Feld[]> = {
   media: [
     { name: 'Bildbeschreibung', text: 'Beschreibt, was zu sehen ist. Wichtig für Menschen, die sich Seiten vorlesen lassen.' },
     { name: 'Sind Personen zu erkennen?', text: 'Pflicht beim Hochladen. „Ja“ nur, wenn die Einwilligung vorliegt – bei Kindern von den Eltern. In der Mediathek zeigt der Ordner „Angabe zu Personen fehlt“ alte Bilder ohne Angabe.' },
-    { name: 'Ordner (Team / Kurs)', text: 'Der einzige Ordner, den es gibt: das Team, zu dem das Bild gehört. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es. Oben in der Mediathek siehst du alle Ordner als Kacheln – Bilder in der Liste anhaken und auf eine Kachel ziehen sortiert sie um.' },
+    { name: 'Ordner (Team / Kurs)', text: 'Das Team, zu dem das Bild gehört (= sein Ordner). Daneben gibt es die Haken „Verein allgemein“ und für Logos den Ordner „Sponsoren“. Nur Verantwortliche dieses Teams (und die Redaktion) sehen und benutzen es. Oben in der Mediathek siehst du alle Ordner als Kacheln – Bilder in der Liste anhaken und auf eine Kachel ziehen sortiert sie um.' },
     { name: 'Verein allgemein', text: 'Für Bilder ohne Team, z. B. Logo oder Sportplatz. Alle Trainer dürfen sie benutzen, aber nicht ändern. Setzen kann das nur die Redaktion.' },
-    { name: 'Noch nicht zugeordnet', text: 'Bilder ohne Team und ohne „Verein allgemein“. Nur die Redaktion sieht sie – Trainer können sie nicht benutzen.' },
+    { name: 'Noch nicht zugeordnet', text: 'Bilder ohne Team, ohne „Verein allgemein“ und ohne Sponsoren-Logo. Nur die Redaktion sieht sie – Trainer können sie nicht benutzen.' },
     { name: 'In der Bildergalerie des Teams zeigen', text: 'Das Bild erscheint in der Fotogalerie auf der Seite des Teams.' },
     { name: 'Wo liegt die Einwilligung? (optional, empfohlen)', text: 'Z. B. „Foto-Einwilligung im Mitgliedsantrag“ oder „Formular vom 03.05., Ordner Vorstand“. Hilft, wenn jemand widerruft. Nicht öffentlich.' },
     { name: 'Sponsoren-Logo', text: 'Legt das Bild in den Ordner „Sponsoren“ (nur Redaktion). Passiert automatisch, sobald es bei einem Sponsor als Logo gespeichert wird.' },
@@ -897,8 +910,8 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Baustein „Bild oder Video“', text: 'Ein Bild oder Video aus der Mediathek in voller Breite.' },
     { name: 'Baustein „Hinweis-Kasten mit Button“', text: 'Ein hervorgehobener Kasten mit kurzem Text und ein bis zwei Buttons, z. B. „Jetzt anmelden“.' },
     { name: 'Baustein „News-Liste“', text: 'Zeigt automatisch die neuesten News (optional nur aus bestimmten Kategorien) oder ausgewählte News.' },
-    { name: 'Baustein „Formular“', text: 'Bindet ein Formular aus „Eigene Formulare → Formulare“ ein, z. B. eine Anmeldung.' },
-    { name: 'Reiter „Google-Vorschau“', text: 'Titel und Beschreibung für Google und beim Teilen. Leer lassen = wird automatisch erzeugt.' },
+    { name: 'Baustein „Formular“', text: 'Bindet ein Formular aus Website-Aufbau → „Formulare“ ein, z. B. eine Anmeldung.' },
+    { name: 'Reiter „Google-Vorschau (optional)“', text: 'Titel und Beschreibung für Google und beim Teilen. Leer lassen = wird automatisch erzeugt.' },
     { name: 'Buttons / Links', text: 'Linkziel: „Eigene Seite/News“ (aus der Liste wählen) oder „Adresse eingeben“ (z. B. /termine oder https://…). Dazu der Text auf dem Button und die Optik: grüner oder heller Button.' },
     { name: 'Slug', text: 'Die Adresse der Seite, z. B. /sommerfest. Besser nicht mehr ändern, wenn schon verlinkt.' },
     { name: 'Live-Vorschau', text: 'Bildschirm-Symbol oben: zeigt die Seite neben dem Formular und jede Änderung sofort. Seiten speichern zwischendurch automatisch als Entwurf.' },
@@ -940,8 +953,11 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Rollen', text: 'Was die Person darf. Mehrere Rollen sind möglich.' },
     { name: 'Zwei-Faktor-Anmeldung eingerichtet', text: 'Haken entfernen setzt die Handy-App zurück (z. B. bei verlorenem Handy). Bei Mitgliedern (freiwillig) ist sie danach aus.' },
     { name: 'Teams & Kurse', text: 'In welchen Angeboten die Person selbst mitmacht (als Mitglied). Gibt keine Bearbeitungsrechte.' },
-    { name: 'Freigegeben', text: 'Ohne Haken: selbst registriert und wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Freigeben geht auch unter „Registrierungen“. Nur Admins.' },
-    { name: 'E-Mail-Benachrichtigungen', text: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für die eigenen Teams, alle 3 Monate „Passt noch?“ für die eigenen Teams, (Kasse) bei neuem Mitgliedsantrag und (Admins) einmal im Monat der Monatsbericht. Haken entfernen = keine Mails.' },
+    { name: 'Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)', text: 'Einzelne Rechte nur für diese Person, z. B. „Kontaktanfragen sehen und bearbeiten“. Vergibt nur ein Web-Admin; die Person kommt damit in die Verwaltung und braucht die Zwei-Faktor-Anmeldung.' },
+    { name: 'Wunsch bei der Registrierung', text: 'Teams & Kurse, die die Person bei der Registrierung angekreuzt hat – unter „Registrierungen“ schon vorausgewählt.' },
+    { name: 'Zuletzt angemeldet', text: 'Wann die Person sich zuletzt angemeldet hat. Hilft beim Aufräumen ungenutzter Zugänge.' },
+    { name: 'Freigegeben', text: 'Ohne Haken: selbst registriert und wartet auf Freigabe – sieht noch keinen Mitgliederbereich. Den Haken hier ändern nur Admins; unter „Registrierungen“ geben auch Kasse und Personen mit Zusatzrecht frei.' },
+    { name: 'E-Mail-Benachrichtigungen', text: 'Mail bei neuer Probetraining-Anfrage oder neuem Passantrag für die eigenen Teams, alle 3 Monate „Passt noch?“ für die eigenen Teams, (Kasse) bei neuem Mitgliedsantrag und neuer Kündigung, (Admins) einmal im Monat der Monatsbericht. Haken entfernen = keine Mails.' },
     { name: 'Team-Berechtigungen', text: 'Welche Teams die Person betreut. Mit Rolle „Trainer“ ist sie dort Trainer, mit „Team-Redaktion“ Pressewart; ohne eine der beiden wird automatisch „Trainer“ gesetzt. „Trainer“ enthält alle Rechte der Team-Redaktion – beide anzukreuzen ist nicht nötig. Steht gleichzeitig beim Team unter „Verantwortliche“.' },
   ],
   menue: [
@@ -980,12 +996,13 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Reihenfolge', text: 'Kleinere Zahl = weiter oben auf „Mitmachen“. Neue Gesuche bekommen 100; gleiche Zahl = alphabetisch.' },
   ],
   texte: [
-    { name: 'Aktion (grüne Box)', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
+    { name: 'Grüne Aktions-Box', text: 'Ein großer Hinweis auf der Startseite, z. B. für ein Projekt oder Fest. Mit „Anzeigen“ ein- oder ausblenden.' },
     { name: 'Bilder oben', text: 'Bis zu 4 Fotos im großen Bereich ganz oben. Dazu zwei kleine Schilder mit kurzem Text.' },
     { name: 'Kacheln', text: 'Die Bilder für die Kacheln Fußball, BSV Kids und Fitness. Das Fußball-Bild ist auch das Titelbild der Fußball-Seite.' },
     { name: 'Breitensport-Seite und Vereinsseite', text: 'Drei Bilder der Breitensport-Seite und das Titelbild der Vereinsseite.' },
     { name: 'Reiter', text: 'Oben nach Seiten sortiert: Startseite, Fußball, Breitensport, Verein, Weitere Seiten.' },
-    { name: 'Platzhalter', text: '{mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung} werden automatisch durch aktuelle Zahlen ersetzt. Genau so stehen lassen.' },
+    { name: 'Platzhalter', text: '{mitglieder}, {teams}, {kurse}, {angebote}, {kinder}, {gruendung} und {abMonat} (günstigster Monatsbeitrag) werden automatisch durch aktuelle Zahlen ersetzt. Genau so stehen lassen.' },
+    { name: 'Veranstaltungs-Countdown', text: 'Überzeile und Button-Text der Countdown-Box auf der Startseite. Welcher Termin gezeigt wird, legt der Haken „Countdown auf der Startseite“ im Termin fest.' },
     { name: 'Zeilenumbruch', text: 'Ein Umbruch im Feld wird auch auf der Website ein Umbruch – praktisch für zweizeilige Überschriften.' },
   ],
 }
@@ -1024,8 +1041,8 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
     teamredaktion: 'Du kannst Fotoalben für deine eigenen Teams anlegen und bearbeiten.',
   },
   users: {
-    admin: 'Du kannst Konten anlegen und Rollen vergeben – außer Admin und Web-Admin. Konten von Web-Admins kannst du nicht ändern.',
-    webadmin: 'Nur du kannst Admin- und Web-Admin-Rechte vergeben. Vergib sie so sparsam wie möglich.',
+    admin: 'Du kannst Konten anlegen und Rollen vergeben – außer Admin, Web-Admin und „Nur ansehen“. Konten von Web-Admins kannst du nicht ändern, bei anderen Admins nicht E-Mail, Passwort oder Zwei-Faktor.',
+    webadmin: 'Nur du kannst Admin-, Web-Admin- und „Nur ansehen“-Rechte vergeben. Vergib sie so sparsam wie möglich.',
   },
 }
 
@@ -1035,7 +1052,7 @@ export const ROLLEN_HINWEIS: Record<string, Partial<Record<RolleKey, string>>> =
 export const FAQ: Faq[] = [
   {
     frage: 'Wie funktioniert die Familienmitgliedschaft?',
-    antwort: 'Im Mitgliedsantrag gibt es die Beitragsart „Familie“; dort trägt die antragstellende Person die weiteren Familienmitglieder ein. Wird der Antrag auf „Aufgenommen“ gesetzt, bekommt JEDE Person eine eigene Mitgliedschaft mit eigenem digitalen Ausweis – alle unter der E-Mail des Antrags. Wer sich mit dieser E-Mail anmeldet, sieht im Mitgliederbereich die Ausweise der ganzen Familie. Einen „Familien-Datensatz“ gibt es bewusst nicht: Trennen sich Eltern oder tritt ein Kind aus, endet nur die einzelne Mitgliedschaft (Datum „Gültig bis (Austritt)“), die anderen bleiben unberührt. Soll ein Kind seine Ausweise später selbst sehen, bei seiner Mitgliedschaft unter „Benutzerkonto“ das eigene Konto eintragen. Wer welchen Beitrag zahlt, führt weiter die Mitgliederverwaltung des Vereins (z. B. DFBnet).',
+    antwort: 'Im Mitgliedsantrag gibt es die Mitgliedsart „Familie“; dort trägt die antragstellende Person die weiteren Familienmitglieder ein. Wird der Antrag auf „Aufgenommen“ gesetzt, bekommt JEDE Person eine eigene Mitgliedschaft mit eigenem digitalen Ausweis – alle unter der E-Mail des Antrags. Wer sich mit dieser E-Mail anmeldet, sieht im Mitgliederbereich die Ausweise der ganzen Familie. Einen „Familien-Datensatz“ gibt es bewusst nicht: Trennen sich Eltern oder tritt ein Kind aus, endet nur die einzelne Mitgliedschaft (Datum „Gültig bis (Austritt)“), die anderen bleiben unberührt. Soll ein Kind seine Ausweise später selbst sehen, bei seiner Mitgliedschaft unter „Benutzerkonto“ das eigene Konto eintragen. Wer welchen Beitrag zahlt, führt weiter die Mitgliederverwaltung des Vereins (z. B. DFBnet).',
     bereich: 'mitgliedschaften',
   },
   {
@@ -1128,12 +1145,12 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie erfahre ich von Sicherheitslücken und Updates (Next.js, Payload, Node.js, Datenbank)?',
-    antwort: 'Alles steht an einem Ort: Technik → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben im Dashboard „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Übersicht mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server; die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
-    bereich: 'sicherung',
+    antwort: 'Alles steht an einem Ort: Technik → „Sicherheit“, Reiter „Updates“ (nur Web-Admins). Die Website prüft jeden Tag und kurz nach jedem Start: alle direkt genutzten Pakete gegen die Sicherheitsdatenbank von npm und auf neuere Versionen, Node.js (Sicherheitsversionen und Ende der Updates), die PostgreSQL-Datenbank und – live auf dem Server – ausstehende Betriebssystem-Updates und einen nötigen Neustart. Bei einer Sicherheitslücke erscheint oben auf der Übersicht „🚨 Sicherheitsupdate nötig …“, normale Updates als „⬆️ N Updates verfügbar“; „Ansehen“ führt direkt zur Seite „Sicherheit“ mit Version, Schweregrad, Link zur Beschreibung und „So geht’s“. Mit „Jetzt prüfen“ startet man die Prüfung sofort. Zusätzlich prüft GitHub täglich auch indirekt genutzte Pakete und schickt bei Fund eine E-Mail. Was tun: Sicherheitsupdates zeitnah, alles andere beim Update-Tag – Update in Auftrag geben (aktualisieren und testen), dann deploy/update.sh auf dem Server; die Sicherung davor macht das Skript selbst. Übertragen werden nur Paketnamen und Versionsnummern, keine Vereinsdaten.',
+    bereich: 'updates',
   },
   {
     frage: 'Gibt es eine Rolle, die nur ansehen darf?',
-    antwort: 'Ja: „Nur ansehen“. Wer nur diese Rolle hat, sieht in der Verwaltung alles – News, Termine, Seiten, Teams, Bilder, Einstellungen, auch Entwürfe und frühere Versionen –, kann aber nichts anlegen, ändern, veröffentlichen oder löschen (die Formulare sind grau, Knöpfe zum Speichern fehlen; der Server lehnt Änderungen auch über direkte Aufrufe ab). Gedacht z. B. für Vorstand oder Kassenprüfung. Sensible Bereiche schaltet der Web-Admin unter Mitglieder → „Rollen & Rechte“ → Reiter „Rechte anpassen“ → „Nur ansehen“ einzeln ab, indem er den Haken entfernt: Posteingang, Passanträge, Mitgliedsanträge, Bankdaten (IBAN), Mitgliedschaften, Benutzerkonten (inkl. Registrierungen und Profilfotos) und Besucherstatistik. Ab Werk ist alles an. Nie sichtbar: Pass-Unterlagen (Ausweise, Fotos), Papierkorb, Datensicherung, Sicherheits-Einstellungen; Exporte (z. B. für die Kasse) und Datenschutz-Auskünfte gibt es für diese Rolle nicht. Das eigene Passwort und die Zwei-Faktor-Anmeldung kann die Person selbst ändern, die Zwei-Faktor-Anmeldung ist wie bei allen Verwaltungsrollen Pflicht. Auf der Website gilt sie wie alle anderen: Kontaktformular und Mitgliedsantrag gehen, und mit der Rolle „Mitglied“ dazu nutzt sie den Mitgliederbereich ganz normal (Ausweis, Profilfoto, Passantrag). Hat jemand zusätzlich eine andere Rolle (z. B. Kasse), darf er dort weiter arbeiten und sieht den Rest zum Lesen. Vergeben und entziehen kann die Rolle nur ein Web-Admin, weil sie auch Bereiche öffnet, die sonst nur Web-Admins sehen (z. B. Besucherstatistik).',
+    antwort: 'Ja: „Nur ansehen“. Wer nur diese Rolle hat, sieht in der Verwaltung alles – News, Termine, Seiten, Teams, Bilder, Einstellungen, auch Entwürfe und frühere Versionen –, kann aber nichts anlegen, ändern, veröffentlichen oder löschen (die Formulare sind grau, Knöpfe zum Speichern fehlen; der Server lehnt Änderungen auch über direkte Aufrufe ab). Gedacht z. B. für Vorstand oder Kassenprüfung. Sensible Bereiche schaltet der Web-Admin unter Mitglieder → „Rollen & Rechte“ → Reiter „Rechte anpassen“ → „Nur ansehen“ einzeln ab, indem er den Haken entfernt: Posteingang, Passanträge, Mitgliedsanträge, Bankdaten (IBAN), Mitgliedschaften (inkl. Kündigungen, ohne die unterschriebenen Schreiben), Benutzerkonten (inkl. Registrierungen, Profilfotos, Zu-/Absagen und Spielecke-Rangliste) und Besucherstatistik. Ab Werk ist alles an. Nie sichtbar: Pass-Unterlagen (Ausweise, Fotos), Papierkorb, Datensicherung, Sicherheits-Einstellungen; Exporte (z. B. für die Kasse) und Datenschutz-Auskünfte gibt es für diese Rolle nicht. Das eigene Passwort und die Zwei-Faktor-Anmeldung kann die Person selbst ändern, die Zwei-Faktor-Anmeldung ist wie bei allen Verwaltungsrollen Pflicht. Auf der Website gilt sie wie alle anderen: Kontaktformular und Mitgliedsantrag gehen, und mit der Rolle „Mitglied“ dazu nutzt sie den Mitgliederbereich ganz normal (Ausweis, Profilfoto, Passantrag). Hat jemand zusätzlich eine andere Rolle (z. B. Kasse), darf er dort weiter arbeiten und sieht den Rest zum Lesen. Vergeben und entziehen kann die Rolle nur ein Web-Admin, weil sie auch Bereiche öffnet, die sonst nur Web-Admins sehen (z. B. Besucherstatistik).',
     bereich: 'users',
   },
   {
@@ -1148,27 +1165,27 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Was ist der Monatsbericht?',
-    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist, welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Verschickt wird nur von der echten Live-Website (nicht von Test-Installationen wie der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
+    antwort: 'Einmal im Monat bekommen alle Admins eine E-Mail: was im Posteingang offen ist (Anträge, Anfragen, Passanträge, Registrierungen, Kündigungen), welche Teams keine Verantwortlichen oder keine Trainingszeiten haben, welche seit über 6 Monaten nicht bestätigt wurden („Passt noch?“), ungenutzte Zugänge, fehlende Zwei-Faktor-Anmeldung und fällige Datenschutz-Fristen. Web-Admins sehen zusätzlich Technik-Hinweise (Sicherung, Speicher, Versionen). Ist alles erledigt, steht „Alles in Ordnung“ drin – so sieht man, dass der Versand funktioniert. Verschickt wird nur von der echten Live-Website (nicht von Test-Installationen wie der Generalprobe). Abbestellen: „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“.',
     bereich: 'dashboard',
   },
   {
     frage: 'Ein Trainer hört auf – was muss ich tun?',
-    antwort: 'Team öffnen (am einfachsten über Sport → „Saisonwechsel“) → unter „Verantwortliche“ die Person entfernen → Speichern. Betreut sie kein anderes Team mehr: unter Mitglieder → „Benutzer“ bei der Person nur die Rolle „Mitglied“ lassen. Dann kommt sie nicht mehr in die Verwaltung; ihre News und Bilder bleiben.',
+    antwort: 'Team öffnen (Fußball: über Sport → „Saisonwechsel“, Kurse: Sport → „Teams & Kurse“) → unter „Verantwortliche“ die Person entfernen → Speichern. Betreut sie kein anderes Team mehr: unter Mitglieder → „Benutzer“ bei der Person nur die Rolle „Mitglied“ lassen. Dann kommt sie nicht mehr in die Verwaltung; ihre News und Bilder bleiben.',
     bereich: 'saisonwechsel',
   },
   {
     frage: 'Was ist der Saisonwechsel und wann mache ich ihn?',
-    antwort: 'Vor jeder Fußball-Saison – meist im Sommer – gehen Admin oder Redaktion unter Sport → „Saisonwechsel“ alle Fußballteams durch: Namen, Verantwortliche, Trainingszeiten, alte Fotos. Breitensport-Kurse haben keine Saison und stehen dort nicht. Jedes Team wird abgehakt, am Ende „Saisonwechsel abschließen“. Vom 15. Juni bis 30. September erinnert das Dashboard daran.',
+    antwort: 'Vor jeder Fußball-Saison – meist im Sommer – gehen Admin oder Redaktion unter Sport → „Saisonwechsel“ alle Fußballteams durch: Namen, Verantwortliche, Trainingszeiten, alte Fotos. Breitensport-Kurse haben keine Saison und stehen dort nicht. Jedes Team wird abgehakt, am Ende „Saisonwechsel abschließen“. Vom 15. Juni bis 30. September erinnert die Übersicht daran.',
     bereich: 'saisonwechsel',
   },
   {
-    frage: 'Das Dashboard sagt, Node.js oder PostgreSQL bekommt bald keine Sicherheits-Updates mehr. Was tun?',
+    frage: 'Die Übersicht sagt, Node.js oder PostgreSQL bekommt bald keine Sicherheits-Updates mehr. Was tun?',
     antwort: 'Das ist die Technik unter der Website. Rechtzeitig (der Hinweis kommt 6 Monate vorher) auf die nächste Version wechseln – das macht der Web-Admin bzw. wer den Server betreut, am besten an einem Update-Tag nach einer frischen Sicherung. Die Daten bleiben dabei erhalten. Details stehen unter „Datensicherung“ im Kasten „Wartung“.',
     bereich: 'sicherung',
   },
   {
     frage: 'Der Speicherplatz wird knapp. Was tun?',
-    antwort: 'Ab 80 % belegt warnt das Dashboard. Möglichkeiten: in der Mediathek alte, nicht mehr genutzte Bilder löschen (Papierkorb leert sich nach 30 Tagen), alte Fotoalben aufräumen – oder beim Server-Anbieter mehr Speicher buchen. Auch die Sicherungen brauchen Platz; es bleiben automatisch nur die letzten 14 sowie je eine pro Woche und Monat.',
+    antwort: 'Ab 80 % belegt warnt die Übersicht. Möglichkeiten: in der Mediathek alte, nicht mehr genutzte Bilder löschen (Papierkorb leert sich nach 30 Tagen), alte Fotoalben aufräumen – oder beim Server-Anbieter mehr Speicher buchen. Auch die Sicherungen brauchen Platz; es bleiben automatisch nur die letzten 14 sowie je eine pro Woche und Monat.',
     bereich: 'sicherung',
   },
   {
@@ -1210,7 +1227,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Bekomme ich eine E-Mail bei neuen Probetraining-Anfragen oder Passanträgen?',
-    antwort: 'Ja, als Trainer für deine Teams (Passanträge zusätzlich an die Rolle „Passwesen“) – sobald der E-Mail-Versand eingerichtet ist. Dazu alle 3 Monate die Frage „Passt noch?“ zu deinen Teams. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“ entfernen und speichern.',
+    antwort: 'Ja – sobald der E-Mail-Versand eingerichtet ist: Trainer bekommen Probetraining-Anfragen und Passanträge ihrer Teams, die Rolle „Passwesen“ alle Passanträge. Trainer bekommen außerdem alle 3 Monate die Frage „Passt noch?“ zu ihren Teams. Abbestellen: oben rechts auf dein Symbol → „Mein Konto“ → Haken „E-Mail-Benachrichtigungen“ entfernen und speichern.',
   },
   {
     frage: 'Wie melde ich mich ab oder wechsle in den Mitgliederbereich?',
@@ -1229,13 +1246,13 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wer sieht die Passanträge und Ausweiskopien?',
-    antwort: 'Die antragstellende Person (ihre eigenen), Admins, Konten mit der Rolle „Passwesen“ (alle Teams – auch ohne eigenes Team) und die Trainer des Teams, für das der Antrag gestellt wurde. Team-Redaktion, Kasse und Trainer anderer Teams sehen sie nicht. Die Rolle „Passwesen“ vergibst du unter „Benutzer“.',
+    antwort: 'Die antragstellende Person (ihre eigenen), Admins, Konten mit der Rolle „Passwesen“ (alle Teams – auch ohne eigenes Team) und die Trainer des Teams, für das der Antrag gestellt wurde (solange unter Rollen & Rechte → „Rechte anpassen“ eingeschaltet), dazu Personen mit dem Zusatzrecht „Passanträge aller Teams“. „Nur ansehen“ sieht die Anträge, aber nie die Ausweis- und Fotodateien. Team-Redaktion, Kasse und Trainer anderer Teams sehen sie nicht. Die Rolle „Passwesen“ vergibst du unter „Benutzer“.',
     bereich: 'passantraege',
   },
   {
     frage: 'Jemand hat sich auf der Website registriert – was muss ich tun?',
-    antwort: 'Links unter „Posteingang“ auf „Registrierungen“ (das Dashboard erinnert auch daran). Dort erscheinen nur Personen, die ihre E-Mail-Adresse schon bestätigt haben. 1. Teams & Kurse prüfen: Was die Person bei der Registrierung angekreuzt hat, ist schon angehakt (grün, „Wunsch“). Haken setzen oder entfernen; „Alle Teams & Kurse zeigen“ klappt den Rest auf. 2. Ist die Person Mitglied, auf „Freigeben“ klicken – sie bekommt automatisch eine E-Mail. Sonst „Ablehnen“, dann wird das Konto gelöscht. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen, nie bestätigte nach 7 Tagen von selbst.',
-    bereich: 'users',
+    antwort: 'Links unter „Posteingang“ auf „Registrierungen“ (die Übersicht erinnert auch daran). Dort erscheinen nur Personen, die ihre E-Mail-Adresse schon bestätigt haben. 1. Teams & Kurse prüfen: Was die Person bei der Registrierung angekreuzt hat, ist schon angehakt (grün, „Wunsch“). Haken setzen oder entfernen; „Alle Teams & Kurse zeigen“ klappt den Rest auf. 2. Ist die Person Mitglied, auf „Freigeben“ klicken – sie bekommt automatisch eine E-Mail. Sonst „Ablehnen“, dann wird das Konto gelöscht. Nicht freigegebene Registrierungen verschwinden nach 60 Tagen, nie bestätigte nach 7 Tagen von selbst.',
+    bereich: 'registrierungen',
   },
   {
     frage: 'Wie lege ich fest, wer Nachrichten aus dem Kontaktformular bekommt?',
@@ -1245,12 +1262,12 @@ export const FAQ: Faq[] = [
   {
     frage: 'Warum erscheint eine Registrierung nicht unter „Registrierungen“?',
     antwort: 'Die Person hat den Link in der Bestätigungs-E-Mail noch nicht angeklickt. Oben auf der Seite steht, wie viele noch darauf warten. Tipp für die Person: im Spam-Ordner nachsehen oder auf der Anmeldeseite „Bestätigungs-E-Mail noch einmal senden“ nutzen. Auch „Passwort vergessen?“ zählt als Bestätigung.',
-    bereich: 'users',
+    bereich: 'registrierungen',
   },
   {
     frage: 'Wie schützt sich die Registrierung vor Bots?',
     antwort: 'Ohne „Ich bin kein Roboter“-Kästchen und ohne fremde Dienste (also auch ohne Daten an Google): 1. Der Browser löst im Hintergrund eine kleine Rechenaufgabe (meist unter 2 Sekunden, unter dem Knopf steht „Sicherheitsprüfung erledigt“). Für Menschen unsichtbar, für Massen-Bots teuer. 2. Wer schneller als 3 Sekunden absendet, wird abgewiesen. 3. Ein unsichtbares Fangfeld, das nur Bots ausfüllen. 4. Höchstens 5 Versuche pro Internetanschluss in kurzer Zeit. 5. Ohne bestätigte E-Mail erscheint niemand bei euch – und wird nach 7 Tagen gelöscht.',
-    bereich: 'users',
+    bereich: 'registrierungen',
   },
   {
     frage: 'Wie richte ich den E-Mail-Versand ein?',
@@ -1260,8 +1277,8 @@ export const FAQ: Faq[] = [
 
   {
     frage: 'Wer sieht die Profilfotos der Mitglieder?',
-    antwort: 'Nur das Mitglied selbst, Admin und Kasse sowie die Trainer der Kurse, in denen das Mitglied eingetragen ist (im Team unter „Mitglieder in diesem Team / Kurs“). Nie öffentlich. Das Mitglied kann sein Foto jederzeit selbst entfernen.',
-    bereich: 'users',
+    antwort: 'Nur das Mitglied selbst, Admin und Kasse, die Trainer der Kurse, in denen das Mitglied eingetragen ist (im Team unter „Mitglieder in diesem Team / Kurs“; abschaltbar unter Rollen & Rechte → „Rechte anpassen“), und – sofern nicht abgeschaltet – die Rolle „Nur ansehen“. Nie öffentlich. Das Mitglied kann sein Foto jederzeit selbst entfernen.',
+    bereich: 'profilbilder',
   },
   {
     frage: 'Wie stelle ich ein, dass die News auf der Startseite von selbst weiterlaufen?',
@@ -1281,16 +1298,18 @@ export const FAQ: Faq[] = [
   {
     frage: 'Ich habe aus Versehen etwas gelöscht. Ist es weg?',
     antwort:
-      'Fast alles landet zuerst im Papierkorb des Bereichs (Liste → oben „Papierkorb“ → Eintrag öffnen → „Wiederherstellen“) und bleibt dort 30 Tage. Danach – oder wenn du es dort endgültig löschst – kann es nur noch ein Web-Admin zurückholen: Anträge, Anfragen und andere persönliche Daten 30 Tage lang, alles andere bis zu 1 Jahr. Sofort weg sind gelöschte Benutzerkonten, Passanträge, Pass-Unterlagen und Profilfotos. Bei News und Seiten gibt es außerdem „Versionen“ mit früheren Fassungen.',
+      'Fast alles landet zuerst im Papierkorb des Bereichs (Liste → oben „Papierkorb“ → Eintrag öffnen → „Wiederherstellen“) und bleibt dort 30 Tage. Danach – oder wenn du es dort endgültig löschst – kann es nur noch ein Web-Admin zurückholen: Anträge, Anfragen und andere persönliche Daten 30 Tage lang, alles andere bis zu 1 Jahr. Sofort weg sind gelöschte Benutzerkonten, Kündigungen (mit Schreiben), Passanträge, Pass-Unterlagen, Profilfotos und Einträge der Spielecke-Rangliste. Bei News und Seiten gibt es außerdem „Versionen“ mit früheren Fassungen.',
     bereich: 'dashboard',
   },
   {
     frage: 'Kann ich die Verwaltung auf dem Handy nutzen?',
-    antwort: 'Ja. Am besten als App-Symbol: Verwaltung im Handy-Browser öffnen und „Zum Startbildschirm hinzufügen“ wählen (iPhone: Teilen-Symbol → „Zum Home-Bildschirm“; Android: Menü ⋮ → „Zum Startbildschirm hinzufügen“). Ein Ausfall ist dann in drei Klicks gemeldet.',
+    antwort: 'Ja. Die Seitenleiste öffnest du über das Menü-Symbol oben links. Für längere Texte ist ein Computer angenehmer. Am besten als App-Symbol: Verwaltung im Handy-Browser öffnen und „Zum Startbildschirm hinzufügen“ wählen (iPhone: Teilen-Symbol → „Zum Home-Bildschirm“; Android: Menü ⋮ → „Zum Startbildschirm hinzufügen“). Dann startet sie als eigenes Symbol „BSV Verwaltung“ – genauso wie die Website-App (siehe „Gibt es die Website als App?“). Ein Ausfall ist dann in drei Klicks gemeldet.',
+    bereich: 'dashboard',
   },
   {
     frage: 'Wie sichere ich alle Daten?',
-    antwort: 'Links unter „Technik“ auf „Datensicherung“ (nur Web-Admins) → „Sicherung jetzt erstellen“ → „Herunterladen“ und zusätzlich auf einem USB-Stick oder in einer Cloud speichern. Am besten einmal pro Woche – das Dashboard erinnert nach 7 Tagen.',
+    antwort: 'Die Website sichert jede Nacht automatisch (es bleiben die letzten 14 sowie je eine pro Woche und Monat). Zusätzlich vor größeren Änderungen: Technik → „Datensicherung“ (nur Web-Admins) → „💾 Sicherung jetzt erstellen“. Für eine Kopie außerhalb des Servers etwa einmal pro Woche „⬇️ Herunterladen“ und auf einem USB-Stick oder in einer Cloud ablegen – nie per E-Mail. Ist die letzte Sicherung älter als 7 Tage, warnt die Übersicht.',
+    bereich: 'sicherung',
   },
   {
     frage: 'Warum muss ich beim Hochladen angeben, ob Personen zu erkennen sind?',
@@ -1328,7 +1347,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ist die Seitenleiste aufgebaut?',
-    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Animationen, Spielecke-Rangliste, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel Fußball (Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
+    antwort: 'Posteingang: Mitgliedsanträge, Kontaktanfragen, Probetraining-Anfragen, Passanträge, Kündigungen, Formular-Eingänge, Registrierungen. Inhalte: News, Termine, Fotoalben, Mediathek, Sponsoren, Ehrenamt & Mitmachen. Website-Aufbau: Seiten, Menü & Fußzeile, Texte & Bilder, Animationen, Spielecke-Rangliste, Formulare, Kategorien (nur Admins). Sport: Teams & Kurse, Trainingsausfälle, Saisonwechsel (nur Fußball; Admin und Redaktion). Mitglieder: Benutzer, Rollen & Rechte, Mitgliedschaften, Profilfotos, Mitglieder-Dokumente. Einstellungen: Vereinsdaten, Datenschutz-Fristen, E-Mail-Vorlagen, Hilfe-Texte, Hilfe-Rückmeldungen. Technik (nur Web-Admins): Datensicherung, Sicherheit (Updates und automatisches Abmelden), Papierkorb, Besucherstatistik, Suchindex, Weiterleitungen. Die Ausweis- und Fotodateien zu Passanträgen öffnest du direkt im Passantrag. Ganz unten: Hilfe-Center, dein Konto und „Zur Website“. Jede Rolle sieht nur, was sie braucht.',
     bereich: 'dashboard',
   },
   {
@@ -1343,7 +1362,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Kann ich einer Person ein einzelnes Recht geben, ohne ihr eine ganze Rolle zu geben?',
-    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen fast alle Bereiche: Posteingang (Kontaktanfragen, Probetraining und Passanträge aller Teams, Registrierungen, Formular-Eingänge), Inhalte (News aller Teams, Termine, Ehrenamt, Bilder/Galerie/Dokumente, Sponsoren), Website-Aufbau (Seiten, Menü, Texte & Bilder, Formulare), Sport (alle Teams & Kurse, Ausfälle aller Teams, Saisonwechsel), Mitglieder (Mitgliedsanträge ohne Bankdaten, Mitgliedschaften nur lesen) Einstellungen (Vereinsdaten, Datenschutz-Fristen, Hilfe-Texte) und Technik (Besucherstatistik, Papierkorb nur wiederherstellen). Ein Bereichsrecht gibt genau die Rechte, die die zuständige Rolle dort hat – z. B. „News aller Teams“ = wie die Redaktion, aber nur für News. Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Bewusst nie einzeln vergebbar: Benutzerverwaltung, Admin-Rechte, Bankdaten (IBAN, Kontoinhaber, Export für die Kasse) und Datensicherung – dafür gibt es die Rollen Admin, Kasse und Web-Admin. Alle Personen mit Zusatzrechten auf einen Blick: Mitglieder → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
+    antwort: 'Ja. Benutzer öffnen → unten den zugeklappten Abschnitt „Ausnahmen: Zusatzrechte nur für diese Person (Web-Admin)“ öffnen → Häkchen setzen → Speichern. Zur Wahl stehen fast alle Bereiche: Posteingang (Kontaktanfragen, Probetraining und Passanträge aller Teams, Registrierungen, Formular-Eingänge), Inhalte (News aller Teams, Termine, Ehrenamt, Bilder/Galerie/Dokumente, Sponsoren), Website-Aufbau (Seiten, Menü, Texte & Bilder, Formulare), Sport (alle Teams & Kurse, Ausfälle aller Teams, Saisonwechsel), Mitglieder (Mitgliedsanträge ohne Bankdaten, Mitgliedschaften nur lesen), Einstellungen (Vereinsdaten, Datenschutz-Fristen, Hilfe-Texte) und Technik (Besucherstatistik, Papierkorb nur wiederherstellen). Ein Bereichsrecht gibt genau die Rechte, die die zuständige Rolle dort hat – z. B. „News aller Teams“ = wie die Redaktion, aber nur für News. Wer ein Zusatzrecht hat, kommt in die Verwaltung, sieht dort nur die passenden Bereiche und braucht die Zwei-Faktor-Anmeldung. Vergeben kann das nur ein Web-Admin, Admins sehen die Häkchen nur. Bewusst nie einzeln vergebbar: Benutzerverwaltung, Admin-Rechte, Bankdaten (IBAN, Kontoinhaber, Export für die Kasse) und Datensicherung – dafür gibt es die Rollen Admin, Kasse und Web-Admin. Alle Personen mit Zusatzrechten auf einen Blick: Mitglieder → „Rollen & Rechte“ → Kachel „Personen mit Zusatzrechten“ anklicken (oder unter „Nach Person“ den Punkt „Mit Zusatzrechten“ wählen). Die Rechte stehen dort als orange „+ …“ unter den Rollen.',
     bereich: 'users',
   },
   {
@@ -1359,7 +1378,7 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wo ändere ich die Überschrift der News-Seite („Newsroom“), von Termine oder Kontakt?',
     antwort:
-      'Website-Aufbau → „Texte & Bilder“ → Reiter „Weitere Seiten“. Dort gibt es je einen Abschnitt für News, Termine, Kontakt, Mitgliedsantrag, Probetraining und die Fußzeile – jeweils mit „Überschrift“ und „Text“ darunter. Ändern, oben rechts „Speichern“, fertig: Die Website zeigt es sofort.\n\nDie Überschriften von Startseite, Fußball, Breitensport und Verein stehen in den gleichnamigen Reitern davor. Die Einträge im Menü oben (z. B. „News“) sind etwas anderes – die änderst du unter Menü & Fußzeile.',
+      'Website-Aufbau → „Texte & Bilder“ → Reiter „Weitere Seiten“. Dort gibt es je einen Abschnitt für Fußzeile, Web-App, News, Termine, Kontakt, Mitglied werden, Sponsoren, Galerie, Mitmachen / Ehrenamt und Probetraining – jeweils mit „Überschrift“ und „Text“ darunter. Ändern, oben rechts „Speichern“, fertig: Die Website zeigt es sofort.\n\nDie Überschriften von Startseite, Fußball, Breitensport und Verein stehen in den gleichnamigen Reitern davor. Die Einträge im Menü oben (z. B. „News“) sind etwas anderes – die änderst du unter Menü & Fußzeile.',
     bereich: 'texte',
   },
   {
@@ -1394,12 +1413,12 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wo sehe ich, wie viele Menschen die Website besuchen?',
     antwort: 'Technik → „Besucherstatistik“ (nur Web-Admins). Dort: Besuche und Seitenaufrufe mit Vergleich zum Zeitraum davor, Verlauf pro Tag/Woche/Monat, beliebteste Seiten, Herkunft (Google, Instagram, direkt …), Handy oder Computer, meistgesehene Teams & Kurse, wie weit Interessierte im Mitgliedsantrag kommen und was gesucht wurde – auch ohne Treffer. Gezählt wird ohne Cookies und ohne Google; angemeldete Mitarbeitende zählen nicht mit.',
-    bereich: 'dashboard',
+    bereich: 'statistik',
   },
   {
     frage: 'Was muss wegen der Besucherstatistik in die Datenschutzerklärung?',
-    antwort: 'Ein kurzer Absatz, z. B.: „Reichweitenmessung: Wir zählen Seitenaufrufe auf unserem eigenen Server, um die Website zu verbessern (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Dabei werden keine Cookies gesetzt und keine IP-Adressen gespeichert. Aus IP-Adresse und Browserkennung wird ein täglich wechselndes, nicht rückverfolgbares Kürzel gebildet, damit wir Besuche eines Tages zählen können. Gespeichert werden aufgerufene Seite, Herkunftsseite (nur der Name, z. B. „Google“), Gerätetyp und Suchbegriffe der Website-Suche. Die Daten werden nicht weitergegeben und nach 14 Monaten automatisch gelöscht. Browser mit aktivierter „Do Not Track“- bzw. „Global Privacy Control“-Einstellung werden nicht erfasst.“ Die Datenschutzerklärung bearbeitest du unter Website-Aufbau → Seiten → „Datenschutz“. Im Zweifel bitte rechtlich prüfen lassen.',
-    bereich: 'dashboard',
+    antwort: 'Ein kurzer Absatz, z. B.: „Reichweitenmessung: Wir zählen Seitenaufrufe auf unserem eigenen Server, um die Website zu verbessern (berechtigtes Interesse, Art. 6 Abs. 1 lit. f DSGVO). Dabei werden keine Cookies gesetzt und keine IP-Adressen gespeichert. Aus IP-Adresse und Browserkennung wird ein täglich wechselndes, nicht rückverfolgbares Kürzel gebildet, damit wir Besuche eines Tages zählen können. Gespeichert werden aufgerufene Seite, Herkunftsseite (nur der Name, z. B. „Google“), Gerätetyp und Suchbegriffe der Website-Suche. Die Daten werden nicht weitergegeben und nach 14 Monaten (Suchbegriffe nach 3 Monaten) automatisch gelöscht. Browser mit aktivierter „Do Not Track“- bzw. „Global Privacy Control“-Einstellung werden nicht erfasst.“ Die Zahlen an die eingestellten Datenschutz-Fristen anpassen. Die Datenschutzerklärung bearbeitest du unter Website-Aufbau → Seiten → „Datenschutz“. Im Zweifel bitte rechtlich prüfen lassen.',
+    bereich: 'statistik',
   },
   {
     frage: 'Wie bekommt meine Team-News einen Platz auf der Startseite?',
@@ -1414,7 +1433,7 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wie exportiere ich Mitgliedsanträge für das DFBnet?',
     antwort: 'Posteingang → Mitgliedsanträge → oben „📥 … neue exportieren“. Du bekommst eine Excel-Datei (CSV) mit allen aufgenommenen Anträgen, die noch nicht exportiert wurden – eine Zeile pro Person, Familienmitglieder einzeln, ohne Bankdaten. Danach sind sie als „exportiert“ markiert. Brauchst du alle noch einmal: „alle aufgenommenen“. Die Datei nach dem Übertragen löschen. Exportieren dürfen Kasse und Admins.',
-    bereich: 'dashboard',
+    bereich: 'mitgliedsantraege',
   },
   {
     frage: 'Warum gibt es bei Auswahlfeldern kein „+“ und manchmal kein „Duplizieren“?',
@@ -1424,7 +1443,7 @@ export const FAQ: Faq[] = [
   {
     frage: 'Wo sehe ich, wer welche Rolle und welches Team hat?',
     antwort: 'Unter Mitglieder → „Rollen & Rechte“ (Admins und Web-Admins): Reiter „Nach Person“ und „Nach Team“. Web-Admins sehen zusätzlich „Nach Rolle“, „Rechte je Rolle“ und „Testkonten“.',
-    bereich: 'users',
+    bereich: 'rollen',
   },
   {
     frage: 'Warum sehe ich meine News nicht auf der Startseite?',
@@ -1485,11 +1504,13 @@ export const FAQ: Faq[] = [
     frage: 'Jemand will wissen, welche Daten wir über ihn gespeichert haben.',
     antwort:
       'Einstellungen → Datenschutz-Fristen → „Auskunft für eine Person“: E-Mail-Adresse eingeben, Datei herunterladen und der Person geben (nicht per unverschlüsselter Mail an Dritte). Enthalten ist alles von der Website – auch aus dem Papierkorb. Will die Person, dass alles gelöscht wird: die gefundenen Einträge löschen und im Web-Admin-Papierkorb endgültig entfernen lassen.',
+    bereich: 'datenschutz',
   },
   {
     frage: 'Wie lange bleiben Anträge und Anfragen gespeichert?',
     antwort:
       'Das stellst du unter Einstellungen → Datenschutz-Fristen ein. Mit „Automatisch aufräumen“ (Standard) wandern fällige Einträge täglich in den Papierkorb, nach 30 Tagen in den Web-Admin-Papierkorb und werden dort nach der Frist für persönliche Daten (Standard 30 Tage) endgültig gelöscht. Die IBAN eines Mitgliedsantrags wird schon beim Wechsel in den Web-Admin-Papierkorb entfernt.',
+    bereich: 'datenschutz',
   },
   {
     frage: 'Wie lösche ich ein Bild?',
@@ -1524,17 +1545,13 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wer sieht die Mitgliedsanträge und Bankdaten?',
-    antwort: 'Nur Personen mit der Rolle Kasse oder Admin. Alle anderen sehen diesen Bereich gar nicht.',
+    antwort: 'Kasse und Admin (mit Bankdaten). Wer das Zusatzrecht „Mitgliedsanträge bearbeiten – ohne Bankdaten“ hat, sieht die Anträge ohne IBAN. Die Rolle „Nur ansehen“ sieht sie ebenfalls, solange der Web-Admin unter Rollen & Rechte → „Rechte anpassen“ die Haken „Mitgliedsanträge“ bzw. „Bankdaten“ nicht entfernt hat (ab Werk an). Alle anderen sehen den Bereich nicht.',
     bereich: 'mitgliedsantraege',
   },
   {
     frage: 'Ein Training fällt aus – wo trage ich das ein?',
     antwort: 'Unter „Trainingsausfälle“ – nicht bei „Termine“. Der Hinweis steht sofort auf der Teamseite und verschwindet nach dem Datum von selbst.',
     bereich: 'ausfaelle',
-  },
-  {
-    frage: 'Kann ich die Verwaltung auch am Handy benutzen?',
-    antwort: 'Ja. Die Seitenleiste öffnest du über das Menü-Symbol oben links. Für längere Texte ist ein Computer angenehmer. Tipp: Die Verwaltung lässt sich als eigenes Symbol „BSV Verwaltung“ auf den Startbildschirm legen – genauso wie die Website-App (siehe „Gibt es die Website als App?“), nur während du in der Verwaltung bist.',
   },
   {
     frage: 'Was ist „Für Fortgeschrittene: Google-Vorschau und passende News“ bei einer News?',
@@ -1578,7 +1595,7 @@ export const FAQ: Faq[] = [
       + '• Haben mehrere Termine den Haken, zeigt die Startseite den nächsten. Ist er vorbei, kommt automatisch der übernächste dran. Bei wiederkehrenden Terminen zählt immer der nächste.\n'
       + '• Am Tag selbst steht „Heute ist es so weit!“, danach verschwindet die Kachel von selbst.\n'
       + '• Nur bei öffentlichen Terminen: zusammen mit „Nur für Mitglieder sichtbar“ lässt sich der Haken nicht speichern.\n'
-      + '• Den Haken setzen dürfen Admin, Redaktion und wer das Recht für „Seiten“ hat – wie früher unter „Texte & Bilder“.\n'
+      + '• Den Haken setzen dürfen Admin und Redaktion; mit Zusatzrechten nur, wer sowohl „Termine“ als auch „Seiten“ hat.\n'
       + '• Die Überzeile („Bald im BSV“) und den Button-Text für alle Countdowns änderst du unter Website-Aufbau → Texte & Bilder → Startseite → „Veranstaltungs-Countdown“.\n\n'
       + 'Beispiel 1 – Wenn du eine Seite „Sommerfest“ mit Programm und Anmeldung gebaut hast – dann lege unter Termine den Termin „Sommerfest“ am 4. Juli an, setze rechts den Haken „Countdown auf der Startseite“ und wähle bei „Countdown-Button führt zu“ die Seite „Sommerfest“. Die Startseite zählt herunter, der Button öffnet deine Seite.\n\n'
       + 'Beispiel 2 – Wenn im Dezember schon die Weihnachtsfeier und im Januar der Neujahrsempfang den Haken haben – dann zählt die Startseite erst bis zur Weihnachtsfeier und ab dem Folgetag bis zum Neujahrsempfang. Umstellen musst du nichts.',
@@ -1704,7 +1721,7 @@ export const FAQ: Faq[] = [
     frage: 'Gibt es die Website als App?',
     antwort:
       'Ja, als sogenannte Web-App: kostenlos, ohne App-Store und ohne Anmeldung. Wer sie installiert, hat das Vereinswappen auf dem Startbildschirm und die Website öffnet sich in einem eigenen Fenster ohne Browser-Leiste. Inhalte sind immer dieselben wie auf der Website – es gibt nichts extra zu pflegen.\n\n'
-      + 'So geht’s: auf der Startseite in der Kachel „Mitgliederbereich“ auf „App installieren ›“ oder ganz unten auf der Website auf „Als App installieren“ tippen. Chrome, Edge und Android öffnen dann direkt den Installieren-Dialog; auf dem iPhone erscheint eine kurze Anleitung (Teilen → „Zum Home-Bildschirm“). In der installierten App sind beide Hinweise ausgeblendet. Die Texte änderst du unter Website-Aufbau → Texte & Bilder: Reiter „Startseite“ → Kachel Mitgliederbereich (Hinweis und Link-Text) und Reiter „Weitere Seiten“ → Fußzeile. Sobald es Benachrichtigungen gibt, passt du dort den Satz „… folgen in Kürze“ an.\n\n'
+      + 'So geht’s: auf der Startseite in der Kachel „Web-App“ auf „App installieren“ tippen, bei den Trainingszeiten auf „App installieren ›“ oder ganz unten auf der Website auf „Als App installieren“. Chrome, Edge und Android öffnen dann direkt den Installieren-Dialog; auf dem iPhone erscheint eine kurze Anleitung (Teilen → „Zum Home-Bildschirm“). In der installierten App sind diese Hinweise ausgeblendet. Die Texte änderst du unter Website-Aufbau → Texte & Bilder → Reiter „Weitere Seiten“ → „Web-App (für alle Besucher)“ (Kachel, Knopf, Zeile bei den Trainingszeiten, Link in der Fußzeile). Sobald es Benachrichtigungen gibt, passt du dort den Satz „… folgen in Kürze“ an.\n\n'
       + 'Ohne Internet zeigt die App eine freundliche Seite „Gerade keine Verbindung“ statt einer Fehlermeldung. Dabei werden keine Seiten oder Daten auf dem Gerät gespeichert – nur diese eine Hinweisseite. Mitgliederbereich und Ausweis brauchen also immer eine Verbindung. Benachrichtigungen aufs Handy (z. B. bei Trainingsausfall) gibt es noch nicht; sie sind für später geplant – was sie auslösen wird, steht unter „Was löst eine Push-Nachricht auf dem Handy aus?“.\n\n'
       + 'Beispiel 1 – Wenn ein Elternteil fragt, wie es schnell an die Trainingszeiten kommt – dann: Website am Handy öffnen, unten „Als App installieren“. Ein langes Drücken auf das Symbol zeigt Abkürzungen zu Trainingszeiten, Terminen, News und Mitgliederbereich (Android).\n\n'
       + 'Beispiel 2 – Wenn beim Tippen auf „Als App installieren“ nur die Anleitung erscheint statt des Dialogs – dann unterstützt der Browser das direkte Installieren nicht (z. B. Safari oder Firefox) oder die App ist schon installiert. Einfach der Anleitung folgen.',
@@ -1760,8 +1777,8 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   admin: {
     label: 'Admin',
     kurz: 'Du darfst fast alles – inklusive Benutzer und Rollen.',
-    darf: ['Alle Inhalte bearbeiten', 'Benutzer anlegen und Rollen vergeben (außer Admin/Web-Admin)', 'Zwei-Faktor zurücksetzen', 'Mitgliedsanträge und Vereinsdaten'],
-    darfNicht: ['Admin- oder Web-Admin-Rechte vergeben (macht der Web-Admin)', 'Konten von Web-Admins ändern', 'Technik-Bereiche (Weiterleitungen, Suchindex)', 'Datensicherung, Web-Admin-Papierkorb, Besucherstatistik, Zusatzrechte vergeben'],
+    darf: ['Alle Inhalte bearbeiten', 'Benutzer anlegen und Rollen vergeben (außer Admin, Web-Admin und „Nur ansehen“)', 'Zwei-Faktor zurücksetzen', 'Mitgliedsanträge und Vereinsdaten'],
+    darfNicht: ['Admin-, Web-Admin- oder „Nur ansehen“-Rechte vergeben (macht der Web-Admin)', 'Konten von Web-Admins ändern', 'Technik-Bereiche (Weiterleitungen, Suchindex)', 'Datensicherung, Web-Admin-Papierkorb, Besucherstatistik, Zusatzrechte vergeben'],
     anleitungen: [
       ['users', 'konto-anlegen'],
       ['angebote', 'team-verantwortliche'],
@@ -1820,19 +1837,22 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
   },
   kasse: {
     label: 'Kasse',
-    kurz: 'Du bearbeitest die Mitgliedsanträge und pflegst die Beiträge.',
-    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Anträge mit einem Klick aufnehmen, nachfragen oder ablehnen – mit fertiger E-Mail', 'Aufgenommene Anträge als Datei für das DFBnet exportieren (ohne Bankdaten)', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen', 'Registrierungen freigeben', 'E-Mail-Vorlagen für Mitgliedsanträge'],
+    kurz: 'Du bearbeitest Mitgliedsanträge und Kündigungen und pflegst die Beiträge.',
+    darf: ['Mitgliedsanträge (inkl. Bankdaten) bearbeiten', 'Anträge mit einem Klick aufnehmen, nachfragen oder ablehnen – mit fertiger E-Mail', 'Aufgenommene Anträge als Datei für das DFBnet exportieren (ohne Bankdaten)', 'Mitgliedschaften für den digitalen Ausweis pflegen', 'Beiträge und SEPA-Gläubiger-ID in den Vereinsdaten pflegen', 'Kündigungen prüfen, bestätigen und im DFBnet austragen – mit fertiger E-Mail', 'Registrierungen freigeben', 'E-Mail-Vorlagen für Mitgliedsanträge und Kündigungen'],
     darfNicht: ['News und Seiten veröffentlichen', 'Benutzer verwalten'],
     anleitungen: [
       ['mitgliedsantraege', 'antrag-bearbeiten'],
       ['mitgliedsantraege', 'antraege-exportieren'],
       ['mitgliedsantraege', 'antrag-vorlagen'],
+      ['kuendigungen', 'kuendigung-bearbeiten'],
       ['mitgliedschaften', 'ausweis-pflegen'],
       ['registrierungen', 'registrierung-freigeben'],
       ['verein', 'beitraege'],
     ],
     faq: [
       'Wie exportiere ich Mitgliedsanträge für das DFBnet?',
+      'Wie bearbeite ich eine Kündigung im Posteingang?',
+      'Wie funktioniert „Im DFBnet austragen“ bei einer Kündigung?',
       'Wer sieht die Mitgliedsanträge und Bankdaten?',
       'Warum sieht ein Mitglied keinen Ausweis?',
       'Jemand hat sich auf der Website registriert – was muss ich tun?',
@@ -1913,7 +1933,7 @@ export const ROLLEN_PROFIL: Record<RolleKey, RollenProfil> = {
     kurz: 'Du kannst dir in der Verwaltung alles ansehen, aber nichts ändern.',
     darf: [
       'News, Termine, Seiten, Teams, Bilder und Einstellungen ansehen – auch Entwürfe und frühere Versionen',
-      'Posteingang, Mitgliedsanträge, Mitgliedschaften und Benutzerkonten ansehen (sofern der Web-Admin das unter „Rollen-Rechte → Nur ansehen“ nicht abgeschaltet hat)',
+      'Posteingang, Passanträge, Mitgliedsanträge, Mitgliedschaften, Benutzerkonten und Besucherstatistik ansehen (sofern der Web-Admin das unter Mitglieder → „Rollen & Rechte“ → „Rechte anpassen“ nicht abgeschaltet hat)',
       'Dein eigenes Passwort und deine Zwei-Faktor-Anmeldung ändern',
     ],
     darfNicht: [
@@ -1962,6 +1982,6 @@ export const GLOSSAR: Feld[] = [
   { name: 'Verantwortliche', text: 'Die Benutzerkonten, die ein bestimmtes Team pflegen dürfen.' },
   { name: 'Zwei-Faktor-Anmeldung', text: 'Zusätzlich zum Passwort ein 6-stelliger Code aus einer Handy-App. Schützt die Daten des Vereins.' },
   { name: 'Wiederherstellungscodes', text: 'Zehn Einmal-Codes für den Notfall, falls das Handy fehlt. Gut aufbewahren!' },
-  { name: 'Drei Punkte (⋮)', text: 'Das Menü mit weiteren Aktionen: kopieren, löschen, Veröffentlichung aufheben.' },
+  { name: 'Drei Punkte (⋮)', text: 'Das Menü mit weiteren Aktionen: Duplizieren, Löschen, Veröffentlichung aufheben.' },
   { name: 'Griff (sechs Punkte)', text: 'Daran zieht man Einträge in Listen nach oben oder unten.' },
 ]

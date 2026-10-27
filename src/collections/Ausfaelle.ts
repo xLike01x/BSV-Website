@@ -41,7 +41,7 @@ export const Ausfaelle: CollectionConfig = {
     hinweisFeld('AusfallHinweise', false),
     {
       name: 'angebot',
-      label: 'Angebot',
+      label: 'Team / Kurs',
       type: 'relationship',
       relationTo: 'angebote',
       required: true,
