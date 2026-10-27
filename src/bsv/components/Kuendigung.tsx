@@ -15,6 +15,30 @@ export type MeineKuendigung = {
 }
 
 const MAX = 10 * 1024 * 1024
+
+const SCHRITTE: [string, string][] = [
+  ['⬇️', 'Herunterladen'],
+  ['🖨️', 'Ausdrucken'],
+  ['✍️', 'Unterschreiben'],
+  ['📷', 'Abfotografieren'],
+  ['⬆️', 'Hochladen'],
+]
+
+/** Kurz und bildlich: so funktioniert die Kündigung */
+function Schritte() {
+  return (
+    <ol className="kuendigung-schritte" aria-label="So kündigst du">
+      {SCHRITTE.map(([symbol, text], i) => (
+        <li key={text}>
+          <span aria-hidden="true">{symbol}</span>
+          <strong>
+            {i + 1}. {text}
+          </strong>
+        </li>
+      ))}
+    </ol>
+  )
+}
 const KOPF = { 'x-bsv-kuendigung': '1' }
 
 /**
@@ -159,6 +183,7 @@ export function Kuendigung({
         </p>
       ) : !offen ? (
         <>
+          <Schritte />
           <p className="muted" style={{ margin: '0 0 14px', fontSize: 15, lineHeight: 1.5 }}>
             Laut Satzung wirkt eine Kündigung zum Ende des Quartals, in dem sie bei uns eingeht –
             jetzt also zum <strong>{wirksamJetzt}</strong>.
@@ -169,10 +194,12 @@ export function Kuendigung({
         </>
       ) : (
         <form onSubmit={absenden} className="kuendigung-form" method="post">
+          <Schritte />
           <p className="muted" style={{ margin: 0, fontSize: 15, lineHeight: 1.5 }}>
-            So geht’s: 1. auswählen · 2. Schreiben öffnen, ausdrucken und unterschreiben · 3. Foto
-            oder PDF davon hier hochladen. Laut Satzung wirkt die Kündigung zum Ende des Quartals,
-            in dem sie hochgeladen wird.
+            Schreiben herunterladen (bzw. als PDF speichern), ausdrucken, unterschreiben – bei
+            Kindern die Eltern –, mit dem Handy abfotografieren und hier hochladen. Ein gut lesbares
+            Foto reicht. Laut Satzung wirkt die Kündigung zum Ende des Quartals, in dem sie
+            hochgeladen wird.
           </p>
 
           <label className="field">
@@ -220,16 +247,30 @@ export function Kuendigung({
             )}
           </div>
 
-          <label className="field">
+          <div className="field">
             3. Unterschriebenes Schreiben hochladen (Foto oder PDF, höchstens 10 MB)
-            <input
-              type="file"
-              accept="application/pdf,image/jpeg,image/png,image/webp"
-              onChange={dateiWaehlen}
-              required
-              disabled={!ids.length}
-            />
-          </label>
+            <div className="kuendigung-datei">
+              <label
+                className={`btn ${datei ? 'btn-ghost' : 'btn-primary'}${ids.length ? '' : ' ist-aus'}`}
+              >
+                {datei ? '📷 Andere Datei wählen' : '📷 Foto oder PDF auswählen'}
+                <input
+                  type="file"
+                  className="sr-nur"
+                  accept="application/pdf,image/jpeg,image/png,image/webp"
+                  onChange={dateiWaehlen}
+                  disabled={!ids.length}
+                />
+              </label>
+              <span className={datei ? 'kuendigung-datei-name' : 'muted'}>
+                {datei
+                  ? `✓ ${datei.name}`
+                  : ids.length
+                    ? 'Noch keine Datei ausgewählt'
+                    : 'Erst oben auswählen'}
+              </span>
+            </div>
+          </div>
 
           <label className="field">
             Möchtest du uns sagen, warum? (freiwillig)

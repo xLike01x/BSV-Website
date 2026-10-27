@@ -946,3 +946,11 @@
   .schreiben-seite { background: #fff; padding: 0; }
   .schreiben { box-shadow: none; max-width: none; }
 }
+.kuendigung-schritte { list-style: none; margin: 4px 0 14px; padding: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(104px, 1fr)); gap: 8px; }
+.kuendigung-schritte li { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 12px 6px; border-radius: 16px; background: var(--bsv-soft); text-align: center; font-size: 13px; }
+.kuendigung-schritte li span { font-size: 24px; line-height: 1; }
+.kuendigung-datei { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; font-size: 15px; font-weight: 400; }
+.kuendigung-datei .btn { cursor: pointer; }
+.kuendigung-datei .btn.ist-aus { opacity: 0.45; pointer-events: none; }
+.kuendigung-datei-name { color: var(--bsv-green); font-weight: 600; word-break: break-all; }
+.kuendigung-datei label:focus-within { outline: 3px solid var(--bsv-green); outline-offset: 3px; }
