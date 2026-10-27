@@ -23,6 +23,7 @@
     "test:int": "cross-env NODE_OPTIONS=--no-deprecation vitest run --config ./vitest.config.mts",
     "seed:bsv": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/seed.ts",
     "seed:beispiele": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/beispiele.ts",
+    "datenschutz:einspielen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/bsv/seed/datenschutzEinspielen.ts",
     "sicherung:erstellen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/erstellen.ts",
     "sicherung:einspielen": "cross-env NODE_OPTIONS=--no-deprecation payload run src/sicherung/einspielen.ts",
     "test:sicherheit": "node --env-file=.env tests/sicherheit/alle.mjs",
