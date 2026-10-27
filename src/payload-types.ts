@@ -645,6 +645,10 @@ export interface Media {
    */
   sponsoren?: boolean | null;
   /**
+   * Legt die Datei in den Ordner „Vereinsdokumente“ – für Satzung, Abteilungsordnungen, Verhaltenskodex, Schutzkonzept usw. Auf die Website kommt sie erst über Einstellungen → Vereinsdaten → „Satzung & Downloads“.
+   */
+  vereinsdokument?: boolean | null;
+  /**
    * Nur Fotos mit Einwilligung der abgebildeten Personen – bei Kindern der Eltern.
    */
   inGalerie?: boolean | null;
@@ -2602,6 +2606,7 @@ export interface MediaSelect<T extends boolean = true> {
   team?: T;
   allgemein?: T;
   sponsoren?: T;
+  vereinsdokument?: T;
   inGalerie?: T;
   caption?: T;
   endgueltigAm?: T;
@@ -4023,7 +4028,7 @@ export interface Verein {
          */
         nurMitglieder?: boolean | null;
         /**
-         * Für alle sichtbar, z. B. die Satzung.
+         * Für alle sichtbar, z. B. die Satzung. Die Datei kommt in der Mediathek automatisch in den Ordner „Vereinsdokumente“.
          */
         datei?: (number | null) | Media;
         dokument?: (number | null) | Dokumente;

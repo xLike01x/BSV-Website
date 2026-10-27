@@ -5,6 +5,7 @@ import type { GlobalConfig } from 'payload'
 import { anyone } from '../access/anyone'
 import { sichereAdresse } from '@/fields/sichereAdresse'
 import { revalidateAllesGlobal } from '../hooks/revalidateAlles'
+import { downloadsInOrdner } from './downloadsInOrdner'
 
 /** Vereinsdaten an einer Stelle: Adressen, Kennzahlen, Beiträge, Hauptsponsor. */
 export const Verein: GlobalConfig = {
@@ -14,7 +15,7 @@ export const Verein: GlobalConfig = {
   access: { read: anyone, update: ({ req }) => imBereich(req.user, 'verein') },
   admin: { group: 'Einstellungen', description: 'Grunddaten des Vereins: Zahlen, Adressen, Beiträge, Vorstand, Kontaktformular und Downloads. Bilder und die grüne Aktions-Box: Website-Aufbau → „Texte & Bilder“.', hidden: ausblendenAusserBereich('verein') },
   hooks: {
-    afterChange: [revalidateAllesGlobal],
+    afterChange: [revalidateAllesGlobal, downloadsInOrdner],
     // Über die öffentliche Schnittstelle niemals Dateien „Nur für Mitglieder“ verraten
     afterRead: [
       ({ doc, req }) => {
@@ -247,7 +248,7 @@ export const Verein: GlobalConfig = {
           label: 'Datei (öffentlich)',
           type: 'upload',
           relationTo: 'media',
-          admin: { condition: (_, s) => !s?.nurMitglieder || Boolean(s?.datei && !s?.dokument), description: 'Für alle sichtbar, z. B. die Satzung.' },
+          admin: { condition: (_, s) => !s?.nurMitglieder || Boolean(s?.datei && !s?.dokument), description: 'Für alle sichtbar, z. B. die Satzung. Die Datei kommt in der Mediathek automatisch in den Ordner „Vereinsdokumente“.' },
         },
         {
           name: 'dokument',

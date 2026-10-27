@@ -3,9 +3,9 @@ import { usePreferences, useSelection } from '@payloadcms/ui'
 import { useRouter, useSearchParams } from 'next/navigation'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
-export type Ziel = { art: 'team'; id: number } | { art: 'allgemein' } | { art: 'sponsoren' } | { art: 'offen' }
+export type Ziel = { art: 'team'; id: number } | { art: 'allgemein' } | { art: 'sponsoren' } | { art: 'dokumente' } | { art: 'offen' }
 export type Ordner = { key: string; titel: string; anzahl: number; query: string; symbol?: string; warn?: boolean; gedimmt?: boolean; ziel?: Ziel }
-type Vorher = { id: number; team: number | null; allgemein: boolean; sponsoren: boolean }
+type Vorher = { id: number; team: number | null; allgemein: boolean; sponsoren: boolean; vereinsdokument: boolean }
 type Vorschlag = { id: number; datei: string; art: 'team' | 'allgemein'; team?: string; grund: string }
 
 const PREF = 'bsv-medien-ordner'
@@ -89,23 +89,26 @@ export default function MedienOrdnerClient({ oben, gruppen, redaktion }: { oben:
       const z = o.ziel
       const daten =
         z.art === 'team'
-          ? { team: z.id, allgemein: false, sponsoren: false }
+          ? { team: z.id, allgemein: false, sponsoren: false, vereinsdokument: false }
           : z.art === 'allgemein'
-            ? { team: null, allgemein: true, sponsoren: false }
+            ? { team: null, allgemein: true, sponsoren: false, vereinsdokument: false }
             : z.art === 'sponsoren'
-              ? { team: null, allgemein: true, sponsoren: true }
-              : { team: null, allgemein: false, sponsoren: false }
+              ? { team: null, allgemein: true, sponsoren: true, vereinsdokument: false }
+              : z.art === 'dokumente'
+                ? { team: null, allgemein: true, sponsoren: false, vereinsdokument: true }
+                : { team: null, allgemein: false, sponsoren: false, vereinsdokument: false }
       const filter = ids.map((id, i) => `where[id][in][${i}]=${id}`).join('&')
       setMeldung('Wird verschoben …')
       setRueckgaengig(null)
       try {
         // Vorherigen Stand merken – für „Rückgängig“
-        const alt = await fetch(`/api/media?${filter}&depth=0&limit=${ids.length}&select[team]=true&select[allgemein]=true&select[sponsoren]=true`, { credentials: 'include' }).then((r) => r.json())
-        const vorher: Vorher[] = (alt?.docs ?? []).map((d: { id: number; team?: number | { id: number } | null; allgemein?: boolean | null; sponsoren?: boolean | null }) => ({
+        const alt = await fetch(`/api/media?${filter}&depth=0&limit=${ids.length}&select[team]=true&select[allgemein]=true&select[sponsoren]=true&select[vereinsdokument]=true`, { credentials: 'include' }).then((r) => r.json())
+        const vorher: Vorher[] = (alt?.docs ?? []).map((d: { id: number; team?: number | { id: number } | null; allgemein?: boolean | null; sponsoren?: boolean | null; vereinsdokument?: boolean | null }) => ({
           id: d.id,
           team: d.team == null ? null : typeof d.team === 'object' ? d.team.id : d.team,
           allgemein: Boolean(d.allgemein),
           sponsoren: Boolean(d.sponsoren),
+          vereinsdokument: Boolean(d.vereinsdokument),
         }))
         const r = await fetch(`/api/media?${filter}`, { method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(daten) })
         const d = await r.json()
@@ -132,7 +135,7 @@ export default function MedienOrdnerClient({ oben, gruppen, redaktion }: { oben:
     if (!rueckgaengig) return
     setMeldung('Wird zurückgenommen …')
     for (const v of rueckgaengig)
-      await fetch(`/api/media/${v.id}`, { method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team: v.team, allgemein: v.allgemein, sponsoren: v.sponsoren }) })
+      await fetch(`/api/media/${v.id}`, { method: 'PATCH', credentials: 'include', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ team: v.team, allgemein: v.allgemein, sponsoren: v.sponsoren, vereinsdokument: v.vereinsdokument }) })
     setRueckgaengig(null)
     setMeldung('Zurückgenommen.')
     router.refresh()

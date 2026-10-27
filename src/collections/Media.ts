@@ -71,10 +71,19 @@ export const Media: CollectionConfig = {
     ],
     beforeChange: [
       teamBildPruefen,
-      // Ordner eindeutig halten: Team-Ordner schließt „Sponsoren“ aus, „Sponsoren“ zählt als Vereinsbild (alle dürfen es benutzen)
-      ({ data }) => {
-        if (data.team) data.sponsoren = false
-        else if (data.sponsoren) data.allgemein = true
+      // Ordner eindeutig halten: Team-Ordner schließt „Sponsoren“ und „Vereinsdokumente“ aus; beide zählen als Vereinsdatei
+      // (alle dürfen sie benutzen). Sponsoren-Logo und Vereinsdokument schließen sich aus – das zuletzt gesetzte gewinnt.
+      ({ data, originalDoc }) => {
+        if (data.team) {
+          data.sponsoren = false
+          data.vereinsdokument = false
+        } else {
+          if (data.sponsoren && data.vereinsdokument) {
+            if (originalDoc?.sponsoren) data.sponsoren = false
+            else data.vereinsdokument = false
+          }
+          if (data.sponsoren || data.vereinsdokument) data.allgemein = true
+        }
         return data
       },
     ],
@@ -153,6 +162,20 @@ export const Media: CollectionConfig = {
         position: 'sidebar',
         condition: (data) => !data?.team,
         description: 'Legt das Bild in den Ordner „Sponsoren“. Passiert automatisch, sobald es bei einem Sponsor als Logo gespeichert wird.',
+      },
+    },
+    {
+      name: 'vereinsdokument',
+      label: 'Vereinsdokument (Satzung, Ordnung, Konzept …)',
+      type: 'checkbox',
+      access: {
+        create: ({ req }) => imBereich(req.user, 'medien'),
+        update: ({ req }) => imBereich(req.user, 'medien'),
+      },
+      admin: {
+        position: 'sidebar',
+        condition: (data) => !data?.team,
+        description: 'Legt die Datei in den Ordner „Vereinsdokumente“ – für Satzung, Abteilungsordnungen, Verhaltenskodex, Schutzkonzept usw. Auf die Website kommt sie erst über Einstellungen → Vereinsdaten → „Satzung & Downloads“.',
       },
     },
     {
