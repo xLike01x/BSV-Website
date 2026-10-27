@@ -3697,6 +3697,7 @@ export interface Animationen {
   elfmeter?: boolean | null;
   hochhalten?: boolean | null;
   memory?: boolean | null;
+  huetchen?: boolean | null;
   /**
    * Kinder tippen selbst einen Spitznamen ein; ein Filter sperrt Schimpfwörter, Links und lange Zahlen. Einträge unter Website-Aufbau → „Spielecke-Rangliste“ prüfen und löschen.
    */
@@ -4529,6 +4530,7 @@ export interface AnimationenSelect<T extends boolean = true> {
   elfmeter?: T;
   hochhalten?: T;
   memory?: T;
+  huetchen?: T;
   rangliste?: T;
   ranglisteFreigabe?: T;
   updatedAt?: T;

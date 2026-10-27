@@ -86,7 +86,7 @@ export default async function BreitensportSeite() {
             </span>
             <span style={{ flex: '1 1 260px' }}>
               <strong>Spielecke für BSV Kids</strong>
-              <span>Elfmeterschießen, Ball hochhalten und Memory – direkt im Browser.</span>
+              <span>Elfmeterschießen, Ball hochhalten, Memory und Hütchenspiel – direkt im Browser.</span>
             </span>
             <span className="link-more">Jetzt spielen ›</span>
           </Link>

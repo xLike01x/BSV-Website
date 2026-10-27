@@ -708,7 +708,18 @@
 .bsv[data-anim='aus'] .karussell-leiste { scroll-behavior: auto; }
 
 /* ===== Spielecke (/spielecke) – Website-Aufbau → Animationen ===== */
-.spielecke { max-width: 1180px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 420px), 1fr)); gap: 24px; align-items: start; }
+.spielecke { max-width: 760px; margin: 0 auto; display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; align-items: start; }
+/* Auswahl per Kacheln – darunter läuft nur das gewählte Spiel */
+.spiele-kacheln { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 12px; }
+.spiele-kachel { font: inherit; text-align: left; display: flex; flex-direction: column; gap: 4px; padding: 16px 16px 18px; border-radius: 22px; border: 2px solid transparent; background: #fff; color: var(--bsv-ink); cursor: pointer; box-shadow: 0 10px 26px rgba(232, 89, 12, 0.07); transition: transform 0.2s var(--bsv-ease), border-color 0.2s; }
+.spiele-kachel:hover { transform: translateY(-2px); }
+.spiele-kachel:focus-visible { outline: 3px solid var(--bsv-green); outline-offset: 3px; }
+.spiele-kachel[aria-selected='true'] { border-color: var(--bsv-coral); background: var(--bsv-coral-tint); }
+.spiele-kachel-symbol { font-size: 30px; line-height: 1; margin-bottom: 4px; }
+.spiele-kachel strong { font-size: 17px; letter-spacing: -0.01em; hyphens: auto; -webkit-hyphens: auto; overflow-wrap: normal; word-break: normal; }
+.spiele-kachel-text { font-size: 14px; color: var(--bsv-ink-2); }
+@media (max-width: 520px) { .spiele-kacheln { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; } .spiele-kachel { padding: 14px; border-radius: 18px; } .spiele-kachel-symbol { font-size: 26px; } }
+.spiel-buehne { min-width: 0; }
 .spiel { background: #fff; border-radius: 30px; padding: clamp(20px, 3vw, 32px); box-shadow: 0 18px 44px rgba(232, 89, 12, 0.08); display: flex; flex-direction: column; gap: 16px; }
 .spiel-kopf { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
 .spiel-titel { margin: 0; font-size: 26px; font-weight: 800; letter-spacing: -0.02em; }
@@ -756,6 +767,29 @@
 .spiel-ende-text { font-size: 18px; }
 .hochhalten-zahl { margin: 0; display: flex; align-items: baseline; gap: 6px; color: var(--bsv-blue); }
 .hochhalten-zahl strong { font-size: 34px; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.03em; }
+
+/* Hütchenspiel */
+.huetchen-feld { position: relative; height: clamp(230px, 56vw, 300px); background: linear-gradient(#fff6ec, #fff 62%); border-radius: 22px; overflow: hidden; user-select: none; -webkit-user-select: none; }
+.huetchen-feld:focus-visible { outline: 3px solid var(--bsv-green); outline-offset: 3px; }
+.huetchen-feld::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 56px; background: var(--bsv-green); opacity: 0.85; }
+.huetchen-stueck, .huetchen-ball { position: absolute; bottom: 44px; translate: -50% 0; z-index: 1; pointer-events: none; }
+.huetchen-stueck { width: min(26%, 120px); z-index: 2; }
+.huetchen-heben { display: block; transition: transform 0.38s cubic-bezier(0.3, 0.7, 0.4, 1); }
+.huetchen-stueck.ist-hoch .huetchen-heben { transform: translateY(-62%) rotate(-6deg); }
+.huetchen-stueck svg { display: block; width: 100%; height: auto; overflow: visible; }
+.huetchen-koerper { fill: var(--bsv-coral); }
+.huetchen-streifen { fill: #fff; }
+.huetchen-fuss { fill: var(--bsv-coral-dark); }
+.huetchen-augen circle:nth-child(n + 3) { fill: var(--bsv-ink); }
+.huetchen-ball { width: min(11%, 50px); aspect-ratio: 1; bottom: 46px; transition: opacity 0.2s; }
+.huetchen-ball svg { display: block; width: 100%; height: 100%; fill: #fff; stroke: var(--bsv-ink); stroke-width: 1.5; stroke-linejoin: round; }
+.huetchen-ball.ist-weg { opacity: 0; }
+.huetchen-stueck.ist-falsch .huetchen-heben { transform: translateY(-62%) rotate(8deg); }
+.huetchen-ziele { position: absolute; inset: 0 0 0 0; display: flex; z-index: 3; }
+.huetchen-ziele button { flex: 1; border: 0; background: transparent; border-radius: 16px; cursor: pointer; }
+.huetchen-ziele button:disabled { cursor: default; }
+.huetchen-ziele button:hover:not(:disabled) { background: rgba(232, 89, 12, 0.08); }
+.huetchen-meldung { bottom: auto; top: 18px; color: var(--bsv-coral-dark); z-index: 4; }
 
 /* Teaser auf der Breitensport-Seite */
 .spielecke-teaser { max-width: 880px; margin: 0 auto; display: flex; gap: 18px 28px; align-items: center; justify-content: space-between; flex-wrap: wrap; background: var(--bsv-coral-tint); border-radius: 28px; padding: 24px 28px; text-decoration: none; color: var(--bsv-ink); }

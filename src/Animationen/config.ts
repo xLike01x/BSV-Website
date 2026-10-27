@@ -60,6 +60,7 @@ export const Animationen: GlobalConfig = {
             haken('elfmeter', 'Spiel „Elfmeterschießen“'),
             haken('hochhalten', 'Spiel „Ball hochhalten“'),
             haken('memory', 'Spiel „Memory“ (6 × 6)'),
+            haken('huetchen', 'Spiel „Hütchenspiel“ (für die Kleinen)'),
           ],
         },
         {

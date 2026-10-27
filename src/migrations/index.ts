@@ -20,6 +20,7 @@ import * as migration_20261026_151441_animationen_global from './20261026_151441
 import * as migration_20261026_153216_spielecke_statistik from './20261026_153216_spielecke_statistik';
 import * as migration_20261026_164436_memory from './20261026_164436_memory';
 import * as migration_20261026_203917_rangliste from './20261026_203917_rangliste';
+import * as migration_20261027_085945_huetchenspiel from './20261027_085945_huetchenspiel';
 
 export const migrations = [
   {
@@ -130,6 +131,11 @@ export const migrations = [
   {
     up: migration_20261026_203917_rangliste.up,
     down: migration_20261026_203917_rangliste.down,
-    name: '20261026_203917_rangliste'
+    name: '20261026_203917_rangliste',
+  },
+  {
+    up: migration_20261027_085945_huetchenspiel.up,
+    down: migration_20261027_085945_huetchenspiel.down,
+    name: '20261027_085945_huetchenspiel'
   },
 ];

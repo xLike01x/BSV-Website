@@ -1577,7 +1577,7 @@ export const FAQ: Faq[] = [
   {
     frage: 'Was ist die Spielecke – und was wird dabei gespeichert?',
     antwort:
-      'Unter /spielecke gibt es drei kleine Spiele für die BSV Kids: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten), „Ball hochhalten“ (den herunterfallenden Ball antippen, mit jedem Kontakt wird es schneller – schnelles Dauerklicken zählt nicht) und „Memory“ (6 × 6 Karten, 18 Paare mit BSV-Wappen und Sport-Motiven – ganz ohne Zeitdruck, auch mit der Tastatur). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
+      'Unter /spielecke gibt es vier kleine Spiele für die BSV Kids – oben wählt man per Kachel, darunter läuft nur das gewählte Spiel: „Elfmeterschießen“ (5 Schüsse gegen einen Torwart, Ecke antippen oder Pfeiltasten), „Ball hochhalten“ (den herunterfallenden Ball antippen, mit jedem Kontakt wird es schneller – schnelles Dauerklicken zählt nicht) und „Memory“ (6 × 6 Karten, 18 Paare mit BSV-Wappen und Sport-Motiven – ganz ohne Zeitdruck, auch mit der Tastatur) und „Hütchenspiel“ für die Kleinen (der Ball liegt unter einem von drei Hütchen, die Hütchen werden gemischt, dann wird geraten – jede richtige Runde mischt länger und schneller; nichts wird gespeichert). Ein Spiel lässt sich direkt verlinken, z. B. /spielecke#huetchen (auch #elfmeter, #hochhalten, #memory). Ein Hinweis mit Link steht auf der Breitensport-Seite.\n\n'
       + '• Tagesrekord ohne Namen: Oben steht „Heute in der Spielecke: ⚽ 214 Elfmeter · 152 Tore · 🤹 Tagesrekord: 27× hochgehalten · 🧠 Memory in 24 Zügen“. Gespeichert werden dafür nur diese Tageszahlen – keine Namen, keine IP-Adressen, keine Kennungen. Wer den Rekord bricht, sieht „🎉 Neuer Tagesrekord!“. Die Zahlen von mehr als 30 Tagen werden automatisch gelöscht.\n'
       + '• Der „Bester Wert“ im Spiel gilt nur, solange die Seite offen ist. Unrealistische Werte (mehr als 250× hochgehalten, Memory in weniger als 18 Zügen) nimmt die Website nicht an.\n'
       + '• Elfmeterschießen hat zwei Spielarten: „5 Schüsse“ und „Bis zum Fehlschuss“ – bei Letzterem zählt die Torserie für die Rangliste.\n'
@@ -1630,7 +1630,7 @@ export const FAQ: Faq[] = [
       + '• Kachel „Fitness“ auf der Startseite: Eine Pulslinie zeichnet sich, dann läuft ab und zu ein Lichtpunkt darüber.\n'
       + '• Große Überschriften: Ein grüner Kreidestrich zieht sich darunter, wenn man hinscrollt.\n'
       + '• „Seite nicht gefunden“: Ein Ball fliegt über das Tor – „Daneben!“.\n'
-      + '• Spielecke (/spielecke): „Elfmeterschießen“, „Ball hochhalten“ und „Memory“ – jedes Spiel mit eigenem Haken. Sind alle aus, steht dort „Die Spielecke macht gerade Pause“ und der Hinweis auf der Breitensport-Seite verschwindet.\n\n'
+      + '• Spielecke (/spielecke): „Elfmeterschießen“, „Ball hochhalten“, „Memory“ und „Hütchenspiel“ – jedes Spiel mit eigenem Haken. Ist nur ein Spiel an, entfallen die Auswahl-Kacheln. Sind alle aus, steht dort „Die Spielecke macht gerade Pause“ und der Hinweis auf der Breitensport-Seite verschwindet.\n\n'
       + 'Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht die Effekte nie. Sie kommen ohne zusätzliche Programme aus und bremsen die Seite nicht. Ändern dürfen das alle, die auch „Texte & Bilder“ ändern dürfen.\n\n'
       + 'Beispiel – Wenn euch der Kreidestrich unter den Überschriften zu verspielt ist – dann nur den Haken „Große Überschriften: Kreidestrich“ rausnehmen und speichern. Alles andere bleibt.',
     bereich: 'animationen',

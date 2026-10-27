@@ -35,12 +35,13 @@ export function Rangliste({ spiele }: { spiele: RanglistenSpiel[] }) {
     laden()
     const neu = (e: Event) => {
       const s = (e as CustomEvent<{ spiel: RanglistenSpiel }>).detail?.spiel
-      if (s) setSpiel(s)
+      // Nur Spiele, die hier auch einen Reiter haben (abgeschaltete Spiele fehlen)
+      if (s && spiele.includes(s)) setSpiel(s)
       laden()
     }
     window.addEventListener('bsv-rangliste', neu)
     return () => window.removeEventListener('bsv-rangliste', neu)
-  }, [laden])
+  }, [laden, spiele])
 
   return (
     <section className="spiel rangliste" aria-labelledby="rangliste-titel">
