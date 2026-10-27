@@ -13,13 +13,16 @@ import { T } from '@/bsv/components/Text'
 import { WebApp } from '@/bsv/components/WebApp'
 import { Countdown } from '@/bsv/components/Countdown'
 import { Pulslinie } from '@/bsv/components/home/Pulslinie'
-import { getAngebote, getCountdown, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
+import { WappenIntro } from '@/bsv/components/wappen/WappenIntro'
+import { animationAn, getAngebote, getAnimationen, getCountdown, getNews, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
 import { bildUrl, datum, farbe, uhrzeit } from '@/bsv/lib'
 
 export const revalidate = 60
 
 export default async function Startseite() {
-  const [verein, angebote, news, tx, w, start, countdown] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter(), getStartseite(), getCountdown()])
+  const [verein, angebote, news, tx, w, start, countdown, anim] = await Promise.all([getVerein(), getAngebote(), getNews(6), getTexte(), getPlatzhalter(), getStartseite(), getCountdown(), getAnimationen()])
+  // Wappen-Intro nur, wenn Animationen allgemein und das Intro eingeschaltet sind
+  const intro = animationAn(anim, 'alle') && animationAn(anim, 'wappenIntro')
   /** Erste Zeile normal, weitere Zeilen grün hervorgehoben */
   const zweifarbig = (text?: string | null) => {
     const [erste, ...rest] = (text ?? '').split('\n')
@@ -85,7 +88,14 @@ export default async function Startseite() {
   return (
     <>
       <JsonLd daten={verein_ld} />
+      {intro && <WappenIntro name={verein.name ?? 'Büdericher Spielverein 1919 e.V.'} />}
       <section className="hero">
+        {/* Schrägstreifen aus dem Wappen – Website-Aufbau → Animationen → Vereinswappen */}
+        <div aria-hidden="true" className="hero-streifen">
+          <span />
+          <span />
+          <span />
+        </div>
         <div aria-hidden="true" className="blob blob1" style={{ left: -120, top: -80, width: 420, height: 420, background: '#FFE3D3', borderRadius: '42% 58% 63% 37% / 41% 44% 56% 59%' }} />
         <div aria-hidden="true" className="blob blob2" style={{ right: -140, bottom: -160, width: 520, height: 520, background: '#DDF3E5', borderRadius: '58% 42% 38% 62% / 52% 61% 39% 48%' }} />
         <div aria-hidden="true" className="blob blob3" style={{ right: '38%', top: 40, width: 160, height: 160, background: '#FFF0C2', borderRadius: '50%' }} />

@@ -18,6 +18,7 @@ import './globals.css'
 import './bsv.css'
 import { getServerSideURL } from '@/utilities/getURL'
 import { getAnimationen } from '@/bsv/data'
+import { INTRO_SKRIPT } from '@/bsv/components/wappen/introSkript'
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
   const { isEnabled } = await draftMode()
@@ -33,6 +34,8 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         {/* Die Website ist bewusst hell. Dunkelmodus-Erweiterungen und Browser mit „Dark Reader“-Technik (z. B. Edge auf dem Handy)
             färben sie sonst trotz color-scheme um – und verändern dabei die Seite, bevor React sie übernimmt (Hydration-Fehler). */}
         <meta name="darkreader-lock" />
+        {/* Wappen-Intro der Startseite: nur beim ersten Aufruf pro Besuch (statisches Skript, keine Nutzerdaten) */}
+        <script dangerouslySetInnerHTML={{ __html: INTRO_SKRIPT }} />
       </head>
       <body
         className="bsv"
@@ -42,6 +45,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         data-anim-puls={aus('pulslinie')}
         data-anim-kreide={aus('kreide')}
         data-anim-fehlerseite={aus('fehlerseite')}
+        data-wappen-streifen={aus('wappenStreifen')}
         suppressHydrationWarning
       >
         <Providers>

@@ -850,3 +850,68 @@
 .rangliste-erfolg { margin: 0; font-weight: 700; color: var(--bsv-green); font-size: 17px; }
 .spiel-ende { row-gap: 14px; }
 @media (max-width: 520px) { .rangliste-liste li { grid-template-columns: 34px 1fr auto; } .rangliste-datum { display: none; } }
+
+/* ===== Vereinswappen (Website-Aufbau → Animationen → Vereinswappen) ===== */
+/* Winkel der Schrägstreifen im Wappen: von oben rechts nach unten links, 38,5° gegen die Senkrechte */
+
+/* Wappen-Intro auf der Startseite (einmal pro Besuch) */
+@property --wi-wisch { syntax: '<percentage>'; inherits: false; initial-value: 0%; }
+.wappen-intro { position: fixed; inset: 0; z-index: 1000; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 26px; background: #fff; cursor: pointer; animation: wi-aus 0.7s cubic-bezier(0.4, 0, 0.2, 1) 2.35s forwards; }
+.wappen-intro.ist-aus, html[data-intro='gesehen'] .wappen-intro { display: none; }
+.wappen-intro.ist-weg { animation: wi-aus 0.35s ease forwards; }
+.wappen-intro-logo { position: relative; width: min(40vw, 210px); aspect-ratio: 690 / 743; animation: wi-logo 3s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.wappen-intro-flaeche, .wappen-intro-strich { position: absolute; inset: 0; width: 100%; height: 100%; display: block; }
+/* Fläche: diagonaler Pinselstrich entlang der Streifen */
+.wappen-intro-flaeche {
+  --wi-wisch: 0%;
+  -webkit-mask-image: linear-gradient(218.5deg, #000 calc(var(--wi-wisch) - 14%), transparent var(--wi-wisch));
+  mask-image: linear-gradient(218.5deg, #000 calc(var(--wi-wisch) - 14%), transparent var(--wi-wisch));
+  animation: wi-wisch 0.85s cubic-bezier(0.55, 0, 0.25, 1) 0.6s forwards;
+}
+.wappen-intro-strich { overflow: visible; fill: none; stroke: var(--bsv-ink); stroke-width: 9; stroke-linejoin: round; }
+.wappen-intro-strich path { stroke-dasharray: 1; stroke-dashoffset: 1; animation: wi-strich 0.9s cubic-bezier(0.6, 0, 0.3, 1) 0.05s forwards, wi-strich-weg 0.4s ease 1.35s forwards; }
+.wappen-intro-name { margin: 0; padding: 0 16px; text-align: center; font-size: clamp(10px, 2.8vw, 13px); font-weight: 600; letter-spacing: 0.3em; text-transform: uppercase; color: var(--bsv-ink-2); opacity: 0; animation: wi-name 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) 1.25s forwards; }
+@keyframes wi-strich { to { stroke-dashoffset: 0; } }
+@keyframes wi-strich-weg { to { opacity: 0; } }
+@keyframes wi-wisch { to { --wi-wisch: 130%; } }
+@keyframes wi-name { from { opacity: 0; transform: translateY(8px); letter-spacing: 0.45em; } to { opacity: 1; transform: none; letter-spacing: 0.3em; } }
+@keyframes wi-logo { 0% { transform: scale(0.94); } 70% { transform: scale(1); } 100% { transform: scale(1.03); } }
+@keyframes wi-aus { to { opacity: 0; visibility: hidden; pointer-events: none; } }
+@media (prefers-reduced-motion: reduce) { .wappen-intro { display: none; } }
+
+/* Schrägstreifen als Signatur: große zarte Streifen im Hintergrund der Startseite … */
+.hero-streifen { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+.hero-streifen span { position: absolute; top: -40%; height: 180%; width: clamp(60px, 7vw, 120px); background: var(--bsv-ink); opacity: 0.03; transform: rotate(38.5deg); transform-origin: center; }
+.hero-streifen span:nth-child(1) { left: 50%; }
+.hero-streifen span:nth-child(2) { left: calc(50% + clamp(120px, 14vw, 240px)); }
+.hero-streifen span:nth-child(3) { left: calc(50% + 2 * clamp(120px, 14vw, 240px)); }
+@media (max-width: 760px) { .hero-streifen span:nth-child(1) { left: 58%; } .hero-streifen span:nth-child(2) { left: calc(58% + 110px); } .hero-streifen span:nth-child(3) { display: none; } }
+@supports (animation-timeline: scroll()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .hero-streifen { animation: streifen-gleiten linear both; animation-timeline: scroll(root); animation-range: 0 90vh; }
+  }
+}
+@keyframes streifen-gleiten { to { transform: translate(-60px, 70px); } }
+/* … und drei kleine Streifen vor den Überschriften-Zeilen („Über uns“, „BSV Kids“ …) */
+.kicker::before { content: ''; display: inline-block; width: 1.1em; height: 0.6em; margin-right: 0.42em; vertical-align: 0.02em; background: currentColor; -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 12'%3E%3Cpath d='M9.5 0h2.8L2.8 12H0zM14.1 0h2.8L7.4 12H4.6zM18.7 0h2.8L12 12H9.2z'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 22 12'%3E%3Cpath d='M9.5 0h2.8L2.8 12H0zM14.1 0h2.8L7.4 12H4.6zM18.7 0h2.8L12 12H9.2z'/%3E%3C/svg%3E") center / contain no-repeat; }
+.bsv[data-wappen-streifen='aus'] .hero-streifen, .bsv[data-wappen-streifen='aus'] .kicker::before { display: none; }
+
+/* Vereinsseite: Wappen mit Prägung und Lichtreflex */
+.wappen-glanz { width: clamp(120px, 15vw, 170px); margin: 0 auto 30px; perspective: 700px; }
+.wappen-glanz-karte { --kipp-x: 0deg; --kipp-y: 0deg; --licht-x: 50%; --licht-y: 30%; position: relative; aspect-ratio: 690 / 743; transform: rotateX(var(--kipp-x)) rotateY(var(--kipp-y)); transform-style: preserve-3d; transition: transform 0.6s cubic-bezier(0.2, 0.7, 0.2, 1); filter: drop-shadow(0 18px 26px rgba(0, 0, 0, 0.16)) drop-shadow(0 3px 5px rgba(0, 0, 0, 0.12)); }
+.wappen-glanz-karte.ist-aktiv { transition-duration: 0.12s; }
+.wappen-glanz-karte img { display: block; width: 100%; height: 100%; }
+.wappen-glanz-licht, .wappen-glanz-schimmer { position: absolute; inset: 0; pointer-events: none; -webkit-mask: url(/wappen-form.svg) center / contain no-repeat; mask: url(/wappen-form.svg) center / contain no-repeat; }
+.wappen-glanz-licht { background: radial-gradient(circle at var(--licht-x) var(--licht-y), rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.12) 28%, transparent 55%); opacity: 0; transition: opacity 0.4s; }
+.wappen-glanz-karte.ist-aktiv .wappen-glanz-licht { opacity: 1; }
+/* Schimmer, der von selbst darüberzieht: einmal beim Laden, ohne Maus (Handy) alle paar Sekunden */
+.wappen-glanz-schimmer { background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.6) 48%, rgba(255, 255, 255, 0.15) 54%, transparent 62%) no-repeat; background-size: 260% 100%; background-position: 130% 0; animation: glanz-schimmer 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.9s 1 both; }
+@media (hover: none) { .wappen-glanz-schimmer { animation: glanz-schimmer 1.6s cubic-bezier(0.4, 0, 0.2, 1) 0.9s infinite both; animation-duration: 6s; } }
+@keyframes glanz-schimmer { 0% { background-position: 130% 0; } 27%, 100% { background-position: -30% 0; } }
+.wappen-glanz.ist-still .wappen-glanz-schimmer { display: none; }
+@media (prefers-reduced-motion: reduce) { .wappen-glanz-schimmer { display: none; } .wappen-glanz-karte { transform: none; } }
+
+/* Fußzeile: großes Wappen als Wasserzeichen */
+.foot { position: relative; overflow: hidden; }
+.foot-inner { position: relative; z-index: 1; }
+.foot-wappen { position: absolute; right: -70px; bottom: -150px; width: clamp(300px, 34vw, 520px); aspect-ratio: 690 / 743; background: var(--bsv-ink); opacity: 0.045; transform: rotate(-8deg); pointer-events: none; -webkit-mask: url(/wappen-schwarz.svg) center / contain no-repeat; mask: url(/wappen-schwarz.svg) center / contain no-repeat; }

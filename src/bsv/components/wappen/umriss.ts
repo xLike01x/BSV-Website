@@ -1,0 +1,3 @@
+/** Außenkontur des Vereinswappens (aus assets/bsv-wappen-vektor.svg) – für die Strich-Animation im Wappen-Intro */
+export const WAPPEN_VIEWBOX = '50 47 690 743'
+export const WAPPEN_UMRISS = 'M 733.7 63.2 C 732 57.1 726.5 52.2 720.3 51.5 C 505.9 51.2 291.4 51.5 77 51.3 C 53.8 52 59 78.8 58.7 94.9 C 58.8 210.3 58 325.8 59.3 441.2 C 64.9 540.5 108.5 636.4 183.9 702.1 C 237.8 754.6 313.2 780.2 386.2 785.7 L 405.4 785.7 C 545.9 780.3 669.2 680.2 713.4 547.3 C 724.2 513.7 732.6 478.8 733.8 443.3 C 735.3 415.2 736.1 99 733.7 63.2'

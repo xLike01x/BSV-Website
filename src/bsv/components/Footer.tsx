@@ -1,14 +1,14 @@
 import Link from 'next/link'
 import React from 'react'
 
-import { getHauptsponsoren, getMenue, getTexte, getVerein } from '@/bsv/data'
+import { animationAn, getAnimationen, getHauptsponsoren, getMenue, getTexte, getVerein } from '@/bsv/data'
 
 import { zuLinks, type MenueEintrag } from './menueLinks'
 import { SponsorLogo } from './SponsorLogo'
 import { WebApp } from './WebApp'
 
 export async function Footer() {
-  const [v, hauptsponsoren, menue, tx] = await Promise.all([getVerein(), getHauptsponsoren(), getMenue(), getTexte()])
+  const [v, hauptsponsoren, menue, tx, anim] = await Promise.all([getVerein(), getHauptsponsoren(), getMenue(), getTexte(), getAnimationen()])
   const spalten = ((menue?.fusszeile ?? []) as { titel?: string | null; eintraege?: MenueEintrag[] | null }[]).map((sp) => ({ titel: sp.titel ?? '', links: zuLinks(sp.eintraege) }))
   const kontakt = (menue as { kontakt?: { anzeigen?: boolean | null; titel?: string | null; adresseZeigen?: boolean | null; links?: MenueEintrag[] | null } } | null)?.kontakt
   const kontaktLinks = zuLinks(kontakt?.links)
@@ -17,6 +17,8 @@ export async function Footer() {
 
   return (
     <footer className="foot">
+      {/* Großes Wappen als Wasserzeichen – Website-Aufbau → Animationen → Vereinswappen */}
+      {animationAn(anim, 'wappenFusszeile') && <span className="foot-wappen" aria-hidden="true" />}
       <div className="foot-inner">
         <div className="foot-top">
           <img src="/bsv-logo.png" alt="BSV 1919 e.V." width={38} height={41} style={{ objectFit: 'contain' }} />

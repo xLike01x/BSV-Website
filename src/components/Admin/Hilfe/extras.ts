@@ -1597,6 +1597,16 @@ export const FAQ: Faq[] = [
     bereich: 'dashboard',
   },
   {
+    frage: 'Das Wappen-Intro auf der Startseite kommt bei mir nicht mehr – ist es kaputt?',
+    antwort:
+      'Nein. Das Intro läuft absichtlich nur einmal pro Besuch: beim ersten Aufruf der Startseite in einem Browser-Tab. Danach (auch beim Neuladen) erscheint die Startseite sofort.\n\n'
+      + '• Nochmal ansehen: einen neuen Browser-Tab oder ein privates Fenster öffnen und die Startseite aufrufen.\n'
+      + '• Es erscheint gar nicht: Website-Aufbau → Animationen prüfen – „Animationen auf der Website“ und „Startseite: Wappen zeichnet sich beim ersten Besuch auf“ müssen angehakt sein. Wer im Gerät „Bewegung reduzieren“ eingeschaltet hat, sieht es nie.\n'
+      + '• Wer über einen Link auf einer Unterseite landet (z. B. aus Instagram direkt auf /termine) und dann zur Startseite geht, sieht es nicht – es soll niemanden mitten im Lesen aufhalten.\n\n'
+      + 'Beispiel – Wenn du das Intro im Verein vorführen willst – dann ein privates Fenster öffnen und die Startseite aufrufen.',
+    bereich: 'animationen',
+  },
+  {
     frage: 'Ich habe Text eingefügt – warum sind die Überschriften nicht fett?',
     antwort:
       'Text aus dem Editor (Notepad), einer .txt-Datei oder einem Chat bringt keine Formatierung mit – alles wird normaler Text.\n\n'
@@ -1630,6 +1640,7 @@ export const FAQ: Faq[] = [
       + '• Kachel „Fitness“ auf der Startseite: Eine Pulslinie zeichnet sich, dann läuft ab und zu ein Lichtpunkt darüber.\n'
       + '• Große Überschriften: Ein grüner Kreidestrich zieht sich darunter, wenn man hinscrollt.\n'
       + '• „Seite nicht gefunden“: Ein Ball fliegt über das Tor – „Daneben!“.\n'
+      + '• Vereinswappen (eigener Bereich, jeder Teil einzeln): „Startseite: Wappen zeichnet sich beim ersten Besuch auf“ (gut 2 Sekunden, einmal pro Besuch, Klick überspringt), „Schrägstreifen aus dem Wappen als Gestaltungselement“ (zarte große Streifen im Hintergrund der Startseite und drei kleine Streifen vor Zeilen wie „Über uns“), „Vereinsseite: großes Wappen mit Lichtreflex“ (kippt mit der Maus, Schimmer) und „Fußzeile: großes Wappen als Wasserzeichen“. Ist „Animationen auf der Website“ aus, entfällt das Intro und das Wappen auf der Vereinsseite steht still; Streifen und Wasserzeichen bleiben (sie bewegen sich nicht).\n'
       + '• Spielecke (/spielecke): „Elfmeterschießen“, „Ball hochhalten“, „Memory“ und „Hütchenspiel“ – jedes Spiel mit eigenem Haken. Ist nur ein Spiel an, entfallen die Auswahl-Kacheln. Sind alle aus, steht dort „Die Spielecke macht gerade Pause“ und der Hinweis auf der Breitensport-Seite verschwindet.\n\n'
       + 'Wer im Handy oder am PC „Bewegung reduzieren“ eingestellt hat, sieht die Effekte nie. Sie kommen ohne zusätzliche Programme aus und bremsen die Seite nicht. Ändern dürfen das alle, die auch „Texte & Bilder“ ändern dürfen.\n\n'
       + 'Beispiel – Wenn euch der Kreidestrich unter den Überschriften zu verspielt ist – dann nur den Haken „Große Überschriften: Kreidestrich“ rausnehmen und speichern. Alles andere bleibt.',

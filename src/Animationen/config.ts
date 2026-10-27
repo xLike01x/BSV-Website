@@ -51,6 +51,25 @@ export const Animationen: GlobalConfig = {
     },
     {
       type: 'collapsible',
+      label: 'Vereinswappen',
+      admin: {
+        initCollapsed: false,
+        description: 'Gestaltung mit dem BSV-Wappen. Jeder Teil einzeln abschaltbar. Bei „Bewegung reduzieren“ im Gerät steht alles still bzw. das Intro entfällt.',
+      },
+      fields: [
+        {
+          type: 'row',
+          fields: [
+            haken('wappenIntro', 'Startseite: Wappen zeichnet sich beim ersten Besuch auf', 'Etwa 2 Sekunden, nur einmal pro Besuch (neuer Tab = neuer Besuch). Ein Klick überspringt es. Entfällt, wenn oben „Animationen auf der Website“ aus ist.'),
+            haken('wappenStreifen', 'Schrägstreifen aus dem Wappen als Gestaltungselement', 'Große, ganz zarte Streifen im Hintergrund der Startseite und drei kleine Streifen vor den grauen bzw. farbigen Überschriften-Zeilen (z. B. „Über uns“).'),
+            haken('wappenGlanz', 'Vereinsseite: großes Wappen mit Lichtreflex', 'Über der Überschrift der Vereinsseite. Mit der Maus kippt es leicht und ein Lichtschimmer wandert darüber; am Handy zieht der Schimmer ab und zu von selbst darüber.'),
+            haken('wappenFusszeile', 'Fußzeile: großes Wappen als Wasserzeichen', 'Angeschnitten unten rechts in der Fußzeile, ganz dezent – auf allen Seiten.'),
+          ],
+        },
+      ],
+    },
+    {
+      type: 'collapsible',
       label: 'Spielecke (/spielecke)',
       admin: { initCollapsed: false, description: 'Kleine Spiele für die BSV Kids. Gespeichert werden Tageszahlen ohne Namen und – wenn die Rangliste an ist – Spitzname, Ergebnis und Zeitpunkt (keine IP-Adressen, keine Konten).' },
       fields: [

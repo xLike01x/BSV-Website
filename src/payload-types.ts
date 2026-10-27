@@ -3694,6 +3694,22 @@ export interface Animationen {
   pulslinie?: boolean | null;
   kreide?: boolean | null;
   fehlerseite?: boolean | null;
+  /**
+   * Etwa 2 Sekunden, nur einmal pro Besuch (neuer Tab = neuer Besuch). Ein Klick überspringt es. Entfällt, wenn oben „Animationen auf der Website“ aus ist.
+   */
+  wappenIntro?: boolean | null;
+  /**
+   * Große, ganz zarte Streifen im Hintergrund der Startseite und drei kleine Streifen vor den grauen bzw. farbigen Überschriften-Zeilen (z. B. „Über uns“).
+   */
+  wappenStreifen?: boolean | null;
+  /**
+   * Über der Überschrift der Vereinsseite. Mit der Maus kippt es leicht und ein Lichtschimmer wandert darüber; am Handy zieht der Schimmer ab und zu von selbst darüber.
+   */
+  wappenGlanz?: boolean | null;
+  /**
+   * Angeschnitten unten rechts in der Fußzeile, ganz dezent – auf allen Seiten.
+   */
+  wappenFusszeile?: boolean | null;
   elfmeter?: boolean | null;
   hochhalten?: boolean | null;
   memory?: boolean | null;
@@ -4527,6 +4543,10 @@ export interface AnimationenSelect<T extends boolean = true> {
   pulslinie?: T;
   kreide?: T;
   fehlerseite?: T;
+  wappenIntro?: T;
+  wappenStreifen?: T;
+  wappenGlanz?: T;
+  wappenFusszeile?: T;
   elfmeter?: T;
   hochhalten?: T;
   memory?: T;

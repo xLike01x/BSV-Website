@@ -6,7 +6,8 @@ import React from 'react'
 
 import { Bild } from '@/bsv/components/Bild'
 import { T } from '@/bsv/components/Text'
-import { getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
+import { animationAn, getAnimationen, getPlatzhalter, getStartseite, getTexte, getVerein } from '@/bsv/data'
+import { WappenGlanz } from '@/bsv/components/wappen/WappenGlanz'
 import { abMonat, euroKurz, proMonat } from '@/bsv/beitrag'
 import { bildUrl, initialen, zahl } from '@/bsv/lib'
 
@@ -14,7 +15,7 @@ export const revalidate = 60
 export const metadata: Metadata = seite('Verein', 'Seit 1919 in Büderich: Vorstand, Mitgliedsbeiträge, Satzung und Datenschutz des Büdericher Spielvereins.')
 
 export default async function VereinSeite() {
-  const [v, tx, w, start] = await Promise.all([getVerein(), getTexte(), getPlatzhalter(), getStartseite()])
+  const [v, tx, w, start, anim] = await Promise.all([getVerein(), getTexte(), getPlatzhalter(), getStartseite(), getAnimationen()])
   const beitraege = v.beitraege ?? []
   // Günstigster Monatsbeitrag für aktive Mitglieder (passiv zählt nicht – „alle Kurse inklusive“)
   const guenstigster = abMonat(beitraege)
@@ -22,6 +23,7 @@ export default async function VereinSeite() {
   return (
     <>
       <section className="center" style={{ padding: '120px 22px 90px' }}>
+        {animationAn(anim, 'wappenGlanz') && <WappenGlanz bewegt={animationAn(anim, 'alle')} className="in1" />}
         <p className="kicker in1" style={{ color: 'var(--bsv-muted)' }}>
           Über uns
         </p>
