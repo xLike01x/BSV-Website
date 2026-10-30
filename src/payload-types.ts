@@ -511,7 +511,7 @@ export interface Angebote {
   kategorie?:
     ('Fußball' | 'Tanzen' | 'Turnen' | 'Zirkus' | 'Fitness' | 'Gesundheit' | 'Ausdauer' | 'Kampfkunst') | null;
   /**
-   * Steht im Menü und auf den Karten.
+   * Steht im Menü und auf den Karten. Im Fußball das Alter statt der Jahrgänge, z. B. „7–8 Jahre (U8 & U9)“ – das muss nicht jede Saison geändert werden.
    */
   alterText?: string | null;
   /**

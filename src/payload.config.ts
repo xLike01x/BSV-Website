@@ -59,6 +59,7 @@ import { Kuendigungen } from './kuendigungen/Kuendigungen'
 import { Kuendigungsdokumente } from './kuendigungen/Kuendigungsdokumente'
 import { taeglicheAufgaben } from './utilities/taeglich'
 import { trainerUmbenennen } from './utilities/trainerUmbenennen'
+import { altersangabenUmstellen } from './utilities/altersangaben'
 import { Datenschutz } from './datenschutz/config'
 import { RollenRechte } from './rollenRechte/config'
 import { vorstandFotoEndpunkt } from './Verein/vorstandFoto'
@@ -130,6 +131,7 @@ const konfiguration = buildConfig({
     await doppelteHauptsponsorenAufraeumen(payload).catch((e) => payload.logger.warn({ err: e }, 'Doppelte Hauptsponsoren aufräumen fehlgeschlagen'))
     await sponsorLogosEinordnen(payload).catch((e) => payload.logger.warn({ err: e }, 'Sponsor-Logos einordnen fehlgeschlagen'))
     await trainerUmbenennen(payload).catch((e) => payload.logger.warn({ err: e }, 'Trainer-Umbenennung fehlgeschlagen'))
+    await altersangabenUmstellen(payload).catch((e) => payload.logger.warn({ err: e }, 'Umstellung der Altersangaben fehlgeschlagen'))
     await startseiteUmziehen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme „Startseite & Bilder“ fehlgeschlagen'))
     // Überarbeitete Rechtstexte einmalig übernehmen (nur solange noch der alte Text drinsteht)
     await rechtstexteUebernehmen(payload).catch((e) => payload.logger.warn({ err: e }, 'Übernahme der Rechtstexte fehlgeschlagen'))

@@ -143,7 +143,7 @@ export default function SaisonwechselClient({ zeilen, stand: start }: { zeilen: 
       <header className="bsv-saison__kopf">
         <div>
           <h1>Saisonwechsel</h1>
-          <p>Vor jeder neuen Fußball-Saison alle Teams durchgehen: Wer trainiert sie jetzt? Stimmen Namen, Jahrgänge, Zeiten und Fotos noch? Jedes Team abhaken, wenn es passt. (Breitensport-Kurse haben keine Saison und stehen hier nicht.)</p>
+          <p>Vor jeder neuen Fußball-Saison alle Teams durchgehen: Wer trainiert sie jetzt? Stimmen Namen, Alter, Zeiten und Fotos noch? Jedes Team abhaken, wenn es passt. (Breitensport-Kurse haben keine Saison und stehen hier nicht.)</p>
         </div>
         <div className="bsv-saison__stand">
           <strong>
