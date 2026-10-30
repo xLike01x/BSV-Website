@@ -6,11 +6,14 @@ import { UNTERGRUPPE_LABEL } from '@/bsv/lib'
 import { zuLink, zuLinks, type MenueEintrag } from './menueLinks'
 import { NavClient, type NavEintrag, type NavMenu } from './NavClient'
 
+/** Nur echte Altersangaben im Menü („3–6 Jahre“, „ab 16 Jahren“) – andere Texte im Alter-Feld bleiben dort weg, damit es einheitlich aussieht */
+const IST_ALTER = /^(ab \d+ Jahren|\d+(,\d)?\s?[–-]\s?\d+ Jahre)$/
+
 /** Hauptmenü: Teams und Kurse kommen direkt aus Payload, neue Angebote erscheinen automatisch. */
 export async function Nav() {
   const [angebote, menue] = await Promise.all([getAngebote(), getMenue()])
   const link = (a: (typeof angebote)[number]) => ({
-    label: a.title + (a.bereich !== 'fussball' && a.alterText && a.alterText.length < 14 ? ` (${a.alterText})` : ''),
+    label: a.title + (a.bereich !== 'fussball' && a.alterText && IST_ALTER.test(a.alterText) ? ` (${a.alterText})` : ''),
     href: `/angebote/${a.slug}`,
   })
 

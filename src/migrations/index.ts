@@ -29,6 +29,7 @@ import * as migration_20261027_174802_konto_geschuetzt from './20261027_174802_k
 import * as migration_20261027_183018_beitrittserklaerung from './20261027_183018_beitrittserklaerung';
 import * as migration_20261027_183317_antrag_text from './20261027_183317_antrag_text';
 import * as migration_20261027_185309_vereinsdokumente from './20261027_185309_vereinsdokumente';
+import * as migration_20261030_180237_altersangaben from './20261030_180237_altersangaben';
 
 export const migrations = [
   {
@@ -184,6 +185,11 @@ export const migrations = [
   {
     up: migration_20261027_185309_vereinsdokumente.up,
     down: migration_20261027_185309_vereinsdokumente.down,
-    name: '20261027_185309_vereinsdokumente'
+    name: '20261027_185309_vereinsdokumente',
+  },
+  {
+    up: migration_20261030_180237_altersangaben.up,
+    down: migration_20261030_180237_altersangaben.down,
+    name: '20261030_180237_altersangaben'
   },
 ];

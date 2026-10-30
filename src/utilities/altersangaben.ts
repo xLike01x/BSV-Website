@@ -1,14 +1,22 @@
 import type { Payload } from 'payload'
 
 /**
- * Einmalig (30.10.2026, Wunsch von Thomas): Fußball-Teams zeigen das Alter statt der Jahrgänge.
- * Die Jahrgänge stammten von der alten Website und waren schon eine Saison veraltet; das Alter (DFB-Altersklassen,
- * Stichtag 1. Januar) muss nicht jede Saison angepasst werden.
+ * Einmalig (30.10.2026, Wunsch von Thomas): einheitliche Altersangaben.
+ * Fußball: Alter statt Jahrgang (DFB-Altersklassen, Stichtag 1. Januar) – die Jahrgänge stammten von der alten Website,
+ * waren eine Saison veraltet und hätten jede Saison geändert werden müssen.
+ * Breitensport: immer „X–Y Jahre“ bzw. „ab X Jahren“ statt eines Mischmaschs aus „J.“, „18–99“ und Zusatzinfos.
  *
  * Geändert wird nur, was noch genau dem alten Starttext entspricht – selbst geänderte Angaben bleiben unberührt.
  * Die Zahlen für den Angebotsfinder nur, wenn beide noch die alten Startwerte haben.
  */
-type Umstellung = { alt: string; neu: string; von?: [number, number]; auf?: [number, number] }
+type Umstellung = {
+  alt: string
+  neu: string
+  von?: [number, number]
+  auf?: [number, number]
+  /** Was bisher im Alter-Feld stand und wegfällt, wandert vorn in die Kurzbeschreibung (nur wenn sie noch der Starttext ist) */
+  kurz?: [string, string]
+}
 
 export const ALTERSANGABEN: Umstellung[] = [
   { alt: 'Jg. 2019/2020', neu: 'unter 7 Jahre (U7)', von: [5, 7], auf: [4, 6] },
@@ -22,14 +30,30 @@ export const ALTERSANGABEN: Umstellung[] = [
   { alt: 'Hallen-Stadtmeister', neu: 'Erwachsene (Senioren)' },
   { alt: 'Herren ab 32', neu: 'ab 32 Jahren (Ü32)' },
   { alt: 'SG mit SV Menzelen', neu: 'Erwachsene · SG mit SV Menzelen' },
+  // Breitensport – Kinder
+  { alt: '1,5–3 J.', neu: '1,5–3 Jahre' },
+  { alt: '3–6 J.', neu: '3–6 Jahre' },
+  { alt: '6–11 J.', neu: '6–11 Jahre' },
+  { alt: '11–15 J.', neu: '11–15 Jahre' },
+  { alt: '8–12 J.', neu: '8–12 Jahre' },
+  { alt: '6–10 J.', neu: '6–10 Jahre' },
+  { alt: '1–3 J. mit Eltern', neu: '1–3 Jahre' },
+  // Breitensport – Erwachsene
+  { alt: 'Frauen ab 16 Jahren', neu: 'ab 16 Jahren', kurz: ['Ausdauer und Koordination: 60 Minuten Step und 30 Minuten abwechslungsreiches Workout.', 'Für Frauen: 60 Minuten Step und 30 Minuten abwechslungsreiches Workout für Ausdauer und Koordination.'] },
+  { alt: 'Frauen 18–99', neu: 'ab 18 Jahren' },
+  { alt: 'drei Kurse', neu: 'ab 18 Jahren', kurz: ['Kräftigung der Körpermitte, je ca. 60 Minuten.', 'Drei Kurse zur Kräftigung der Körpermitte, je ca. 60 Minuten.'] },
+  { alt: '18–99 Jahre', neu: 'ab 18 Jahren' },
+  { alt: 'mit Verordnung', neu: 'ab 18 Jahren' },
+  { alt: 'Qi Gong, Tai Chi', neu: 'ab 18 Jahren', kurz: ['Ruhige, fließende Bewegungen für Körper und Geist.', 'Qi Gong und Tai Chi: ruhige, fließende Bewegungen für Körper und Geist.'] },
+  { alt: 'über den Rheindamm', neu: 'ab 18 Jahren', von: [30, 99], auf: [18, 99] },
 ]
 
-type Angebot = { id: number; alterText?: string | null; alterVon?: number | null; alterBis?: number | null }
+type Angebot = { id: number; alterText?: string | null; alterVon?: number | null; alterBis?: number | null; kurzbeschreibung?: string | null }
 
 export async function altersangabenUmstellen(payload: Payload) {
   const r = await payload.find({
     collection: 'angebote',
-    where: { and: [{ bereich: { equals: 'fussball' } }, { alterText: { in: ALTERSANGABEN.map((u) => u.alt) } }] },
+    where: { alterText: { in: ALTERSANGABEN.map((u) => u.alt) } },
     limit: 200,
     depth: 0,
     pagination: false,
@@ -44,10 +68,11 @@ export async function altersangabenUmstellen(payload: Payload) {
       daten.alterVon = u.auf[0]
       daten.alterBis = u.auf[1]
     }
+    if (u.kurz && a.kurzbeschreibung === u.kurz[0]) daten.kurzbeschreibung = u.kurz[1]
     await payload
       .update({ collection: 'angebote', id: a.id, data: daten as never, overrideAccess: true, context: { disableRevalidate: true } })
       .then(() => geaendert++)
       .catch((e) => payload.logger.warn({ err: e }, `Altersangabe für Team ${a.id} nicht umgestellt`))
   }
-  if (geaendert) payload.logger.info(`Fußball-Teams: ${geaendert} Altersangaben von Jahrgang auf Alter umgestellt`)
+  if (geaendert) payload.logger.info(`Teams & Kurse: ${geaendert} Altersangaben vereinheitlicht`)
 }

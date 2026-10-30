@@ -880,7 +880,7 @@ export const FELDER: Record<string, Feld[]> = {
     { name: 'Kategorie', text: 'Art des Angebots (z. B. Tanzen, Fitness, Ausdauer) – für Filter und Angebotsfinder.' },
     { name: 'Titelbild', text: 'Großes Bild oben auf der Teamseite und auf den Karten.' },
     { name: 'Hinweis-Banner auf der Teamseite', text: 'Kurzer Hinweis oben auf der Teamseite, z. B. „Training heute in Halle 2“. Art „ℹ️ Info“ oder „⚠️ Wichtig“, optional „Anzeigen bis einschließlich“ – danach verschwindet er von selbst.' },
-    { name: 'Alter (Anzeige)', text: 'Kurzer Text wie „ab 32 Jahren (Ü32)“ oder „4–6 Jahre“. Erscheint im Menü und auf Karten. Im Fußball das Alter statt der Jahrgänge eintragen, z. B. „7–8 Jahre (U8 & U9)“ – dann muss es nicht jede Saison geändert werden.' },
+    { name: 'Alter (Anzeige)', text: 'Bitte immer in derselben Form: „3–6 Jahre“ oder „ab 16 Jahren“. Nur so erscheint es im Menü in Klammern hinter dem Namen; auf den Karten steht es immer. Im Fußball das Alter statt der Jahrgänge, z. B. „7–8 Jahre (U8 & U9)“ – dann muss es nicht jede Saison geändert werden. Zusätze wie „nur Frauen“ oder „mit Verordnung“ gehören in die Kurzbeschreibung.' },
     { name: 'Alter von / bis', text: 'Zahlen für den Angebotsfinder („Wie alt bist du?“).' },
     { name: 'Kurzbeschreibung', text: 'Ein Satz für Übersichtskarten.' },
     { name: 'Beschreibung', text: 'Ausführlicher Text auf der Seite des Teams.' },

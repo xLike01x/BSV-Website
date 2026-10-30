@@ -9,6 +9,8 @@ const ERSETZEN: [string, string][] = [
   ['Ab 5 € im Monat, alle Kurse inklusive.', 'Ab {abMonat} € im Monat, alle Kurse inklusive.'],
   // Stimmte nie: Neue Anträge gehen an die Kasse, nicht an die Trainer (27.10.2026)
   ['Die Trainer werden automatisch informiert.', 'Wir melden uns schnellstmöglich bei dir.'],
+  // Einheitliche Altersangaben (30.10.2026)
+  ['Tanzmäuse · 3–6 J.', 'Tanzmäuse · 3–6 Jahre'],
 ]
 
 const ersetzen = (wert: unknown): unknown => {

@@ -111,7 +111,7 @@ export const Angebote: CollectionConfig<'angebote'> = {
     {
       type: 'row',
       fields: [
-        { name: 'alterText', label: 'Alter (Anzeige)', type: 'text', admin: { placeholder: 'z. B. 3–6 Jahre', description: 'Steht im Menü und auf den Karten. Im Fußball das Alter statt der Jahrgänge, z. B. „7–8 Jahre (U8 & U9)“ – das muss nicht jede Saison geändert werden.' } },
+        { name: 'alterText', label: 'Alter (Anzeige)', type: 'text', admin: { placeholder: 'z. B. 3–6 Jahre', description: 'Steht auf den Karten und im Menü. Bitte einheitlich: „3–6 Jahre“ oder „ab 16 Jahren“ (nur so erscheint es im Menü). Im Fußball das Alter statt der Jahrgänge, z. B. „7–8 Jahre (U8 & U9)“ – das muss nicht jede Saison geändert werden. Zusätze wie „nur Frauen“ gehören in die Kurzbeschreibung.' } },
         { name: 'alterVon', label: 'Alter von', type: 'number', min: 0, max: 99, admin: { description: 'Für den Angebotsfinder.' } },
         { name: 'alterBis', label: 'Alter bis', type: 'number', min: 0, max: 99, admin: { description: 'Für den Angebotsfinder.' } },
       ],

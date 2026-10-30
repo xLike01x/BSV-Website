@@ -153,7 +153,7 @@ async function main() {
     data: {
       bilderUebernommen: true,
       heroBilder: [B['tanzmaeuse-1'], B['step-burn'], B['seniorenturnen'], B['hero-maedchen']].filter(Boolean) as number[],
-      heroTag1: 'Tanzmäuse · 3–6 J.',
+      heroTag1: 'Tanzmäuse · 3–6 Jahre',
       heroTag2: 'Mädchenfußball',
       bildFussball: B['f-jugend'],
       bildKids: B['kids-gruppe'],

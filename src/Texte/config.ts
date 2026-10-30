@@ -61,7 +61,7 @@ export const Texte: GlobalConfig = {
                 {
                   type: 'row',
                   fields: [
-                    { name: 'heroTag1', label: 'Schild 1 (auf den Bildern)', type: 'text', defaultValue: 'Tanzmäuse · 3–6 J.' },
+                    { name: 'heroTag1', label: 'Schild 1 (auf den Bildern)', type: 'text', defaultValue: 'Tanzmäuse · 3–6 Jahre' },
                     { name: 'heroTag2', label: 'Schild 2', type: 'text', defaultValue: 'Mädchenfußball' },
                   ],
                 },
