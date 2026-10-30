@@ -10,3 +10,16 @@ export const OBEN_GESPERRT = 0.4
 export function darfKicken({ y, vy, groesse, feldHoehe }: { y: number; vy: number; groesse: number; feldHoehe: number }): boolean {
   return vy > 0 && y + groesse / 2 >= feldHoehe * OBEN_GESPERRT
 }
+
+/** Höhe des Rasenstreifens unten im Feld (px) – dort liegt der Ball auf */
+export const RASEN = 18
+
+/**
+ * Ist der Ball heruntergefallen (Runde vorbei)?
+ * Nur ein FALLENDER Ball kann landen: Beim Anstoß liegt der Ball genau auf dem Rasen und fliegt erst nach oben.
+ * Fällt der erste Bild-Schritt auf dieselbe Zeit wie der Start (Zeitdifferenz 0), hat er sich noch nicht bewegt –
+ * ohne diese Bedingung war die Runde dann sofort mit 1 Kontakt vorbei (Fehler vom 31.10.2026).
+ */
+export function amBoden({ y, vy, groesse, feldHoehe }: { y: number; vy: number; groesse: number; feldHoehe: number }): boolean {
+  return vy > 0 && y >= feldHoehe - groesse - RASEN
+}

@@ -2,7 +2,7 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import { Ball } from './Ball'
-import { darfKicken } from './hochhaltenRegel'
+import { amBoden, darfKicken, RASEN } from './hochhaltenRegel'
 import { melden } from './melden'
 import { RanglisteEintragen } from './RanglisteEintragen'
 
@@ -41,7 +41,7 @@ export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
     if (!f) return
     const z = zustand.current
     z.x = (f.clientWidth - GROESSE) / 2
-    z.y = f.clientHeight - GROESSE - 18
+    z.y = f.clientHeight - GROESSE - RASEN
     z.vx = 0
     z.vy = 0
     z.dreh = 0
@@ -86,8 +86,8 @@ export function Hochhalten({ rangliste = false }: { rangliste?: boolean }) {
         z.y = 0
         z.vy = Math.abs(z.vy) * 0.3
       }
-      if (z.y >= f.clientHeight - GROESSE - 18) {
-        z.y = f.clientHeight - GROESSE - 18
+      if (amBoden({ y: z.y, vy: z.vy, groesse: GROESSE, feldHoehe: f.clientHeight })) {
+        z.y = f.clientHeight - GROESSE - RASEN
         z.laeuft = false
         zeichnen()
         setPhase('aus')
