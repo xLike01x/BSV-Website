@@ -2,10 +2,12 @@
 import { useDocumentInfo } from '@payloadcms/ui'
 import React, { useCallback, useEffect, useState } from 'react'
 
+import { nachAlter } from '@/utilities/altersSortierung'
+
 import './aufklapp.scss'
 
 type Menue = 'Fußball' | 'Breitensport'
-type Angebot = { id: number; title: string; bereich?: string | null; untergruppe?: string | null; reihenfolge?: number | null }
+type Angebot = { id: number; title: string; bereich?: string | null; untergruppe?: string | null; reihenfolge?: number | null; alterText?: string | null; alterVon?: number | null; alterBis?: number | null }
 type Spalte = { titel: string; items: Angebot[]; hinweis?: string; warn?: boolean }
 
 const GRUPPEN: [string, string][] = [
@@ -47,7 +49,7 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
   const [ueber, setUeber] = useState<{ spalte: string; index: number } | null>(null)
 
   const laden = useCallback(async () => {
-    const r = await fetch('/api/angebote?depth=0&limit=300&sort=reihenfolge,title&where[aktiv][not_equals]=false&select[title]=true&select[bereich]=true&select[untergruppe]=true&select[reihenfolge]=true', { credentials: 'include' }).catch(() => null)
+    const r = await fetch('/api/angebote?depth=0&limit=300&sort=reihenfolge,title&where[aktiv][not_equals]=false&select[title]=true&select[bereich]=true&select[untergruppe]=true&select[reihenfolge]=true&select[alterText]=true&select[alterVon]=true&select[alterBis]=true', { credentials: 'include' }).catch(() => null)
     if (r?.ok) setAlle(((await r.json()).docs ?? []) as Angebot[])
     else setFehler('Teams & Kurse konnten nicht geladen werden.')
   }, [])
@@ -87,7 +89,7 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
     <div className={`bsv-aufklapp${laeuft ? ' is-laeuft' : ''}`}>
       <p className="bsv-aufklapp__info">
         Die Einträge in diesem Menü sind eure <strong>Teams & Kurse</strong> – ein neues Angebot erscheint von selbst. Reihenfolge ändern: <strong>am Griff ⠿ ziehen</strong> (am Handy mit den Pfeilen). Das gilt sofort, ohne Speichern.
-        {menue === 'Fußball' ? ' Die Spalte legst du beim Team fest: „Gruppe (Fußball)“.' : ' Die Spalte legst du beim Kurs fest: „Bereich“ (BSV Kids oder Erwachsene & Senioren).'} Ausblenden: beim Angebot den Haken „Aktiv“ entfernen.
+        {menue === 'Fußball' ? ' Die Spalte legst du beim Team fest: „Gruppe (Fußball)“.' : ' Die Spalte legst du beim Kurs fest: „Bereich“ (BSV Kids oder Erwachsene & Senioren).'} {menue === 'Breitensport' ? ' „Nach Alter sortieren“ ordnet eine Spalte mit einem Klick nach dem Alter (jüngste zuerst) – praktisch nach einem neuen Kurs.' : ''} Ausblenden: beim Angebot den Haken „Aktiv“ entfernen.
       </p>
       {fehler && <p className="bsv-aufklapp__fehler">{fehler}</p>}
       {gespeichert && <p className="bsv-aufklapp__ok">✓ Reihenfolge gespeichert</p>}
@@ -99,6 +101,17 @@ export default function AufklappUebersicht({ menue = 'Fußball' }: { menue?: Men
               {s.titel}
             </strong>
             {s.hinweis && <small>{s.hinweis}</small>}
+            {menue === 'Breitensport' && darf && s.items.length > 1 && (() => {
+              const sortiert = [...s.items].sort(nachAlter)
+              const schon = sortiert.every((a, i) => a.id === s.items[i]!.id)
+              return schon ? (
+                <small className="bsv-aufklapp__alter">✓ nach Alter sortiert</small>
+              ) : (
+                <button type="button" className="bsv-aufklapp__alter" disabled={laeuft} onClick={() => void speichern(sortiert)} title="Jüngste zuerst – Kurse mit gleichem Alter behalten ihre Reihenfolge">
+                  ↕ Nach Alter sortieren
+                </button>
+              )
+            })()}
             <ol>
               {s.items.map((a, i) => (
                 <li

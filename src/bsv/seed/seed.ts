@@ -9,6 +9,7 @@ import { getPayload, type Payload } from 'payload'
 
 import config from '@payload-config'
 import { slugify } from '@/hooks/slugFromTitle'
+import { nachAlter } from '@/utilities/altersSortierung'
 import { ANGEBOTE, DSGVO, NEWS_BILD, NEWS_KATEGORIE, NEWS_TITEL, VORSTAND } from './daten'
 import { ausText, doc, h, p, ul } from './lexical'
 
@@ -91,8 +92,15 @@ async function main() {
   }
 
   log('Teams & Kurse …')
+  // Breitensport-Kurse nach Alter (jüngste zuerst), jeweils an den Plätzen ihres Bereichs; Fußball bleibt wie in daten.ts
+  const reihe = [...ANGEBOTE]
+  for (const b of ['kids', 'erwachsene']) {
+    const plaetze = ANGEBOTE.flatMap((a, i) => (a.bereich === b ? [i] : []))
+    const sortiert = plaetze.map((i) => ANGEBOTE[i]!).sort(nachAlter)
+    plaetze.forEach((platz, k) => (reihe[platz] = sortiert[k]!))
+  }
   let reihenfolge = 10
-  for (const a of ANGEBOTE) {
+  for (const a of reihe) {
     const quelle = wp(a.wp)
     await upsert(payload, 'angebote', { title: { equals: a.title } }, {
       title: a.title,

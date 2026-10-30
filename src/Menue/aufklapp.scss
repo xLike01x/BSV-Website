@@ -53,6 +53,31 @@
       color: #8a4b00;
     }
 
+    > .bsv-aufklapp__alter {
+      display: inline-block;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #157a43;
+    }
+
+    > button.bsv-aufklapp__alter {
+      padding: 4px 10px;
+      border: 1px solid #157a43;
+      border-radius: 999px;
+      background: #fff;
+      font-weight: 600;
+      cursor: pointer;
+
+      &:hover:not(:disabled) {
+        background: #f4faf6;
+      }
+
+      &:disabled {
+        opacity: 0.5;
+        cursor: default;
+      }
+    }
+
     ol {
       margin: 8px 0 0;
       padding: 0;

@@ -1401,7 +1401,7 @@ export const FAQ: Faq[] = [
   },
   {
     frage: 'Wie ändere ich die Reihenfolge im Menü und in den Aufklappmenüs Fußball und Breitensport?',
-    antwort: 'Reihenfolge in der Menüleiste (Fußball, Breitensport, Verein, News …): Menü & Fußzeile → Reiter „Hauptmenü oben“ → Einträge am Griff links ziehen → Speichern. Inhalt der Aufklappmenüs: Reiter „Aufklappmenü Fußball“ bzw. „Aufklappmenü Breitensport“. Die Teams und Kurse kommen automatisch aus „Teams & Kurse“; am Griff ⠿ ziehen (am Handy: Pfeile ▲▼) sortiert sie innerhalb einer Spalte – gilt sofort, ohne Speichern. Die Spalte bestimmt beim Angebot der „Bereich“ und bei Fußball die „Gruppe (Fußball)“. Darunter änderst du den Text links im Aufklappmenü.',
+    antwort: 'Reihenfolge in der Menüleiste (Fußball, Breitensport, Verein, News …): Menü & Fußzeile → Reiter „Hauptmenü oben“ → Einträge am Griff links ziehen → Speichern. Inhalt der Aufklappmenüs: Reiter „Aufklappmenü Fußball“ bzw. „Aufklappmenü Breitensport“. Die Teams und Kurse kommen automatisch aus „Teams & Kurse“; am Griff ⠿ ziehen (am Handy: Pfeile ▲▼) sortiert sie innerhalb einer Spalte – gilt sofort, ohne Speichern. Im Breitensport-Menü ordnet der Knopf „↕ Nach Alter sortieren“ eine Spalte mit einem Klick nach dem Alter (jüngste zuerst, Kurse mit gleichem Alter behalten ihre Reihenfolge) – praktisch, nachdem ein neuer Kurs dazugekommen ist; steht dort „✓ nach Alter sortiert“, passt alles. Die Spalte bestimmt beim Angebot der „Bereich“ und bei Fußball die „Gruppe (Fußball)“. Darunter änderst du den Text links im Aufklappmenü.',
     bereich: 'menue',
   },
   {
