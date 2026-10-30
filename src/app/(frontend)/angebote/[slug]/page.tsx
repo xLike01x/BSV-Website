@@ -20,6 +20,10 @@ export const revalidate = 60
 type Args = { params: Promise<{ slug: string }> }
 
 export async function generateStaticParams() {
+  // Im Testbetrieb (pnpm dev) nichts vorab erzeugen: Next startet dafür bei jedem ersten Aufruf einen eigenen Prozess,
+  // der Payload samt Datenbankprüfung („Pulling schema …“) neu hochfährt – 10 Sekunden und mehr. Die Seiten entstehen dann
+  // beim Aufruf. Live (next build) werden sie wie bisher vorab erzeugt.
+  if (process.env.NODE_ENV === 'development') return []
   const angebote = await getAngebote()
   return angebote.map((a) => ({ slug: a.slug }))
 }

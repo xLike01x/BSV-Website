@@ -14,6 +14,10 @@ import PageClient from './page.client'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 
 export async function generateStaticParams() {
+  // Im Testbetrieb (pnpm dev) nichts vorab erzeugen: Next startet dafür bei jedem ersten Aufruf einen eigenen Prozess,
+  // der Payload samt Datenbankprüfung („Pulling schema …“) neu hochfährt – 10 Sekunden und mehr. Die Seiten entstehen dann
+  // beim Aufruf. Live (next build) werden sie wie bisher vorab erzeugt.
+  if (process.env.NODE_ENV === 'development') return []
   const payload = await getPayload({ config: configPromise })
   const pages = await payload.find({
     collection: 'pages',
